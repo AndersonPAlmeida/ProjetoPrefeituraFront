@@ -1,6 +1,7 @@
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 const config = require('./webpack.config.base');
+const path = require('path');
 
 const GLOBALS = {
   'process.env': {
@@ -31,9 +32,9 @@ module.exports = merge(config, {
       {
         test: /\.scss$/,
         include: [
-          /src\/client\/assets\/javascripts/,
-          /src\/client\/assets\/styles/,
-          /src\/client\/scripts/
+          path.resolve(__dirname, '../src/client/assets/javascripts'),
+          path.resolve(__dirname, '../src/client/assets/styles'),
+          path.resolve(__dirname, '../src/client/scripts')
         ],
         loaders: [
           'style',
