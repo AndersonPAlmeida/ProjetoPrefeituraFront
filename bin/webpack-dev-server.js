@@ -1,7 +1,7 @@
 import express from 'express';
 import webpack from 'webpack';
 const { host, port, webpackPort } = require('../config/env');
-const webpackConfig = {};
+const webpackConfig = require('../webpack/dev.config');
 const compiler = webpack(webpackConfig);
 const serverOptions = {
   contentBase: 'http://${host}:${port}',
