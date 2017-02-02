@@ -4,6 +4,7 @@
   "description": "",
   "main": ".eslintrc.js",
   "scripts": {
+    "dev": "node ./bin/server \"webpack -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -13,6 +14,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-core": "6.22.1",
+    "babel-loader": "6.2.10",
     "babel-plugin-transform-class-properties": "6.22.0",
     "babel-plugin-transform-runtime": "6.22.0",
     "babel-polyfill": "6.22.0",
@@ -21,11 +24,17 @@
     "babel-preset-stage-0": "6.22.0",
     "babel-register": "6.22.0",
     "express": "4.14.1",
+    "http-proxy": "1.16.2",
     "react": "15.4.2",
+    "react-dom": "15.4.2",
     "react-redux": "5.0.2",
     "react-router": "3.0.2",
     "redux": "3.6.0",
     "webpack": "2.2.1",
     "webpack-isomorphic-tools": "2.6.6"
+  },
+  "devDependencies": {
+    "webpack-dev-middleware": "1.10.0",
+    "webpack-hot-middleware": "2.16.1"
   }
 }
