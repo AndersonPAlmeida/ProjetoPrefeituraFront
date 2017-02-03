@@ -26,13 +26,12 @@ module.exports = {
       },
     ],
   },
-  progress: true,
   resolve: {
-    modulesDirectories: [
+    modules: [
       'node_modules',
       'src',
     ],
-    extensions: ['', '.json', '.js', '.jsx'],
+    extensions: ['.json', '.js', '.jsx'],
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
