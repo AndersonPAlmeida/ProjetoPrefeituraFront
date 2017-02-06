@@ -25,3 +25,15 @@ if (!dest || !dest.firstChild || !dest.firstChild.attributes || !dest.firstChild
     console.error('Server-side React render was discarded. Make sure that your initial render does not contain any client-side code.');
   }
 }
+if (__DEVTOOLS__ && !global.devToolsExtension) {
+  const DevTools = require('./containers/DevTools'); // eslint-disable-line
+  ReactDOM.render(
+    <Provider store={store} key="provider">
+      <div>
+        {component}
+        <DevTools />
+      </div>
+    </Provider>,
+    dest
+  );
+}
