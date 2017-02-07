@@ -33,7 +33,7 @@ export default class Default extends React.Component {
           <script
             src={
               process.env.NODE_ENV === 'development' ?
-              `http://${webpackHost}:${webpackPort}/assets/main.js` :
+              assets.javascript.main :
               '/assets/main.js'
             }
             charSet="UTF-8"

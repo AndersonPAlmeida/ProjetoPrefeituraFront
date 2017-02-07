@@ -26,7 +26,7 @@ if (!dest || !dest.firstChild || !dest.firstChild.attributes || !dest.firstChild
   }
 }
 if (__DEVTOOLS__ && !global.devToolsExtension) {
-  const DevTools = require('./containers/DevTools'); // eslint-disable-line
+  const DevTools = require('./containers/DevTools');
   ReactDOM.render(
     <Provider store={store} key="provider">
       <div>

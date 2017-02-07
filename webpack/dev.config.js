@@ -8,19 +8,23 @@ const webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(webpackIso
 const autoprefixer = require('autoprefixer');
 module.exports = {
   devtool: 'inline-source-map',
+  /* base dir to resolve entry points and loaders */
   context: path.resolve(__dirname, '..'),
+  /* files that will be bundled and will have their require()s solved */
   entry: {
     main: [
       `webpack-hot-middleware/client?path=http://${webpackHost}:${webpackPort}/__webpack_hmr`,
       './src/index.js',
     ],
   },
+  /* bundled files */
   output: {
     path: assetsPath,
     filename: '[name]-[hash].js',
     chunkFilename: '[name]-[chunkhash].js',
     publicPath: `http://${webpackHost}:${webpackPort}/assets/`,
   },
+  /* allows you to require other extensions in javascript */
   module: {
     loaders: [
       {
@@ -58,6 +62,7 @@ module.exports = {
       },
     ],
   },
+  /* makes it able to require files in a more flexible way */
   resolve: {
     modules: [
       'node_modules',
@@ -66,13 +71,15 @@ module.exports = {
     extensions: ['.json', '.js', '.jsx'],
   },
   plugins: [
+    /* hot reload (dev only) */
     new webpack.HotModuleReplacementPlugin(),
     new webpack.IgnorePlugin(/webpack-stats\.json$/),
+    /* variables that set env to development (DEVTOOLS will enable redux devtools) */
     new webpack.DefinePlugin({
-     __CLIENT__: true,
+      __CLIENT__: true,
       __DEVTOOLS__: true,
       'process.env': {
-        NODE_ENV: '"development"',
+      NODE_ENV: '"development"',
       },
     }),
     new webpack.LoaderOptionsPlugin({
