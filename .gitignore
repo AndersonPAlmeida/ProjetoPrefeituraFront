@@ -6,3 +6,4 @@ build
 *.log*
 npm-debug.log
 bundle.js
+webpack-assets.json

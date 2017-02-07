@@ -1,4 +1,3 @@
-
 import { createStore as _createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware } from 'react-router-redux';
 function createStoreWithReducer(history, data, reducer) {

@@ -1,13 +1,13 @@
 const path = require('path');
 const webpack = require('webpack');
 const assetsPath = path.resolve(__dirname, '../public/assets');
-const { webpackHost, webpackPort } = require('../config/env');
 const webpackIsomorphicToolsConfig = require('./webpack-isomorphic-tools');
 const WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 const webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(webpackIsomorphicToolsConfig);
 const autoprefixer = require('autoprefixer');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   context: path.resolve(__dirname, '..'),
   entry: {
     main: [
@@ -19,7 +19,7 @@ module.exports = {
     path: assetsPath,
     filename: '[name]-[hash].js',
     chunkFilename: '[name]-[chunkhash].js',
-    publicPath: `http://${webpackHost}:${webpackPort}/assets/`,
+    publicPath: '/assets/',
   },
   module: {
     loaders: [
@@ -30,7 +30,10 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!postcss-loader',
+        loader: ExtractTextPlugin.extract(
+                  'style',
+                  'css-loader?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!postcss-loader'
+        ),
       },
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
@@ -46,7 +49,7 @@ module.exports = {
       },
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'file-loader',
+        loader: 'file',
       },
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
@@ -58,6 +61,9 @@ module.exports = {
       },
     ],
   },
+  postcss() {
+    return [autoprefixer];
+  },
   resolve: {
     modules: [
       'node_modules',
@@ -66,23 +72,22 @@ module.exports = {
     extensions: ['.json', '.js', '.jsx'],
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.IgnorePlugin(/webpack-stats\.json$/),
+    new ExtractTextPlugin('[name]-[chunkhash].css', { allChunks: true }),
     new webpack.DefinePlugin({
-     __CLIENT__: true,
-      __DEVTOOLS__: true,
       'process.env': {
-        NODE_ENV: '"development"',
+        NODE_ENV: '"production"',
+      },
+      __CLIENT__: true,
+      __DEVTOOLS__: false,
+    }),
+    new webpack.IgnorePlugin(/\.\/dev/, /\/config$/),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
       },
     }),
-    new webpack.LoaderOptionsPlugin({
-      options: {
-        context: __dirname,
-        postcss: [
-          autoprefixer
-        ]
-      }
-    }),
-    webpackIsomorphicToolsPlugin.development(),
+    webpackIsomorphicToolsPlugin,
   ],
 };
