@@ -4,7 +4,7 @@
   "description": "",
   "main": ".eslintrc.js",
   "scripts": {
-    "dev": "NODE_ENV=development concurrently --kill-others \"nodemon --exec babel-node ./bin/server \" \"nodemon --exec babel-node ./bin/webpack-dev-server.js\"",
+    "dev": "NODE_ENV=development concurrently --kill-others \"babel-node ./bin/server \" \"babel-node ./bin/webpack-dev-server.js\"",
     "start": "NODE_ENV=production babel-node ./bin/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -50,11 +50,9 @@
     "webpack-isomorphic-tools": "^2.6.6"
   },
   "devDependencies": {
-    "nodemon": "^1.11.0",
     "redux-devtools": "^3.3.2",
     "redux-devtools-dock-monitor": "^1.1.1",
     "redux-devtools-log-monitor": "^1.2.0",
-    "style-loader": "^0.13.1",
     "webpack-dev-middleware": "1.10.0",
     "webpack-hot-middleware": "2.16.1"
   }

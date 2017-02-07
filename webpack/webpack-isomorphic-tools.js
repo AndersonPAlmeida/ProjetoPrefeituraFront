@@ -1,4 +1,5 @@
 const WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
+/* settle the extensions and use url-loader to parse */
 module.exports = {
   assets: {
     images: {
