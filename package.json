@@ -4,6 +4,7 @@
   "description": "",
   "main": ".eslintrc.js",
   "scripts": {
+    "build": "webpack --verbose --colors --display-error-details --config webpack/prod.config.js",
     "dev": "NODE_ENV=development concurrently --kill-others \"babel-node ./bin/server \" \"babel-node ./bin/webpack-dev-server.js\"",
     "start": "NODE_ENV=production babel-node ./bin/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -33,6 +34,7 @@
     "concurrently": "^3.1.0",
     "css-loader": "^0.26.1",
     "express": "4.14.1",
+    "extract-text-webpack-plugin": "^2.0.0-beta.4",
     "file-loader": "^0.10.0",
     "postcss-loader": "^1.2.2",
     "pretty-error": "^2.0.2",

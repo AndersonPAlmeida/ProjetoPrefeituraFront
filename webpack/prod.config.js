@@ -11,7 +11,6 @@ module.exports = {
   context: path.resolve(__dirname, '..'),
   entry: {
     main: [
-      `webpack-hot-middleware/client?path=http://${webpackHost}:${webpackPort}/__webpack_hmr`,
       './src/index.js',
     ],
   },
@@ -30,10 +29,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract(
-                  'style-loader',
-                  'css-loader?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!postcss-loader'
-        ),
+        loader: ExtractTextPlugin.extract( { fallbackLoader: 'style-loader', loader: 'css-loader?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!postcss-loader' } ),
       },
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
@@ -61,9 +57,6 @@ module.exports = {
       },
     ],
   },
-  postcss() {
-    return [autoprefixer];
-  },
   resolve: {
     modules: [
       'node_modules',
@@ -72,7 +65,7 @@ module.exports = {
     extensions: ['.json', '.js', '.jsx'],
   },
   plugins: [
-    new ExtractTextPlugin('[name]-[chunkhash].css', { allChunks: true }),
+    new ExtractTextPlugin( { filename: '[name]-[chunkhash].css', allChunks: true } ),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"',
@@ -82,11 +75,19 @@ module.exports = {
     }),
     new webpack.IgnorePlugin(/\.\/dev/, /\/config$/),
     new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false,
       },
+    }),
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        context: __dirname,
+        postcss: [
+          autoprefixer
+        ]
+      }
     }),
     webpackIsomorphicToolsPlugin,
   ],

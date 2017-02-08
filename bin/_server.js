@@ -9,9 +9,7 @@ import { match, RouterContext } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
 import { Provider } from 'react-redux';
-import {
-  createStore,
-} from '../src/redux/createStore';
+import { createStore } from '../src/redux/createStore';
 import getRoutes from '../src/routes';
 import Default from '../src/layouts/Default';
 global.__CLIENT__ = false;
@@ -26,7 +24,10 @@ app.use((req, res) => {
   if (process.env.NODE_ENV === 'development') {
     webpackIsomorphicTools.refresh();
   }
+  console.log('aaa');
+  /* Start history with requested url */
   const memoryHistory = createHistory(req.originalUrl);
+  /* Create store and enhanced history (memoryHistory) */
   const store = createStore(memoryHistory);
   const history = syncHistoryWithStore(memoryHistory, store);
   /* Send blank page to the client and hydrates (inject the initial app state) */
@@ -59,7 +60,7 @@ app.use((req, res) => {
       /* 
         Send rendered page with scripts/store/assets to the client (server side rendering)
         After this, the client will keep up with rendering (universal/isomorphism)
-       */
+      */
       res.send(`<!doctype html>${ReactDOM.renderToStaticMarkup(<Default assets={webpackIsomorphicTools.assets()} component={component} store={store} />)}`);
     } else {
       res.status(404).send('Not found');

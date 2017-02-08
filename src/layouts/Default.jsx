@@ -32,9 +32,7 @@ export default class Default extends React.Component {
           />
           <script
             src={
-              process.env.NODE_ENV === 'development' ?
-              assets.javascript.main :
-              '/assets/main.js'
+              assets.javascript.main
             }
             charSet="UTF-8"
           />
