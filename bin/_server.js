@@ -1,3 +1,4 @@
+import React from 'react';
 import express from 'express';
 import http from 'http';
 import path from 'path';
@@ -10,7 +11,7 @@ import { initialize } from '../src/app';
 import qs from 'query-string';
 import { loadOnServer } from 'redux-connect';
 global.__CLIENT__ = false;
-const apiUrl = 'http://${apiHost}:${apiPort}/{apiVer}';
+const apiUrl = `http://${apiHost}:${apiPort}/{apiVer}`;
 const app = express();
 const server = http.Server(app);
 /* Set ../public as default static files path (not used at the moment) */
@@ -24,7 +25,7 @@ app.use((req, res) => {
   const query = qs.stringify(req.query);
   const location = `${req.path}${(query.length ? `?${query}` : '')}`;
   /* Send blank page to the client and hydrates (inject the initial app state) */
-  function hydrateOnClient() {
+  function hydrateOnClient(store) {
     res.send(`<!doctype html>${ReactDOM.renderToString(<Default assets={webpackIsomorphicTools.assets()} store={store} />)}`);
   }
   initialize({
@@ -47,7 +48,7 @@ app.use((req, res) => {
         } else if (error) {
           console.error('ROUTER ERROR:', pretty.render(error));
           res.status(500);
-          hydrateOnClient();
+          hydrateOnClient(store);
         /* Successful Route */
         } else if (renderProps) {
           loadOnServer({ ...renderProps, store, helpers: {} }).then(() => {

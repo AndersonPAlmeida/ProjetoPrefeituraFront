@@ -4,34 +4,21 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
 import { createStore } from './redux/createStore';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
-import { Home, NotFound } from './containers';
+import { App, Home, NotFound } from './containers';
 import { AuthGlobals } from 'redux-auth';
 import { configure } from 'redux-auth';
-class App extends React.Component {
-  static propTypes = {
-    children: PropTypes.node,
-  };
-  render() {
-    return (
-      <div>
-        <AuthGlobals />
-        {this.props.children}
-      </div>
-    );
-  }
-}
-/*function requireAuth(store, nextState, replace, next) {
+function requireAuth(store, nextState, replace, next) {
   if (!store.getState().auth.getIn(['user', 'isSignedIn'])) {
     replace('/login');
   }
   next();
-}*/
+}
 export function initialize({ apiUrl, cookies, isServer, currentLocation, userAgent } = {}) {
   /* Start history with requested url */
   let memoryHistory = isServer ? createHistory(currentLocation) : browserHistory;
   /* Create store and enhanced history (memoryHistory) */
   const store = createStore(memoryHistory);
-  const history = syncHistoryWithStore(memoryHistory, store);
+  let history = syncHistoryWithStore(memoryHistory, store);
   const routes = (
     <Router history={history}>
       <Route path="/" component={App}>
