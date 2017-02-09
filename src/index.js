@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { createStore } from './redux/createStore';
-import { initialize } from './appconfig';
+import { initialize } from './app';
 const dest = global.document.getElementById('root');
 const store = createStore(browserHistory, global.__data);
 const history = syncHistoryWithStore(browserHistory, store);

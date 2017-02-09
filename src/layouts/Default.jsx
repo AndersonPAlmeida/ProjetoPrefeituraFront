@@ -1,10 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import serialize from 'serialize-javascript';
-import { webpackHost, webpackPort, apiHost, apiPort, apiVer } from '../../config/env';
 export default class Default extends React.Component {
   render() {
-    const { assets, component, store } = this.props;
+    const { assets, component, store, apiUrl } = this.props;
     const content = component ? ReactDOM.renderToString(component) : '';
     return (
       <html lang="en">
@@ -24,7 +23,7 @@ export default class Default extends React.Component {
               <style dangerouslySetInnerHTML={{ __html: require('../containers/App.css')._style }} /> : null
           }
           <script
-            dangerouslySetInnerHTML={{ __html: `window.__API_URL__='${apiHost}:${apiPort}/{apiVer}'` }}
+            dangerouslySetInnerHTML={{ __html: `window.__API_URL__='${apiUrl}'` }}
             charSet="UTF-8"
           />
         </head>
@@ -49,4 +48,5 @@ Default.propTypes = {
   assets: React.PropTypes.object,
   component: React.PropTypes.node,
   store: React.PropTypes.object,
+  apiUrl: React.PropTypes.string
 };

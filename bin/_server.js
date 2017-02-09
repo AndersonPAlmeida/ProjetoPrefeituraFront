@@ -6,7 +6,7 @@ import PrettyError from 'pretty-error';
 import ReactDOM from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
 import Default from '../src/layouts/Default';
-import { initialize } from '../src/appconfig';
+import { initialize } from '../src/app';
 global.__CLIENT__ = false;
 const apiUrl = 'http://${apiHost}:${apiPort}/{apiVer}';
 const app = express();
@@ -45,23 +45,21 @@ app.use((req, res) => {
           res.status(500);
           hydrateOnClient();
         /* Successful Route */
+
         } else if (renderProps) {
-          /* 
-            Create component containing the store with Provider (which allows containers to access store),
-            and the routes with the given requested route to render 
-          */
-          const component = (
-            <Provider store={store} key="provider">
-              <RouterContext {...renderProps} />
-            </Provider>
-          );
-          res.status(200);
-          global.navigator = { userAgent: req.headers['user-agent'] };
-          /* 
-            Send rendered page with scripts/store/assets to the client (server side rendering)
-            After this, the client will keep up with rendering (universal/isomorphism)
-          */
-          res.send(`<!doctype html>${ReactDOM.renderToStaticMarkup(<Default assets={webpackIsomorphicTools.assets()} component={component} store={store} />)}`);
+          loadOnServer({ ...renderProps, store, helpers: {} }).then(() => {
+            res.status(200);
+            global.navigator = { userAgent: req.headers['user-agent'] };
+            const html = ReactDOM.renderToString(
+              <Default
+                apiUrl={apiUrl}
+                assets={webpackIsomorphicTools.assets()}
+                component={provider}
+                store={store}
+              />
+            );
+            res.send(`<!doctype html>${ReactDOM.renderToStaticMarkup(<Default apiUrl={apiUrl} assets={webpackIsomorphicTools.assets()} component={provider} store={store} />)}`);
+          });
         } else {
           res.status(404).send('Not found');
         }

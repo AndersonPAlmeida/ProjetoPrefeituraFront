@@ -4,10 +4,10 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
 import { createStore } from './redux/createStore';
 import { IndexRoute, Route } from 'react-router';
-import { App, Home, NotFound } from './containers';
+import { Home, NotFound } from './containers';
 import { AuthGlobals } from 'redux-auth';
 import { configure } from 'redux-auth';
-class AppConfig extends React.Component {
+class App extends React.Component {
   static propTypes = {
     children: PropTypes.node,
   };
