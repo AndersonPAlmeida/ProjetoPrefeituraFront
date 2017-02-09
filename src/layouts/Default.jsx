@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import serialize from 'serialize-javascript';
-import { webpackHost, webpackPort } from '../../config/env';
+import { webpackHost, webpackPort, apiHost, apiPort, apiVer } from '../../config/env';
 export default class Default extends React.Component {
   render() {
     const { assets, component, store } = this.props;
@@ -23,6 +23,10 @@ export default class Default extends React.Component {
             Object.keys(assets.styles).length === 0 ?
               <style dangerouslySetInnerHTML={{ __html: require('../containers/App.css')._style }} /> : null
           }
+          <script
+            dangerouslySetInnerHTML={{ __html: `window.__API_URL__='${apiHost}:${apiPort}/{apiVer}'` }}
+            charSet="UTF-8"
+          />
         </head>
         <body>
           <div id="root" dangerouslySetInnerHTML={{ __html: content }} />

@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { createStore } from './redux/createStore';
-import getRoutes from './routes';
+import { initialize } from './appconfig';
 const dest = global.document.getElementById('root');
 const store = createStore(browserHistory, global.__data);
 const history = syncHistoryWithStore(browserHistory, store);
@@ -19,6 +19,12 @@ ReactDOM.render(
   </Provider>,
   dest
 );
+initialize({ apiUrl: window.__API_URL__ }).then(({ provider }) => {
+  ReactDOM.render(
+    provider,
+    dest
+  );
+});
 if (process.env.NODE_ENV !== 'production') {
   global.React = React; // enable debugger
 if (!dest || !dest.firstChild || !dest.firstChild.attributes || !dest.firstChild.attributes['data-react-checksum']) {
