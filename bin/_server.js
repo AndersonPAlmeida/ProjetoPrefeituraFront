@@ -7,6 +7,8 @@ import ReactDOM from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
 import Default from '../src/layouts/Default';
 import { initialize } from '../src/app';
+import qs from 'query-string';
+import { loadOnServer } from 'redux-connect';
 global.__CLIENT__ = false;
 const apiUrl = 'http://${apiHost}:${apiPort}/{apiVer}';
 const app = express();
@@ -19,6 +21,8 @@ app.use((req, res) => {
   if (process.env.NODE_ENV === 'development') {
     webpackIsomorphicTools.refresh();
   }
+  const query = qs.stringify(req.query);
+  const location = `${req.path}${(query.length ? `?${query}` : '')}`;
   /* Send blank page to the client and hydrates (inject the initial app state) */
   function hydrateOnClient() {
     res.send(`<!doctype html>${ReactDOM.renderToString(<Default assets={webpackIsomorphicTools.assets()} store={store} />)}`);
@@ -27,7 +31,7 @@ app.use((req, res) => {
     apiUrl,
     isServer: true,
     cookies: req.headers.cookie,
-    currentLocation: req.originalUrl,
+    currentLocation: location,
     userAgent: req.headers['user-agent']
   }).then(({ store, provider, blank, routes, history }) => {
       if (blank) {
@@ -35,7 +39,7 @@ app.use((req, res) => {
         return;
       }
       /* Check route matches for client requested path */
-      match({ history, routes, location: req.originalUrl },
+      match({ history, routes, location },
       (error, redirectLocation, renderProps) => {
         if (redirectLocation) {
           res.redirect(redirectLocation.pathname + redirectLocation.search);
@@ -45,26 +49,17 @@ app.use((req, res) => {
           res.status(500);
           hydrateOnClient();
         /* Successful Route */
-
         } else if (renderProps) {
           loadOnServer({ ...renderProps, store, helpers: {} }).then(() => {
             res.status(200);
             global.navigator = { userAgent: req.headers['user-agent'] };
-            const html = ReactDOM.renderToString(
-              <Default
-                apiUrl={apiUrl}
-                assets={webpackIsomorphicTools.assets()}
-                component={provider}
-                store={store}
-              />
-            );
-            res.send(`<!doctype html>${ReactDOM.renderToStaticMarkup(<Default apiUrl={apiUrl} assets={webpackIsomorphicTools.assets()} component={provider} store={store} />)}`);
+            res.send(`<!doctype html>${ReactDOM.renderToString(<Default apiUrl={apiUrl} assets={webpackIsomorphicTools.assets()} component={provider} store={store} />)}`);
           });
         } else {
           res.status(404).send('Not found');
         }
       });
-  });
+  }).catch(e => console.log('@-->server error', e, e.stack));
 });
 app.listen(port, 
   (err) => { 

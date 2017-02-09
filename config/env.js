@@ -4,5 +4,5 @@ module.exports = {
   apiPort: 5000,
   apiVer: 'v1',
   webpackHost: 'localhost',
-  webpackPort: 3002,
+  webpackPort: 3001,
 };

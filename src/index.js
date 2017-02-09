@@ -8,17 +8,6 @@ import { initialize } from './app';
 const dest = global.document.getElementById('root');
 const store = createStore(browserHistory, global.__data);
 const history = syncHistoryWithStore(browserHistory, store);
-const component = (
-  <Router history={history}>
-    {getRoutes(store)}
-  </Router>
-);
-ReactDOM.render(
-  <Provider store={store} key="provider">
-    {component}
-  </Provider>,
-  dest
-);
 initialize({ apiUrl: window.__API_URL__ }).then(({ provider }) => {
   ReactDOM.render(
     provider,
