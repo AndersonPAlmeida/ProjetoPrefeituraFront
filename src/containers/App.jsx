@@ -1,11 +1,10 @@
 import React from 'react';
-import * as DefaultTheme from 'redux-auth';
-
+import { AuthGlobals } from "redux-auth/default-theme";
 export default class App extends React.Component {
   render() {
     return ( 
       <div> 
-        <DefaultTheme.AuthGlobals />
+        <AuthGlobals />
         {this.props.children} 
       </div>
     );

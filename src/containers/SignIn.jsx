@@ -1,15 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { EmailSignInForm } from 'redux-auth';
+import { EmailSignInForm } from "redux-auth/default-theme";
 import { browserHistory } from 'react-router';
-
-class SignIn extends React.Component {
+export class SignIn extends React.Component {
   render() {
-    return (
-      <div>
-        <EmailSignInForm next={() => browserHistory.push('/')} />
-      </div>
-    );
+    return <EmailSignInForm next={() => console.log("success")} />
   }
 }
-export default connect(({ routes }) => ({ routes }))(SignIn);
+//export default connect(({ routes }) => ({ routes }))(SignIn);
