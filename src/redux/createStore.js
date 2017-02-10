@@ -3,9 +3,8 @@ import { routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
 function createStore(history, data) {
   const reducer = require('../reducers');
-  const reduxRouterMiddleware = routerMiddleware(history);
   const middleware = [
-    reduxRouterMiddleware,
+    routerMiddleware(history),
     thunk,
   ];
   /* 
