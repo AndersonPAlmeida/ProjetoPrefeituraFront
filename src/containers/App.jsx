@@ -1,8 +1,14 @@
 import React from 'react';
-import styles from './App.css';
+import * as DefaultTheme from 'redux-auth';
+
 export default class App extends React.Component {
   render() {
-    return <div className={styles.app}>{this.props.children}</div>;
+    return ( 
+      <div> 
+        <DefaultTheme.AuthGlobals />
+        {this.props.children} 
+      </div>
+    );
   }
 }
 App.propTypes = {

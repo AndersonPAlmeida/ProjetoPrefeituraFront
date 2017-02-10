@@ -18,10 +18,6 @@ export default class Default extends React.Component {
             />
           )}
           {/* development */}
-          {
-            Object.keys(assets.styles).length === 0 ?
-              <style dangerouslySetInnerHTML={{ __html: require('../containers/App.css')._style }} /> : null
-          }
           <script
             dangerouslySetInnerHTML={{ __html: `window.__API_URL__='${apiUrl}'` }}
             charSet="UTF-8"
