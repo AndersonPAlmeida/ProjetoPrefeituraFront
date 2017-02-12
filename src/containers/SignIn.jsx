@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { EmailSignInForm } from "redux-auth/default-theme";
+import { EmailSignInForm } from "../redux-auth/views/default";
 import { browserHistory } from 'react-router';
 class SignIn extends React.Component {
   render() {

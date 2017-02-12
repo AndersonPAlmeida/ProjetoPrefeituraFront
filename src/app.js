@@ -6,7 +6,7 @@ import { createStore } from './redux/createStore';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { App, Home, NotFound } from './containers';
 import SignIn from './containers/SignIn';
-import { configure } from 'redux-auth';
+import { configure } from './redux-auth';
 function requireAuth(store, nextState, replace, next) {
   if (!store.getState().auth.getIn(['user', 'isSignedIn'])) {
     replace('/login');
