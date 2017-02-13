@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import { Button, Card, Row, Col } from 'react-materialize'
-import './styles/Login.css'
+import styles from './styles/Login.css'
 import LoginImg from '../../public/login6.png'
 import ScheduleImg from '../../public/schedule2.png'
 import DoneImg from '../../public/done.png'
@@ -10,7 +10,7 @@ export const Infographic = () => (
 
         <div>
           <div>
-            <div className='info-text'>
+            <div className={styles['info-text']}>
               <p> O aplicativo Agendador foi desenvolvido para viabilizar a
                 <b> automatização do agendamento</b> dos atendimentos com hora marcada  
                 <b> em órgãos públicos</b>, permitindo que uma prefeitura crie, por exemplo, 
@@ -20,17 +20,17 @@ export const Infographic = () => (
             <Row>
               <Col s={10} m={4} offset="s1" >
                 <div id='steps-row'>
-                  <div id='step1' className='steps'>
-                    <div className='step-header'>
-                      <div className='title'>1º Passo</div>
-                      <div className='step-description'>
+                  <div id='step1' className={styles['steps']}>
+                    <div className={styles['step-header']}>
+                      <div className={styles['title']}>1º Passo</div>
+                      <div className={styles['step-description']}>
                         Faça login ou <br />
                         cadastre-se.
                       </div>
                     </div>
-                    <div className='step-body'>
+                    <div className={styles['step-body']}>
                       <img
-                      className='step-img'
+                      className={styles['step-img']}
                         src={LoginImg}
                         />
                     </div>
@@ -39,17 +39,17 @@ export const Infographic = () => (
               </Col>
               <Col s={10} m={4} offset="s1" >
                 <div id='steps-row'>
-                  <div id='step2' className='steps'>
-                    <div className='step-header'>
-                      <div className='title'>2º Passo</div>
-                      <div className='step-description'>
+                  <div id='step2' className={styles['steps']}>
+                    <div className={styles['step-header']}>
+                      <div className={styles['title']}>2º Passo</div>
+                      <div className={styles['step-description']}>
                         Marque <br />
                         seu agendamento.
                       </div>
                     </div>
-                    <div className='step-body'>
+                    <div className={styles['step-body']}>
                       <img
-                      className='step-img'
+                      className={styles['step-img']}
                         src={ScheduleImg}
                         />
                     </div>
@@ -58,17 +58,17 @@ export const Infographic = () => (
               </Col>
               <Col s={10} m={4} offset="s1" >
                 <div id='steps-row'>
-                  <div id='step3' className='steps'>
-                    <div className='step-header'>
-                      <div className='title'>3º Passo</div>
-                      <div className='step-description'>
+                  <div id='step3' className={styles['steps']}>
+                    <div className={styles['step-header']}>
+                      <div className={styles['title']}>3º Passo</div>
+                      <div className={styles['step-description']}>
                         Compareça na data <br />
                         marcada.
                       </div>
                     </div>
-                    <div className='step-body'>
+                    <div className={styles['step-body']}>
                       <img
-                      className='step-img'
+                      className={styles['step-img']}
                         src={DoneImg}
                         />
                     </div>
@@ -84,7 +84,7 @@ class Login extends Component {
   
   render() {
     return (
-      <div className='main'>
+      <div className={styles['main']}>
         <Row>
           <Col s={12} m={12} l={7}>
             <Infographic />

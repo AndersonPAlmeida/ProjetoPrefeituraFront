@@ -23,7 +23,7 @@
   height: auto;
 }
 
-.goverment-bar {
+.government-bar {
   background-color: rgb(127,127,127);
   height: 20px;
   padding: 0px 0px 0px 10px;
@@ -31,14 +31,14 @@
   top: 0px;
 }
 
-.goverment-bar li {
+.government-bar li {
   display: inline;
   color: white;
   float: left;
   font-family: 'sans', 'sans-serif';
 }
 
-.goverment-bar li:first-child {
+.government-bar li:first-child {
   padding-right: 10px;
   margin-right: 10px;
   border-right: 1px solid #EDEDED;
