@@ -5,7 +5,6 @@ import createHistory from 'react-router/lib/createMemoryHistory';
 import { createStore } from './redux/createStore';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { App, Home, NotFound } from './containers';
-import SignIn from './containers/SignIn';
 import { configure } from './redux-auth';
 function requireAuth(store, nextState, replace, next) {
   if (!store.getState().auth.getIn(['user', 'isSignedIn'])) {
@@ -23,7 +22,6 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     <Router history={history}>
       <Route path="/" component={App}>
         <IndexRoute component={Home} />
-        <Route path="login" component={SignIn} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

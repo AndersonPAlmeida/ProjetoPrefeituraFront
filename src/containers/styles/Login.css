@@ -1,0 +1,50 @@
+.info-text {
+  font-size: 13px; 
+}
+
+.info-text p {
+  margin-bottom: 45px;
+  font-family: 'Roboto', 'Arial';
+  font-size: 15px;
+}
+
+.main {
+  width: 100%;
+  margin-top: 70px;
+}
+
+.step-body {
+  width: 100%;
+}
+
+.step-img {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 24px;
+}
+
+#step1 .title {
+  color: #92BF23;
+}
+
+#step2 .title {
+  color: #4DA7B6;
+}
+
+#step3 .title {
+  color: #EF8600;
+}
+
+.step-description {
+  margin: 0 auto;
+  color: #636362;
+}
+
+.steps {
+  text-align: center;
+}
+

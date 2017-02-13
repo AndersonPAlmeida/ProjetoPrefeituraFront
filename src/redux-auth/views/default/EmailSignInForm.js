@@ -9,7 +9,7 @@ class EmailSignInForm extends React.Component {
     endpoint: PropTypes.string,
     next: PropTypes.func,
     inputProps: PropTypes.shape({
-      email: PropTypes.object,
+      cpf: PropTypes.object,
       password: PropTypes.object,
       submit: PropTypes.object
     })
@@ -18,7 +18,7 @@ class EmailSignInForm extends React.Component {
   static defaultProps = {
     next: () => {},
     inputProps: {
-      email: {},
+      cpf: {},
       password: {},
       submit: {}
     }
@@ -56,12 +56,12 @@ class EmailSignInForm extends React.Component {
             onSubmit={this.handleSubmit.bind(this)}>
         <Input type="text"
                className="email-sign-in-email"
-               label="Email"
+               label="CPF"
                disabled={disabled}
-               value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "email"])}
-               errors={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "errors", "email"])}
-               onChange={this.handleInput.bind(this, "email")}
-               {...this.props.inputProps.email} />
+               value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "cpf"])}
+               errors={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "errors", "cpf"])}
+               onChange={this.handleInput.bind(this, "cpf")}
+               {...this.props.inputProps.cpf} />
 
         <Input type="password"
                label="Password"

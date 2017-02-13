@@ -77,7 +77,7 @@ module.exports = {
     /* variables that set env to development (DEVTOOLS will enable redux devtools) */
     new webpack.DefinePlugin({
       __CLIENT__: true,
-      __DEVTOOLS__: true,
+      __DEVTOOLS__: false,
       'process.env': {
       NODE_ENV: '"development"',
       },
