@@ -32,17 +32,11 @@ export default class Default extends React.Component {
           />
         </head>
         <body>
+          <script src="https://code.jquery.com/jquery-2.1.1.min.js" />
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js" />
           <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
-          <script
-            dangerouslySetInnerHTML={{ __html: `window.__data=${serialize(store.getState())};` }}
-            charSet="UTF-8"
-          />
-          <script
-            src={
-              assets.javascript.main
-            }
-            charSet="UTF-8"
-          />
+          <script dangerouslySetInnerHTML={{ __html: `window.__data=${serialize(store.getState())};` }} charSet="UTF-8" />
+          <script src={ assets.javascript.main } charSet="UTF-8" />
         </body>
       </html>
     );

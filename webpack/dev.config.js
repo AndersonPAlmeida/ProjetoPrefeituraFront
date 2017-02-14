@@ -34,7 +34,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!postcss-loader',
+        loader: 'style-loader!css-loader?modules&importLoaders=2&sourceMap&localIdentName=[local]!postcss-loader',
       },
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,

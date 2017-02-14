@@ -7,7 +7,6 @@ import DoneImg from '../../public/done.png'
 import SignIn from './SignIn'
 
 export const Infographic = () => (
-
         <div>
           <div>
             <div className={styles['info-text']}>
@@ -20,7 +19,7 @@ export const Infographic = () => (
             <Row>
               <Col s={10} m={4} offset="s1" >
                 <div id='steps-row'>
-                  <div id='step1' className={styles['steps']}>
+                  <div id={styles['step1']} className={styles['steps']}>
                     <div className={styles['step-header']}>
                       <div className={styles['title']}>1º Passo</div>
                       <div className={styles['step-description']}>
@@ -38,8 +37,8 @@ export const Infographic = () => (
                 </div>
               </Col>
               <Col s={10} m={4} offset="s1" >
-                <div id='steps-row'>
-                  <div id='step2' className={styles['steps']}>
+                <div id={styles['steps-row']}>
+                  <div id={styles['step2']} className={styles['steps']}>
                     <div className={styles['step-header']}>
                       <div className={styles['title']}>2º Passo</div>
                       <div className={styles['step-description']}>
@@ -58,7 +57,7 @@ export const Infographic = () => (
               </Col>
               <Col s={10} m={4} offset="s1" >
                 <div id='steps-row'>
-                  <div id='step3' className={styles['steps']}>
+                  <div id={styles['step3']} className={styles['steps']}>
                     <div className={styles['step-header']}>
                       <div className={styles['title']}>3º Passo</div>
                       <div className={styles['step-description']}>
