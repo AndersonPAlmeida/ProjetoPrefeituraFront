@@ -2,6 +2,7 @@ import React, { PropTypes } from "react";
 import ButtonLoader from "./ButtonLoader";
 import Input from "./Input";
 import { emailSignInFormUpdate, emailSignIn } from "../../actions/email-sign-in";
+import styles from "../../../containers/styles/SignIn.css";
 import { connect } from "react-redux";
 
 class EmailSignInForm extends React.Component {
@@ -51,38 +52,48 @@ class EmailSignInForm extends React.Component {
     );
 
     return (
-      <form className='redux-auth email-sign-in-form'
-            style={{clear: "both", overflow: "hidden"}}
+      <form className='redux-auth email-sign-in-form login-form right card'
             onSubmit={this.handleSubmit.bind(this)}>
-        <Input type="text"
-               className="email-sign-in-email"
-               label="CPF"
-               disabled={disabled}
-               value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "cpf"])}
-               errors={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "errors", "cpf"])}
-               onChange={this.handleInput.bind(this, "cpf")}
-               {...this.props.inputProps.cpf} />
-
-        <Input type="password"
-               label="Password"
-               className="email-sign-in-password"
-               disabled={disabled}
-               value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "password"])}
-               errors={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "errors", "password"])}
-               onChange={this.handleInput.bind(this, "password")}
-               {...this.props.inputProps.password} />
-
-        <ButtonLoader loading={this.props.auth.getIn(["emailSignIn", "loading"])}
-                      type="submit"
-                      style={{float: "right"}}
-                      icon={this.props.icon}
-                      className='email-sign-in-submit'
-                      disabled={disabled}
-                      onClick={this.handleSubmit.bind(this)}
-                      primary={true}
-                      {...this.props.inputProps.submit}>
-          Sign In
-        </ButtonLoader>
+        <div className='login-header card-content'>
+          <h2 className='card-title white-text'>Login</h2>
+        </div>
+        <div className='login-field'>
+          <div>
+            <Input type="text"
+                   className="email-sign-in-email"
+                   label="CPF"
+                   disabled={disabled}
+                   value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "cpf"])}
+                   errors={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "errors", "cpf"])}
+                   onChange={this.handleInput.bind(this, "cpf")}
+                   {...this.props.inputProps.cpf} />
+          </div>
+          <div>
+            <Input type="password"
+                   label="Password"
+                   className="email-sign-in-password"
+                   disabled={disabled}
+                   value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "password"])}
+                   errors={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "errors", "password"])}
+                   onChange={this.handleInput.bind(this, "password")}
+                   {...this.props.inputProps.password} />
+          </div>
+          <div>
+            <ButtonLoader loading={this.props.auth.getIn(["emailSignIn", "loading"])}
+                          type="submit"
+                          style={{float: "right"}}
+                          disabled={disabled}
+                          onClick={this.handleSubmit.bind(this)}
+                          primary={true}
+                          {...this.props.inputProps.submit}>
+                Entrar
+            </ButtonLoader>
+          </div>
+        </div>
+        <div className='card-action'>
+          <a className='right btn-flat waves-effect right login-signup light-green-text text-darken-4'> Cadastre-se </a>
+          <a className='btn-flat waves-effect login-iforgot light-green-text text-darken-4'> Esqueceu sua senha?</a>
+        </div>
       </form>
     );
   }

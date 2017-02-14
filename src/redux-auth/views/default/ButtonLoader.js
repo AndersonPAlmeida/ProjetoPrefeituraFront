@@ -4,7 +4,6 @@ import extend from "extend";
 
 class ButtonLoader extends React.Component {
   static propTypes = {
-    icon: PropTypes.any,
     loading: PropTypes.bool,
     spinConfig: PropTypes.object,
     spinColorDark: PropTypes.string,
@@ -16,7 +15,6 @@ class ButtonLoader extends React.Component {
   };
 
   static defaultProps = {
-    icon: "▸",
     loading: false,
     spinConfig: {
       lines: 10,
@@ -46,45 +44,19 @@ class ButtonLoader extends React.Component {
     this.props.onClick(ev);
   }
 
-  renderIcon () {
-    let icon,
-        color = this.getColor();
-
-    if (this.props.loading) {
-      icon = (
-        <div>
-          <Spinner ref="spinner" {...this.props.spinConfig} color={color} loaded={false} />
-        </div>
-      );
-    } else {
-      icon = <div color={color} style={{width: 10, height: 10}}>{this.props.icon}</div>;
-    }
-
-    return (
-      <span style={{
-        width: 15,
-        height: 15,
-        position: "absolute",
-        left: 0,
-        top: 2
-      }}>
-        {icon}
-      </span>
-    );
-  }
-
   render () {
     let color = this.getColor();
-    let style = extend({color, paddingLeft: 15, position: "relative"}, this.props.style);
     var { loading, primary, spinConfig, spinColorDark, spinColorLight, spinColorDisabled, ...other } = this.props;
     return (
-      <button
-        disabled={this.props.disabled || this.props.loading}
-        {...other}
-        style={style}
-        onClick={this.handleClick.bind(this)}>
-        {this.renderIcon()} {this.props.children}
-      </button>
+      <div className='clear'>
+        <button
+          className='login-button right waves-effect btn'
+          disabled={this.props.disabled || this.props.loading}
+          {...other}
+          onClick={this.handleClick.bind(this)}>
+          {this.props.children}
+        </button>
+      </div>
     );
   }
 }
