@@ -37,12 +37,12 @@ const initialState = Immutable.fromJS({
 
 export default createReducer(initialState, {
   [emailSignInActions.EMAIL_SIGN_IN_COMPLETE]: state => { 
-    Materialize.toast("Bem vindo.", 5000, "green"); 
+    Materialize.toast("Bem vindo.", 10000, "green",function(){$("#toast-container").remove()}); 
     return state; 
   },
 
   [emailSignInActions.EMAIL_SIGN_IN_ERROR]: state => {
-    Materialize.toast("Erro ao realizar login.", 5000, "red")
+    Materialize.toast("Erro ao realizar login.", 10000, "red",function(){$("#toast-container").remove()});
     return state;
   },
 

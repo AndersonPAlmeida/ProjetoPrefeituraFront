@@ -1,3 +1,21 @@
+#toast-container {
+  top: 101px;
+  text-align: center;
+}
+#toast-container {
+  right: 0%;
+  width: 100%;
+  max-width:100%;
+}
+.toast {
+  margin: 0 auto;
+  float:inherit;
+  width:auto;
+  clear:both;
+  display:inline-block;
+  max-width: 60%;
+}
+
 .logo-content {
   text-align: center;
   padding-top: 29px;
