@@ -4,8 +4,6 @@ import Input from "./Input";
 import { emailSignInFormUpdate, emailSignIn } from "../../actions/email-sign-in";
 import styles from "../../../containers/styles/SignIn.css";
 import { connect } from "react-redux";
-import MaskedInput from 'react-maskedinput';
-
 
 class EmailSignInForm extends React.Component {
   static propTypes = {
@@ -61,10 +59,7 @@ class EmailSignInForm extends React.Component {
         </div>
         <div className='login-field'>
           <div>
-            <MaskedInput 
-                   mask="111.111.111-11"
-                   placeholder='CPF'
-                   type="text"
+            <Input type="text"
                    className="email-sign-in-email"
                    label="CPF"
                    disabled={disabled}
@@ -74,9 +69,8 @@ class EmailSignInForm extends React.Component {
                    {...this.props.inputProps.cpf} />
           </div>
           <div>
-            <Input 
-                   type="password"
-                   placeholder="Senha"
+            <Input type="password"
+                   label="Password"
                    className="email-sign-in-password"
                    disabled={disabled}
                    value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "password"])}
