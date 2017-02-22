@@ -5,15 +5,13 @@ import Modal from "./Modal";
 
 class EmailSignInSuccessModal extends React.Component {
   render () {
+    { 
+      if(this.props.show){
+        Materialize.toast("Bem vindo.", 4000, "green"); 
+      }
+    }
     return (
-      <Modal
-        show={this.props.show}
-        containerClass="email-sign-in-success-modal"
-        closeAction={hideEmailSignInSuccessModal}
-        closeBtnLabel="Close"
-        title="Welcome Back">
-        <p>You are now signed in as {this.props.auth.getIn(["user", "attributes", "email"])}.</p>
-      </Modal>
+      <div />
     );
   }
 }

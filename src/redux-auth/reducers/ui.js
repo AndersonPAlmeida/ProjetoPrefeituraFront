@@ -36,13 +36,15 @@ const initialState = Immutable.fromJS({
 });
 
 export default createReducer(initialState, {
-  [emailSignInActions.EMAIL_SIGN_IN_COMPLETE]: state => state.set(
-    "emailSignInSuccessModalVisible", true
-  ),
+  [emailSignInActions.EMAIL_SIGN_IN_COMPLETE]: state => { 
+    Materialize.toast("Bem vindo.", 5000, "green"); 
+    return state; 
+  },
 
-  [emailSignInActions.EMAIL_SIGN_IN_ERROR]: state => state.set(
-    "emailSignInErrorModalVisible", true
-  ),
+  [emailSignInActions.EMAIL_SIGN_IN_ERROR]: state => {
+    Materialize.toast("Erro ao realizar login.", 5000, "red")
+    return state;
+  },
 
   [oAuthSignInActions.OAUTH_SIGN_IN_COMPLETE]: state => state.merge({
     oAuthSignInSuccessModalVisible: true,

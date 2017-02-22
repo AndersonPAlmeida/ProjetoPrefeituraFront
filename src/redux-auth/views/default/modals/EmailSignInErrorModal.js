@@ -4,13 +4,13 @@ import Modal from "./Modal";
 
 class EmailSignInErrorModal extends React.Component {
   render () {
+    {
+      if(this.props.show){
+        Materialize.toast("Erro ao realizar login.", 4000, "red");
+      }
+    }
     return (
-      <Modal
-        show={this.props.show}
-        containerClass="email-sign-in-error-modal"
-        closeAction={hideEmailSignInErrorModal}
-        title="Sign In Error"
-        errorAddr={["emailSignIn", "errors"]} />
+      <div />
     );
   }
 }
