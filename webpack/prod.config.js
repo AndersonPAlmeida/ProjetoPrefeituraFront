@@ -29,7 +29,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract( { fallbackLoader: 'style-loader', loader: 'css-loader?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!postcss-loader' } ),
+        loader: ExtractTextPlugin.extract( { fallback: 'style-loader', loader: 'css-loader?modules&importLoaders=2&sourceMap&localIdentName=[local]!postcss-loader' } ),
       },
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,

@@ -1,15 +1,15 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 
-class PageOne extends Component {
+class PageTwo extends Component {
   render() {
     return (
       <div> 
-        Page One 
-        <Link to="/pagetwo">Page Two</Link>
+        <Link to="/pageone">Page One</Link>
+        Page Two 
       </div>
     )
   }
 }
 
-export default PageOne 
+export default PageTwo
