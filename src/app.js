@@ -9,6 +9,7 @@ import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
+import deserialize from 'serialize-javascript';
 function requireAuth(store, nextState, replace, next) {
   if (!store.getState().auth.getIn(['user', 'isSignedIn'])) {
     replace('/');
@@ -23,13 +24,15 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     routerMiddleware(memoryHistory),
     thunk,
   ];
+  let store;
   /* Create store and enhanced history (memoryHistory) */
-  const store = createStore(
-    reducer,
-    compose(
-      applyMiddleware(...middleware)
-    )
-  );
+  if(isServer) {
+    store = createStore(reducer, compose(applyMiddleware(...middleware)))
+  } else {
+    let finalCreateStore;
+    finalCreateStore = applyMiddleware(...middleware)(createStore);
+    store = finalCreateStore(reducer, deserialize(global.__data));
+  }
   if (process.env.NODE_ENV === 'development' && module.hot) {
     module.hot.accept('./reducers', () => {
       store.replaceReducer(require('./reducers'));
@@ -63,9 +66,3 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     });
   });
 }
-
-
-
-
-
-
