@@ -64,7 +64,7 @@ render () {
 		              <img
 		                src={UserImg} />
 		          </div>
-              <div className={styles['input-file']} 'btn'>
+              <div className='btn'>
               	<input type='file'></input>
               </div>
 							<div>
