@@ -1,0 +1,31 @@
+.form-signup {
+  display: inline-block;
+  text-align: left;
+}
+
+.main {
+	text-align: center;
+	height: 100%;
+	margin-bottom: 5%;
+	font-family: 'Roboto', 'Arial';
+}
+
+.main p {
+	font-size: 13px;
+}
+
+.main input {
+	width: 75%;
+}
+
+.category-title {
+	border-bottom: 2px solid black;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	font-weight: bold;
+}
+
+.input-file {
+	width: 50%;
+	text-decoration: none;
+}
