@@ -42,7 +42,9 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   const routes = (
     <Router history={history}>
       <Route path="/" component={App}>
-        <IndexRoute component={Home} />
+        <IndexRoute component={Login} />
+        <Route path="signup" component={SignUp} />
+        <Route path="signup2" component={SignUpForm} />
         <Route onEnter={requireAuth.bind(this, store)} path="pageone" component={PageOne} />
         <Route onEnter={requireAuth.bind(this, store)} path="pagetwo" component={PageTwo} />
         <Route path="*" component={NotFound} status={404} />

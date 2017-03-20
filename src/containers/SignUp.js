@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Card, Row, Col } from 'react-materialize';
 import styles from './styles/SignUp.css';
 import MaskedInput from 'react-maskedinput';
+import Home from './Home';
 
 export const SignUpCEP = () => (
 		<div className='card'>
@@ -25,16 +26,18 @@ export const SignUpCEP = () => (
 class SignUp extends React.Component {
 	render () {
 		return(
-			<main className={styles['main']}>
-				<div className='container'>
-					<Row className={styles['cep']}>
-              			<Col s={12} m={12} l={12} >
-              				<SignUpCEP />
-              			</Col>
-              		</Row>
-              	</div>			
-			</main>
-		)
+      <Home>
+        <main className={styles['main']}>
+          <div className='container'>
+            <Row className={styles['cep']}>
+                      <Col s={12} m={12} l={12} >
+                        <SignUpCEP />
+                      </Col>
+                    </Row>
+                  </div>			
+        </main>
+      </Home>
+    )
 	}
 }
 
