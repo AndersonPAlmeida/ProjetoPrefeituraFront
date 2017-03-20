@@ -7,6 +7,9 @@ import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { App, Home, NotFound } from './containers';
 import { PageOne, PageTwo } from './containers';
 import { configure } from './redux-auth';
+import Login from './containers/Login'
+import SignUpForm from './containers/SignUpForm.js'
+import SignUp from './containers/SignUp.js'
 function requireAuth(store, nextState, replace, next) {
   if (!store.getState().auth.getIn(['user', 'isSignedIn'])) {
     replace('/');
@@ -22,7 +25,9 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   const routes = (
     <Router history={history}>
       <Route path="/" component={App}>
-        <IndexRoute component={Home} />
+        <IndexRoute component={Login} />
+        <Route path="signup" component={SignUp} />
+        <Route path="signup2" component={SignUpForm} />
         <Route onEnter={requireAuth.bind(this, store)} path="pageone" component={PageOne} />
         <Route onEnter={requireAuth.bind(this, store)} path="pagetwo" component={PageTwo} />
         <Route path="*" component={NotFound} status={404} />

@@ -3,7 +3,7 @@ import { Button, Card, Row, Col, Input } from 'react-materialize';
 import styles from './styles/SignUpForm.css';
 import MaskedInput from 'react-maskedinput';
 import UserImg from '../../public/user.png'
-
+import Home from './Home';
 
 class SignUpForm extends React.Component {
 
@@ -64,7 +64,7 @@ render () {
 		              <img
 		                src={UserImg} />
 		          </div>
-              <div className={styles['input-file']} 'btn'>
+              <div className={styles['input-file'] + ' btn'}>
               	<input type='file'></input>
               </div>
 							<div>
@@ -192,15 +192,17 @@ render () {
 class SignUp extends React.Component {
 	render () {
 		return(
-			<main className={styles['main']}>
-				<div className='container'>
-					<Row className={styles['form-signup']}>
-      			<Col>
-      				<SignUpForm />
-      			</Col>
-      		</Row>
-      	</div>			
-			</main>
+      <Home>
+        <main className={styles['main']}>
+          <div className='container'>
+            <Row className={styles['form-signup']}>
+              <Col>
+                <SignUpForm />
+              </Col>
+            </Row>
+          </div>			
+        </main>
+      </Home>
 		)
 	}
 }
