@@ -1,9 +1,8 @@
 import React from 'react';
 import { Button, Card, Row, Col } from 'react-materialize';
-import styles from './styles/SignUp.css';
+import styles from '../styles/SignUp.css';
 import MaskedInput from 'react-maskedinput';
-import Home from './Home';
-
+import Home from '../Home';
 export const SignUpCEP = () => (
 		<div className='card'>
 			<form>
@@ -21,24 +20,21 @@ export const SignUpCEP = () => (
 			</form>
 		</div>
 )
-
-
-class SignUp extends React.Component {
+class RegisterCep extends React.Component {
 	render () {
 		return(
       <Home>
         <main className={styles['main']}>
           <div className='container'>
             <Row className={styles['cep']}>
-                      <Col s={12} m={12} l={12} >
-                        <SignUpCEP />
-                      </Col>
-                    </Row>
-                  </div>			
+              <Col s={12} m={12} l={12} >
+                <SignUpCEP />
+              </Col>
+            </Row>
+          </div>			
         </main>
       </Home>
     )
 	}
 }
-
-export default SignUp
+export default RegisterCep

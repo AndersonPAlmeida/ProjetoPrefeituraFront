@@ -10,6 +10,9 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
 import deserialize from 'serialize-javascript';
+import Login from './containers/SignIn/Login'
+import Register from './containers/SignUp/Register'
+import RegisterCep from './containers/SignUp/RegisterCep'
 function requireAuth(store, nextState, replace, next) {
   if (!store.getState().auth.getIn(['user', 'isSignedIn'])) {
     replace('/');
@@ -43,8 +46,8 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     <Router history={history}>
       <Route path="/" component={App}>
         <IndexRoute component={Login} />
-        <Route path="signup" component={SignUp} />
-        <Route path="signup2" component={SignUpForm} />
+        <Route path="signup" component={Register} />
+        <Route path="signup2" component={RegisterCep} />
         <Route onEnter={requireAuth.bind(this, store)} path="pageone" component={PageOne} />
         <Route onEnter={requireAuth.bind(this, store)} path="pagetwo" component={PageTwo} />
         <Route path="*" component={NotFound} status={404} />

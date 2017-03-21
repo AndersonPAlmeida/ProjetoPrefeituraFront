@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button, Card, Row, Col, Input } from 'react-materialize';
-import styles from './styles/SignUpForm.css';
+import styles from '../styles/SignUpForm.css';
 import MaskedInput from 'react-maskedinput';
-import UserImg from '../../public/user.png'
-import Home from './Home';
+import UserImg from '../../../public/user.png'
+import Home from '../Home';
 
 class SignUpForm extends React.Component {
 
