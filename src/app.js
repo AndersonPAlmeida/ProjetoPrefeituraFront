@@ -34,7 +34,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   } else {
     let finalCreateStore;
     finalCreateStore = applyMiddleware(...middleware)(createStore);
-    store = finalCreateStore(reducer, deserialize(global.__data));
+    store = finalCreateStore(reducer,{});
   }
   if (process.env.NODE_ENV === 'development' && module.hot) {
     module.hot.accept('./reducers', () => {
