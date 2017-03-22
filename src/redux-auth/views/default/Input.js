@@ -48,15 +48,11 @@ class AuthInput extends React.Component {
     if (other.value == null) {
       other.value = '';
     }
-
-    const optInput = (this.props.label == "CPF");
-
     return (
       <div>
         <label>{this.props.label}</label>
-        {optInput ? (
+        {this.props.mask ? (
             <MaskedInput
-            mask="111.111.111-11"
             placeholder={this.props.label}
             {...other}
             onChange={this.handleInput.bind(this)} />

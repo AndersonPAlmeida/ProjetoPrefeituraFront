@@ -4,13 +4,14 @@ import ButtonLoader from "./ButtonLoader";
 import { emailSignUpFormUpdate, emailSignUp } from "../../actions/email-sign-up";
 import { connect } from "react-redux";
 
+
 class EmailSignUpForm extends React.Component {
   static propTypes = {
     endpoint: PropTypes.string,
     next: PropTypes.func,
     icon: PropTypes.string,
     inputProps: PropTypes.shape({
-      email: PropTypes.object,
+      cpf: PropTypes.object,
       password: PropTypes.object,
       passwordConfirmation: PropTypes.object,
       submit: PropTypes.object
@@ -20,7 +21,7 @@ class EmailSignUpForm extends React.Component {
   static defaultProps = {
     next: () => {},
     inputProps: {
-      email: {},
+      cpf: {},
       password: {},
       submit: {}
     }
@@ -58,16 +59,17 @@ class EmailSignUpForm extends React.Component {
             style={{clear: "both", overflow: "hidden"}}
             onSubmit={this.handleSubmit.bind(this)}>
         <Input type="text"
-               label="Email"
+               label="CPF"
+               mask="111.111.111-11"
                className="email-sign-up-email"
                disabled={disabled}
-               value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "email"])}
-               errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "email"])}
-               onChange={this.handleInput.bind(this, "email")}
-               {...this.props.inputProps.email} />
+               value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "cpf"])}
+               errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "cpf"])}
+               onChange={this.handleInput.bind(this, "cpf")}
+               {...this.props.inputProps.cpf} />
 
         <Input type="password"
-               label="Password"
+               label="Senha"
                className="email-sign-up-password"
                disabled={disabled}
                value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "password"])}
@@ -76,7 +78,7 @@ class EmailSignUpForm extends React.Component {
                {...this.props.inputProps.password} />
 
         <Input type="password"
-               label="Password Confirmation"
+               label="Confirmação de Senha"
                className="email-sign-up-password-confirmation"
                disabled={disabled}
                value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "password_confirmation"])}
@@ -84,17 +86,22 @@ class EmailSignUpForm extends React.Component {
                onChange={this.handleInput.bind(this, "password_confirmation")}
                {...this.props.inputProps.passwordConfirmation} />
 
-        <ButtonLoader loading={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "loading"])}
-                      type="submit"
-                      className="email-sign-up-submit"
-                      primary={true}
-                      style={{float: "right"}}
-                      icon={this.props.icon}
-                      disabled={disabled}
-                      onClick={this.handleSubmit.bind(this)}
-                      {...this.props.inputProps.submit}>
-          Sign Up
-        </ButtonLoader>
+        { this.props.children }
+
+        <div className='card-action'>
+          <ButtonLoader loading={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "loading"])}
+                        type="submit"
+                        className="email-sign-up-submit back-bt waves-effect right"
+                        primary={true}
+                        style={{float: "right"}}
+                        icon={this.props.icon}
+                        disabled={disabled}
+                        onClick={this.handleSubmit.bind(this)}
+                        {...this.props.inputProps.submit}>
+            Criar Conta
+          </ButtonLoader>
+          <a className='back-bt waves-effect btn-flat'> Voltar </a>
+        </div>
       </form>
     );
   }

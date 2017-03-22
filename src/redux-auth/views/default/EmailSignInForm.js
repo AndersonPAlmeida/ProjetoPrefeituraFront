@@ -61,6 +61,7 @@ class EmailSignInForm extends React.Component {
         <div className='login-field'>
           <div>
             <Input type="text"
+                   mask="111.111.111-11"
                    className="email-sign-in-email"
                    label="CPF"
                    disabled={disabled}
@@ -71,7 +72,7 @@ class EmailSignInForm extends React.Component {
           </div>
           <div>
             <Input type="password"
-                   label="Password"
+                   label="Senha"
                    className="email-sign-in-password"
                    disabled={disabled}
                    value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "password"])}
