@@ -53,12 +53,10 @@ class AuthInput extends React.Component {
         <label>{this.props.label}</label>
         {this.props.mask ? (
             <MaskedInput
-            placeholder={this.props.label}
             {...other}
             onChange={this.handleInput.bind(this)} />
           ) : (
             <input
-            placeholder={this.props.label}
             {...other}
             onChange={this.handleInput.bind(this)} />
           )}

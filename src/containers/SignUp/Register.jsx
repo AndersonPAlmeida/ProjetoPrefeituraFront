@@ -56,8 +56,11 @@ class SignUp extends React.Component {
           <h2 className='card-title'>Cadastro de Cidadão:</h2>
           <p>Para mais informações sobre como usar o Sistema Agendador de Serviços Públicos visite o Manual de Utilização ou a seção de Perguntas Frequentes.</p>
           <EmailSignUpForm next={() => browserHistory.push('/pageone')}>
-            <Row className='first-line'>
+            <Row className='second-line'>
               <Col s={12} m={12} l={6}>
+                <div className={styles['category-title']}>
+                  <p>Informações Pessoais</p>
+                </div>
                 <div>
                     <img
                       src={UserImg} />
@@ -66,94 +69,74 @@ class SignUp extends React.Component {
                   <input type='file'></input>
                 </div>
                 <div>
-                  <h6>Nome:*</h6>
-                  <input></input>
+                  <label>Nome:*</label>
+                  <input name='name' placeholder='Nome'></input>
                 </div>
                 <div>
-                  <h6>RG:*</h6>
-                  <input></input>
+                  <label>RG:*</label>
+                  <input name='rg' placeholder='RG'></input>
                 </div>
                 <div>
-                  <h6>Cartão SUS:</h6>
-                  <input></input>
+                  <label>Cartão SUS:</label>
+                  <input name='sus_number' placeholder='Cartão SUS'></input>
                 </div>
-                  <h6>Data de Nascimento</h6>
-
-                  {this.selectDay()}
-                  {this.selectMonth()}
-                  {this.selectYear()}
-
-                <h6>Possui algum tipo de deficiência?</h6>
+                <div>
+                  <label>Data de Nascimento</label>
+                  <div>
+                    {this.selectDay()}
+                    {this.selectMonth()}
+                    {this.selectYear()}
+                  </div>
+                </div>
+                <label>Possui algum tipo de deficiência?</label>
                 <div>
                   <Input name='group1' type='radio' value='red' label='Sim' />
                   <Input name='group1' type='radio' value='yellow' label='Não' />
                 </div>
-              </Col>
-              <Col s={12} m={12} l={6}>
-                <div className={styles['category-title']}>
-                  <p>Endereço</p>
-                </div>
+                <br />
                 <div>
-                  <h6>CEP:*</h6>
-                  <input></input>
-                </div>
-                <div>
-                  <h6>Estado:</h6>
-                  <input></input>
-                </div>
-                <div>
-                  <h6>Município:</h6>
-                  <input></input>
-                </div>
-                <div>
-                  <h6>Bairro:</h6>
-                  <input></input>
-                </div>
-                <div>
-                  <h6>Endereço:</h6>
-                  <input></input>
-                </div>
-                <div>
-                  <h6>Número</h6>
-                  <input></input>
-                </div>
-                <div>
-                  <h6>Complemento:</h6>
-                  <input></input>
-                </div>
-              </Col>
-            </Row>
-            <Row className='second-line'>
-              <Col s={12} m={12} l={6}>
-                <div className={styles['category-title']}>
-                  <p>Informações de Contato</p>
-                </div>
-                <div>
-                  <h6>Telefone 1:*</h6>
-                  <input></input>
-                </div>
-                <div>
-                  <h6>Telefone 2:</h6>
-                  <input></input>
-                </div>
-                <div>
-                  <h6>E-mail:</h6>
-                  <input></input>
-                </div>
-                <p>
-                  <i className="material-icons tiny yellow-text text-darken-3 info-icon">info_outline</i>
-                  Sem cadastrar um e-mail você não poderá receber lembretes e confirmação de agendamentos por e-mail nem recuperar sua senha.
-                </p>
-                <br></br>
-                <div>
-                  <h6>Observações:</h6>
+                  <p><label>Observações:</label></p>
                   <textarea
+                    name='note'
                     placeholder="Deixe este campo em branco caso não exista observações a serem feitas"
                     className="materialize-textarea" ></textarea>
                 </div>
                 <p>
                   <font color="red">  Campos com (*) são de preenchimento obrigatório. </font>
                 </p>
+              </Col>
+              <Col s={12} m={12} l={6}>
+                <div className={styles['category-title']}>
+                  <p>Endereço</p>
+                </div>
+                <div>
+                  <label>CEP:*</label>
+                  <input name='cep' placeholder='CEP'></input>
+                </div>
+                <div>
+                  <label>Estado:</label>
+                  <input name='state' placeholder='Estado'></input>
+                </div>
+                <div>
+                  <label>Município:</label>
+                  <input name='city' placeholder='Município'></input>
+                </div>
+                <div>
+                  <label>Bairro:</label>
+                  <input name='neighborhood' placeholder='Bairro'></input>
+                </div>
+                <div>
+                  <label>Endereço:</label>
+                  <input name='address_street' placeholder='Endereço'></input>
+                </div>
+                <div>
+                  <label>Número:</label>
+                  <input name='address_number' placeholder='Número'></input>
+                </div>
+                <div>
+                  <label>Complemento:</label>
+                  <input name='address_complement' placeholder='Complemento'></input>
+                </div>
               </Col>
             </Row>
           </EmailSignUpForm>

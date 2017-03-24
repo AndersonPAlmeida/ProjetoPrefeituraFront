@@ -64,6 +64,7 @@ class EmailSignInForm extends React.Component {
                    mask="111.111.111-11"
                    className="email-sign-in-email"
                    label="CPF"
+                   placeholder="CPF"
                    disabled={disabled}
                    value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "cpf"])}
                    errors={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "errors", "cpf"])}
@@ -73,6 +74,7 @@ class EmailSignInForm extends React.Component {
           <div>
             <Input type="password"
                    label="Senha"
+                   placeholder="Senha"
                    className="email-sign-in-password"
                    disabled={disabled}
                    value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "password"])}
