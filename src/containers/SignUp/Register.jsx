@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { EmailSignUpForm } from "../../redux-auth/views/default";
 import { browserHistory } from 'react-router';
-import { Button, Card, Row, Col, Input } from 'react-materialize';
+import { Button, Card, Row, Col, Input as _Input } from 'react-materialize';
 import styles from '../styles/SignUpForm.css';
-import MaskedInput from 'react-maskedinput';
+import Input from "../../redux-auth/views/default/Input";
 import UserImg from '../../../public/user.png'
 import Home from '../Home';
 
@@ -17,9 +17,9 @@ class SignUp extends React.Component {
         );
       }
       return (
-              <Input s={12} l={3} type='select'>
+              <_Input s={12} l={3} type='select'>
                 {days}
-              </Input>
+              </_Input>
               )
   }
   selectMonth(){
@@ -31,9 +31,9 @@ class SignUp extends React.Component {
         );
       }
       return (
-              <Input s={12} l={4} type='select'>
+              <_Input s={12} l={4} type='select'>
                 {options}
-              </Input>
+              </_Input>
               )
   }
   selectYear(){
@@ -45,9 +45,9 @@ class SignUp extends React.Component {
         );
       }
       return (
-              <Input s={12} l={4} type='select'>
+              <_Input s={12} l={4} type='select'>
                 {options}
-              </Input>
+              </_Input>
               )
   }
   render() {
@@ -65,20 +65,35 @@ class SignUp extends React.Component {
                     <img
                       src={UserImg} />
                 </div>
-                <div className={styles['input-file'] + ' btn'}>
-                  <input type='file'></input>
+                <div className={styles['Input-file'] + ' btn'}>
+                  <Input type='file'
+                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "photo"])}
+                    errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "photo"])}
+                    onChange={this.handleInput.bind(this, "photo")} />
                 </div>
                 <div>
-                  <label>Nome:*</label>
-                  <input name='name' placeholder='Nome'></input>
+                  <Input name='name' 
+                    label="Nome:*"
+                    placeholder="Nome"
+                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "name"])}
+                    errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "name"])}
+                    onChange={this.handleInput.bind(this, "name")} />
                 </div>
                 <div>
-                  <label>RG:*</label>
-                  <input name='rg' placeholder='RG'></input>
+                  <Input name='rg' 
+                    label="RG:*"
+                    placeholder="RG"
+                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "rg"])}
+                    errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "rg"])}
+                    onChange={this.handleInput.bind(this, "rg")} />
                 </div>
                 <div>
-                  <label>Cartão SUS:</label>
-                  <input name='sus_number' placeholder='Cartão SUS'></input>
+                  <Input name='sus_number' 
+                    label="Cartão SUS:*:"
+                    placeholder="Cartão SUS"
+                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "sus_number"])}
+                    errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "sus_number"])}
+                    onChange={this.handleInput.bind(this, "sus_number")} />
                 </div>
                 <div>
                   <label>Data de Nascimento</label>
@@ -90,8 +105,8 @@ class SignUp extends React.Component {
                 </div>
                 <label>Possui algum tipo de deficiência?</label>
                 <div>
-                  <Input name='group1' type='radio' value='red' label='Sim' />
-                  <Input name='group1' type='radio' value='yellow' label='Não' />
+                  <_Input name='group1' type='radio' value='red' label='Sim' />
+                  <_Input name='group1' type='radio' value='yellow' label='Não' />
                 </div>
                 <br />
                 <div>
@@ -110,32 +125,61 @@ class SignUp extends React.Component {
                   <p>Endereço</p>
                 </div>
                 <div>
-                  <label>CEP:*</label>
-                  <input name='cep' placeholder='CEP'></input>
+                  <Input name='cep' 
+                    label="CEP:*"
+                    placeholder="CEP"
+                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "email"])}
+                    errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "email"])}
+                    onChange={this.handleInput.bind(this, "email")} />
                 </div>
                 <div>
-                  <label>Estado:</label>
-                  <input name='state' placeholder='Estado'></input>
+                  <Input name='state' placeholder='Estado'
+                    label="Estado:"
+                    placeholder="Estado"
+                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "state"])}
+                    errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "state"])}
+                    onChange={this.handleInput.bind(this, "state")} />
                 </div>
                 <div>
-                  <label>Município:</label>
-                  <input name='city' placeholder='Município'></input>
+                  <Input name='city' placeholder='Município'
+                    label="Município:"
+                    placeholder="Município"
+                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "city"])}
+                    errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "city"])}
+                    onChange={this.handleInput.bind(this, "city")} />
                 </div>
                 <div>
-                  <label>Bairro:</label>
-                  <input name='neighborhood' placeholder='Bairro'></input>
+                  <Input name='neighborhood' 
+                    label="Bairro:"
+                    placeholder="Bairro"
+                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "neighborhood"])}
+                    errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "neighborhood"])}
+                    onChange={this.handleInput.bind(this, "neighborhood")} />
                 </div>
                 <div>
-                  <label>Endereço:</label>
-                  <input name='address_street' placeholder='Endereço'></input>
+                  <Input name='address_street' 
+                    label="Endereço:"
+                    placeholder="Endereço"
+                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "address_street"])}
+                    errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "address_street"])}
+                    onChange={this.handleInput.bind(this, "address_street")} />
                 </div>
                 <div>
-                  <label>Número:</label>
-                  <input name='address_number' placeholder='Número'></input>
+                  <Input name='address_number' placeholder='Número'
+                    label="Número:"
+                    placeholder="Número"
+                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "address_number"])}
+                    errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "address_number"])}
+                    onChange={this.handleInput.bind(this, "address_number")} />
                 </div>
                 <div>
                   <label>Complemento:</label>
-                  <input name='address_complement' placeholder='Complemento'></input>
+                  <Input name='address_complement' 
+                    label="Complemento:"
+                    placeholder="Complemento"
+                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "address_complement"])}
+                    errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "address_complement"])}
+                    onChange={this.handleInput.bind(this, "address_complement")} />
                 </div>
               </Col>
             </Row>

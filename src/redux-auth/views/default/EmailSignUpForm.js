@@ -44,7 +44,6 @@ class EmailSignUpForm extends React.Component {
     console.log("submitting form to endpoint", this.getEndpoint());
     event.preventDefault();
     let formData = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS();
-    console.log(formData);
     this.props.dispatch(emailSignUp(formData, this.getEndpoint()))
       .then(this.props.next)
       .catch(() => {});
@@ -102,16 +101,28 @@ class EmailSignUpForm extends React.Component {
               <p>Informações de Contato</p>
             </div>
             <div>
-              <label>Telefone 1:*</label>
-              <input name='phone1' placeholder='Telefone 1'></input>
+              <Input name='phone1'
+                label="Telefone 1:*" 
+                placeholder="Telefone 1"
+                value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "phone1"])}
+                errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "phone1"])}
+                onChange={this.handleInput.bind(this, "phone1")} />
             </div>
             <div>
-              <label>Telefone 2:</label>
-              <input name='phone2' placeholder='Telefone 2'></input>
+              <Input name='phone2' placeholder='Telefone 2'
+                label="Telefone 2:*" 
+                placeholder="Telefone 2"
+                value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "phone2"])}
+                errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "phone2"])}
+                onChange={this.handleInput.bind(this, "phone2")} />
             </div>
             <div>
-              <label>E-mail:</label>
-              <input name='email' placeholder='Email'></input>
+              <Input name='email' 
+                label="Email:" 
+                placeholder="Email"
+                value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "email"])}
+                errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "email"])}
+                onChange={this.handleInput.bind(this, "email")} />
             </div>
             <p>
               <i className="material-icons tiny yellow-text text-darken-3 info-icon">info_outline</i>
