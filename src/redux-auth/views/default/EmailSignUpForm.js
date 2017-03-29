@@ -8,6 +8,17 @@ import styles from '../../../containers/styles/SignUpForm.css'
 import UserImg from '../../../../public/user.png'
 import Home from '../../../containers/Home';
 
+class ShowDivCheckbox extends React.Component {
+  render () {
+    return (
+      <div>
+        <h6>Qual tipo de deficiência?</h6>
+        <input></input>
+      </div>
+      )
+  }
+}
+
 class EmailSignUpForm extends React.Component {
   static propTypes = {
     endpoint: PropTypes.string,
@@ -20,6 +31,14 @@ class EmailSignUpForm extends React.Component {
       submit: PropTypes.object
     })
   };
+
+  constructor(props) {
+        super(props);
+        this.state = { 
+          check: false,
+        };
+        this.handleChange = this.handleChange.bind(this);
+  }
 
   static defaultProps = {
     next: () => {},
@@ -70,6 +89,10 @@ class EmailSignUpForm extends React.Component {
                 {options}
               </_Input>
               )
+  }
+
+  handleChange(event){
+    this.setState({check: event.target.value})
   }
 
   getEndpoint () {
@@ -165,8 +188,9 @@ class EmailSignUpForm extends React.Component {
                         </div>
                         <label>Possui algum tipo de deficiência?</label>
                         <div>
-                          <_Input name='group1' type='radio' value='red' label='Sim' />
-                          <_Input name='group1' type='radio' value='yellow' label='Não' />
+                          <_Input onChange={this.handleChange} s={12} l={12} name='group1' type='radio' value='true' label='Sim' />
+                          <_Input onChange={this.handleChange} defaultChecked='true' s={12} l={12} name='group1' type='radio' value='' label='Não' />
+                          { this.state.check ? <ShowDivCheckbox /> : null }
                         </div>
                         
                         
