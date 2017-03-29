@@ -3,19 +3,11 @@
   text-align: left;
 }
 
-.main {
-	text-align: center;
+.main-signup {
 	height: 100%;
 	margin-bottom: 5%;
 	font-family: 'Roboto', 'Arial';
-}
-
-.main p {
-	font-size: 13px;
-}
-
-.main input {
-	width: 75%;
+	text-align: center;
 }
 
 .category-title {
@@ -23,9 +15,4 @@
 	margin-top: 20px;
 	margin-bottom: 10px;
 	font-weight: bold;
-}
-
-.input-file {
-	width: 50%;
-	text-decoration: none;
 }
