@@ -84,17 +84,16 @@ export default createReducer(initialState, {
     "signOutErrorModalVisible", false
   ),
 
-  [emailSignUpActions.EMAIL_SIGN_UP_COMPLETE]: (state, {user}) => state.merge({
-    emailSignUpSuccessModalVisible: true,
+  [emailSignUpActions.EMAIL_SIGN_UP_COMPLETE]: (state, {user}) => {
+    Materialize.toast("Registrado com sucesso.", 10000, "green",function(){$("#toast-container").remove()}); 
     emailSignUpAddress: user.email
-  }),
+  },
 
-  [emailSignUpActions.EMAIL_SIGN_UP_ERROR]: state => state.set(
-    "emailSignUpErrorModalVisible", true
-  ),
+  [emailSignUpActions.EMAIL_SIGN_UP_ERROR]: state => {
+    Materialize.toast("Erro ao realizar cadastro.", 10000, "red",function(){$("#toast-container").remove()});
+  },
 
   [uiActions.HIDE_EMAIL_SIGN_UP_SUCCESS_MODAL]: state => state.merge({
-    emailSignUpSuccessModalVisible: false,
     emailSignUpAddress: null
   }),
 
