@@ -53,7 +53,7 @@ class EmailSignUpForm extends React.Component {
       var days = []; 
       for(var i = 1; i <= 31; i++){
         days.push(
-          <option value={i}>{i}</option>
+          <option key={i} value={i}>{i}</option>
         );
       }
       return (
@@ -67,7 +67,7 @@ class EmailSignUpForm extends React.Component {
       var months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
       for(var i = 0; i < 12; i++){
         options.push(
-          <option value={i+1}>{months[i]}</option>
+          <option key={i+1} value={i+1}>{months[i]}</option>
         );
       }
       return (
@@ -81,7 +81,7 @@ class EmailSignUpForm extends React.Component {
       var year = new Date().getFullYear()
       for(var i = 1900; i < year; i++){
         options.push(
-          <option value={i-1899}>{i}</option>
+          <option key={i-1899} value={i-1899}>{i}</option>
         );
       }
       return (
@@ -108,15 +108,13 @@ class EmailSignUpForm extends React.Component {
   }
 
   handleSubmit (event) {
-    console.log("submitting form to endpoint", this.getEndpoint());
     event.preventDefault();
     let formData = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS();
     formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
+    formData['birth_date'] = formData['birth_day'] + '/' + formData['birth_month'] + '/' + formData['birth_year'];
     this.props.dispatch(emailSignUp(formData, this.getEndpoint()))
       .then(this.props.next)
       .catch(() => {});
-    this.props.auth.setIn(["emailSignUp", this.getEndpoint(), "loading"], false)
-    console.log(this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors"]));
   }
 
   render () {
@@ -124,7 +122,6 @@ class EmailSignUpForm extends React.Component {
       this.props.auth.getIn(["user", "isSignedIn"]) ||
       this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "loading"])
     );
-
     return (
       <main className={styles['main-signup']}>
         <div className='container'>
@@ -182,9 +179,9 @@ class EmailSignUpForm extends React.Component {
                             onChange={this.handleInput.bind(this, "rg")} />
                         </div>
                         <div>
-                          <label>Data de Nascimento</label>
+                          <label>Data de Nascimento:*</label>
                           <div>
-                            {this.selectDay()}
+                            {this.selectDay}
                             {this.selectMonth()}
                             {this.selectYear()}
                           </div>
