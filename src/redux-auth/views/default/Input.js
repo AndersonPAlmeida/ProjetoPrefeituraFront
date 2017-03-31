@@ -64,7 +64,6 @@ class AuthInput extends React.Component {
       else if(this.props.materializeComp) {
         return (
           <div>
-            <label>{this.props.label}</label>
             <M_Input
             {...other}
             onChange={this.handleInput.bind(this)} />

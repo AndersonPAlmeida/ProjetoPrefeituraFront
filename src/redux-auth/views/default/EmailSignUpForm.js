@@ -61,32 +61,32 @@ class EmailSignUpForm extends React.Component {
       }
       return (
             <div>
-              <_Input s={12} l={3} type='select'
+              <Input s={12} l={3} type='select'
                 value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "birth_day"])}
                 errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "birth_day"])}
                 onChange={this.handleInput.bind(this, "birth_day")}
                 materializeComp={true}
               >
                 {optionsDays}
-              </_Input>
+              </Input>
             
-              <_Input s={12} l={3} type='select'
+              <Input s={12} l={3} type='select'
                 value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "birth_month"])}
                 errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "birth_month"])}
                 onChange={this.handleInput.bind(this, "birth_month")}
                 materializeComp={true}
               >
                 {optionsMonths}
-              </_Input>
+              </Input>
 
-              <_Input s={12} l={3} type='select'
+              <Input s={12} l={3} type='select'
                 value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "birth_year"])}
                 errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "birth_year"])}
                 onChange={this.handleInput.bind(this, "birth_year")}
                 materializeComp={true}
               >
                 {optionsYears}
-              </_Input>
+              </Input>
 
             </div>
               )
