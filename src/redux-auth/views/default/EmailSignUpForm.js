@@ -116,7 +116,8 @@ class EmailSignUpForm extends React.Component {
     let formData = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS();
     formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
     formData['birth_date'] = formData['birth_day'] + '/' + formData['birth_month'] + '/' + formData['birth_year'];
-    this.props.dispatch(emailSignUp(formData, this.getEndpoint()))
+    var { birth_day, birth_month, birth_year, confirm_success_url, config_name, registration, ...other } = formData;
+    this.props.dispatch(emailSignUp(other, this.getEndpoint()))
       .then(this.props.next)
       .catch(() => {});
   }
