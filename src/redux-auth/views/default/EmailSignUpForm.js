@@ -8,17 +8,6 @@ import styles from '../../../containers/styles/SignUpForm.css'
 import UserImg from '../../../../public/user.png'
 import Home from '../../../containers/Home';
 
-class ShowDivCheckbox extends React.Component {
-  render () {
-    return (
-      <div>
-        <h6>Qual tipo de deficiência?</h6>
-        <input></input>
-      </div>
-      )
-  }
-}
-
 class EmailSignUpForm extends React.Component {
   static propTypes = {
     endpoint: PropTypes.string,
@@ -181,7 +170,7 @@ class EmailSignUpForm extends React.Component {
                         <div>
                           <label>Data de Nascimento:*</label>
                           <div>
-                            {this.selectDay}
+                            {this.selectDay()}
                             {this.selectMonth()}
                             {this.selectYear()}
                           </div>
@@ -190,7 +179,11 @@ class EmailSignUpForm extends React.Component {
                         <div>
                           <_Input onChange={this.handleChange} s={12} l={12} name='group1' type='radio' value='true' label='Sim' />
                           <_Input onChange={this.handleChange} defaultChecked='true' s={12} l={12} name='group1' type='radio' value='' label='Não' />
-                          { this.state.check ? <ShowDivCheckbox /> : null }
+                          { this.state.check ? <Input name='pcd'
+                                                  label="Qual tipo de deficiência?"
+                                                  value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "pcd"])}
+                                                  errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "pcd"])}
+                                                  onChange={this.handleInput.bind(this, "pcd")} /> : null }
                         </div>
                         
                         
