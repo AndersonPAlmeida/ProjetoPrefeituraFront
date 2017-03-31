@@ -39,16 +39,21 @@ class EmailSignUpForm extends React.Component {
   };
 
   selectDay(){ 
-      var days = []; 
+      var options = []; 
       for(var i = 1; i <= 31; i++){
-        days.push(
+        options.push(
           <option key={i} value={i}>{i}</option>
         );
       }
       return (
-              <_Input s={12} l={3} type='select'>
-                {days}
-              </_Input>
+              <Input s={12} l={3} type='select'
+                value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "birth_day"])}
+                errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "birth_day"])}
+                onChange={this.handleInput.bind(this, "birth_day")}
+                materializeComp={true}
+              >
+                {options}
+              </Input>
               )
   }
   selectMonth(){
@@ -60,9 +65,14 @@ class EmailSignUpForm extends React.Component {
         );
       }
       return (
-              <_Input s={12} l={3} type='select'>
+              <Input s={12} l={3} type='select'
+                value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "birth_month"])}
+                errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "birth_month"])}
+                onChange={this.handleInput.bind(this, "birth_month")}
+                materializeComp={true}
+              >
                 {options}
-              </_Input>
+              </Input>
               )
   }
   selectYear(){
@@ -74,9 +84,14 @@ class EmailSignUpForm extends React.Component {
         );
       }
       return (
-              <_Input s={12} l={3} type='select'>
+              <Input s={12} l={3} type='select'
+                value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "birth_year"])}
+                errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "birth_year"])}
+                onChange={this.handleInput.bind(this, "birth_year")}
+                materializeComp={true}
+              >
                 {options}
-              </_Input>
+              </Input>
               )
   }
 
@@ -107,10 +122,6 @@ class EmailSignUpForm extends React.Component {
   }
 
   render () {
-    let disabled = (
-      this.props.auth.getIn(["user", "isSignedIn"]) ||
-      this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "loading"])
-    );
     return (
       <main className={styles['main-signup']}>
         <div className='container'>
@@ -153,7 +164,6 @@ class EmailSignUpForm extends React.Component {
                                name="cpf"
                                mask="111.111.111-11"
                                className="email-sign-up-email"
-                               disabled={disabled}
                                value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "cpf"])}
                                errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "cpf"])}
                                onChange={this.handleInput.bind(this, "cpf")}
@@ -306,7 +316,6 @@ class EmailSignUpForm extends React.Component {
                                label="Senha:*"
                                placeholder="Senha"
                                className="email-sign-up-password"
-                               disabled={disabled}
                                value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "password"])}
                                errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "password"])}
                                onChange={this.handleInput.bind(this, "password")}
@@ -318,7 +327,6 @@ class EmailSignUpForm extends React.Component {
                                placeholder="Confirmação de Senha"
                                name="password_confirmation"
                                className="email-sign-up-password-confirmation"
-                               disabled={disabled}
                                value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "password_confirmation"])}
                                errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "password_confirmation"])}
                                onChange={this.handleInput.bind(this, "password_confirmation")}
@@ -327,13 +335,11 @@ class EmailSignUpForm extends React.Component {
                       </Col>
                     </Row>
                     <div className='card-action'>
-                      <ButtonLoader loading={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "loading"])}
-                                    type="submit"
+                      <ButtonLoader type="submit"
                                     className="email-sign-up-submit back-bt waves-effect right"
                                     primary={true}
                                     style={{float: "right"}}
                                     icon={this.props.icon}
-                                    disabled={disabled}
                                     onClick={this.handleSubmit.bind(this)}
                                     {...this.props.inputProps.submit}>
                         Criar Conta
