@@ -38,63 +38,60 @@ class EmailSignUpForm extends React.Component {
     }
   };
 
-  selectDay(){ 
-      var options = []; 
+  selectDate(){ 
+      var optionsDays = []; 
       for(var i = 1; i <= 31; i++){
-        options.push(
+        optionsDays.push(
           <option key={i} value={i}>{i}</option>
         );
       }
+      var optionsMonths = []
+      var months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      for(var i = 0; i < 12; i++){
+        optionsMonths.push(
+          <option key={i+1} value={i+1}>{months[i]}</option>
+        );
+      }
+      var optionsYears = []
+      var year = new Date().getFullYear()
+      for(var i = 1900; i < year; i++){
+        optionsYears.push(
+          <option key={i-1899} value={i-1899}>{i}</option>
+        );
+      }
       return (
-              <Input s={12} l={3} type='select'
+            <div>
+              <_Input s={12} l={3} type='select'
                 value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "birth_day"])}
                 errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "birth_day"])}
                 onChange={this.handleInput.bind(this, "birth_day")}
                 materializeComp={true}
               >
-                {options}
-              </Input>
-              )
-  }
-  selectMonth(){
-      var options = []
-      var months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-      for(var i = 0; i < 12; i++){
-        options.push(
-          <option key={i+1} value={i+1}>{months[i]}</option>
-        );
-      }
-      return (
-              <Input s={12} l={3} type='select'
+                {optionsDays}
+              </_Input>
+            
+              <_Input s={12} l={3} type='select'
                 value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "birth_month"])}
                 errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "birth_month"])}
                 onChange={this.handleInput.bind(this, "birth_month")}
                 materializeComp={true}
               >
-                {options}
-              </Input>
-              )
-  }
-  selectYear(){
-      var options = []
-      var year = new Date().getFullYear()
-      for(var i = 1900; i < year; i++){
-        options.push(
-          <option key={i-1899} value={i-1899}>{i}</option>
-        );
-      }
-      return (
-              <Input s={12} l={3} type='select'
+                {optionsMonths}
+              </_Input>
+
+              <_Input s={12} l={3} type='select'
                 value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "birth_year"])}
                 errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "birth_year"])}
                 onChange={this.handleInput.bind(this, "birth_year")}
                 materializeComp={true}
               >
-                {options}
-              </Input>
+                {optionsYears}
+              </_Input>
+
+            </div>
               )
   }
-
+ 
   handleChange(event){
     this.setState({check: event.target.value})
   }
@@ -143,12 +140,12 @@ class EmailSignUpForm extends React.Component {
                         <div>
                             <img
                               src={UserImg} />
-                        </div>
-                        <div className='btn'>
-                          <Input type='file'
-                            value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "photo"])}
-                            errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "photo"])}
-                            onChange={this.handleInput.bind(this, "photo")} />
+                            <div>
+                              <Input type='file'
+                              value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "photo"])}
+                              errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "photo"])}
+                              onChange={this.handleInput.bind(this, "photo")} />
+                            </div>
                         </div>
                         <div>
                           <Input name='name'
@@ -180,11 +177,7 @@ class EmailSignUpForm extends React.Component {
                         </div>
                         <div>
                           <label>Data de Nascimento:*</label>
-                          <div>
-                            {this.selectDay()}
-                            {this.selectMonth()}
-                            {this.selectYear()}
-                          </div>
+                            {this.selectDate()}
                         </div>
                         <label>Possui algum tipo de deficiência?</label>
                         <div>
