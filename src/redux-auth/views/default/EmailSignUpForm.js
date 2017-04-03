@@ -40,12 +40,14 @@ class EmailSignUpForm extends React.Component {
 
   selectDate(){ 
       var optionsDays = []; 
+      optionsDays.push(<option key={0} value={null}>{i}</option>);
       for(var i = 1; i <= 31; i++){
         optionsDays.push(
           <option key={i} value={i}>{i}</option>
         );
       }
       var optionsMonths = []
+      optionsMonths.push(<option key={0} value={null}></option>);
       var months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
       for(var i = 0; i < 12; i++){
         optionsMonths.push(
@@ -53,6 +55,7 @@ class EmailSignUpForm extends React.Component {
         );
       }
       var optionsYears = []
+      optionsYears.push(<option key={0} value={null}></option>);
       var year = new Date().getFullYear()
       for(var i = 1900; i < year; i++){
         optionsYears.push(
