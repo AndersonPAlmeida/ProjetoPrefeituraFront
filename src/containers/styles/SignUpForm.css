@@ -17,5 +17,6 @@
 	font-weight: bold;
 }
 
-.image-file-button {
+.caret {
+	border-top: 0 !important;			
 }
