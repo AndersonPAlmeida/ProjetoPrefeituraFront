@@ -46,8 +46,8 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     <Router history={history}>
       <Route path="/" component={App}>
         <IndexRoute component={Login} />
-        <Route path="signup" component={Register} />
-        <Route path="signup2" component={RegisterCep} />
+        <Route path="signup" component={RegisterCep} />
+        <Route path="signup2" component={Register} />
         <Route onEnter={requireAuth.bind(this, store)} path="pageone" component={PageOne} />
         <Route onEnter={requireAuth.bind(this, store)} path="pagetwo" component={PageTwo} />
         <Route path="*" component={NotFound} status={404} />
