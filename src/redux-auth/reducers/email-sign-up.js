@@ -23,7 +23,14 @@ export default createReducer(Immutable.fromJS({}), {
 
   [A.EMAIL_SIGN_UP_ERROR]: (state, {endpoint, errors}) => { 
     state.mergeDeep({ [endpoint]: { loading: false, errors } });
-    console.log(errors); 
+  },
+
+  [A.SIGN_UP_CEP_COMPLETE]: (state, {endpoint}) => state.merge({
+    [endpoint]: initialState
+  }),
+
+  [A.SIGN_UP_CEP_ERROR]: (state, {endpoint, errors}) => { 
+    state.mergeDeep({ [endpoint]: { loading: false, errors } });
   },
 
   [A.EMAIL_SIGN_UP_FORM_UPDATE]: (state, {endpoint, key, value}) => {

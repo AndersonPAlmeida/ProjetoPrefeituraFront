@@ -1,4 +1,4 @@
-import {getEmailSignUpUrl, getConfirmationSuccessUrl}  from "../utils/session-storage";
+import {getSignUpCEPUrl, getConfirmationSuccessUrl}  from "../utils/session-storage";
 import {parseResponse} from "../utils/handle-fetch-response";
 import extend from "extend";
 import fetch from "../utils/fetch";
@@ -20,6 +20,12 @@ export function emailSignUpComplete(user, endpoint) {
 export function emailSignUpError(errors, endpoint) {
   return { type: EMAIL_SIGN_UP_ERROR, errors, endpoint };
 }
+export function SignUpCEPComplete(user, endpoint) {
+  return { type: SIGN_UP_CEP_COMPLETE, user, endpoint };
+}
+export function SignUpCEPError(errors, endpoint) {
+  return { type: SIGN_UP_CEP_ERROR, errors, endpoint };
+}
 export function emailSignUp(body, endpointKey) {
   return dispatch => {
     dispatch(emailSignUpStart(endpointKey));
@@ -39,6 +45,30 @@ export function emailSignUp(body, endpointKey) {
       .catch(({errors}) => {
         if(errors) {
           dispatch(emailSignUpError(errors, endpointKey))
+          throw errors;
+        }
+      });
+  };
+}
+export function signUpCEP(body, endpointKey) {
+  return dispatch => {
+    dispatch(emailSignUpStart(endpointKey));
+
+    return fetch(getSignUpCEPUrl(endpointKey), {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      method: "post",
+      body: JSON.stringify(extend(body, {
+        confirm_success_url: getConfirmationSuccessUrl()
+      }))
+    })
+      .then(parseResponse)
+      .then(({data}) => dispatch(signUpCEPComplete(data, endpointKey)))
+      .catch(({errors}) => {
+        if(errors) {
+          dispatch(signUpCEPError(errors, endpointKey))
           throw errors;
         }
       });

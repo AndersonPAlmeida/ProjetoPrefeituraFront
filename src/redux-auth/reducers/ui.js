@@ -93,6 +93,14 @@ export default createReducer(initialState, {
     Materialize.toast("Erro ao realizar cadastro.", 10000, "red",function(){$("#toast-container").remove()});
   },
 
+  [emailSignUpActions.SIGN_UP_CEP_COMPLETE]: (state, {user}) => {
+    Materialize.toast("CEP válido.", 10000, "green",function(){$("#toast-container").remove()}); 
+  },
+
+  [emailSignUpActions.SIGN_UP_CEP_ERROR]: state => {
+    Materialize.toast("CEP inválido.", 10000, "red",function(){$("#toast-container").remove()});
+  },
+
   [uiActions.HIDE_EMAIL_SIGN_UP_SUCCESS_MODAL]: state => state.merge({
     emailSignUpAddress: null
   }),
