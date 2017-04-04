@@ -2,7 +2,7 @@ import React, { PropTypes } from "react";
 import Input from "./Input";
 import ButtonLoader from "./ButtonLoader";
 import { Row, Col, Card, Button, Input as _Input } from 'react-materialize';
-import { emailSignUpFormUpdate, emailSignUp } from "../../actions/email-sign-up";
+import { emailSignUpFormUpdate, signUpCEP } from "../../actions/email-sign-up";
 import { connect } from "react-redux";
 import styles from '../../../containers/styles/SignUpForm.css'
 import UserImg from '../../../../public/user.png'
@@ -53,7 +53,9 @@ class EmailSignUpForm extends React.Component {
 
   handleSubmit (event) {
     event.preventDefault();
-    let formData = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS();
+    var formData = {};
+    formData["cep"] = {};
+    formData["cep"]["number"] = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS().cep;
     this.props.dispatch(signUpCEP(formData, this.getEndpoint()))
       .then(this.props.next)
       .catch(() => {});
