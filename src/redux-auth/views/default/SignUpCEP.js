@@ -8,7 +8,7 @@ import styles from '../../../containers/styles/SignUpForm.css'
 import UserImg from '../../../../public/user.png'
 import Home from '../../../containers/Home';
 
-class EmailSignUpForm extends React.Component {
+class SignUpCEP extends React.Component {
   static propTypes = {
     endpoint: PropTypes.string,
     next: PropTypes.func,
@@ -57,7 +57,7 @@ class EmailSignUpForm extends React.Component {
     formData["cep"] = {};
     formData["cep"]["number"] = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS().cep;
     this.props.dispatch(signUpCEP(formData, this.getEndpoint()))
-      .then(this.props.next)
+      .then(this.props.next())
       .catch(() => {});
   }
 
@@ -95,4 +95,4 @@ class EmailSignUpForm extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(EmailSignUpForm);
+export default connect(({auth}) => ({auth}))(SignUpCEP);

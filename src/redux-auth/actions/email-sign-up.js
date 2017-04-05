@@ -31,9 +31,6 @@ export function signUpCEPError(errors, endpoint) {
 export function emailSignUp(body, endpointKey) {
   return dispatch => {
     dispatch(emailSignUpStart(endpointKey));
-
-    console.log(getEmailSignUpUrl(endpointKey));
-
     return fetch(getEmailSignUpUrl(endpointKey), {
       headers: {
         "Accept": "application/json",

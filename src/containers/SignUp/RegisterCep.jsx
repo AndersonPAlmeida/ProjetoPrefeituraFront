@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button, Card, Row, Col } from 'react-materialize';
 import styles from '../styles/SignUp.css';
-import MaskedInput from 'react-maskedinput';
 import Home from '../Home';
 import SignUpCEP from "../../redux-auth/views/default/SignUpCEP";
+import { browserHistory } from "react-router";
 class RegisterCep extends React.Component {
 	render () {
 		return(
