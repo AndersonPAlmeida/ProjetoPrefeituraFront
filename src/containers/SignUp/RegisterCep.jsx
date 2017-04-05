@@ -8,7 +8,7 @@ class RegisterCep extends React.Component {
 	render () {
 		return(
       <Home>
-        <main className={styles['main']}>
+        <main className={styles['main-cep']}>
           <div className='container'>
             <Row className={styles['cep']}>
               <Col s={12} m={12} l={12} >
