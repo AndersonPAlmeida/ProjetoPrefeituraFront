@@ -56,9 +56,7 @@ class SignUpCEP extends React.Component {
     var formData = {};
     formData["cep"] = {};
     formData["cep"]["number"] = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS().cep;
-    this.props.dispatch(signUpCEP(formData, this.getEndpoint()))
-      .then(this.props.next())
-      .catch(() => {});
+    this.props.dispatch(signUpCEP(formData, this.getEndpoint(), this.props.next)).catch(() => {});
   }
 
   render () {

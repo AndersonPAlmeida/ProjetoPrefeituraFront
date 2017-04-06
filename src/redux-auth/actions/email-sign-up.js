@@ -1,4 +1,4 @@
-import {getSignUpCEPUrl, getConfirmationSuccessUrl}  from "../utils/session-storage";
+import {getEmailSignUpUrl, getSignUpCEPUrl, getConfirmationSuccessUrl}  from "../utils/session-storage";
 import {parseResponse} from "../utils/handle-fetch-response";
 import extend from "extend";
 import fetch from "../utils/fetch";
@@ -28,7 +28,7 @@ export function signUpCEPComplete(endpoint) {
 export function signUpCEPError(errors, endpoint) {
   return { type: SIGN_UP_CEP_ERROR, errors, endpoint };
 }
-export function emailSignUp(body, endpointKey) {
+export function emailSignUp(body, endpointKey, next) {
   return dispatch => {
     dispatch(emailSignUpStart(endpointKey));
     return fetch(getEmailSignUpUrl(endpointKey), {
@@ -42,7 +42,12 @@ export function emailSignUp(body, endpointKey) {
       }))
     })
       .then(parseResponse)
-      .then(({data}) => dispatch(emailSignUpComplete(data, endpointKey)))
+      .then(({data}) => 
+            { 
+              dispatch(emailSignUpComplete(data, endpointKey));
+              next();
+            }
+          ) 
       .catch(({errors}) => {
         if(errors) {
           dispatch(emailSignUpError(errors, endpointKey))
@@ -51,7 +56,7 @@ export function emailSignUp(body, endpointKey) {
       });
   };
 }
-export function signUpCEP(body, endpointKey) {
+export function signUpCEP(body, endpointKey, next) {
   return dispatch => {
     dispatch(emailSignUpStart(endpointKey));
 
@@ -66,7 +71,12 @@ export function signUpCEP(body, endpointKey) {
       }))
     })
       .then(parseResponse)
-      .then(({data}) => dispatch(signUpCEPComplete(endpointKey)))
+      .then(({data}) => 
+            {
+              dispatch(signUpCEPComplete(endpointKey));
+              next();
+            }
+           )
       .catch(({errors}) => {
         if(errors) {
           dispatch(signUpCEPError(errors, endpointKey))

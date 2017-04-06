@@ -40,14 +40,14 @@ class EmailSignUpForm extends React.Component {
 
   selectDate(){ 
       var optionsDays = []; 
-      optionsDays.push(<option key={0} value="" disabled selected>Dia</option>);
+      optionsDays.push(<option key={0} value="" disabled>Dia</option>);
       for(var i = 1; i <= 31; i++){
         optionsDays.push(
           <option key={i} value={i}>{i}</option>
         );
       }
       var optionsMonths = []
-      optionsMonths.push(<option key={0} value="" disabled selected>Mês</option>);
+      optionsMonths.push(<option key={0} value="" disabled>Mês</option>);
       var months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
       for(var i = 0; i < 12; i++){
         optionsMonths.push(
@@ -55,7 +55,7 @@ class EmailSignUpForm extends React.Component {
         );
       }
       var optionsYears = []
-      optionsYears.push(<option key={0} value="" disabled selected>Ano</option>);
+      optionsYears.push(<option key={0} value="" disabled>Ano</option>);
       var year = new Date().getFullYear()
       for(var i = 1900; i < year; i++){
         optionsYears.push(
@@ -113,13 +113,16 @@ class EmailSignUpForm extends React.Component {
 
   handleSubmit (event) {
     event.preventDefault();
-    let formData = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS();
+    let formData = {};
+    formData['cpf'] = "";
+    formData['birth_day'] = ""; 
+    formData['birth_month'] = ""; 
+    formData['birth_year'] = ""; 
+    formData = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS();
     formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
     formData['birth_date'] = formData['birth_day'] + '/' + formData['birth_month'] + '/' + formData['birth_year'];
     var { birth_day, birth_month, birth_year, confirm_success_url, config_name, registration, ...other } = formData;
-    this.props.dispatch(emailSignUp(other, this.getEndpoint()))
-      .then(this.props.next)
-      .catch(() => {});
+    this.props.dispatch(emailSignUp(other, this.getEndpoint(), this.props.next)).catch(() => {});
   }
 
   render () {
