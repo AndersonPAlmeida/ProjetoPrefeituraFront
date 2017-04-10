@@ -91,7 +91,6 @@ export default createReducer(initialState, {
   },
 
   [emailSignUpActions.EMAIL_SIGN_UP_ERROR]: state => {
-    Materialize.toast("Erro ao realizar cadastro.", 10000, "red",function(){$("#toast-container").remove()});
     return state;
   },
 

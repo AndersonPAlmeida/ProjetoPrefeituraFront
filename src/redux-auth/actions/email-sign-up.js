@@ -50,6 +50,9 @@ export function emailSignUp(body, endpointKey, next) {
           ) 
       .catch(({errors}) => {
         if(errors) {
+          let full_error_msg = "";
+          errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n' });
+          Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
           dispatch(emailSignUpError(errors, endpointKey))
           throw errors;
         }

@@ -113,16 +113,28 @@ class EmailSignUpForm extends React.Component {
 
   handleSubmit (event) {
     event.preventDefault();
+    let errors = [];
     let formData = {};
-    formData['cpf'] = "";
     formData['birth_day'] = ""; 
     formData['birth_month'] = ""; 
     formData['birth_year'] = ""; 
     formData = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS();
-    formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
-    formData['birth_date'] = formData['birth_day'] + '/' + formData['birth_month'] + '/' + formData['birth_year'];
-    var { birth_day, birth_month, birth_year, confirm_success_url, config_name, registration, ...other } = formData;
-    this.props.dispatch(emailSignUp(other, this.getEndpoint(), this.props.next)).catch(() => {});
+    if(!formData['cpf'])
+      errors.push("Campo CPF é obrigatório.");
+    if(!formData['birth_day'] || !formData['birth_month'] || !formData['birth_year'])
+      errors.push("Campo Data de Nascimento é obrigatório.");
+    if(!formData['cep'])
+      errors.push("Campo CEP é obrigatório.");
+    if(errors.length > 0) {
+      let full_error_msg = "";
+      errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+      Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+    } else {
+      formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
+      formData['birth_date'] = formData['birth_day'] + '/' + formData['birth_month'] + '/' + formData['birth_year'];
+      var { birth_day, birth_month, birth_year, confirm_success_url, config_name, registration, ...other } = formData;
+      this.props.dispatch(emailSignUp(other, this.getEndpoint(), this.props.next)).catch(() => {});
+    }
   }
 
   render () {
