@@ -115,9 +115,6 @@ class EmailSignUpForm extends React.Component {
     event.preventDefault();
     let errors = [];
     let formData = {};
-    formData['birth_day'] = ""; 
-    formData['birth_month'] = ""; 
-    formData['birth_year'] = ""; 
     formData = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS();
     if(!formData['cpf'])
       errors.push("Campo CPF é obrigatório.");
@@ -131,6 +128,7 @@ class EmailSignUpForm extends React.Component {
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
       formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
+      formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
       formData['birth_date'] = formData['birth_day'] + '/' + formData['birth_month'] + '/' + formData['birth_year'];
       var { birth_day, birth_month, birth_year, confirm_success_url, config_name, registration, ...other } = formData;
       this.props.dispatch(emailSignUp(other, this.getEndpoint(), this.props.next)).catch(() => {});
@@ -218,6 +216,7 @@ class EmailSignUpForm extends React.Component {
                           <Input name='cep'
                             label="CEP:*"
                             placeholder="CEP"
+                            mask="11111-111"
                             value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "cep"])}
                             errors={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "errors", "cep"])}
                             onChange={this.handleInput.bind(this, "cep")} />

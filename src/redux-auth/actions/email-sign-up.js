@@ -37,9 +37,7 @@ export function emailSignUp(body, endpointKey, next) {
         "Content-Type": "application/json"
       },
       method: "post",
-      body: JSON.stringify(extend(body, {
-        confirm_success_url: getConfirmationSuccessUrl()
-      }))
+      body: JSON.stringify(body)
     })
       .then(parseResponse)
       .then(({data}) => 

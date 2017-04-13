@@ -56,6 +56,7 @@ class SignUpCEP extends React.Component {
     var formData = {};
     formData["cep"] = {};
     formData["cep"]["number"] = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS().cep;
+    formData["cep"]["number"] = formData["cep"]["number"].replace(/(\.|-)/g,'');
     this.props.dispatch(signUpCEP(formData, this.getEndpoint(), this.props.next)).catch(() => {});
   }
 
@@ -69,6 +70,7 @@ class SignUpCEP extends React.Component {
             <h2 className='card-title'>Digite seu CEP</h2>
             <p>Para podermos verificar a disponibilidade do agendador na sua cidade, informe seu CEP.</p>
             <Input name='cep'
+                   mask="11111-111"
                    label="CEP:*"
                    placeholder="CEP"
                    value={this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form", "cep"])}
