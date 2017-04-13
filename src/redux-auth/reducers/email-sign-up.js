@@ -25,7 +25,7 @@ export default createReducer(Immutable.fromJS({}), {
     state.mergeDeep({ [endpoint]: { loading: false, errors } });
   },
 
-  [A.SIGN_UP_CEP_COMPLETE]: (state, {endpoint}) => state.merge({
+  [A.SIGN_UP_CEP_COMPLETE]: (state, {endpoint}) => state.mergeDeep({
     [endpoint]: { loading: false, errors: null }
   }),
 
