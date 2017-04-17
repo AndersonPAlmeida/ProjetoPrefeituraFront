@@ -12,6 +12,7 @@ class SignUpCEP extends React.Component {
   static propTypes = {
     endpoint: PropTypes.string,
     next: PropTypes.func,
+    prev: PropTypes.func,
     icon: PropTypes.string,
     inputProps: PropTypes.shape({
       submit: PropTypes.object
@@ -87,7 +88,7 @@ class SignUpCEP extends React.Component {
                           {...this.props.inputProps.submit}>
               Criar Conta
             </ButtonLoader>
-            <a className='back-bt waves-effect btn-flat'> Voltar </a>
+            <a className='back-bt waves-effect btn-flat' onClick={() => this.props.prev()} > Voltar </a>
           </div>
         </form>
       </div>

@@ -5,7 +5,7 @@ import { browserHistory } from 'react-router';
 import styles from '../styles/SignIn.css'
 class SignIn extends React.Component {
   render() {
-    return <EmailSignInForm next={() => browserHistory.push('/pageone')} />
+    return <EmailSignInForm next={() => browserHistory.push('/pageone')} signup={() => browserHistory.push('/signup')} />
   }
 }
 export default connect(({ routes }) => ({ routes }))(SignIn);

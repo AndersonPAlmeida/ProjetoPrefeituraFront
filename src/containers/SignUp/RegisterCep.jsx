@@ -12,7 +12,7 @@ class RegisterCep extends React.Component {
           <div className='container'>
             <Row className={styles['cep']}>
               <Col s={12} m={12} l={12} >
-                <SignUpCEP next={() => browserHistory.push('/signup2')} />
+                <SignUpCEP next={() => browserHistory.push('/signup2')} prev={() => browserHistory.push('/')} />
               </Col>
             </Row>
           </div>			
