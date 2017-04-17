@@ -74,7 +74,7 @@ export function signUpCEP(body, endpointKey, next) {
       .then(parseResponse)
       .then(({data}) => 
             {
-              dispatch(signUpCEPComplete(endpointKey));
+              dispatch(signUpCEPComplete(data, endpointKey));
               next();
             }
            )
