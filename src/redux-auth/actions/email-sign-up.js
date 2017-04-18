@@ -72,8 +72,14 @@ export function signUpCEP(body, endpointKey, next) {
       }))
     })
       .then(parseResponse)
-      .then(({data}) => 
+      .then((data) => 
             {
+              console.log(data);
+              dispatch(emailSignUpFormUpdate(endpointKey, "address_street", data['address']));
+              dispatch(emailSignUpFormUpdate(endpointKey, "city", data['city_name']));
+              dispatch(emailSignUpFormUpdate(endpointKey, "address_complement", data['complement2']));
+              dispatch(emailSignUpFormUpdate(endpointKey, "neighborhood", data['neighborhood']));
+              dispatch(emailSignUpFormUpdate(endpointKey, "state", data['state_name']));
               dispatch(signUpCEPComplete(data, endpointKey));
               next();
             }
