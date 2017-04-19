@@ -3,6 +3,8 @@ import LogoImage from '../../public/logo.png'
 import styles from './styles/Home.css'
 import { Button, Card, Row, Col } from 'react-materialize'
 import McImg from '../../public/mc_logo.png'
+import LogoImg from '../../public/logo.png'
+
 
 export const GovernmentBar = () => (
         <div className="show-on-large-only government-bar"> 
@@ -40,4 +42,20 @@ export const Footer = () => (
             />
           </div>
         </div>
+)
+
+export const NavBar = () => (
+    <nav className="white">
+      <div className="nav-wrapper container">
+        <div className="brand-logo center-align">   
+          <img
+               className={styles['nav-logo']}
+               src={LogoImg} />
+          <h2 className='right city-name'> São José dos Pinhais </h2>
+        </div>
+      </div>
+      <div className="progress">
+        <div></div>
+      </div>
+    </nav>
 )

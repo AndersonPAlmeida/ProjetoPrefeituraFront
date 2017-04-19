@@ -94,3 +94,24 @@ body {
 .top-footer p {
   padding-top: 10px;
 }
+
+.nav-bar {
+  width: 70%;
+}
+
+.nav-logo { 
+  padding: 5px;
+  height: 54px;
+}
+
+.city-name {
+  color: #183442;
+  display: block;
+  font-size: 20px;
+}
+
+.progress {
+    height: 8px;
+    background-color: #92bf23;
+    margin: 0;
+}
