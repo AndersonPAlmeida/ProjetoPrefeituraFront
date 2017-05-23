@@ -11,6 +11,7 @@ export function signOutStart(endpoint) {
   return { type: SIGN_OUT_START, endpoint };
 }
 export function signOutComplete(endpoint, user) {
+  localStorage.setItem('token', JSON.stringify(data.name));
   return { type: SIGN_OUT_COMPLETE, user, endpoint };
 }
 export function signOutError(endpoint, errors) {

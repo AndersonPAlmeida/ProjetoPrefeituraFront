@@ -45,11 +45,10 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   }
   let history = syncHistoryWithStore(memoryHistory, store);
   const UserIsAuthenticated = UserAuthWrapper({
-    // state.auth.getIn(['user','isSignedIn'])
-    authSelector: (state)  => { return (state.auth.getIn(['user','isSignedIn']) ? { 'authentication' : true } : false) },  // how to get the user state
-    redirectAction: routerActions.replace, // the redux action to dispatch for redirect
+    authSelector: (state)  => { return (state.auth.getIn(['user','isSignedIn']) ? { 'authentication' : true } : false) },  
+    redirectAction: routerActions.replace, 
     failureRedirectPath: '/',
-    wrapperDisplayName: 'UserIsAuthenticated' // a nice name for this auth check
+    wrapperDisplayName: 'UserIsAuthenticated' 
   })
   const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState);
   const routes = (
