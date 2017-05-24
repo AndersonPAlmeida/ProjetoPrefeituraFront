@@ -6,8 +6,7 @@ import { SET_ENDPOINT_KEYS } from "../actions/configure";
 const initialState = {
   loading: false,
   errors: null,
-  form: {},
-  name: JSON.parse(localStorage.getItem('token')) || null
+  form: {}
 };
 
 export default createReducer(Immutable.fromJS({}), {

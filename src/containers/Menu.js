@@ -1,8 +1,6 @@
 var options = {}
-
-user_name = "Exemplo Nome"
-user_permission = "adm_c3sl"
-
+var user_name = "Exemplo Nome"
+var user_permission = "adm_c3sl"
 if (user_permission == "adm_c3sl") {
   options = [ 
               { 'name': "Agendamentos", 
@@ -13,19 +11,19 @@ if (user_permission == "adm_c3sl") {
                         { 'name': "Cadastro de Cidadãos", 'link': "/professionals/users" } 
                       ]
               },
-              { 'name': "Atendimentos", 'rolldown': false, 'link' "/schedules/service" },
-              { 'name': "Escalas", 'rolldown': false, 'link' "/shifts" },
-              { 'name': "Gráficos", 'rolldown': false, 'link' "/charts" },
+              { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" },
+              { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
+              { 'name': "Gráficos", 'rolldown': false, 'link': "/charts" },
               { 'name': "Sistema", 
                 'rolldown': true, 
                 'fields': 
                       [ 
                         { 'name': "Tipos de Atendimento", 'link': "/schedules" },
-                        { 'name': "Cadastro de Cidadãos", 'link': "/professionals/users" },
+                        { 'name': "Cadastro de Cidadãos", 'link': "/professionals/users", 'separator': true },
                         { 'name': "Prefeituras", 'link': "/city_halls" },
                         { 'name': "Setores", 'link': "/sectors" },
                         { 'name': "Cargos", 'link': "/occupations" },
-                        { 'name': "Profissionais", 'link': "/professionals" },
+                        { 'name': "Profissionais", 'link': "/professionals", 'separator': true },
                         { 'name': "Relatórios", 'link': "/reports" },
                         { 'name': "Solicitações", 'link': "/solicitations" } 
                       ]
@@ -34,10 +32,10 @@ if (user_permission == "adm_c3sl") {
                 'rolldown': true, 
                 'fields': 
                       [ 
-                        { 'name': "Administrador C3SL", 'link': "/choose_role" },
+                        { 'name': "Administrador C3SL", 'link': "/choose_role", 'separator': true },
                         { 'name': "Mudar Permissão", 'link': "/choose_role" },
                         { 'name': "Editar", 'link': "/citizens/edit" },
-                        { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf" },
+                        { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
                         { 'name': "Sair", 'link': "/citizens/sign_out" } 
                       ]
               }
@@ -49,22 +47,22 @@ else if (user_permission == "adm_prefeitura") {
 else if (user_permission == "adm_local") {
 
 }
-else if (user_permission == "atendente_local) {
+else if (user_permission == "atendente_local") {
 
 }
 else {
   options = [
-              { 'name': "Efetuar Agendamento", 'rolldown': false, 'link' "/citizens/schedules/agreement" },
-              { 'name': "Histórico", 'rolldown': false, 'link' "/citizens/schedules/history" },
-              { 'name': "user_name, 
+              { 'name': "Efetuar Agendamento", 'rolldown': false, 'link': "/citizens/schedules/agreement" },
+              { 'name': "Histórico", 'rolldown': false, 'link': "/citizens/schedules/history" },
+              { 'name': "user_name", 
                 'rolldown': true, 
                 'fields': 
                       [ 
-                        { 'name': "Cidadão", 'link': "/choose_role" },
+                        { 'name': "Cidadão", 'link': "/choose_role", 'separator': true },
                         { 'name': "Editar", 'link': "/citizens/edit" },
                         { 'name': "Dependentes", 'link': "/dependants" },
-                        { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf" },
-                        { 'name': "Imprimir Cadastro", 'link': "/citizens/sign_out" }
+                        { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
+                        { 'name': "Sair", 'link': "/citizens/sign_out" }
                       ]
               }
             ];
