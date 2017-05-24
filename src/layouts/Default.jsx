@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import serialize from 'serialize-javascript';
+import PropTypes from 'prop-types';
 export default class Default extends React.Component {
   render() {
     const { assets, component, store, apiUrl } = this.props;
@@ -43,8 +44,8 @@ export default class Default extends React.Component {
   }
 }
 Default.propTypes = {
-  assets: React.PropTypes.object,
-  component: React.PropTypes.node,
-  store: React.PropTypes.object,
-  apiUrl: React.PropTypes.string
+  assets: PropTypes.object,
+  component: PropTypes.node,
+  store: PropTypes.object,
+  apiUrl: PropTypes.string
 };

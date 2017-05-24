@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
@@ -7,12 +8,13 @@ import { App, Home, NotFound } from './containers';
 import { PageOne, PageTwo } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
-import { routerMiddleware } from 'react-router-redux';
+import { routerMiddleware, routerActions } from 'react-router-redux';
 import thunk from 'redux-thunk';
 import deserialize from 'serialize-javascript';
 import Login from './containers/SignIn/Login'
 import Register from './containers/SignUp/Register'
 import RegisterCep from './containers/SignUp/RegisterCep'
+import { UserAuthWrapper } from 'redux-auth-wrapper'
 function requireAuth(store, nextState, replace, next) {
   if (!store.getState().auth.getIn(['user', 'isSignedIn'])) {
     replace('/');
@@ -42,6 +44,13 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     });
   }
   let history = syncHistoryWithStore(memoryHistory, store);
+  const UserIsAuthenticated = UserAuthWrapper({
+    authSelector: (state)  => { return (state.auth.getIn(['user','isSignedIn']) ? { 'authentication' : true } : false) },  
+    redirectAction: routerActions.replace, 
+    failureRedirectPath: '/',
+    wrapperDisplayName: 'UserIsAuthenticated' 
+  })
+  const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState);
   const routes = (
     <Router history={history}>
       <Route path="/" component={App}>
@@ -49,7 +58,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="signup" component={RegisterCep} />
         <Route path="signup2" component={Register} />
         <Route path="pageone" component={PageOne} />
-        <Route onEnter={requireAuth.bind(this, store)} path="pagetwo" component={PageTwo} />
+        <Route path="pagetwo" component={UserIsAuthenticated(PageTwo)} onEnter={connect(UserIsAuthenticated.onEnter)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

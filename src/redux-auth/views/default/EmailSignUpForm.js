@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from 'prop-types';
 import Input from "./Input";
 import ButtonLoader from "./ButtonLoader";
 import { Row, Col, Card, Button, Input as _Input } from 'react-materialize';
@@ -12,6 +13,7 @@ class EmailSignUpForm extends React.Component {
   static propTypes = {
     endpoint: PropTypes.string,
     next: PropTypes.func,
+    prev: PropTypes.func,
     icon: PropTypes.string,
     inputProps: PropTypes.shape({
       cpf: PropTypes.object,
@@ -355,7 +357,7 @@ class EmailSignUpForm extends React.Component {
                                     {...this.props.inputProps.submit}>
                         Criar Conta
                       </ButtonLoader>
-                      <a className='back-bt waves-effect btn-flat'> Voltar </a>
+                      <a className='back-bt waves-effect btn-flat' onClick={() => this.props.prev()} > Voltar </a>
                     </div>
                   </div>
                 </form>

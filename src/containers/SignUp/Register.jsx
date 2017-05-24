@@ -8,7 +8,7 @@ class SignUp extends React.Component {
   render() {
     return (
           <Home>
-            <EmailSignUpForm next={() => browserHistory.push('/')} />
+            <EmailSignUpForm next={() => browserHistory.push('/')} prev={() => browserHistory.push('/signup')} />
           </Home>
     );
   }

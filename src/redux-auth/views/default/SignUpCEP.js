@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from 'prop-types';
 import Input from "./Input";
 import ButtonLoader from "./ButtonLoader";
 import { Row, Col, Card, Button, Input as _Input } from 'react-materialize';
@@ -12,6 +13,7 @@ class SignUpCEP extends React.Component {
   static propTypes = {
     endpoint: PropTypes.string,
     next: PropTypes.func,
+    prev: PropTypes.func,
     icon: PropTypes.string,
     inputProps: PropTypes.shape({
       submit: PropTypes.object
@@ -57,9 +59,8 @@ class SignUpCEP extends React.Component {
     formData["cep"] = {};
     formData["cep"]["number"] = this.props.auth.getIn(["emailSignUp", this.getEndpoint(), "form"]).toJS().cep;
     formData["cep"]["number"] = formData["cep"]["number"].replace(/(\.|-)/g,'');
-    this.props.dispatch(signUpCEP(formData, this.getEndpoint()))
-      .then(this.props.next())
-      .catch(() => {});
+    this.props.dispatch(signUpCEP(formData, this.getEndpoint(), this.props.next)).catch(() => {});
+    this.handleInput("address_street","123");
   }
 
   render () {
@@ -89,7 +90,7 @@ class SignUpCEP extends React.Component {
                           {...this.props.inputProps.submit}>
               Criar Conta
             </ButtonLoader>
-            <a className='back-bt waves-effect btn-flat'> Voltar </a>
+            <a className='back-bt waves-effect btn-flat' onClick={() => this.props.prev()} > Voltar </a>
           </div>
         </form>
       </div>

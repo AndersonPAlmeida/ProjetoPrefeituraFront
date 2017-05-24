@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from 'prop-types';
 import ButtonLoader from "./ButtonLoader";
 import Input from "./Input";
 import { emailSignInFormUpdate, emailSignIn } from "../../actions/email-sign-in";
@@ -9,6 +10,7 @@ class EmailSignInForm extends React.Component {
   static propTypes = {
     endpoint: PropTypes.string,
     next: PropTypes.func,
+    signup: PropTypes.func,
     inputProps: PropTypes.shape({
       cpf: PropTypes.object,
       password: PropTypes.object,
@@ -95,7 +97,7 @@ class EmailSignInForm extends React.Component {
           </div>
         </div>
         <div className='card-action'>
-          <a className='right btn-flat waves-effect right login-signup light-green-text text-darken-4'> Cadastre-se </a>
+          <a className='right btn-flat waves-effect right login-signup light-green-text text-darken-4' onClick={() => this.props.signup()} > Cadastre-se </a>
           <a className='btn-flat waves-effect login-iforgot light-green-text text-darken-4'> Esqueceu sua senha?</a>
         </div>
       </form>

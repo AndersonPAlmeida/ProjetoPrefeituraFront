@@ -1,5 +1,6 @@
 import React from 'react';
 import { AuthGlobals } from "../redux-auth/views/default";
+import PropTypes from 'prop-types';
 export default class App extends React.Component {
   render() {
     return ( 
@@ -11,5 +12,5 @@ export default class App extends React.Component {
   }
 }
 App.propTypes = {
-  children: React.PropTypes.any,
+  children: PropTypes.any,
 };
