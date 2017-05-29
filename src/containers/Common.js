@@ -65,13 +65,9 @@ export const NaveBar = () => (
           </span>
         </a>
         <ul className="right hide-on-med-and-down large-menu" id="nav-ul">
-          <li>
-            <a href="">Efetuar Agendamento</a>
-          </li>
-          <li>
-            <a href="">Histórico</a>
-          </li>
-          <li>
+          <NavItem href="">Efetuarar Agendamento</NavItem>
+          <NavItem href="">Históricoo</NavItem>
+          <NavItem>
             <Dropdown trigger={
                 <a>
                   <span className="user-name left">Administrador MPOG</span>
@@ -91,7 +87,7 @@ export const NaveBar = () => (
               <NavItem divider />
               <NavItem>Sair</NavItem>
             </Dropdown>
-          </li>
+          </NavItem>
         </ul>
       </div>
       <div>

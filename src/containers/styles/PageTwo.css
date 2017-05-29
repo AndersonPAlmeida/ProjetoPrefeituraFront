@@ -1,0 +1,38 @@
+.body-div {
+	background-color: white;
+}
+
+.nav-component {
+	background-color: white;	
+}
+
+.nav-item a {
+	color: black !important;
+}
+
+.nav-item ul {
+}
+
+.nav-component i {
+	margin-left: 0px !important;
+}
+
+.progress {
+    height: 8px;
+    background-color: #92bf23;
+    margin: 0;
+}
+
+.nav-bar ul a {
+	padding: 0 10px !important;
+}
+
+.nav-item {
+	float: right;
+}
+
+.nav-logo { 
+  padding: 5px;
+  height: 54px;
+  margin-left: 0;
+}
