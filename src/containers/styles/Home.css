@@ -94,3 +94,7 @@ body {
 .top-footer p {
   padding-top: 10px;
 }
+
+.top-footer a {
+  text-transform: none;
+}

@@ -2,14 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { EmailSignUpForm } from "../../redux-auth/views/default";
 import { browserHistory } from 'react-router';
-import Home from '../Home';
 
 class SignUp extends React.Component {
   render() {
     return (
-          <Home>
+          <div>
             <EmailSignUpForm next={() => browserHistory.push('/')} prev={() => browserHistory.push('/signup')} />
-          </Home>
+          </div>
     );
   }
 }
