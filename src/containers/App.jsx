@@ -2,7 +2,8 @@ import React from 'react';
 import { AuthGlobals } from "../redux-auth/views/default";
 import PropTypes from 'prop-types';
 import Home from './Home';
-export default class App extends React.Component {
+import { connect } from 'react-redux'
+class getApp extends React.Component {
   render() {
     const footerItems = [
                           { 'name': 'Perguntas e Respostas', 'link': '/agendador/faq' },
@@ -13,13 +14,25 @@ export default class App extends React.Component {
     return ( 
       <div> 
         <AuthGlobals />
-        <Home footerItems={footerItems}>
+        <Home 
+          footerItems={ this.props.is_authenticated ? footerItems : [ footerItems[3] ] }
+          showHeader={ this.props.is_authenticated ? false : true }
+        >
           {this.props.children} 
         </Home>
       </div>
     );
   }
 }
-App.propTypes = {
+getApp.propTypes = {
   children: PropTypes.any,
 };
+const mapStateToProps = (state) => {
+  return {
+    is_authenticated: state.auth.getIn(['user', 'isSignedIn']) 
+  }
+}
+const App = connect(
+  mapStateToProps
+)(getApp)
+export default App

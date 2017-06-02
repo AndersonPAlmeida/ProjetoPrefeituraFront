@@ -15,12 +15,7 @@ import Login from './containers/SignIn/Login'
 import Register from './containers/SignUp/Register'
 import RegisterCep from './containers/SignUp/RegisterCep'
 import { UserAuthWrapper } from 'redux-auth-wrapper'
-function requireAuth(store, nextState, replace, next) {
-  if (!store.getState().auth.getIn(['user', 'isSignedIn'])) {
-    replace('/');
-  }
-  next();
-}
+
 export function initialize({ apiUrl, cookies, isServer, currentLocation, userAgent } = {}) {
   const reducer = require('./reducers');
   /* Start history with requested url */

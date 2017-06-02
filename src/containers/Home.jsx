@@ -6,7 +6,7 @@ export default class Home extends React.Component {
       <div>
         <GovernmentBar />
         <div>
-          <Header />
+          {this.props.showHeader ? <Header /> : <div />}
           {this.props.children}
           <Footer footerItems={this.props.footerItems} />
         </div>
