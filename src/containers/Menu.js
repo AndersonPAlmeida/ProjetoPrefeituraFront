@@ -67,7 +67,8 @@ else if (user_permission == "adm_prefeitura") {
                       ]
               },
               { 'name': user_name, 
-                'rolldown': true, 
+                'rolldown': true,
+                'img': true, 
                 'fields': 
                       [ 
                         { 'name': "Administrador Prefeitura", 'link': "/choose_role", 'separator': true },
@@ -115,7 +116,8 @@ else if (user_permission == "adm_local") {
 else if (user_permission == "atendente_local") {
   options = [ 
               { 'name': "Agendamentos", 
-                'rolldown': true, 
+                'rolldown': true,
+                'img': true, 
                 'fields': 
                       [ 
                         { 'name': "Agendamentos", 'link': "/schedules", 'separator': false },

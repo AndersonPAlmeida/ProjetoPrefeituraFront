@@ -13,7 +13,6 @@ class PageTwo extends Component {
       super(props);
     }
 
-
   NavComponents(props) {
       var navOptions = []
       for (var i in props) {
@@ -21,7 +20,7 @@ class PageTwo extends Component {
         if (props[i].rolldown) {
             for (var j in props[i].fields){
                 navDropDown.push(
-                  <NavItem className={styles['nav-item']} href={props[i].fields[j].link}> {props[i].fields[j].name} </NavItem>
+                  <NavItem className={styles['nav-item-li']} href={props[i].fields[j].link}>{props[i].fields[j].name}</NavItem>
                 )
                 if(props[i].fields[j].separator){
                   navDropDown.push(<NavItem divider />)
@@ -38,7 +37,7 @@ class PageTwo extends Component {
                           className="material-icons circle profile-pic right" 
                           src={UserImg} /> :
                             "" }
-                      <i className="material-icons right">arrow_drop_down</i>
+                      <i className="hide1 material-icons right">arrow_drop_down</i>
                     </a>
                   }>
                   {navDropDown}
@@ -59,10 +58,13 @@ class PageTwo extends Component {
   render() {
     return (
       <div className='body-div'> 
-        <Navbar className= 'nav-bar container nav-component' right>
-          <img
-             className={styles['nav-logo']}
-             src={LogoImg} />
+        <Navbar className= 'nav-bar container nav-component' right 
+            brand={
+                  <img className='nav-logo' src={LogoImg} />
+              }>
+          <a className="right black-text logout-icon modal-trigger" title="Sair" data-target="">
+            <i className="material-icons">exit_to_app</i>
+          </a>
           {this.NavComponents(options)}
         </Navbar>
         <div className="progress">

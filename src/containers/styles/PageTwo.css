@@ -4,13 +4,20 @@
 
 .nav-component {
 	background-color: white;	
+	color: black;
 }
 
 .nav-item a {
 	color: black !important;
 }
 
+.nav-item-li a {
+	height: 50px;
+	line-height: 50px !important;
+}
+
 .nav-item ul {
+	width: 200px !important;
 }
 
 .nav-component i {
@@ -21,6 +28,22 @@
     height: 8px;
     background-color: #92bf23;
     margin: 0;
+}
+
+.nav-component ul {
+	width: 100%;
+}
+
+#nav-mobile {
+	width: 50% !important;
+}
+
+#nav-mobile ul {
+	width: 100% !important;
+}
+
+#nav-mobile i {
+	display: none;
 }
 
 .nav-bar ul a {
@@ -34,5 +57,8 @@
 .nav-logo { 
   padding: 5px;
   height: 54px;
-  margin-left: 0;
+}
+
+.button-collapse i {
+	color: #23527c;
 }
