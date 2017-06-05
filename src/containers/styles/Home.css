@@ -154,3 +154,7 @@ body {
   margin-bottom: 5px;
   font-size: 13px;
 }
+=======
+.top-footer a {
+  text-transform: none;
+}

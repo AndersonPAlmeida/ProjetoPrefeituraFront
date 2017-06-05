@@ -7,7 +7,6 @@ import { emailSignUpFormUpdate, signUpCEP } from "../../actions/email-sign-up";
 import { connect } from "react-redux";
 import styles from '../../../containers/styles/SignUpForm.css'
 import UserImg from '../../../../public/user.png'
-import Home from '../../../containers/Home';
 
 class SignUpCEP extends React.Component {
   static propTypes = {

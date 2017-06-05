@@ -8,7 +8,7 @@ export default class Home extends React.Component {
         <div>
           <Header />
           {this.props.children}
-          <Footer />
+          <Footer footerItems={this.props.footerItems} />
         </div>
       </div>
     )

@@ -5,7 +5,6 @@ import LoginImg from '../../../public/login6.png'
 import ScheduleImg from '../../../public/schedule2.png'
 import DoneImg from '../../../public/done.png'
 import SignIn from './SignIn'
-import Home from '../Home'
 export const Infographic = () => (
         <div>
           <div>
@@ -83,7 +82,7 @@ class Login extends Component {
   
   render() {
     return (
-      <Home>
+      <div>
         <div className={styles['main']}>
           <Row>
             <Col s={12} m={12} l={7}>
@@ -94,7 +93,7 @@ class Login extends Component {
             </Col>
           </Row>
         </div>
-      </Home>
+      </div>
     )
   }
 

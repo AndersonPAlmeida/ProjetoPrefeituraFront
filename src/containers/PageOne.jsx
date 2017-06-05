@@ -89,6 +89,8 @@ class PageOne extends Component {
 			    </Row>
 			  </main>
       	<Footer />
+        Page One 
+        <Link to="/pagetwo">Page Two</Link>
       </div>
     )
   }
