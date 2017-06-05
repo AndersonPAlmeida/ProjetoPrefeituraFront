@@ -10,7 +10,6 @@ export default class Default extends React.Component {
       <html lang="en">
         <head>
           <title>Agendador</title>
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
           <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons" />
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css" />
           {/* production */}
