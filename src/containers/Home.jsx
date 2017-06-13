@@ -5,6 +5,7 @@ export default class Home extends React.Component {
     return (
       <div>
         <GovernmentBar />
+        <div style={ { clear: 'left' } }>{this.props.navHistory}</div>
         <div>
           {this.props.showHeader ? <Header /> : <div />}
           {this.props.children}

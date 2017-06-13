@@ -3,7 +3,6 @@ import { AuthGlobals } from "../redux-auth/views/default";
 import PropTypes from 'prop-types';
 import Home from './Home';
 import { connect } from 'react-redux'
-import { browserHistory } from 'react-router';
 import { Link } from 'react-router';
 
 class getApp extends React.Component {
@@ -14,7 +13,7 @@ class getApp extends React.Component {
                           { 'name': 'Comunicar um erro', 'link': '/agendador/report' },
                           { 'name': 'Manual', 'link': '/agendador/manual' }
                         ]
-    const navHistory = this.props.path.map((item, idx) => {
+    const navHist = this.props.path.map((item, idx) => {
         return <div style={ { display: 'inline' } }> { item.link == '/' ? '' : ' > ' } <Link key={idx} to={item.link}>{item.name}</Link></div>
     });
     return ( 
@@ -22,10 +21,10 @@ class getApp extends React.Component {
         <AuthGlobals />
         <Home 
           footerItems={ this.props.is_authenticated ? footerItems : [ footerItems[3] ] }
+          navHistory={ this.props.is_authenticated ? navHist : <div /> }
           showHeader={ this.props.is_authenticated ? false : true }
         >
-          { this.props.is_authenticated ? navHistory : <div /> }
-          {this.props.children} 
+          { this.props.children } 
         </Home>
       </div>
     );
