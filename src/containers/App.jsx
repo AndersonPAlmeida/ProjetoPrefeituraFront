@@ -14,7 +14,7 @@ class getApp extends React.Component {
                           { 'name': 'Manual', 'link': '/agendador/manual' }
                         ]
     const navHist = this.props.path.map((item, idx) => {
-        return <div style={ { display: 'inline' } }> { item.link == '/' ? '' : ' > ' } <Link key={idx} to={item.link}>{item.name}</Link></div>
+        return <div key={idx} style={ { display: 'inline' } }> { item.link == '/' ? '' : ' > ' } <Link to={item.link}>{item.name}</Link></div>
     });
     return ( 
       <div> 
