@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from 'prop-types';
-import { Modal, Button, Glyphicon } from "react-bootstrap";
 import ButtonLoader from "../ButtonLoader";
 import Input from "../Input";
 import { connect } from "react-redux";
@@ -47,16 +46,16 @@ class PasswordResetSuccessModal extends React.Component {
         endpoint = this.getEndpoint();
 
     return (
-      <Modal
+      <div
         show={this.props.show}
         className="password-reset-success-modal"
         onHide={this.close.bind(this)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Reset Your Password</Modal.Title>
-        </Modal.Header>
+        <div>
+          <div>Reset Your Password</div>
+        </div>
 
         <form>
-          <Modal.Body>
+          <div>
             <Input
               type="password"
               label="Password"
@@ -78,27 +77,26 @@ class PasswordResetSuccessModal extends React.Component {
               errors={this.props.auth.getIn(["updatePasswordModal", endpoint, "errors", "password_confirmation"])}
               onChange={this.handleInput.bind(this, "password_confirmation")}
               {...this.props.inputProps.passwordConfirmation} />
-          </Modal.Body>
+          </div>
 
-          <Modal.Footer>
-            <Button
+          <div>
+            <button
               className="password-reset-success-modal-close"
               onClick={this.close.bind(this)}
               {...this.props.inputProps.cancel}>
               Cancel
-            </Button>
+            </button>
 
             <ButtonLoader
               {...this.props}
               loading={loading}
               type="submit"
               className="password-reset-success-modal-submit"
-              icon={<Glyphicon glyph="lock" />}
               onClick={this.handleSubmit.bind(this)}
               {...this.props.inputProps.submit} />
-          </Modal.Footer>
+          </div>
         </form>
-      </Modal>
+      </div>
     );
   }
 }
