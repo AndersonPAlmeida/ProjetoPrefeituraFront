@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
 import LogoImage from '../../public/logo.png'
 import styles from './styles/Home.css'
-import { Button, Card, Row, Col } from 'react-materialize'
+import { Button, Card, Row, Col, Dropdown, NavItem, Navbar } from 'react-materialize'
 import McImg from '../../public/mc_logo.png'
+import LogoImg from '../../public/logo.png'
+import UserImg from '../../public/user.png'
 import { browserHistory } from 'react-router';
 
 export const GovernmentBar = () => (
@@ -49,3 +51,56 @@ export const Footer = (props) =>
           </div>
   )
 }
+
+export const NaveBar = () => (
+    <nav className="white">
+      <div className={styles['nav-width'] + " nav-wrapper container"}>
+        <div className="nav-brand center-align">   
+          <a>
+            <img
+                 className={styles['nav-logo']}
+                 src={LogoImg} />
+          </a>
+            <h2 className="city-name right hide-on-med-and-down left-align"> São José dos Pinhais </h2>
+        </div>
+        <a className="right black-text logout-icon modal-trigger" title="Sair" data-target="">
+          <i className="material-icons">exit_to_app</i>
+        </a>
+        <a data-activates="notifications-menu" href="" className="button-notifications black-text right" title="Notificações">
+          <span className="mdl-badge no-notification" data-badge="0">
+            <i className="material-icons" id="notification-icon">notifications</i>
+          </span>
+        </a>
+        <ul className="right hide-on-med-and-down large-menu" id="nav-ul">
+          <NavItem href="">Efetuarar Agendamento</NavItem>
+          <NavItem href="">Históricoo</NavItem>
+          <NavItem>
+            <Dropdown trigger={
+                <a>
+                  <span className="user-name left">Administrador MPOG</span>
+                  <img 
+                    alt="Administrador MPOG" 
+                    className="material-icons circle profile-pic right" 
+                    src={UserImg} />
+                  <i className="material-icons right">arrow_drop_down</i> 
+                </a>
+              }>
+              <NavItem>Cidadão<p className='nav-p'>Brasília</p></NavItem>
+              <NavItem>Mudar Permissão</NavItem>
+              <NavItem divider />
+              <NavItem>Editar</NavItem>
+              <NavItem>Dependentes</NavItem>
+              <NavItem>Imprimir Cadastro</NavItem>
+              <NavItem divider />
+              <NavItem>Sair</NavItem>
+            </Dropdown>
+          </NavItem>
+        </ul>
+      </div>
+      <div>
+      </div>
+      <div className="progress">
+        <div></div>
+      </div>
+    </nav>
+  )

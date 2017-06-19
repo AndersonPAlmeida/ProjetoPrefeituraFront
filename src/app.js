@@ -53,7 +53,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="signup" component={RegisterCep} />
         <Route path="signup2" component={Register} />
         <Route path="pageone" component={PageOne} />
-        <Route path="pagetwo" component={UserIsAuthenticated(PageTwo)} onEnter={connect(UserIsAuthenticated.onEnter)} />
+        <Route path="pagetwo" component={PageTwo} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

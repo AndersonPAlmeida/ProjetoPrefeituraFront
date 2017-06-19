@@ -3,16 +3,18 @@ var user_name = "Exemplo Nome"
 var user_permission = "adm_c3sl"
 if (user_permission == "adm_c3sl") {
   options = [ 
-              { 'name': "Agendamentos", 
-                'rolldown': true, 
+              { 'name': user_name, 
+                'rolldown': true,
+                'img': true,
                 'fields': 
                       [ 
-                        { 'name': "Agendamentos", 'link': "/schedules", 'separator': false },
-                        { 'name': "Cadastro de Cidadãos", 'link': "/professionals/users", 'separator': false } 
+                        { 'name': "Administrador C3SL", 'link': "/choose_role", 'separator': true },
+                        { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
+                        { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
+                        { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
+                        { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false } 
                       ]
               },
-              { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" },
-              { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
               { 'name': "Sistema", 
                 'rolldown': true, 
                 'fields': 
@@ -27,15 +29,14 @@ if (user_permission == "adm_c3sl") {
                         { 'name': "Solicitações", 'link': "/solicitations", 'separator': false } 
                       ]
               },
-              { 'name': user_name, 
+              { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" },
+              { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
+              { 'name': "Agendamentos", 
                 'rolldown': true, 
                 'fields': 
                       [ 
-                        { 'name': "Administrador C3SL", 'link': "/choose_role", 'separator': true },
-                        { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
-                        { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
-                        { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
-                        { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false } 
+                        { 'name': "Agendamentos", 'link': "/schedules", 'separator': false },
+                        { 'name': "Cadastro de Cidadãos", 'link': "/professionals/users", 'separator': false } 
                       ]
               }
             ];
@@ -66,7 +67,8 @@ else if (user_permission == "adm_prefeitura") {
                       ]
               },
               { 'name': user_name, 
-                'rolldown': true, 
+                'rolldown': true,
+                'img': true, 
                 'fields': 
                       [ 
                         { 'name': "Administrador Prefeitura", 'link': "/choose_role", 'separator': true },
@@ -114,7 +116,8 @@ else if (user_permission == "adm_local") {
 else if (user_permission == "atendente_local") {
   options = [ 
               { 'name': "Agendamentos", 
-                'rolldown': true, 
+                'rolldown': true,
+                'img': true, 
                 'fields': 
                       [ 
                         { 'name': "Agendamentos", 'link': "/schedules", 'separator': false },
@@ -170,3 +173,5 @@ else {
               }
             ];
 }
+
+export default {options}
