@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 import ButtonLoader from "../ButtonLoader";
 import Input from "../Input";
+import Modal from "./Modal";
 import { connect } from "react-redux";
 import { hidePasswordResetSuccessModal } from "../../../actions/ui";
 import {
@@ -46,14 +47,11 @@ class PasswordResetSuccessModal extends React.Component {
         endpoint = this.getEndpoint();
 
     return (
-      <div
+      <Modal
         show={this.props.show}
         className="password-reset-success-modal"
         onHide={this.close.bind(this)}>
-        <div>
-          <div>Reset Your Password</div>
-        </div>
-
+        <div>Reset Your Password</div>
         <form>
           <div>
             <Input
@@ -96,7 +94,7 @@ class PasswordResetSuccessModal extends React.Component {
               {...this.props.inputProps.submit} />
           </div>
         </form>
-      </div>
+      </Modal>
     );
   }
 }
