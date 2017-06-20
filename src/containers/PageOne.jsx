@@ -1,9 +1,7 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
-import {GovernmentBar, Header, Footer, NaveBar} from './Common.js'
 import { Button, Card, Row, Col, Dropdown, NavItem, Navbar } from 'react-materialize'
 import styles from './styles/PageOne.css'
-
 
 class PageOne extends Component {
 
@@ -74,23 +72,18 @@ class PageOne extends Component {
   render() {
     return (
       <div> 
-      	<GovernmentBar />
-      	<NaveBar />
 	      <main>
 	      	<Row>
 		        <Col s={12}>
-				      	<div>
-				      		{this.firstComponent()}
-				      		{this.secondComponent()}
-				      		{this.thirdComponent()}
-				      		{this.fourthComponent()}
-				      	</div>
-			      </Col>
-			    </Row>
-			  </main>
-      	<Footer />
-        Page One 
-        <Link to="/pagetwo">Page Two</Link>
+			      	<div>
+			      		{this.firstComponent()}
+			      		{this.secondComponent()}
+			      		{this.thirdComponent()}
+			      		{this.fourthComponent()}
+			      	</div>
+		      	</Col>
+		    </Row>
+		  </main>
       </div>
     )
   }
