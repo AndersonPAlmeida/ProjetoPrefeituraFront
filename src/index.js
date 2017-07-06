@@ -5,11 +5,7 @@ import { Router, browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { initialize } from './app';
 const dest = global.document.getElementById('root');
-initialize({ apiUrl: window.__API_URL__ }).then(({ store, provider, routes }) => {
-  ReactDOM.render(
-    provider,
-    dest
-  );
+initialize({ apiUrl: window.__API_URL__ , stateData: global.__data }).then(({ store, provider, routes }) => {
   // render redux dev tools case in dev env 
   if (__DEVTOOLS__ && !global.devToolsExtension) {
     const DevTools = require('./containers/DevTools');
@@ -20,6 +16,11 @@ initialize({ apiUrl: window.__API_URL__ }).then(({ store, provider, routes }) =>
           <DevTools />
         </div>
       </Provider>,
+      dest
+    );
+  } else {
+    ReactDOM.render(
+      provider,
       dest
     );
   }

@@ -76,7 +76,7 @@ module.exports = {
     new webpack.IgnorePlugin(/webpack-stats\.json$/),
     /* variables that set env to development (DEVTOOLS will enable redux devtools) */
     new webpack.DefinePlugin({
-      __CLIENT__: false,
+      __CLIENT__: true,
       __DEVTOOLS__: true,
       'process.env': {
       NODE_ENV: '"development"',

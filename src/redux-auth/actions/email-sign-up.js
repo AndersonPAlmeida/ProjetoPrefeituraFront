@@ -74,7 +74,6 @@ export function signUpCEP(body, endpointKey, next) {
       .then(parseResponse)
       .then((data) => 
             {
-              console.log(data);
               dispatch(emailSignUpFormUpdate(endpointKey, "address_street", data['address']));
               dispatch(emailSignUpFormUpdate(endpointKey, "city", data['city_name']));
               dispatch(emailSignUpFormUpdate(endpointKey, "address_complement", data['complement2']));

@@ -15,8 +15,9 @@ import Login from './containers/SignIn/Login'
 import Register from './containers/SignUp/Register'
 import RegisterCep from './containers/SignUp/RegisterCep'
 import { UserAuthWrapper } from 'redux-auth-wrapper'
+import { fromJS, Immutable } from 'immutable';
 
-export function initialize({ apiUrl, cookies, isServer, currentLocation, userAgent } = {}) {
+export function initialize({ apiUrl, cookies, isServer, currentLocation, userAgent, stateData } = {}) {
   const reducer = require('./reducers');
   /* Start history with requested url */
   let memoryHistory = isServer ? createHistory(currentLocation) : browserHistory;
@@ -25,14 +26,25 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     thunk,
   ];
   let store;
+  let finalCreateStore;
   /* Create store and enhanced history (memoryHistory) */
-  if(isServer) {
-    store = createStore(reducer, compose(applyMiddleware(...middleware)))
-  } else {
-    let finalCreateStore;
+  if (process.env.NODE_ENV === 'development' && __CLIENT__ && __DEVTOOLS__) {
+    const { persistState } = require('redux-devtools');
+    const DevTools = require('./containers/DevTools');
+    store = createStore(reducer, 
+                        stateData,
+                        compose(
+                               applyMiddleware(...middleware), 
+                               global.devToolsExtension ? global.devToolsExtension() : DevTools.instrument(),
+                               persistState(global.location.href.match(/[?&]debug_session=([^&]+)\b/))
+                              )
+                       );
+  }
+  else {
     finalCreateStore = applyMiddleware(...middleware)(createStore);
     store = finalCreateStore(reducer,{});
   }
+
   if (process.env.NODE_ENV === 'development' && module.hot) {
     module.hot.accept('./reducers', () => {
       store.replaceReducer(require('./reducers'));
