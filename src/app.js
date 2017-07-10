@@ -31,7 +31,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     const { persistState } = require('redux-devtools');
     const DevTools = require('./containers/DevTools');
     store = createStore(reducer, 
-                        stateData,
+                        fromJS(stateData),
                         compose(
                                applyMiddleware(...middleware), 
                                global.devToolsExtension ? global.devToolsExtension() : DevTools.instrument(),

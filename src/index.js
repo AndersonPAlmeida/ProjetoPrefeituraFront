@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { initialize } from './app';
-import { fromJS } from 'immutable';
 const dest = global.document.getElementById('root');
 initialize({ apiUrl: window.__API_URL__ , stateData: global.__data }).then(({ store, provider, routes }) => {
   // render redux dev tools case in dev env 
