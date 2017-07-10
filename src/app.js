@@ -10,7 +10,6 @@ import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware, routerActions } from 'react-router-redux';
 import thunk from 'redux-thunk';
-import deserialize from 'serialize-javascript';
 import Login from './containers/SignIn/Login'
 import Register from './containers/SignUp/Register'
 import RegisterCep from './containers/SignUp/RegisterCep'
