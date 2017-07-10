@@ -1,7 +1,7 @@
-import { routerReducer } from 'react-router-redux';
+import routerReducer from './router-reducer';
 import { authStateReducer } from '../redux-auth';
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux-immutable';
 module.exports = combineReducers({
   auth: authStateReducer,
-  routing: routerReducer,
+  routing: routerReducer
 });

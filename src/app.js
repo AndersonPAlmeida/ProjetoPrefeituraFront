@@ -33,7 +33,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     store = createStore(reducer, 
                         fromJS(stateData),
                         compose(
-                               applyMiddleware(...middleware), 
+                               applyMiddleware(...middleware),
                                global.devToolsExtension ? global.devToolsExtension() : DevTools.instrument(),
                                persistState(global.location.href.match(/[?&]debug_session=([^&]+)\b/))
                               )
@@ -41,7 +41,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   }
   else {
     finalCreateStore = applyMiddleware(...middleware)(createStore);
-    store = finalCreateStore(reducer,{});
+    store = finalCreateStore(reducer,fromJS({}));
   }
 
   if (process.env.NODE_ENV === 'development' && module.hot) {
@@ -49,7 +49,11 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
       store.replaceReducer(require('./reducers'));
     });
   }
-  let history = syncHistoryWithStore(memoryHistory, store);
+  let history = syncHistoryWithStore(memoryHistory, store, {
+    selectLocationState (state) {
+      return (state.get('routing').toJS());
+    }
+  });
   const UserIsAuthenticated = UserAuthWrapper({
     authSelector: (state)  => { return (state.auth.getIn(['user','isSignedIn']) ? { 'authentication' : true } : false) },  
     redirectAction: routerActions.replace, 
