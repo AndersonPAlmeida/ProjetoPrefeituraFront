@@ -41,7 +41,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   }
   else {
     finalCreateStore = applyMiddleware(...middleware)(createStore);
-    store = finalCreateStore(reducer,fromJS({}));
+    store = finalCreateStore(reducer,fromJS(stateData));
   }
 
   if (process.env.NODE_ENV === 'development' && module.hot) {
@@ -55,7 +55,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     }
   });
   const UserIsAuthenticated = UserAuthWrapper({
-    authSelector: (state)  => { return (state.auth.getIn(['user','isSignedIn']) ? { 'authentication' : true } : false) },  
+    authSelector: (state)  => { return (state.get('auth').getIn(['user','isSignedIn']) ? { 'authentication' : true } : false) },  
     redirectAction: routerActions.replace, 
     failureRedirectPath: '/',
     wrapperDisplayName: 'UserIsAuthenticated' 

@@ -32,7 +32,7 @@ getApp.propTypes = {
 };
 const mapStateToProps = (state) => {
   return {
-    is_authenticated: state.auth.getIn(['user', 'isSignedIn'])
+    is_authenticated: state.get('auth').getIn(['user', 'isSignedIn'])
   }
 }
 const App = connect(
