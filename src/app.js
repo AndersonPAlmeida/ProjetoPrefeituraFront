@@ -43,7 +43,6 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     finalCreateStore = applyMiddleware(...middleware)(createStore);
     store = finalCreateStore(reducer,fromJS(stateData));
   }
-
   if (process.env.NODE_ENV === 'development' && module.hot) {
     module.hot.accept('./reducers', () => {
       store.replaceReducer(require('./reducers'));
@@ -64,12 +63,13 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   const routes = (
     <Router history={history}>
       <Route path="/" component={App}>
-        <IndexRoute component={Login} />
+        <IndexRoute component={PageOne} />
+        /*<IndexRoute component={Login} />
         <Route path="signup" component={RegisterCep} />
         <Route path="signup2" component={Register} />
         <Route path="pageone" component={PageOne} />
         <Route path="pagetwo" component={PageTwo} />
-        <Route path="*" component={NotFound} status={404} />
+        <Route path="*" component={NotFound} status={404} />*/
       </Route>
     </Router>
   );

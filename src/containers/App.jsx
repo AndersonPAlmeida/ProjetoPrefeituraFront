@@ -1,12 +1,10 @@
-import React from 'react';
-import { AuthGlobals } from "../redux-auth/views/default";
+import React, {Component} from 'react'
 import PropTypes from 'prop-types';
-import Home from './Home';
 import { connect } from 'react-redux'
-import { Link } from 'react-router';
-var Breadcrumbs = require('react-breadcrumbs');
+import Home from './Home';
+import { AuthGlobals } from "../redux-auth/views/default";
 
-class getApp extends React.Component {
+class getApp extends Component {
   render() {
     const footerItems = [
                           { 'name': 'Perguntas e Respostas', 'link': '/agendador/faq' },
@@ -14,17 +12,17 @@ class getApp extends React.Component {
                           { 'name': 'Comunicar um erro', 'link': '/agendador/report' },
                           { 'name': 'Manual', 'link': '/agendador/manual' }
                         ]
-    return ( 
-      <div> 
+    return (
+      <div>
         <AuthGlobals />
         <Home 
           footerItems={ this.props.is_authenticated ? footerItems : [ footerItems[3] ] }
           showHeader={ this.props.is_authenticated ? false : true }
         >
-          { this.props.children } 
+          <div> </div> 
         </Home>
       </div>
-    );
+    )
   }
 }
 getApp.propTypes = {
@@ -39,3 +37,4 @@ const App = connect(
   mapStateToProps
 )(getApp)
 export default App
+
