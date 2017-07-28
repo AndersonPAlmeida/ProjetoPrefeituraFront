@@ -8,4 +8,4 @@ class SignIn extends React.Component {
     return <EmailSignInForm next={() => browserHistory.push('/pageone')} signup={() => browserHistory.push('/signup')} />
   }
 }
-export default connect(({ routes }) => ({ routes }))(SignIn);
+export default SignIn;

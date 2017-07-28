@@ -64,11 +64,123 @@ class AuthGlobals extends React.Component {
   };
 
   render () {
+    let showEmailSignInSuccess = (
+      this.props.emailSignInSuccessEnabled &&
+      this.props.auth.getIn(["ui", "emailSignInSuccessModalVisible"])
+    );
+
+    let showEmailSignInError = (
+      this.props.emailSignInErrorEnabled &&
+      this.props.auth.getIn(["ui", "emailSignInErrorModalVisible"])
+    );
+
+    let showEmailSignUpSuccess = (
+      this.props.emailSignUpSuccessEnabled &&
+      this.props.auth.getIn(["ui", "emailSignUpSuccessModalVisible"])
+    );
+
+    let showEmailSignUpError = (
+      this.props.emailSignUpErrorEnabled &&
+      this.props.auth.getIn(["ui", "emailSignUpErrorModalVisible"])
+    );
+
+    let showSignOutSuccess = (
+      this.props.signOutSuccessEnabled &&
+      this.props.auth.getIn(["ui", "signOutSuccessModalVisible"])
+    );
+
+    let showSignOutError = (
+      this.props.signOutErrorEnabled &&
+      this.props.auth.getIn(["ui", "signOutErrorModalVisible"])
+    );
+
+    let showFirstTimeLoginSuccess = (
+      this.props.firstTimeLoginSuccessEnabled &&
+      this.props.auth.getIn(["ui", "firstTimeLoginSuccessModalVisible"])
+    );
+
+    let showFirstTimeLoginError = (
+      this.props.firstTimeLoginErrorEnabled &&
+      this.props.auth.getIn(["ui", "firstTimeLoginErrorModalVisible"])
+    );
+
+    let showRequestPasswordResetError = (
+      this.props.requestPasswordResetErrorEnabled &&
+      this.props.auth.getIn(["ui", "requestPasswordResetErrorModalVisible"])
+    );
+
+    let showRequestPasswordResetSuccess = (
+      this.props.requestPasswordResetSuccessEnabled &&
+      this.props.auth.getIn(["ui", "requestPasswordResetSuccessModalVisible"])
+    );
+
+    let showOAuthSignInSuccess = (
+      this.props.oAuthSignInSuccessEnabled &&
+      this.props.auth.getIn(["ui", "oAuthSignInSuccessModalVisible"])
+    );
+
+    let showOAuthSignInError = (
+      this.props.oAuthSignInErrorEnabled &&
+      this.props.auth.getIn(["ui", "oAuthSignInErrorModalVisible"])
+    );
+
+    let updatePasswordSuccess = (
+      this.props.updatePasswordSuccessEnabled &&
+      this.props.auth.getIn(["ui", "updatePasswordSuccessModalVisible"])
+    );
+
+    let updatePasswordError = (
+      this.props.updatePasswordErrorEnabled &&
+      this.props.auth.getIn(["ui", "updatePasswordErrorModalVisible"])
+    );
+
+    let destroyAccountSuccess = (
+      this.props.destroyAccountSuccessEnabled &&
+      this.props.auth.getIn(["ui", "destroyAccountSuccessModalVisible"])
+    );
+
+    let destroyAccountError = (
+      this.props.destroyAccountErrorEnabled &&
+      this.props.auth.getIn(["ui", "destroyAccountErrorModalVisible"])
+    );
+
+    let passwordResetSuccess = (
+      this.props.passwordResetSuccessEnabled &&
+      this.props.auth.getIn(["ui", "passwordResetSuccessModalVisible"])
+    );
+
+    //let passwordResetError = (
+      //this.props.passwordResetErrorEnabled &&
+      //this.props.auth.getIn(["ui", "passwordResetErrorModalVisible"])
+    //);
+
     return (
       <div id="auth-modals">
+        <EmailSignInSuccessModal show={showEmailSignInSuccess} />
+        <EmailSignInErrorModal show={showEmailSignInError} />
+        <OAuthSignInSuccessModal show={showOAuthSignInSuccess} />
+        <OAuthSignInErrorModal show={showOAuthSignInError} />
+        <EmailSignUpSuccessModal show={showEmailSignUpSuccess} />
+        <EmailSignUpErrorModal show={showEmailSignUpError} />
+        <SignOutSuccessModal show={showSignOutSuccess} />
+        <SignOutErrorModal show={showSignOutError} />
+        <FirstTimeLoginSuccessModal show={showFirstTimeLoginSuccess} />
+        <FirstTimeLoginErrorModal show={showFirstTimeLoginError} />
+        <RequestPasswordResetErrorModal show={showRequestPasswordResetError} />
+        <RequestPasswordResetSuccessModal show={showRequestPasswordResetSuccess} />
+        <UpdatePasswordErrorModal show={updatePasswordError} />
+        <UpdatePasswordSuccessModal show={updatePasswordSuccess} />
+        <DestroyAccountErrorModal show={destroyAccountError} />
+        <DestroyAccountSuccessModal show={destroyAccountSuccess} />
+        <PasswordResetSuccessModal show={passwordResetSuccess} />
+        <TokenBridge />
       </div>
     );
   }
 }
 
-export default AuthGlobals
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(AuthGlobals)

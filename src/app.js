@@ -63,13 +63,12 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   const routes = (
     <Router history={history}>
       <Route path="/" component={App}>
-        <IndexRoute component={PageOne} />
-        /*<IndexRoute component={Login} />
+        <IndexRoute component={Login} />
         <Route path="signup" component={RegisterCep} />
         <Route path="signup2" component={Register} />
         <Route path="pageone" component={PageOne} />
         <Route path="pagetwo" component={PageTwo} />
-        <Route path="*" component={NotFound} status={404} />*/
+        <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>
   );

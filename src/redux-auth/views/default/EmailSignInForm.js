@@ -105,4 +105,8 @@ class EmailSignInForm extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(EmailSignInForm);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(EmailSignInForm)

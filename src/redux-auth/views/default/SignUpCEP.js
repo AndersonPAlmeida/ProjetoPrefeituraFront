@@ -97,4 +97,8 @@ class SignUpCEP extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(SignUpCEP);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(SignUpCEP)

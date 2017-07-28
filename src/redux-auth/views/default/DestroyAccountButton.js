@@ -42,4 +42,8 @@ class DestroyAccountButton extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(DestroyAccountButton);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(DestroyAccountButton)

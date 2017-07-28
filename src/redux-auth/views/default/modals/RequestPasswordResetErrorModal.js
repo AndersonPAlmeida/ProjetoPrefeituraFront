@@ -16,4 +16,3 @@ class RequestPasswordResetErrorModal extends React.Component {
 }
 
 export default RequestPasswordResetErrorModal;
-
