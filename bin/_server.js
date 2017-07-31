@@ -33,7 +33,8 @@ app.use((req, res) => {
     isServer: true,
     cookies: req.headers.cookie,
     currentLocation: location,
-    userAgent: req.headers['user-agent']
+    userAgent: req.headers['user-agent'],
+    stateData: {}
   }).then(({ store, provider, blank, routes, history }) => {
       if (blank) {
         res.send('<!doctype html><body>loading...</body>');

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ButtonLoader from "./ButtonLoader";
 import Input from "./Input";
 import { emailSignInFormUpdate, emailSignIn } from "../../actions/email-sign-in";
-import styles from "../../../containers/styles/SignIn.css";
+import styles from "../../../containers/account/styles/SignIn.css";
 import { connect } from "react-redux";
 
 class EmailSignInForm extends React.Component {
@@ -105,4 +105,8 @@ class EmailSignInForm extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(EmailSignInForm);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(EmailSignInForm)

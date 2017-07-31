@@ -4,19 +4,15 @@ import { Provider } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
-import { App, Home, NotFound } from './containers';
-import { PageOne, PageTwo } from './containers';
+import { App, Home, NotFound, Login, Register, RegisterCep, PageOne } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware, routerActions } from 'react-router-redux';
 import thunk from 'redux-thunk';
-import deserialize from 'serialize-javascript';
-import Login from './containers/SignIn/Login'
-import Register from './containers/SignUp/Register'
-import RegisterCep from './containers/SignUp/RegisterCep'
 import { UserAuthWrapper } from 'redux-auth-wrapper'
+import { fromJS, Immutable } from 'immutable';
 
-export function initialize({ apiUrl, cookies, isServer, currentLocation, userAgent } = {}) {
+export function initialize({ apiUrl, cookies, isServer, currentLocation, userAgent, stateData } = {}) {
   const reducer = require('./reducers');
   /* Start history with requested url */
   let memoryHistory = isServer ? createHistory(currentLocation) : browserHistory;
@@ -25,35 +21,54 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     thunk,
   ];
   let store;
+  let finalCreateStore;
   /* Create store and enhanced history (memoryHistory) */
-  if(isServer) {
-    store = createStore(reducer, compose(applyMiddleware(...middleware)))
-  } else {
-    let finalCreateStore;
+  if (process.env.NODE_ENV === 'development' && __CLIENT__ && __DEVTOOLS__) {
+    const { persistState } = require('redux-devtools');
+    const DevTools = require('./containers/application/DevTools');
+    store = createStore(reducer, 
+                        fromJS(stateData),
+                        compose(
+                               applyMiddleware(...middleware),
+                               global.devToolsExtension ? global.devToolsExtension() : DevTools.instrument(),
+                               persistState(global.location.href.match(/[?&]debug_session=([^&]+)\b/))
+                              )
+                       );
+  }
+  else {
     finalCreateStore = applyMiddleware(...middleware)(createStore);
-    store = finalCreateStore(reducer,{});
+    store = finalCreateStore(reducer,fromJS(stateData));
   }
   if (process.env.NODE_ENV === 'development' && module.hot) {
     module.hot.accept('./reducers', () => {
       store.replaceReducer(require('./reducers'));
     });
   }
-  let history = syncHistoryWithStore(memoryHistory, store);
+  let history = syncHistoryWithStore(memoryHistory, store, {
+    selectLocationState (state) {
+      return (state.get('routing').toJS());
+    }
+  });
   const UserIsAuthenticated = UserAuthWrapper({
-    authSelector: (state)  => { return (state.auth.getIn(['user','isSignedIn']) ? { 'authentication' : true } : false) },  
+    authSelector: (state)  => { return (state.get('auth').getIn(['user','isSignedIn']) ? { 'authentication' : true } : null ) },
     redirectAction: routerActions.replace, 
     failureRedirectPath: '/',
     wrapperDisplayName: 'UserIsAuthenticated' 
+  })
+  const UserIsNotAuthenticated = UserAuthWrapper({
+    authSelector: (state)  => { return (!(state.get('auth').getIn(['user','isSignedIn'])) ? { 'authentication' : true } : null ) },
+    redirectAction: routerActions.replace, 
+    failureRedirectPath: '/pageone',
+    wrapperDisplayName: 'UserIsNotAuthenticated' 
   })
   const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState);
   const routes = (
     <Router history={history}>
       <Route path="/" component={App}>
-        <IndexRoute component={Login} />
-        <Route path="signup" component={RegisterCep} />
-        <Route path="signup2" component={Register} />
-        <Route path="pageone" component={PageOne} />
-        <Route path="pagetwo" component={PageTwo} />
+        <IndexRoute component={UserIsNotAuthenticated(Login)} />
+        <Route path="signup" component={UserIsNotAuthenticated(RegisterCep)} />
+        <Route path="signup2" component={UserIsNotAuthenticated(Register)} />
+        <Route path="pageone" component={UserIsAuthenticated(PageOne)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

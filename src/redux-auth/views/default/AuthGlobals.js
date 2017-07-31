@@ -179,4 +179,8 @@ class AuthGlobals extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(AuthGlobals);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(AuthGlobals)

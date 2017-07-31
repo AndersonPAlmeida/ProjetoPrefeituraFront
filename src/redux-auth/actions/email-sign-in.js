@@ -6,6 +6,7 @@ import {
 import {storeCurrentEndpointKey} from "./configure";
 import {parseResponse} from "../utils/handle-fetch-response";
 import fetch from "../utils/fetch";
+import {userSignIn} from "../../actions/user"
 
 export const EMAIL_SIGN_IN_START       = "EMAIL_SIGN_IN_START";
 export const EMAIL_SIGN_IN_COMPLETE    = "EMAIL_SIGN_IN_COMPLETE";
@@ -45,7 +46,10 @@ export function emailSignIn(body, endpointKey) {
       body: JSON.stringify(body)
     })
       .then(parseResponse)
-      .then((user) => dispatch(emailSignInComplete(currentEndpointKey, user)))
+      .then((user) => {
+        dispatch(emailSignInComplete(currentEndpointKey, user))
+        dispatch(userSignIn(user.data.citizen))
+       })
       .catch((errors) => {
         // revert endpoint key to what it was before failed request
         setCurrentEndpointKey(prevEndpointKey);

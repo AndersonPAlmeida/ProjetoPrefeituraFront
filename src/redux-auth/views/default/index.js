@@ -8,3 +8,4 @@ export UpdatePasswordForm from "./UpdatePasswordForm";
 export DestroyAccountButton from "./DestroyAccountButton";
 export TokenBridge from "../TokenBridge";
 export ButtonLoader from "./ButtonLoader";
+export SignUpCEP from "./SignUpCEP";

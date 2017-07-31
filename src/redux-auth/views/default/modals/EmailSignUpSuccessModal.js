@@ -21,4 +21,9 @@ class EmailSignUpSuccessModal extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(EmailSignUpSuccessModal);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(EmailSignUpSuccessModal)
+

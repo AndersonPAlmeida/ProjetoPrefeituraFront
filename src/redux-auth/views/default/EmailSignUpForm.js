@@ -5,7 +5,7 @@ import ButtonLoader from "./ButtonLoader";
 import { Row, Col, Card, Button, Input as _Input } from 'react-materialize';
 import { emailSignUpFormUpdate, emailSignUp } from "../../actions/email-sign-up";
 import { connect } from "react-redux";
-import styles from '../../../containers/styles/SignUpForm.css'
+import styles from '../../../containers/account/styles/SignUpForm.css'
 import UserImg from '../../../../public/user.png'
 
 class EmailSignUpForm extends React.Component {
@@ -369,4 +369,8 @@ class EmailSignUpForm extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(EmailSignUpForm);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(EmailSignUpForm)
