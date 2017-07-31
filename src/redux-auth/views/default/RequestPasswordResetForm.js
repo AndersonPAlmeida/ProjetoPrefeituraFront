@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from 'prop-types';
 import Input from "./Input";
 import ButtonLoader from "./ButtonLoader";
 import { connect } from "react-redux";
@@ -81,4 +82,8 @@ class RequestPasswordResetForm extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(RequestPasswordResetForm);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(RequestPasswordResetForm)

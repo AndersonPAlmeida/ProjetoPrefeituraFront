@@ -18,4 +18,9 @@ class FirstTimeLoginSuccessModal extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(FirstTimeLoginSuccessModal);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(FirstTimeLoginSuccessModal)
+

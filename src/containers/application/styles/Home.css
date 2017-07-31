@@ -1,0 +1,160 @@
+#toast-container {
+  top: 101px;
+  text-align: center;
+}
+#toast-container {
+  right: 0%;
+  width: 100%;
+  max-width:100%;
+}
+.toast {
+  margin: 0 auto;
+  float:inherit;
+  width:auto;
+  clear:both;
+  display:inline-block;
+  max-width: 60%;
+  white-space: pre;
+}
+
+.logo-content {
+  text-align: center;
+  padding-top: 29px;
+}
+
+.logo-image {
+  height: 100px;
+  widows: 100px;
+}
+
+.logo-text {
+  font-weight: bold;
+  font-size: 24px;  
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  background-color: #f7f7f7;
+  height: 100%;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+}
+
+.government-bar {
+  background-color: rgb(127,127,127);
+  height: 20px;
+  padding: 0px 0px 0px 10px;
+  display: block;
+  top: 0px;
+}
+
+.government-bar li {
+  display: inline;
+  color: white;
+  float: left;
+  font-family: 'sans', 'sans-serif';
+}
+
+.government-bar a {
+  text-decoration: none;
+  color: white;
+}
+
+.government-bar li:first-child {
+  padding-right: 10px;
+  margin-right: 10px;
+  border-right: 1px solid #EDEDED;
+}
+
+.row:first-child {
+  width: 70%;
+}
+
+.footer {
+  text-align: center;
+}
+
+.top-footer {
+  background-color: #92bf23;
+  width: 100%;
+  color: black;
+  height: 40px;
+}
+
+.top-footer p {
+  padding-top: 10px;
+}
+
+.nav-bar {
+  width: 70%;
+}
+
+.nav-logo { 
+  padding: 5px;
+  height: 54px;
+
+}
+
+.nav-brand {
+  position: absolute;
+  color: #fff;
+  display: inline-block;
+  font-size: 2.1rem;
+  padding: 0;
+}
+
+.city-name {
+  color: #183442;
+  font-size: 20px;
+  line-height: 10px;
+}
+
+.progress {
+    height: 8px;
+    background-color: #92bf23;
+    margin: 0;
+}
+
+.nav-width {
+  width: 70% !important;
+}
+
+#nav-ul a {
+  color: black;
+  text-decoration: none;
+}
+
+.profile-pic {
+  padding: 5px;
+  height: 54px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.user-name {
+  display: inline-block;
+  max-width: 105px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.nav-p {
+  line-height: 17px;
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+=======
+.top-footer a {
+  text-transform: none;
+}

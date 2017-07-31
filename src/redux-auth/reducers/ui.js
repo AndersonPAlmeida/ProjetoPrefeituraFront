@@ -36,13 +36,15 @@ const initialState = Immutable.fromJS({
 });
 
 export default createReducer(initialState, {
-  [emailSignInActions.EMAIL_SIGN_IN_COMPLETE]: state => state.set(
-    "emailSignInSuccessModalVisible", true
-  ),
+  [emailSignInActions.EMAIL_SIGN_IN_COMPLETE]: state => { 
+    Materialize.toast("Bem vindo.", 10000, "green",function(){$("#toast-container").remove()}); 
+    return state; 
+  },
 
-  [emailSignInActions.EMAIL_SIGN_IN_ERROR]: state => state.set(
-    "emailSignInErrorModalVisible", true
-  ),
+  [emailSignInActions.EMAIL_SIGN_IN_ERROR]: state => {
+    Materialize.toast("Erro ao realizar login.", 10000, "red",function(){$("#toast-container").remove()});
+    return state;
+  },
 
   [oAuthSignInActions.OAUTH_SIGN_IN_COMPLETE]: state => state.merge({
     oAuthSignInSuccessModalVisible: true,
@@ -82,17 +84,27 @@ export default createReducer(initialState, {
     "signOutErrorModalVisible", false
   ),
 
-  [emailSignUpActions.EMAIL_SIGN_UP_COMPLETE]: (state, {user}) => state.merge({
-    emailSignUpSuccessModalVisible: true,
+  [emailSignUpActions.EMAIL_SIGN_UP_COMPLETE]: (state, {user}) => {
+    Materialize.toast("Registrado com sucesso.", 10000, "green",function(){$("#toast-container").remove()}); 
     emailSignUpAddress: user.email
-  }),
+    return state;
+  },
 
-  [emailSignUpActions.EMAIL_SIGN_UP_ERROR]: state => state.set(
-    "emailSignUpErrorModalVisible", true
-  ),
+  [emailSignUpActions.EMAIL_SIGN_UP_ERROR]: state => {
+    return state;
+  },
+
+  [emailSignUpActions.SIGN_UP_CEP_COMPLETE]: (state) => {
+    Materialize.toast("CEP válido.", 10000, "green",function(){$("#toast-container").remove()}); 
+    return state;
+  },
+
+  [emailSignUpActions.SIGN_UP_CEP_ERROR]: state => {
+    Materialize.toast("CEP inválido.", 10000, "red",function(){$("#toast-container").remove()});
+    return state;
+  },
 
   [uiActions.HIDE_EMAIL_SIGN_UP_SUCCESS_MODAL]: state => state.merge({
-    emailSignUpSuccessModalVisible: false,
     emailSignUpAddress: null
   }),
 

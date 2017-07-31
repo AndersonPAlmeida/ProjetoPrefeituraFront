@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from 'prop-types';
 import ButtonLoader from "./ButtonLoader";
 import { destroyAccount } from "../../actions/destroy-account";
 import { connect } from "react-redux";
@@ -41,4 +42,8 @@ class DestroyAccountButton extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(DestroyAccountButton);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(DestroyAccountButton)

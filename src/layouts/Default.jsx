@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import serialize from 'serialize-javascript';
+import PropTypes from 'prop-types';
 export default class Default extends React.Component {
   render() {
     const { assets, component, store, apiUrl } = this.props;
@@ -9,7 +10,6 @@ export default class Default extends React.Component {
       <html lang="en">
         <head>
           <title>Agendador</title>
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
           <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons" />
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css" />
           {/* production */}
@@ -23,9 +23,11 @@ export default class Default extends React.Component {
           )
           }
           {/* development */}
-          { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/styles/Home.css')._style }} /> : null }
-          { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/styles/Login.css')._style }} /> : null }
-          { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/styles/SignIn.css')._style }} /> : null }
+          { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/application/styles/Home.css')._style }} /> : null }
+          { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/Login.css')._style }} /> : null }
+          { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/SignIn.css')._style }} /> : null }
+          { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/SignUp.css')._style }} /> : null }
+          { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/SignUpForm.css')._style }} /> : null }
           <script
             dangerouslySetInnerHTML={{ __html: `window.__API_URL__='${apiUrl}'` }}
             charSet="UTF-8"
@@ -43,8 +45,8 @@ export default class Default extends React.Component {
   }
 }
 Default.propTypes = {
-  assets: React.PropTypes.object,
-  component: React.PropTypes.node,
-  store: React.PropTypes.object,
-  apiUrl: React.PropTypes.string
+  assets: PropTypes.object,
+  component: PropTypes.node,
+  store: PropTypes.object,
+  apiUrl: PropTypes.string
 };

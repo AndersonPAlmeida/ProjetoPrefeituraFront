@@ -1,14 +1,16 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from 'prop-types';
 import ButtonLoader from "./ButtonLoader";
 import Input from "./Input";
 import { emailSignInFormUpdate, emailSignIn } from "../../actions/email-sign-in";
-import styles from "../../../containers/styles/SignIn.css";
+import styles from "../../../containers/account/styles/SignIn.css";
 import { connect } from "react-redux";
 
 class EmailSignInForm extends React.Component {
   static propTypes = {
     endpoint: PropTypes.string,
     next: PropTypes.func,
+    signup: PropTypes.func,
     inputProps: PropTypes.shape({
       cpf: PropTypes.object,
       password: PropTypes.object,
@@ -61,8 +63,10 @@ class EmailSignInForm extends React.Component {
         <div className='login-field'>
           <div>
             <Input type="text"
+                   mask="111.111.111-11"
                    className="email-sign-in-email"
                    label="CPF"
+                   placeholder="CPF"
                    disabled={disabled}
                    value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "cpf"])}
                    errors={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "errors", "cpf"])}
@@ -71,7 +75,8 @@ class EmailSignInForm extends React.Component {
           </div>
           <div>
             <Input type="password"
-                   label="Password"
+                   label="Senha"
+                   placeholder="Senha"
                    className="email-sign-in-password"
                    disabled={disabled}
                    value={this.props.auth.getIn(["emailSignIn", this.getEndpoint(), "form", "password"])}
@@ -92,7 +97,7 @@ class EmailSignInForm extends React.Component {
           </div>
         </div>
         <div className='card-action'>
-          <a className='right btn-flat waves-effect right login-signup light-green-text text-darken-4'> Cadastre-se </a>
+          <a className='right btn-flat waves-effect right login-signup light-green-text text-darken-4' onClick={() => this.props.signup()} > Cadastre-se </a>
           <a className='btn-flat waves-effect login-iforgot light-green-text text-darken-4'> Esqueceu sua senha?</a>
         </div>
       </form>
@@ -100,4 +105,8 @@ class EmailSignInForm extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(EmailSignInForm);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(EmailSignInForm)

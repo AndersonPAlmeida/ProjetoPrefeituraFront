@@ -1,6 +1,7 @@
 import React, {PropTypes} from "react";
 import Immutable from "immutable";
 import MaskedInput from 'react-maskedinput';
+import { Input as M_Input } from 'react-materialize';
 
 class AuthInput extends React.Component {
   static propTypes = {
@@ -44,31 +45,44 @@ class AuthInput extends React.Component {
   }
 
   render () {
-    var { errors, ...other } = this.props;
+    var { errors, materializeComp, ...other } = this.props;
     if (other.value == null) {
       other.value = '';
     }
-
-    const optInput = (this.props.label == "CPF");
-
-    return (
-      <div>
-        <label>{this.props.label}</label>
-        {optInput ? (
+    { 
+      if(this.props.mask) {
+        return (
+          <div>
+            <label>{this.props.label}</label>
             <MaskedInput
-            mask="111.111.111-11"
-            placeholder={this.props.label}
             {...other}
             onChange={this.handleInput.bind(this)} />
-          ) : (
+            {this.renderErrorList()}
+          </div>
+        ); 
+      }
+      else if(this.props.materializeComp) {
+        return (
+          <div>
+            <M_Input
+            {...other}
+            onChange={this.handleInput.bind(this)} />
+            {this.renderErrorList()}
+          </div>
+        );
+      }
+      else {
+        return (
+          <div>
+            <label>{this.props.label}</label>
             <input
-            placeholder={this.props.label}
             {...other}
             onChange={this.handleInput.bind(this)} />
-          )}
-        {this.renderErrorList()}
-      </div>
-    );
+            {this.renderErrorList()}
+          </div>
+        );
+      }
+    }
   }
 }
 

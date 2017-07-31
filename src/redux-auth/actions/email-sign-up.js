@@ -1,4 +1,4 @@
-import {getEmailSignUpUrl, getConfirmationSuccessUrl}  from "../utils/session-storage";
+import {getEmailSignUpUrl, getSignUpCEPUrl, getConfirmationSuccessUrl}  from "../utils/session-storage";
 import {parseResponse} from "../utils/handle-fetch-response";
 import extend from "extend";
 import fetch from "../utils/fetch";
@@ -6,6 +6,8 @@ import fetch from "../utils/fetch";
 export const EMAIL_SIGN_UP_START       = "EMAIL_SIGN_UP_START";
 export const EMAIL_SIGN_UP_COMPLETE    = "EMAIL_SIGN_UP_COMPLETE";
 export const EMAIL_SIGN_UP_ERROR       = "EMAIL_SIGN_UP_ERROR";
+export const SIGN_UP_CEP_COMPLETE    = "SIGN_UP_CEP_COMPLETE";
+export const SIGN_UP_CEP_ERROR       = "SIGN_UP_CEP_ERROR";
 export const EMAIL_SIGN_UP_FORM_UPDATE = "EMAIL_SIGN_UP_FORM_UPDATE";
 
 export function emailSignUpFormUpdate(endpoint, key, value) {
@@ -20,11 +22,46 @@ export function emailSignUpComplete(user, endpoint) {
 export function emailSignUpError(errors, endpoint) {
   return { type: EMAIL_SIGN_UP_ERROR, errors, endpoint };
 }
-export function emailSignUp(body, endpointKey) {
+export function signUpCEPComplete(endpoint) {
+  return { type: SIGN_UP_CEP_COMPLETE, endpoint };
+}
+export function signUpCEPError(errors, endpoint) {
+  return { type: SIGN_UP_CEP_ERROR, errors, endpoint };
+}
+export function emailSignUp(body, endpointKey, next) {
+  return dispatch => {
+    dispatch(emailSignUpStart(endpointKey));
+    return fetch(getEmailSignUpUrl(endpointKey), {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      method: "post",
+      body: JSON.stringify(body)
+    })
+      .then(parseResponse)
+      .then(({data}) => 
+            { 
+              dispatch(emailSignUpComplete(data, endpointKey));
+              next();
+            }
+          ) 
+      .catch(({errors}) => {
+        if(errors) {
+          let full_error_msg = "";
+          errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n' });
+          Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+          dispatch(emailSignUpError(errors, endpointKey))
+          throw errors;
+        }
+      });
+  };
+}
+export function signUpCEP(body, endpointKey, next) {
   return dispatch => {
     dispatch(emailSignUpStart(endpointKey));
 
-    return fetch(getEmailSignUpUrl(endpointKey), {
+    return fetch(getSignUpCEPUrl(endpointKey), {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json"
@@ -35,10 +72,22 @@ export function emailSignUp(body, endpointKey) {
       }))
     })
       .then(parseResponse)
-      .then(({data}) => dispatch(emailSignUpComplete(data, endpointKey)))
+      .then((data) => 
+            {
+              dispatch(emailSignUpFormUpdate(endpointKey, "address_street", data['address']));
+              dispatch(emailSignUpFormUpdate(endpointKey, "city", data['city_name']));
+              dispatch(emailSignUpFormUpdate(endpointKey, "address_complement", data['complement2']));
+              dispatch(emailSignUpFormUpdate(endpointKey, "neighborhood", data['neighborhood']));
+              dispatch(emailSignUpFormUpdate(endpointKey, "state", data['state_name']));
+              dispatch(signUpCEPComplete(data, endpointKey));
+              next();
+            }
+           )
       .catch(({errors}) => {
-        dispatch(emailSignUpError(errors, endpointKey))
-        throw errors;
+        if(errors) {
+          dispatch(signUpCEPError(errors, endpointKey))
+          throw errors;
+        }
       });
   };
 }

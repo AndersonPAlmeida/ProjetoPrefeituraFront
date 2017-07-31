@@ -1,7 +1,8 @@
-import React, { PropTypes } from "react";
-import { Modal, Button, Glyphicon } from "react-bootstrap";
+import React from "react";
+import PropTypes from 'prop-types';
 import ButtonLoader from "../ButtonLoader";
 import Input from "../Input";
+import Modal from "./Modal";
 import { connect } from "react-redux";
 import { hidePasswordResetSuccessModal } from "../../../actions/ui";
 import {
@@ -50,12 +51,9 @@ class PasswordResetSuccessModal extends React.Component {
         show={this.props.show}
         className="password-reset-success-modal"
         onHide={this.close.bind(this)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Reset Your Password</Modal.Title>
-        </Modal.Header>
-
+        <div>Reset Your Password</div>
         <form>
-          <Modal.Body>
+          <div>
             <Input
               type="password"
               label="Password"
@@ -77,29 +75,33 @@ class PasswordResetSuccessModal extends React.Component {
               errors={this.props.auth.getIn(["updatePasswordModal", endpoint, "errors", "password_confirmation"])}
               onChange={this.handleInput.bind(this, "password_confirmation")}
               {...this.props.inputProps.passwordConfirmation} />
-          </Modal.Body>
+          </div>
 
-          <Modal.Footer>
-            <Button
+          <div>
+            <button
               className="password-reset-success-modal-close"
               onClick={this.close.bind(this)}
               {...this.props.inputProps.cancel}>
               Cancel
-            </Button>
+            </button>
 
             <ButtonLoader
               {...this.props}
               loading={loading}
               type="submit"
               className="password-reset-success-modal-submit"
-              icon={<Glyphicon glyph="lock" />}
               onClick={this.handleSubmit.bind(this)}
               {...this.props.inputProps.submit} />
-          </Modal.Footer>
+          </div>
         </form>
       </Modal>
     );
   }
 }
 
-export default connect(({auth}) => ({auth}))(PasswordResetSuccessModal);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(PasswordResetSuccessModal)
+
