@@ -1,10 +1,7 @@
 import React, {Component} from 'react'
-import LogoImage from '../../public/logo.png'
 import styles from './styles/Home.css'
 import { Button, Card, Row, Col, Dropdown, NavItem, Navbar } from 'react-materialize'
-import McImg from '../../public/mc_logo.png'
-import LogoImg from '../../public/logo.png'
-import UserImg from '../../public/user.png'
+import { McImg, LogoImage } from '../images'
 import { browserHistory } from 'react-router';
 
 export const GovernmentBar = () => (

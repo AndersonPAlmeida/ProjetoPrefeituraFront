@@ -8,7 +8,7 @@ const dest = global.document.getElementById('root');
 initialize({ apiUrl: window.__API_URL__ , stateData: global.__data }).then(({ store, provider, routes }) => {
   // render redux dev tools case in dev env 
   if (__DEVTOOLS__ && !global.devToolsExtension) {
-    const DevTools = require('./containers/DevTools');
+    const DevTools = require('./containers/application/DevTools');
     ReactDOM.render(
       <Provider store={store} key="provider">
         <div>

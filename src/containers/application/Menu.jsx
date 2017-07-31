@@ -1,14 +1,12 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, NavItem, Navbar } from 'react-materialize'
-import styles from './styles/PageTwo.css'
-import options_array from './Menu.js'
-import UserImg from '../../public/user.png'
-import LogoImg from '../../public/logo.png'
-var options = options_array.options
+import styles from './styles/Menu.css'
+import { getOptions } from '../utils/menu.js'
+import { UserImg, LogoImage } from '../images'
 
-class PageTwo extends Component {
 
+class Menu extends Component {
   constructor(props) {
       super(props);
     }
@@ -20,14 +18,14 @@ class PageTwo extends Component {
       if (props[i].rolldown) {
           for (var j in props[i].fields){
               navDropDown.push(
-                <NavItem className={styles['nav-item-li']} href={props[i].fields[j].link}>{props[i].fields[j].name}</NavItem>
+                <NavItem key={(props[i].fields[j].link)+i+j} className={styles['nav-item-li']} href={props[i].fields[j].link}>{props[i].fields[j].name}</NavItem>
               )
               if(props[i].fields[j].separator){
-                navDropDown.push(<NavItem divider />)
+                navDropDown.push(<NavItem key={"sep"+i+j}divider />)
               }
             }
           navOptions.push(
-            <li className={styles['nav-item']}>
+            <li key={(props[i].name)+i} className={styles['nav-item']}>
               <Dropdown trigger={
                   <a> 
                     <span> {props[i].name} </span>
@@ -47,7 +45,7 @@ class PageTwo extends Component {
       }
       else { 
         navOptions.push(
-          <NavItem className={styles['nav-item']} href={props[i].link}> {props[i].name} </NavItem>
+          <NavItem key={(props[i].link)+i+j} className={styles['nav-item']} href={props[i].link}> {props[i].name} </NavItem>
           );
       }
     }
@@ -60,12 +58,12 @@ render() {
     <div className='body-div'> 
       <Navbar className= 'nav-bar container nav-component' right 
           brand={
-                <img className='nav-logo' src={LogoImg} />
+                <img className='nav-logo' src={LogoImage} />
             }>
         <a className="right black-text logout-icon modal-trigger" title="Sair" data-target="">
           <i className="material-icons">exit_to_app</i>
         </a>
-        {this.NavComponents(options)}
+        {this.NavComponents(getOptions(this.props.permission,this.props.name))}
       </Navbar>
       <div className="progress">
         <div></div>
@@ -75,4 +73,4 @@ render() {
 }
 }
 
-export default PageTwo
+export default Menu

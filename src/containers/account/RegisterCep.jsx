@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Card, Row, Col } from 'react-materialize';
-import styles from '../styles/SignUp.css';
-import SignUpCEP from "../../redux-auth/views/default/SignUpCEP";
+import styles from './styles/SignUp.css';
+import { SignUpCEP } from "../../redux-auth/views/default";
 import { browserHistory } from "react-router";
 class RegisterCep extends React.Component {
 	render () {

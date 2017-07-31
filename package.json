@@ -50,7 +50,7 @@
     "react-dom": "15.4.2",
     "react-loader": "^2.4.0",
     "react-maskedinput": "^3.3.4",
-    "react-materialize": "^0.18.1",
+    "react-materialize": "^1.0.6",
     "react-redux": "5.0.2",
     "react-router": "^3.0.2",
     "react-router-redux": "^4.0.7",
