@@ -4,3 +4,6 @@ export LogoImage from '../../public/logo.png';
 export McImg from '../../public/mc_logo.png';
 export ScheduleImg from '../../public/schedule2.png';
 export UserImg from '../../public/user.png';
+export LocalIcon from '../../public/place-mark.png';
+export CitizenIcon from '../../public/citizen1.png';
+export ProfessionalIcon from '../../public/professional1.png';

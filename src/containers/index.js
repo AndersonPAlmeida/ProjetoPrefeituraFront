@@ -5,3 +5,4 @@ export PageOne from './schedule/PageOne';
 export Login from './account/Login';
 export Register from './account/Register';
 export RegisterCep from './account/RegisterCep';
+export ChooseRole from './application/ChooseRole';
