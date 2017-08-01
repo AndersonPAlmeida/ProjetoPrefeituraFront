@@ -17,6 +17,7 @@ import {destroySession} from "../utils/session-storage";
 import verifyAuth from "../utils/verify-auth";
 import getRedirectInfo from "../utils/parse-url";
 import {push} from "react-router-redux";
+import {userSignIn} from "../../actions/user"
 
 export const SET_ENDPOINT_KEYS = "SET_ENDPOINT_KEYS";
 export const STORE_CURRENT_ENDPOINT_KEY = "STORE_CURRENT_ENDPOINT_KEY";
@@ -88,6 +89,7 @@ export function configure(endpoint={}, settings={}) {
 
           if (user) {
             dispatch(authenticateComplete(user));
+            dispatch(userSignIn(user.citizen));
 
             // do NOT send initial validation request.
             // instead use the credentials that were sent back by the server.
@@ -126,6 +128,7 @@ export function configure(endpoint={}, settings={}) {
     return promise
       .then(user => {
         dispatch(authenticateComplete(user));
+        dispatch(userSignIn(user.citizen));
 
         if (firstTimeLogin) {
           dispatch(showFirstTimeLoginSuccessModal());
