@@ -1,0 +1,35 @@
+.component-home {
+  margin-top: 20px;
+}
+
+.h2-title-home {
+  margin-top: 0;
+  color: #183442;
+  font-family: 'Roboto', 'Arial';
+}
+
+.div-component-home p {
+  line-height: 17px;
+  font-size: 12px;
+  font-family: 'Roboto', 'Arial';
+}
+
+.text-chose-role {
+	height: 32px;
+	width: 70%;
+	line-height: 32px;
+	display: inline-block;
+}
+
+
+.role-place {
+	display: block;
+}
+
+.img-roles {
+	display: inline-block;
+	margin-right: 15px;
+}
+
+.col-role-place {
+}
