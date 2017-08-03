@@ -6,3 +6,5 @@ export Login from './account/Login';
 export Register from './account/Register';
 export RegisterCep from './account/RegisterCep';
 export ChooseRole from './application/ChooseRole';
+export ScheduleAgreement from './application/ScheduleAgreement';
+export ScheduleChoose from './application/ScheduleChoose';
