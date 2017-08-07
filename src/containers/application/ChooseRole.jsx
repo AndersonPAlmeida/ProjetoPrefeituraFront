@@ -3,11 +3,11 @@ import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, NavItem, Navbar } from 'react-materialize'
 import styles from './styles/ChooseRole.css'
 import { LocalIcon, CitizenIcon, ProfessionalIcon } from '../images'
-import options_array from '.././utils/roles.js'
-var options = options_array.options
+import { connect } from 'react-redux'
+import {userUpdate} from "../../actions/user"
+import { browserHistory } from 'react-router';
 
-class ChooseRole extends Component {
-
+class getChooseRole extends Component {
 	firstComponent() {
 		return (
 			<div className='card'>
@@ -18,39 +18,42 @@ class ChooseRole extends Component {
 	    	</div>
 		)
 	}
+  
+  handleClick(role) {
+    this.props.dispatch(userUpdate({ 'current_role': role }))
+    browserHistory.push('/pageone')
+  }
 
 	rolesPlaces() {
 		var rolesOptions = [];
 		var iconImg = ProfessionalIcon
-		for (var i in options) {
-			if (options[i].professional){
-				iconImg = ProfessionalIcon
-			} else {
+		for (var i in this.props.options) {
+			if (this.props.options[i].id == 'citizen'){
 				iconImg = CitizenIcon
+			} else {
+				iconImg = ProfessionalIcon
 			}
 			rolesOptions.push(
-				<Col className="col-role-place" s={12} m={6}>
-					<li className="role-place concrete-flat-button card hoverable waves-effect">
-						<div className="card-content">
-							<div className='img-roles'>
-								<img 
-									src={LocalIcon} />
+        <Col className="col-role-place" s={12} m={6}>
+				  <li className="role-place concrete-flat-button card hoverable waves-effect" onClick={this.handleClick.bind(this, this.props.options[i])}>
+					  <div className="card-content">
+						  <div className='img-roles'>
+							  <img src={LocalIcon} />
 							</div>
 							<div className="text-chose-role truncate">
-				              {options[i].local}
-				            </div>
-				        </div>
+				        {this.props.options[i].city}
+				      </div>
+				    </div>
 						<div className="card-content">
 							<div className='img-roles'>
-								<img 
-									src={iconImg} />
+								<img src={iconImg} />
 							</div>
 							<div className="text-chose-role truncate">
-				              {options[i].role}
-				            </div>
-				        </div>
-				    </li>
-				</Col>
+				        {this.props.options[i].name}
+				      </div>
+            </div>
+          </li>
+        </Col>
 			)
 		}
 		return (
@@ -82,4 +85,17 @@ class ChooseRole extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  const options = [
+            { 'id': "adm_prefeitura", 'name': "Administrador da Prefeitura", 'city': "Curitiba", 'city_id': 1 },
+            { 'id': "citizen", 'name': "Cidadão", 'city': "São José dos Pinhais", 'city_id': 2 }
+          ];
+  return {
+    options
+  }
+}
+
+const ChooseRole = connect(
+  mapStateToProps
+)(getChooseRole)
 export default ChooseRole 
