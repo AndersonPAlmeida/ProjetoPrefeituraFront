@@ -4,7 +4,6 @@ import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
 import styles from './styles/ScheduleChoose.css'
 import DayPicker, { DateUtils } from 'react-day-picker'
 import 'react-day-picker/lib/style.css'
-import DayPickerInput from 'react-day-picker/DayPickerInput'
 
 class ScheduleChoose extends Component {
 
