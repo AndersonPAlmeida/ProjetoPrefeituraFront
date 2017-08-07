@@ -8,9 +8,25 @@ import DayPickerInput from 'react-day-picker/DayPickerInput'
 
 class ScheduleChoose extends Component {
 
-	state = {
-    	selectedDays: [],
-	  };
+	constructor(props) {
+	    super(props);
+	    this.state = {selectedDays: [new Date(2017, 7, 12), new Date(2017, 7, 2)]};
+	  }
+
+	mainComponent() {
+		return (
+			<div className='card'>
+	          <div className='card-content'>
+	            <h2 className='card-title h2-title-home'> Passo 2 de 3 - Agendamento </h2>
+	            {this.pickSector()}
+	            {this.pickServiceType()}
+	            {this.pickServicePlace()}
+	          	{this.calendarComponent()}
+	          </div>
+	          {this.confirmButton()}
+	    	</div>
+		)
+	}
 
 	handleDayClick = (day, { selected }) => {
 	    const { selectedDays } = this.state;
@@ -25,25 +41,39 @@ class ScheduleChoose extends Component {
 	    this.setState({ selectedDays });
 	  };
 
-
-	mainComponent() {
+	calendarComponent() {
 		return (
-			<div className='card'>
-	          <div className='card-content'>
-	            <h2 className='card-title h2-title-home'> Passo 2 de 3 - Agendamento </h2>
-	            {this.pickSector()}
-	            {this.pickServiceType()}
-	            {this.pickServicePlace()}
-	          </div>
-	          <div>
-	          	<DayPicker 
-	          		selectedDays={this.state.selectedDays}
-          			onDayClick={this.handleDayClick} 
-          		/>
-	          </div>
-	          {this.confirmButton()}
-	    	</div>
-		)
+			<div>
+				<div className='select-field'>
+					<b>4. Escolha o tipo de atendimento:</b>
+					<br></br>
+					<Row>
+						<Col s={12} l={4} m={12}>
+							<div>
+								<DayPicker
+										className='card-panel'
+						          		selectedDays={this.state.selectedDays} 
+					          			onDayClick={this.handleDayClick} 
+					          		/>
+					        </div>
+				        </Col>
+				        <Col s={12} l={4} m={12}>
+				          	<div className='card-panel'>
+					          	<b>Horários disponíveis na data selecionada </b>
+								<br></br>
+				          		<Row className='sector-select'>
+								  <Input type='select'>
+									<option value='1'>Option 1</option>
+									<option value='2'>Option 2</option>
+									<option value='3'>Option 3</option>
+								  </Input>
+								</Row>
+				          	</div>
+				         </Col>
+				    </Row>
+			    </div>
+			</div>
+          	)
 	}
 
 	pickSector() {
@@ -107,8 +137,8 @@ class ScheduleChoose extends Component {
 	confirmButton() {
 		return (
 			<div className="card-action">
-				<button className="btn waves-effect btn" name="anterior" type="submit">Não concordo</button>
-				<button className="waves-effect btn right" name="commit" type="submit">Concordar e continuar</button>
+				<a className='back-bt waves-effect btn-flat' onClick={() => this.props.prev()} > Voltar </a>
+				<button className="waves-effect btn right" name="commit" type="submit">Continuar</button>
 	    	</div>
 		)
 	}
