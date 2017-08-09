@@ -5,6 +5,10 @@ import styles from './styles/ScheduleChoose.css'
 import DayPicker, { DateUtils } from 'react-day-picker'
 import 'react-day-picker/lib/style.css'
 
+const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julia', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+const WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
 class ScheduleChoose extends Component {
 
 	constructor(props) {
@@ -40,6 +44,8 @@ class ScheduleChoose extends Component {
 	    this.setState({ selectedDays });
 	  };
 
+
+
 	calendarComponent() {
 		return (
 			<div>
@@ -47,16 +53,20 @@ class ScheduleChoose extends Component {
 					<b>4. Escolha o tipo de atendimento:</b>
 					<br></br>
 					<Row>
-						<Col s={12} l={4} m={12}>
+						<Col>
 							<div>
 								<DayPicker
+										locale="pt"
+								        months={MONTHS}
+								        weekdaysLong={WEEKDAYS_LONG}
+								        weekdaysShort={WEEKDAYS_SHORT}
 										className='card-panel'
 						          		selectedDays={this.state.selectedDays} 
 					          			onDayClick={this.handleDayClick} 
 					          		/>
 					        </div>
 				        </Col>
-				        <Col s={12} l={4} m={12}>
+				        <Col>
 				          	<div className='card-panel'>
 					          	<b>Horários disponíveis na data selecionada </b>
 								<br></br>
