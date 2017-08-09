@@ -12,7 +12,6 @@ class Menu extends Component {
   }
 
   handleClick(path) {
-    console.log(path)
     browserHistory.push(path)
   }
 

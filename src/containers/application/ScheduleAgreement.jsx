@@ -3,8 +3,32 @@ import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown } from 'react-materialize'
 import styles from './styles/ScheduleAgreement.css'
 import { browserHistory } from 'react-router'
+import { port, apiHost, apiPort, apiVer } from '../../../config/env';
+import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
+import {fetch} from "../../redux-auth";
 
 class ScheduleAgreement extends Component {
+
+  constructor(props) {
+      super(props)
+      this.state = {
+          sectors: []
+      };
+  }
+
+  componentDidMount() {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'sectors';
+    fetch(`${apiUrl}/${collection}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get",
+    }).then(parseResponse).then(resp => {
+      self.setState({ sectors: resp })
+    });
+  }
 
 	mainComponent() {
 		return (
@@ -30,13 +54,21 @@ class ScheduleAgreement extends Component {
 	}
 
 	sectorList() {
-		return (
-			<ul className="sectors_list">
-			    <li>
-			      - <b>Setor da Saúde</b>: 1 falta.
-			    </li>
-			</ul>
+		const sectorsAbsence = (
+      this.state.sectors.map((sector) => {
+        return (
+          <li>
+            <b>{sector.name}</b>: {sector.absence_max} {sector.absence_max > 1 ? 'faltas' : 'falta'}
+          </li>
+        )
+      })
+    )
+    return (
+      <ul className="sectors_list">
+        {sectorsAbsence}
+      </ul>
 		)
+    return sectorsAbsence
 	}
 
 	scheduleRules() {
@@ -65,7 +97,7 @@ class ScheduleAgreement extends Component {
 	      	<Row>
 		        <Col s={12}>
 			      	<div>
-			      		{this.mainComponent()}
+			      		{this.mainComponent(this.state.sectors)}
 			      	</div>
 		      	</Col>
 		    </Row>
