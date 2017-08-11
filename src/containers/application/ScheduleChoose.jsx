@@ -17,7 +17,13 @@ class ScheduleChoose extends Component {
   constructor(props) {
       super(props)
       this.state = {
+          selected_sector: '0',
+          selected_service_type: '0',
+          selected_service_place: '0',
+          update_service_types: 0,
           sectors: [],
+          service_types: [],
+          service_places: [],
           selectedDays: [new Date(2017, 7, 12), new Date(2017, 7, 2)]
       };
   }
@@ -34,6 +40,22 @@ class ScheduleChoose extends Component {
     }).then(parseResponse).then(resp => {
       self.setState({ sectors: resp })
     });
+  }
+
+  componentWillUpdate() {
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'service_types';
+
+    if(this.state.update_service_types != 0) 
+      fetch(`${apiUrl}/${collection}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        this.setState({ service_types: resp })
+        this.setState({ update_service_types: 0 })
+      }); 
   }
 
 	mainComponent() {
@@ -105,6 +127,16 @@ class ScheduleChoose extends Component {
           	)
 	}
 
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
+  }
+
 	pickSector() {
     const sectorsList = (
       this.state.sectors.map((sector) => {
@@ -122,7 +154,8 @@ class ScheduleChoose extends Component {
 				</span>
 				<div>
 					<Row className='sector-select'>
-					  <Input s={12} l={4} m={12} type='select'>
+					  <Input name="selected_sector" value={this.state.selected_sector} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_service_types: 1}) } } s={12} l={4} m={12} type='select'>
+              <option value='0' disabled>Escolha o setor</option>
               {sectorsList}
 					  </Input>
 					</Row>
@@ -132,6 +165,13 @@ class ScheduleChoose extends Component {
 	}
 
 	pickServiceType() {
+    const serviceTypeList = (
+      this.state.service_types.map((service_type) => {
+        return (
+          <option value={service_type.id}>{service_type.description}</option>
+        )
+      })
+    )
 		return (
 			<div className='select-field'>
 				<b>2. Escolha o tipo de atendimento:</b>
@@ -139,9 +179,8 @@ class ScheduleChoose extends Component {
 				<div>
 					<Row className='sector-select'>
 					  <Input s={12} l={4} m={12} type='select'>
-            <option value='1'>Option 1</option>
-            <option value='2'>Option 2</option>
-            <option value='3'>Option 3</option>
+              <option value='0' disabled>Escolha o tipo de atendimento</option>
+              {serviceTypeList}
 					  </Input>
 					</Row>
 				</div>
