@@ -4,6 +4,9 @@ import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
 import styles from './styles/ScheduleChoose.css'
 import DayPicker, { DateUtils } from 'react-day-picker'
 import 'react-day-picker/lib/style.css'
+import { port, apiHost, apiPort, apiVer } from '../../../config/env';
+import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
+import {fetch} from "../../redux-auth";
 
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julia', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
@@ -11,10 +14,27 @@ const WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
 class ScheduleChoose extends Component {
 
-	constructor(props) {
-	    super(props);
-	    this.state = {selectedDays: [new Date(2017, 7, 12), new Date(2017, 7, 2)]};
-	  }
+  constructor(props) {
+      super(props)
+      this.state = {
+          sectors: [],
+          selectedDays: [new Date(2017, 7, 12), new Date(2017, 7, 2)]
+      };
+  }
+
+  componentDidMount() {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'sectors';
+    fetch(`${apiUrl}/${collection}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get",
+    }).then(parseResponse).then(resp => {
+      self.setState({ sectors: resp })
+    });
+  }
 
 	mainComponent() {
 		return (
@@ -86,6 +106,13 @@ class ScheduleChoose extends Component {
 	}
 
 	pickSector() {
+    const sectorsList = (
+      this.state.sectors.map((sector) => {
+        return (
+          <option value={sector.id}>{sector.name}</option>
+        )
+      })
+    )
 		return (
 			<div className='select-field'>
 				<b>1. Escolha o setor:</b>
@@ -96,9 +123,7 @@ class ScheduleChoose extends Component {
 				<div>
 					<Row className='sector-select'>
 					  <Input s={12} l={4} m={12} type='select'>
-						<option value='1'>Option 1</option>
-						<option value='2'>Option 2</option>
-						<option value='3'>Option 3</option>
+              {sectorsList}
 					  </Input>
 					</Row>
 				</div>
@@ -114,9 +139,9 @@ class ScheduleChoose extends Component {
 				<div>
 					<Row className='sector-select'>
 					  <Input s={12} l={4} m={12} type='select'>
-						<option value='1'>Option 1</option>
-						<option value='2'>Option 2</option>
-						<option value='3'>Option 3</option>
+            <option value='1'>Option 1</option>
+            <option value='2'>Option 2</option>
+            <option value='3'>Option 3</option>
 					  </Input>
 					</Row>
 				</div>

@@ -96,7 +96,7 @@ class ScheduleAgreement extends Component {
           <Row>
             <Col s={12}>
               <div>
-                {this.mainComponent(this.state.sectors)}
+                {this.mainComponent()}
               </div>
             </Col>
         </Row>
