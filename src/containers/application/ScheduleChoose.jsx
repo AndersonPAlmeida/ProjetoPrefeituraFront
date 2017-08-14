@@ -21,6 +21,8 @@ class ScheduleChoose extends Component {
           selected_service_type: '0',
           selected_service_place: '0',
           update_service_types: 0,
+          update_service_places: 0,
+          update_calendar: 0,
           sectors: [],
           service_types: [],
           service_places: [],
@@ -42,11 +44,11 @@ class ScheduleChoose extends Component {
     });
   }
 
-  componentWillUpdate() {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = 'service_types';
+  componentDidUpdate() {
 
-    if(this.state.update_service_types != 0) 
+    if(this.state.update_service_types != 0) { 
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = 'service_types';
       fetch(`${apiUrl}/${collection}`, {
         headers: {
           "Accept": "application/json",
@@ -56,6 +58,22 @@ class ScheduleChoose extends Component {
         this.setState({ service_types: resp })
         this.setState({ update_service_types: 0 })
       }); 
+    }
+
+    if(this.state.update_service_places != 0) { 
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = 'service_places';
+      fetch(`${apiUrl}/${collection}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        this.setState({ service_places: resp })
+        this.setState({ update_service_places: 0 })
+      }); 
+    }
+
   }
 
 	mainComponent() {
@@ -133,7 +151,7 @@ class ScheduleChoose extends Component {
     const name = target.name;
 
     this.setState({
-      [name]: value
+      [name]: value,
     });
   }
 
@@ -154,7 +172,7 @@ class ScheduleChoose extends Component {
 				</span>
 				<div>
 					<Row className='sector-select'>
-					  <Input name="selected_sector" value={this.state.selected_sector} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_service_types: 1}) } } s={12} l={4} m={12} type='select'>
+					  <Input name="selected_sector" value={this.state.selected_sector} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_service_types: 1, selected_service_type: '0', selected_service_place: '0' }); } } s={12} l={4} m={12} type='select'>
               <option value='0' disabled>Escolha o setor</option>
               {sectorsList}
 					  </Input>
@@ -178,7 +196,7 @@ class ScheduleChoose extends Component {
 				<br></br>
 				<div>
 					<Row className='sector-select'>
-					  <Input s={12} l={4} m={12} type='select'>
+					  <Input s={12} l={4} m={12} name="selected_service_type" value={this.state.selected_service_type} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_service_places: 1, selected_service_place: '0' }); } } s={12} l={4} m={12} type='select'>
               <option value='0' disabled>Escolha o tipo de atendimento</option>
               {serviceTypeList}
 					  </Input>
@@ -189,16 +207,22 @@ class ScheduleChoose extends Component {
 	}
 
 	pickServicePlace() {
+    const servicePlaceList = (
+      this.state.service_places.map((service_place) => {
+        return (
+          <option value={service_place.id}>{service_place.name}</option>
+        )
+      })
+    )
 		return (
 			<div className='select-field'>
 				<b>3. Escolha o local de atendimento:</b>
 				<br></br>
 				<div>
 					<Row className='sector-select'>
-					  <Input s={12} l={4} m={12} type='select'>
-						<option value='1'>Option 1</option>
-						<option value='2'>Option 2</option>
-						<option value='3'>Option 3</option>
+            <Input s={12} l={4} m={12} name="selected_service_place" value={this.state.selected_service_place} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_calendar: 1 }); } } s={12} l={4} m={12} type='select'>
+              <option value='0' disabled>Escolha o local de atendimento</option>
+              {servicePlaceList}
 					  </Input>
 					</Row>
 				</div>
