@@ -172,7 +172,16 @@ class ScheduleChoose extends Component {
 				</span>
 				<div>
 					<Row className='sector-select'>
-					  <Input name="selected_sector" value={this.state.selected_sector} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_service_types: 1, selected_service_type: '0', selected_service_place: '0' }); } } s={12} l={4} m={12} type='select'>
+					  <Input s={12} l={4} m={12} name="selected_sector" type='select' value={this.state.selected_sector} 
+              onChange={ 
+                (event) => { 
+                  if(event.target.value != this.state.selected_sector) {
+                    this.handleInputChange(event); 
+                    this.setState({ update_service_types: 1, selected_service_type: '0', selected_service_place: '0' } ); 
+                  }
+                }
+              }
+            >
               <option value='0' disabled>Escolha o setor</option>
               {sectorsList}
 					  </Input>
@@ -196,7 +205,16 @@ class ScheduleChoose extends Component {
 				<br></br>
 				<div>
 					<Row className='sector-select'>
-					  <Input s={12} l={4} m={12} name="selected_service_type" value={this.state.selected_service_type} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_service_places: 1, selected_service_place: '0' }); } } s={12} l={4} m={12} type='select'>
+					  <Input s={12} l={4} m={12} name="selected_service_type" type='select' value={this.state.selected_service_type} 
+              onChange= { 
+                (event) => { 
+                  if(this.state.selected_service_type != event.target.value) {
+                    this.handleInputChange(event); 
+                    this.setState({ update_service_places: 1, selected_service_place: '0' }); 
+                  }
+                } 
+              } 
+            >
               <option value='0' disabled>Escolha o tipo de atendimento</option>
               {serviceTypeList}
 					  </Input>
