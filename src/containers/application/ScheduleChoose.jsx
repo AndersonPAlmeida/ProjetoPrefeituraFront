@@ -7,13 +7,13 @@ import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
+import { connect } from 'react-redux'
 
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julia', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
-class ScheduleChoose extends Component {
-
+class getScheduleChoose extends Component {
   constructor(props) {
       super(props)
       this.state = {
@@ -45,11 +45,11 @@ class ScheduleChoose extends Component {
   }
 
   componentDidUpdate() {
-
     if(this.state.update_service_types != 0) { 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'service_types';
-      fetch(`${apiUrl}/${collection}`, {
+      const params = `permission=${this.props.user.current_role.id}&schedule=true&citizen_id=${this.props.user.id}`
+      fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json" },
@@ -295,4 +295,13 @@ class ScheduleChoose extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  const user = state.get('user').getIn(['userInfo'])
+  return {
+    user
+  }
+}
+const ScheduleChoose = connect(
+  mapStateToProps
+)(getScheduleChoose)
 export default ScheduleChoose 
