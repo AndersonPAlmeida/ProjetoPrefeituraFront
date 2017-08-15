@@ -26,7 +26,8 @@ class getScheduleChoose extends Component {
           sectors: [],
           service_types: [],
           service_places: [],
-          selectedDays: [new Date(2017, 7, 12), new Date(2017, 7, 2)]
+          available_days: [],
+          selectedDays: [new Date('2017-08-03T02:00:00Z'), new Date('2017-08-03T02:00:00Z')]
       };
   }
 
@@ -34,7 +35,8 @@ class getScheduleChoose extends Component {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'sectors';
-    fetch(`${apiUrl}/${collection}`, {
+    const params = `permission=${this.props.user.current_role.id}&schedule=true&citizen_id=${this.props.user.id}`
+    fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
@@ -48,7 +50,7 @@ class getScheduleChoose extends Component {
     if(this.state.update_service_types != 0) { 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'service_types';
-      const params = `permission=${this.props.user.current_role.id}&schedule=true&citizen_id=${this.props.user.id}`
+      const params = `permission=${this.props.user.current_role.id}&schedule=true&citizen_id=${this.props.user.id}&sector_id=${this.state.selected_sector}`
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -63,7 +65,8 @@ class getScheduleChoose extends Component {
     if(this.state.update_service_places != 0) { 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'service_places';
-      fetch(`${apiUrl}/${collection}`, {
+      const params = `permission=${this.props.user.current_role.id}&schedule=true&citizen_id=${this.props.user.id}&service_type_id=${this.state.selected_service_type}`
+      fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json" },
@@ -72,6 +75,15 @@ class getScheduleChoose extends Component {
         this.setState({ service_places: resp })
         this.setState({ update_service_places: 0 })
       }); 
+    }
+
+    if(this.state.update_calendar != 0) { 
+      const schedules = (this.state.service_places[this.state.selected_service_place-1].schedules)
+      this.state.available_days = [];
+      this.state.service_places[this.state.selected_service_place-1].schedules.map((schedule,idx) => {
+        this.state.available_days[idx] = new Date(schedule.service_start_time);
+      })
+      this.setState({ update_calendar: 0 })
     }
 
   }
@@ -226,9 +238,9 @@ class getScheduleChoose extends Component {
 
 	pickServicePlace() {
     const servicePlaceList = (
-      this.state.service_places.map((service_place) => {
+      this.state.service_places.map((service_place, idx) => {
         return (
-          <option value={service_place.id}>{service_place.name}</option>
+          <option value={idx+1}>{service_place.name}</option>
         )
       })
     )
