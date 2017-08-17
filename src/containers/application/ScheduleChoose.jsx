@@ -10,7 +10,7 @@ import {fetch} from "../../redux-auth";
 
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julia', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-const WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const WEEKDAYS_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
 
 class ScheduleChoose extends Component {
 
@@ -26,7 +26,9 @@ class ScheduleChoose extends Component {
           sectors: [],
           service_types: [],
           service_places: [],
-          selectedDays: [new Date(2017, 7, 12), new Date(2017, 7, 2)]
+          availableDays: [ new Date(2017, 7, 28), new Date(2017, 7, 30) ],
+          selectedDay: null,
+          disabledDays: [{ before: new Date() }]
       };
   }
 
@@ -91,20 +93,13 @@ class ScheduleChoose extends Component {
 		)
 	}
 
-	handleDayClick = (day, { selected }) => {
-	    const { selectedDays } = this.state;
-	    if (selected) {
-	      const selectedIndex = selectedDays.findIndex(selectedDay =>
-	        DateUtils.isSameDay(selectedDay, day)
-	      );
-	      selectedDays.splice(selectedIndex, 1);
-	    } else {
-	      selectedDays.push(day);
+	handleDayClick = (day, modifiers, { selected }) => {
+		if(modifiers.available) {
+		    this.setState({
+	      		selectedDay: selected ? undefined : day,
+	    	});
 	    }
-	    this.setState({ selectedDays });
-	  };
-
-
+    }
 
 	calendarComponent() {
 		return (
@@ -113,18 +108,21 @@ class ScheduleChoose extends Component {
 					<b>4. Escolha o tipo de atendimento:</b>
 					<br></br>
 					<Row>
-						<Col>
-							<div>
+						<Col className='card-panel calendar-panel'>
 								<DayPicker
+										enableOutsideDays
+										modifiers={ {
+												available: this.state.availableDays
+											} }
 										locale="pt"
 								        months={MONTHS}
 								        weekdaysLong={WEEKDAYS_LONG}
 								        weekdaysShort={WEEKDAYS_SHORT}
-										className='card-panel'
-						          		selectedDays={this.state.selectedDays} 
-					          			onDayClick={this.handleDayClick} 
+										
+						          		selectedDays={this.state.selectedDay}
+					          			onDayClick={this.handleDayClick}
+					          			disabledDays={this.state.disabledDays}
 					          		/>
-					        </div>
 				        </Col>
 				        <Col>
 				          	<div className='card-panel'>
@@ -262,17 +260,15 @@ class ScheduleChoose extends Component {
 
   render() {
     return (
-      <div>
-	      <main>
-	      	<Row>
-		        <Col s={12}>
-			      	<div>
-			      		{this.mainComponent()}
-			      	</div>
-		      	</Col>
-		    </Row>
-		  </main>
-      </div>
+      <main>
+      	<Row>
+	        <Col s={12}>
+		      	<div>
+		      		{this.mainComponent()}
+		      	</div>
+	      	</Col>
+	    </Row>
+	  </main>
     )
   }
 }
