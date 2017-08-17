@@ -7,28 +7,32 @@ import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
+import { connect } from 'react-redux'
 
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julia', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const WEEKDAYS_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
 
-class ScheduleChoose extends Component {
-
+class getScheduleChoose extends Component {
   constructor(props) {
       super(props)
       this.state = {
           selected_sector: '0',
           selected_service_type: '0',
           selected_service_place: '0',
+          selected_time: '0',
           update_service_types: 0,
           update_service_places: 0,
           update_calendar: 0,
+          update_times: 0,
           sectors: [],
           service_types: [],
           service_places: [],
           availableDays: [ new Date(2017, 7, 28), new Date(2017, 7, 30) ],
           selectedDay: null,
-          disabledDays: [{ before: new Date() }]
+          disabledDays: [{ before: new Date() }],
+          available_days: {start_times: [], end_times: []},
+          times: []
       };
   }
 
@@ -36,7 +40,8 @@ class ScheduleChoose extends Component {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'sectors';
-    fetch(`${apiUrl}/${collection}`, {
+    const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.user.citizen.id}`
+    fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
@@ -47,11 +52,11 @@ class ScheduleChoose extends Component {
   }
 
   componentDidUpdate() {
-
     if(this.state.update_service_types != 0) { 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'service_types';
-      fetch(`${apiUrl}/${collection}`, {
+      const params = `permission=${this.props.user.current_role}&schedule=true&citizen_id=${this.props.user.citizen.id}&sector_id=${this.state.selected_sector}`
+      fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json" },
@@ -65,7 +70,8 @@ class ScheduleChoose extends Component {
     if(this.state.update_service_places != 0) { 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'service_places';
-      fetch(`${apiUrl}/${collection}`, {
+      const params = `permission=${this.props.user.current_role}&schedule=true&citizen_id=${this.props.user.citizen.id}&service_type_id=${this.state.selected_service_type}`
+      fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json" },
@@ -74,6 +80,28 @@ class ScheduleChoose extends Component {
         this.setState({ service_places: resp })
         this.setState({ update_service_places: 0 })
       }); 
+    }
+
+    if(this.state.update_calendar != 0) { 
+      const schedules = (this.state.service_places[this.state.selected_service_place-1].schedules)
+      this.state.available_days = {start_times: [], end_times: []}
+      this.state.service_places[this.state.selected_service_place-1].schedules.map((schedule,idx) => {
+        this.state.available_days.start_times[idx] = new Date(schedule.service_start_time);
+        this.state.available_days.end_times[idx] = new Date(schedule.service_end_time);
+      })
+      this.setState({ update_calendar: 0 })
+    }
+
+    if(this.state.update_times != 0) { 
+      this.state.times = []
+      if(this.state.selectedDay) {
+        this.state.available_days.start_times.map((time, idx) => {
+          if(time.getDate() == this.state.selectedDay.getDate()) {
+            this.state.times.push(time)
+          }
+        })
+      }
+      this.setState({ update_times: 0 })
     }
 
   }
@@ -93,15 +121,22 @@ class ScheduleChoose extends Component {
 		)
 	}
 
-	handleDayClick = (day, modifiers, { selected }) => {
-		if(modifiers.available) {
-		    this.setState({
-	      		selectedDay: selected ? undefined : day,
-	    	});
+	handleDayClick = (day, modifiers) => {
+	   if (this.state.selectedDay == day) {
+	      this.setState({ selectedDay: null, update_times: 1 });
+	    } else if(modifiers.available) {
+	      this.setState({ selectedDay: day, update_times: 1 });
 	    }
-    }
+	  };
 
 	calendarComponent() {
+    const timeList = (
+      this.state.times.map((time, idx) => {
+        return (
+          <option value={idx+1}>{`${time.getHours()}:${time.getMinutes()}`}</option>
+        )
+      })
+    )
 		return (
 			<div>
 				<div className='select-field'>
@@ -112,13 +147,12 @@ class ScheduleChoose extends Component {
 								<DayPicker
 										enableOutsideDays
 										modifiers={ {
-												available: this.state.availableDays
+												available: this.state.available_days.start_times
 											} }
 										locale="pt"
 								        months={MONTHS}
 								        weekdaysLong={WEEKDAYS_LONG}
 								        weekdaysShort={WEEKDAYS_SHORT}
-										
 						          		selectedDays={this.state.selectedDay}
 					          			onDayClick={this.handleDayClick}
 					          			disabledDays={this.state.disabledDays}
@@ -129,10 +163,9 @@ class ScheduleChoose extends Component {
 					          	<b>Horários disponíveis na data selecionada </b>
 								<br></br>
 				          		<Row className='sector-select'>
-								  <Input type='select'>
-									<option value='1'>Option 1</option>
-									<option value='2'>Option 2</option>
-									<option value='3'>Option 3</option>
+								  <Input name="selected_time" type='select' value={this.state.selected_time} onChange={ (event) => { this.handleInputChange(event); } } >
+                    <option value='0' disabled>Escolha o horário</option>
+                    {timeList}
 								  </Input>
 								</Row>
 				          	</div>
@@ -170,14 +203,30 @@ class ScheduleChoose extends Component {
 				</span>
 				<div>
 					<Row className='sector-select'>
-					  <Input name="selected_sector" value={this.state.selected_sector} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_service_types: 1, selected_service_type: '0', selected_service_place: '0' }); } } s={12} l={4} m={12} type='select'>
+					  <Input s={12} l={4} m={12} name="selected_sector" type='select' value={this.state.selected_sector} 
+              onChange={ 
+                (event) => { 
+                  if(event.target.value != this.state.selected_sector) {
+                    this.handleInputChange(event); 
+                    this.setState({ 
+                      update_service_types: 1,
+                      selected_service_type: '0',
+                      selected_service_place: '0',
+                      selectedDay: null,      
+                      times: [],       
+                      available_days: {start_times: [], end_times: []}    
+                    });
+                  }
+                }
+              }
+            >
               <option value='0' disabled>Escolha o setor</option>
               {sectorsList}
 					  </Input>
 					</Row>
 				</div>
-	        </div>
-	    )
+      </div>
+    )
 	}
 
 	pickServiceType() {
@@ -194,7 +243,22 @@ class ScheduleChoose extends Component {
 				<br></br>
 				<div>
 					<Row className='sector-select'>
-					  <Input s={12} l={4} m={12} name="selected_service_type" value={this.state.selected_service_type} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_service_places: 1, selected_service_place: '0' }); } } s={12} l={4} m={12} type='select'>
+					  <Input s={12} l={4} m={12} name="selected_service_type" type='select' value={this.state.selected_service_type} 
+              onChange= { 
+                (event) => { 
+                  if(this.state.selected_service_type != event.target.value) {
+                    this.handleInputChange(event); 
+                    this.setState({ 
+                      update_service_places: 1, 
+                      selected_service_place: '0',
+                      selectedDay: null, 
+                      times: [], 
+                      available_days: {start_times: [], end_times: []} 
+                    }); 
+                  }
+                } 
+              } 
+            >
               <option value='0' disabled>Escolha o tipo de atendimento</option>
               {serviceTypeList}
 					  </Input>
@@ -206,9 +270,9 @@ class ScheduleChoose extends Component {
 
 	pickServicePlace() {
     const servicePlaceList = (
-      this.state.service_places.map((service_place) => {
+      this.state.service_places.map((service_place, idx) => {
         return (
-          <option value={service_place.id}>{service_place.name}</option>
+          <option value={idx+1}>{service_place.name}</option>
         )
       })
     )
@@ -218,7 +282,12 @@ class ScheduleChoose extends Component {
 				<br></br>
 				<div>
 					<Row className='sector-select'>
-            <Input s={12} l={4} m={12} name="selected_service_place" value={this.state.selected_service_place} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_calendar: 1 }); } } s={12} l={4} m={12} type='select'>
+            <Input s={12} l={4} m={12} name="selected_service_place" value={this.state.selected_service_place} onChange={ (event) => { this.handleInputChange(event); 
+              this.setState({ update_calendar: 1, 
+                              selectedDay: null, 
+                              times: [], 
+                            }); 
+            } } s={12} l={4} m={12} type='select'>
               <option value='0' disabled>Escolha o local de atendimento</option>
               {servicePlaceList}
 					  </Input>
@@ -273,4 +342,13 @@ class ScheduleChoose extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  const user = state.get('user').getIn(['userInfo'])
+  return {
+    user
+  }
+}
+const ScheduleChoose = connect(
+  mapStateToProps
+)(getScheduleChoose)
 export default ScheduleChoose 
