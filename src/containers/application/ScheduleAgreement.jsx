@@ -6,8 +6,9 @@ import { browserHistory } from 'react-router'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
+import { connect } from 'react-redux'
 
-class ScheduleAgreement extends Component {
+class getScheduleAgreement extends Component {
 
   constructor(props) {
       super(props)
@@ -20,7 +21,8 @@ class ScheduleAgreement extends Component {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'sectors';
-    fetch(`${apiUrl}/${collection}`, {
+    const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.user.citizen.id}`
+    fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
@@ -106,4 +108,13 @@ class ScheduleAgreement extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  const user = state.get('user').getIn(['userInfo'])
+  return {
+    user
+  }
+}
+const ScheduleAgreement = connect(
+  mapStateToProps
+)(getScheduleAgreement)
 export default ScheduleAgreement 

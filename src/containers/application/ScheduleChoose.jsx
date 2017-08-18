@@ -13,6 +13,10 @@ const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Jul
 const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const WEEKDAYS_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
 
+function addZeroBefore(n) {
+  return (n < 10 ? '0' : '') + n;
+}
+
 class getScheduleChoose extends Component {
   constructor(props) {
       super(props)
@@ -28,7 +32,6 @@ class getScheduleChoose extends Component {
           sectors: [],
           service_types: [],
           service_places: [],
-          availableDays: [ new Date(2017, 7, 28), new Date(2017, 7, 30) ],
           selectedDay: null,
           disabledDays: [{ before: new Date() }],
           available_days: {start_times: [], end_times: []},
@@ -133,7 +136,7 @@ class getScheduleChoose extends Component {
     const timeList = (
       this.state.times.map((time, idx) => {
         return (
-          <option value={idx+1}>{`${time.getHours()}:${time.getMinutes()}`}</option>
+          <option value={idx+1}>{`${addZeroBefore(time.getHours())}:${addZeroBefore(time.getMinutes())}`}</option>
         )
       })
     )
