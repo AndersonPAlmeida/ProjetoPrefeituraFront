@@ -170,7 +170,7 @@ export const getOptions = (user_permission,user_name) =>
       [
         { 'name': "Efetuar Agendamento", 'rolldown': false, 'link': "/citizens/schedules/agreement" },
         { 'name': "Histórico", 'rolldown': false, 'link': "/citizens/schedules/history" },
-        { 'name': "user_name", 
+        { 'name': user_name, 
           'rolldown': true, 
           'fields': 
                 [ 

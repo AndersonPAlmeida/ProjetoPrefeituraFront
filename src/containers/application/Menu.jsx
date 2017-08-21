@@ -5,8 +5,9 @@ import styles from './styles/Menu.css'
 import { getOptions } from '../utils/menu.js'
 import { UserImg, LogoImage } from '../images'
 import { browserHistory } from 'react-router';
+import { connect } from 'react-redux';
 
-class Menu extends Component {
+class getMenu extends Component {
   constructor(props) {
     super(props);
   }
@@ -64,7 +65,7 @@ class Menu extends Component {
           <a className="right black-text logout-icon modal-trigger" title="Sair" data-target="">
             <i className="material-icons">exit_to_app</i>
           </a>
-          {this.NavComponents(getOptions(this.props.permission,this.props.name))}
+          {this.NavComponents(getOptions(this.props.user_role,this.props.user_name))}
         </Navbar>
         <div className="progress">
           <div></div>
@@ -74,4 +75,18 @@ class Menu extends Component {
   }
 }
 
+
+const mapStateToProps = (state) => {
+  const user = state.get('user').getIn(['userInfo'])
+  const user_name = user.citizen.name
+  const user_role = user.current_role == "citizen" ? "citizen" : user.roles.find(role => role.id == user.current_role).role
+  return {
+    user_name,
+    user_role 
+  }
+}
+
+const Menu = connect(
+  mapStateToProps
+)(getMenu)
 export default Menu
