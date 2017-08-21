@@ -28,7 +28,7 @@ class getChooseRole extends Component {
   
   handleClick(selected_role) {
     this.props.dispatch(userUpdate({ 'current_role': selected_role.id }))
-    browserHistory.push('/pageone')
+    browserHistory.push('/citizens/schedules')
   }
 
 	rolesPlaces() {

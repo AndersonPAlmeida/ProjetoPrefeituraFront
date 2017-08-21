@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, NavItem, Navbar } from 'react-materialize'
-import styles from './styles/PageOne.css'
+import styles from './styles/CitizenSchedule.css'
 
-class PageOne extends Component {
+class CitizenSchedule extends Component {
 
 	firstComponent() {
 		return (
@@ -89,4 +89,4 @@ class PageOne extends Component {
   }
 }
 
-export default PageOne 
+export default CitizenSchedule 
