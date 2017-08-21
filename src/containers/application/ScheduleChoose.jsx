@@ -20,6 +20,9 @@ function addZeroBefore(n) {
 class getScheduleChoose extends Component {
   constructor(props) {
       super(props)
+      var today = new Date()
+      var today_3months = new Date()
+      today_3months.setMonth(today_3months.getMonth()+3)
       this.state = {
           selected_sector: '0',
           selected_service_type: '0',
@@ -33,7 +36,7 @@ class getScheduleChoose extends Component {
           service_types: [],
           service_places: [],
           selectedDay: null,
-          disabledDays: [{ before: new Date() }],
+          disabledDays: [{ after: today_3months, before: today }],
           available_days: {start_times: [], end_times: []},
           times: []
       };
