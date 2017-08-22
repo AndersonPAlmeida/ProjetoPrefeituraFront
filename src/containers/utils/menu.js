@@ -45,16 +45,18 @@ export const getOptions = (user_permission,user_name) =>
   else if (user_permission == "adm_prefeitura") {
     return(
       [ 
-        { 'name': "Agendamentos", 
-          'rolldown': true, 
+        { 'name': user_name, 
+          'rolldown': true,
+          'img': true, 
           'fields': 
                 [ 
-                  { 'name': "Agendamentos", 'link': "/schedules", 'separator': false },
-                  { 'name': "Cadastro de Cidadãos", 'link': "/professionals/users", 'separator': false } 
+                  { 'name': "Administrador Prefeitura", 'link': "/choose_role", 'separator': true },
+                  { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
+                  { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
+                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
+                  { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false } 
                 ]
         },
-        { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" },
-        { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
         { 'name': "Sistema", 
           'rolldown': true, 
           'fields': 
@@ -68,24 +70,8 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Relatórios", 'link': "/reports", 'separator': false }
                 ]
         },
-        { 'name': user_name, 
-          'rolldown': true,
-          'img': true, 
-          'fields': 
-                [ 
-                  { 'name': "Administrador Prefeitura", 'link': "/choose_role", 'separator': true },
-                  { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
-                  { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
-                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
-                  { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false } 
-                ]
-        }
-      ]
-    );
-  }
-  else if (user_permission == "adm_local") {
-    return (
-      [ 
+        { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
+        { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" },
         { 'name': "Agendamentos", 
           'rolldown': true, 
           'fields': 
@@ -93,17 +79,13 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Agendamentos", 'link': "/schedules", 'separator': false },
                   { 'name': "Cadastro de Cidadãos", 'link': "/professionals/users", 'separator': false } 
                 ]
-        },
-        { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" },
-        { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
-        { 'name': "Sistema", 
-          'rolldown': true, 
-          'fields': 
-                [ 
-                  { 'name': "Profissionais", 'link': "/professionals", 'separator': true },
-                  { 'name': "Relatórios", 'link': "/reports", 'separator': false }
-                ]
-        },
+        } 
+      ]
+    );
+  }
+  else if (user_permission == "adm_local") {
+    return (
+      [ 
         { 'name': user_name, 
           'rolldown': true, 
           'fields': 
@@ -114,6 +96,24 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
                   { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false } 
                 ]
+        },
+        { 'name': "Sistema", 
+          'rolldown': true, 
+          'fields': 
+                [ 
+                  { 'name': "Profissionais", 'link': "/professionals", 'separator': true },
+                  { 'name': "Relatórios", 'link': "/reports", 'separator': false }
+                ]
+        },
+        { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
+        { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" },
+        { 'name': "Agendamentos", 
+          'rolldown': true, 
+          'fields': 
+                [ 
+                  { 'name': "Agendamentos", 'link': "/schedules", 'separator': false },
+                  { 'name': "Cadastro de Cidadãos", 'link': "/professionals/users", 'separator': false } 
+                ]
         }
       ]
     );
@@ -121,17 +121,6 @@ export const getOptions = (user_permission,user_name) =>
   else if (user_permission == "atendente_local") {
     return ( 
       [ 
-        { 'name': "Agendamentos", 
-          'rolldown': true,
-          'img': true, 
-          'fields': 
-                [ 
-                  { 'name': "Agendamentos", 'link': "/schedules", 'separator': false },
-                  { 'name': "Cadastro de Cidadãos", 'link': "/professionals/users", 'separator': false } 
-                ]
-        },
-        { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" },
-        { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
         { 'name': user_name, 
           'rolldown': true, 
           'fields': 
@@ -142,6 +131,17 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
                   { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false } 
                 ]
+        },
+        { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
+        { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" },
+        { 'name': "Agendamentos", 
+          'rolldown': true,
+          'img': true, 
+          'fields': 
+                [ 
+                  { 'name': "Agendamentos", 'link': "/schedules", 'separator': false },
+                  { 'name': "Cadastro de Cidadãos", 'link': "/professionals/users", 'separator': false } 
+                ]
         }
       ]
     );
@@ -149,8 +149,6 @@ export const getOptions = (user_permission,user_name) =>
   else if (user_permission == "responsavel_atendimento") {
     return (
       [ 
-        { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" },
-        { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
         { 'name': user_name, 
           'rolldown': true, 
           'fields': 
@@ -161,15 +159,16 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
                   { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false } 
                 ]
-        }
+        },
+        { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
+        { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" }
       ]
    );
   }
   else {
     return ( 
       [
-        { 'name': "Efetuar Agendamento", 'rolldown': false, 'link': "/citizens/schedules/agreement" },
-        { 'name': "Histórico", 'rolldown': false, 'link': "/citizens/schedules/history" },
+
         { 'name': user_name, 
           'rolldown': true, 
           'fields': 
@@ -180,7 +179,9 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
                   { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false }
                 ]
-        }
+        },
+        { 'name': "Histórico", 'rolldown': false, 'link': "/citizens/schedules/history" },
+        { 'name': "Efetuar Agendamento", 'rolldown': false, 'link': "/citizens/schedules/agreement" }
       ]
     );
   }
