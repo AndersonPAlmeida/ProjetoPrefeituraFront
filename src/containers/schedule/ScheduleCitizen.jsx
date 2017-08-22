@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/ScheduleChoose.css'
+import styles from './styles/ScheduleCitizen.css'
 import DayPicker, { DateUtils } from 'react-day-picker'
 import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
@@ -17,7 +17,7 @@ function addZeroBefore(n) {
   return (n < 10 ? '0' : '') + n;
 }
 
-class getScheduleChoose extends Component {
+class getScheduleCitizen extends Component {
   constructor(props) {
       super(props)
       var today = new Date()
@@ -46,7 +46,7 @@ class getScheduleChoose extends Component {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'sectors';
-    const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.user.citizen.id}`
+    const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.params.citizen_id}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -61,7 +61,7 @@ class getScheduleChoose extends Component {
     if(this.state.update_service_types != 0) { 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'service_types';
-      const params = `permission=${this.props.user.current_role}&schedule=true&citizen_id=${this.props.user.citizen.id}&sector_id=${this.state.selected_sector}`
+      const params = `permission=${this.props.user.current_role}&schedule=true&citizen_id=${this.props.params.citizen_id}&sector_id=${this.state.selected_sector}`
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -76,7 +76,7 @@ class getScheduleChoose extends Component {
     if(this.state.update_service_places != 0) { 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'service_places';
-      const params = `permission=${this.props.user.current_role}&schedule=true&citizen_id=${this.props.user.citizen.id}&service_type_id=${this.state.selected_service_type}`
+      const params = `permission=${this.props.user.current_role}&schedule=true&citizen_id=${this.props.params.citizen_id}&service_type_id=${this.state.selected_service_type}`
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -354,7 +354,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const ScheduleChoose = connect(
+const ScheduleCitizen = connect(
   mapStateToProps
-)(getScheduleChoose)
-export default ScheduleChoose 
+)(getScheduleCitizen)
+export default ScheduleCitizen 

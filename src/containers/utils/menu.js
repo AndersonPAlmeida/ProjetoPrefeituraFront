@@ -174,6 +174,7 @@ export const getOptions = (user_permission,user_name) =>
           'fields': 
                 [ 
                   { 'name': "Cidadão", 'link': "/choose_role", 'separator': true },
+                  { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
                   { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
                   { 'name': "Dependentes", 'link': "/dependants", 'separator': false },
                   { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },

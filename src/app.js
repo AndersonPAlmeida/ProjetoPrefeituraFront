@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
-import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule, ChooseRole, ScheduleAgreement, ScheduleChoose } from './containers';
+import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule, ChooseRole, ScheduleAgreement, ScheduleCitizen } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware, routerActions } from 'react-router-redux';
@@ -70,8 +70,8 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="signup2" component={UserIsNotAuthenticated(Register)} />
         <Route path="citizens/schedules" component={UserIsAuthenticated(CitizenSchedule)} />
         <Route path="choose_role" component={UserIsAuthenticated(ChooseRole)} />
-        <Route path="schedules" component={UserIsAuthenticated(ScheduleAgreement)} />
-        <Route path="schedule_choose" component={UserIsAuthenticated(ScheduleChoose)} />
+        <Route path="citizens/schedules/agreement" component={UserIsAuthenticated(ScheduleAgreement)} />
+        <Route path="citizens/:citizen_id/schedules/schedule" component={UserIsAuthenticated(ScheduleCitizen)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

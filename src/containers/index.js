@@ -7,4 +7,4 @@ export Register from './account/Register';
 export RegisterCep from './account/RegisterCep';
 export ChooseRole from './application/ChooseRole';
 export ScheduleAgreement from './schedule/ScheduleAgreement';
-export ScheduleChoose from './schedule/ScheduleChoose';
+export ScheduleCitizen from './schedule/ScheduleCitizen';
