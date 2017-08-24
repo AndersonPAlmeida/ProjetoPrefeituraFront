@@ -8,6 +8,7 @@ import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
+import { browserHistory } from 'react-router';
 
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julia', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
@@ -32,13 +33,15 @@ class getScheduleCitizen extends Component {
           update_service_places: 0,
           update_calendar: 0,
           update_times: 0,
+          update_schedule: 0,
           sectors: [],
           service_types: [],
           service_places: [],
           selectedDay: null,
           disabledDays: [{ after: today_3months, before: today }],
           available_days: {start_times: [], end_times: []},
-          times: []
+          times: [],
+          schedule_id: null
       };
   }
 
@@ -69,7 +72,7 @@ class getScheduleCitizen extends Component {
           method: "get",
       }).then(parseResponse).then(resp => {
         this.setState({ service_types: resp })
-        this.setState({ update_service_types: 0 })
+        this.setState({ update_service_types: 0, schedule_id: null })
       }); 
     }
 
@@ -84,7 +87,7 @@ class getScheduleCitizen extends Component {
           method: "get",
       }).then(parseResponse).then(resp => {
         this.setState({ service_places: resp })
-        this.setState({ update_service_places: 0 })
+        this.setState({ update_service_places: 0, schedule_id: null })
       }); 
     }
 
@@ -95,7 +98,7 @@ class getScheduleCitizen extends Component {
         this.state.available_days.start_times[idx] = new Date(schedule.service_start_time);
         this.state.available_days.end_times[idx] = new Date(schedule.service_end_time);
       })
-      this.setState({ update_calendar: 0 })
+      this.setState({ update_calendar: 0, schedule_id: null  })
     }
 
     if(this.state.update_times != 0) { 
@@ -107,7 +110,22 @@ class getScheduleCitizen extends Component {
           }
         })
       }
-      this.setState({ update_times: 0 })
+      this.setState({ update_times: 0, schedule_id: null })
+    }
+
+    if(this.state.update_schedule != 0) { 
+      this.state.schedule_id = null
+      const chosen_date = this.state.times[this.state.selected_time-1].getTime()
+      var schedule_date
+      if(this.state.selected_time) {
+        this.state.service_places[this.state.selected_service_place-1].schedules.map((schedule) => {
+          schedule_date = new Date(schedule.service_start_time).getTime()
+          if(schedule_date == chosen_date) {
+            this.state.schedule_id = schedule.id
+          }
+        })
+      }
+      this.setState({ update_schedule: 0 })
     }
 
   }
@@ -169,7 +187,7 @@ class getScheduleCitizen extends Component {
 					          	<b>Horários disponíveis na data selecionada </b>
 								<br></br>
 				          		<Row className='sector-select'>
-								  <Input name="selected_time" type='select' value={this.state.selected_time} onChange={ (event) => { this.handleInputChange(event); } } >
+								  <Input name="selected_time" type='select' value={this.state.selected_time} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_schedule: 1 }) } } >
                     <option value='0' disabled>Escolha o horário</option>
                     {timeList}
 								  </Input>
@@ -303,33 +321,21 @@ class getScheduleCitizen extends Component {
 	    )
 	}
 
+  handleSubmit() {
+    if(this.state.schedule_id != null)
+      browserHistory.push(`/citizens/${this.props.params.citizen_id}/schedules/${this.state.schedule_id}/finish`)
+  }
+
+  prev() {
+    browserHistory.push("citizens/schedules/agreement")
+  }
 
 	confirmButton() {
 		return (
 			<div className="card-action">
-				<a className='back-bt waves-effect btn-flat' onClick={() => this.props.prev()} > Voltar </a>
-				<button className="waves-effect btn right" name="commit" type="submit">Continuar</button>
-	    	</div>
-		)
-	}
-
-
-	scheduleRules() {
-		return (
-		<li className="collection-item agree-itens">
-			<p>Caso efetue o agendamento e não compareça ao local do atendimento no dia e
-			horário agendado, uma falta será registrada para você no setor do agendamento
-			escolhido.</p>
-			<p>Cada setor possui um número máximo de faltas, ultrapassar esse limite dentro
-			<b> 90</b> dias irá bloquear que você
-			solicite agendamentos pela internet pelos próximos
-			<b> 30</b> dias.</p>
-
-			<p>Os setores e seus respectivos limites de faltas estão listados abaixo:</p>
-				 		
-			{this.sectorList()}
- 		</li>
-
+				<a className='back-bt waves-effect btn-flat' onClick={this.prev}> Voltar </a>
+				<button className="waves-effect btn right" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">Continuar</button>
+      </div>
 		)
 	}
 
