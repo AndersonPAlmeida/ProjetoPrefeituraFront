@@ -7,7 +7,7 @@ Informações
 -----------
 
 * Versão node: v5.x
-* Versão npm:
+* Versão npm: latest
 
 Git:
 ```bash
