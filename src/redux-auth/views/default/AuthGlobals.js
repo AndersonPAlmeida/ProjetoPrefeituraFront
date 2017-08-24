@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from 'prop-types';
 import EmailSignInSuccessModal from "./modals/EmailSignInSuccessModal";
 import EmailSignInErrorModal from "./modals/EmailSignInErrorModal";
 import OAuthSignInSuccessModal from "./modals/OAuthSignInSuccessModal";
@@ -178,4 +179,8 @@ class AuthGlobals extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(AuthGlobals);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(AuthGlobals)

@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from 'prop-types';
 import Input from "./Input";
 import ButtonLoader from "./ButtonLoader";
 import { updatePassword, updatePasswordFormUpdate } from "../../actions/update-password";
@@ -92,4 +93,8 @@ class UpdatePasswordForm extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(UpdatePasswordForm);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(UpdatePasswordForm)

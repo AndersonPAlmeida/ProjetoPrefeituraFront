@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from 'prop-types';
 import ButtonLoader from "./ButtonLoader";
 import { connect } from "react-redux";
 import { signOut } from "../../actions/sign-out";
@@ -45,4 +46,8 @@ class SignOutButton extends React.Component {
   }
 }
 
-export default connect(({auth}) => ({auth}))(SignOutButton);
+function mapStateToProps(state) {
+  return { auth: state.get('auth') }
+}
+
+export default connect(mapStateToProps)(SignOutButton)

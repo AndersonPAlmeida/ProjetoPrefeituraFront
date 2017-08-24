@@ -118,6 +118,10 @@ export function getEmailSignUpUrl (endpointKey) {
   return `${getApiUrl(endpointKey)}${getSessionEndpoint(endpointKey).emailRegistrationPath}?config_name=${endpointKey}`
 }
 
+export function getSignUpCEPUrl (endpointKey) {
+  return `${getApiUrl(endpointKey)}/validate_cep`
+}
+
 export function getPasswordResetRequestUrl (endpointKey) {
   return `${getApiUrl(endpointKey)}${getSessionEndpoint(endpointKey).passwordResetPath}?config_name=${endpointKey}`
 }

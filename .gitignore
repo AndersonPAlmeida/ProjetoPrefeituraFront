@@ -8,3 +8,4 @@ npm-debug.log
 bundle.js
 webpack-assets.json
 public/assets
+config/env.js

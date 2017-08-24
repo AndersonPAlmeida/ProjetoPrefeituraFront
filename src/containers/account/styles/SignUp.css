@@ -1,0 +1,10 @@
+.cep {
+  display: inline-block;
+  text-align: left;
+}
+
+.main-cep {
+	text-align: center;
+	height: 100%;
+	margin-bottom: 5%;
+}
