@@ -22,6 +22,11 @@
 	border-radius: 30px;
 }
 
+.DayPicker-Day--disabled {
+	border-radius: 1px !important;
+	background-color: #eff1f1 !important;
+}
+
 .DayPicker-wrapper {
 	padding: 0 !important;
 }

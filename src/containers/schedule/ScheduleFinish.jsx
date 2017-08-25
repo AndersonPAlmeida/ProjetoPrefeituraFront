@@ -9,10 +9,6 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 
-const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julia', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-const WEEKDAYS_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
-
 function addZeroBefore(n) {
   return (n < 10 ? '0' : '') + n;
 }
