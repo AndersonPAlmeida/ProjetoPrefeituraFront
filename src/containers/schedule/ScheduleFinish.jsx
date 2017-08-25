@@ -1,9 +1,7 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/ScheduleCitizen.css'
-import DayPicker, { DateUtils } from 'react-day-picker'
-import 'react-day-picker/lib/style.css'
+import styles from './styles/ScheduleFinish.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
@@ -16,6 +14,9 @@ function addZeroBefore(n) {
 class getScheduleCitizen extends Component {
   constructor(props) {
       super(props)
+      this.state = {
+        schedule: []
+      }
   }
 
   componentDidMount() {
@@ -29,9 +30,56 @@ class getScheduleCitizen extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ sectors: resp })
+      self.setState({ schedule: resp })
+      console.log(this.state.schedule)
     });
   }
+
+  addZeroBefore(n) {
+    return (n < 10 ? '0' : '') + n;
+  }
+
+  mainComponent() {
+    var d = new Date(this.state.schedule.service_start_time)
+    var date = d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear()
+    var time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes())
+    return (
+      <div className='card'>
+            <div className='card-content'>
+              <h2 className='card-title h2-title-home'> Passo 3 de 3 - Confirmação do agendamento: </h2>
+              <p> 
+                <b>Setor: </b>
+                {this.state.schedule.sector_name}
+              </p>
+              <p>
+                <b>Tipo de Atendimento: </b>
+                {this.state.schedule.service_type_name}
+              </p>
+              <p>
+                <b>Local de Atendimento: </b>
+                {this.state.schedule.service_place_name}
+              </p>
+              <p>
+                <b>Endereço: </b>
+                {this.state.schedule.service_place_address_street}, {this.state.schedule.service_place_address_number} 
+              </p>
+              <p>
+                <b>Data do agendamento: </b>
+                {date}
+              </p>
+              <p>
+                <b>Horário do atendimento: </b>
+                {time}
+              </p>
+
+            </div>
+            {this.confirmButton()}
+        </div>
+    )
+  }
+
+  
+
 
 	confirmButton() {
 		return (
@@ -48,6 +96,7 @@ class getScheduleCitizen extends Component {
       	<Row>
 	        <Col s={12}>
 		      	<div>
+              {this.mainComponent()}
 		      	</div>
 	      	</Col>
 	    </Row>
