@@ -6,16 +6,18 @@ import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
+import { browserHistory } from 'react-router';
 
 function addZeroBefore(n) {
   return (n < 10 ? '0' : '') + n;
 }
 
-class getScheduleCitizen extends Component {
+class getScheduleFinish extends Component {
   constructor(props) {
       super(props)
       this.state = {
-        schedule: []
+        schedule: [],
+        confirm: 0
       }
   }
 
@@ -31,8 +33,25 @@ class getScheduleCitizen extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       self.setState({ schedule: resp })
-      console.log(this.state.schedule)
     });
+  }
+
+  componentDidUpdate() {
+    if(this.state.confirm != 0) {
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = `schedules/${this.props.params.schedule_id}/confirm`;
+      const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.params.citizen_id}`
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "put",
+      }).then(parseResponse).then(resp => {
+        console.log(resp)
+        browserHistory.push(`/citizens/schedules`)
+      });
+      this.setState({ confirm: 0 })
+    }
   }
 
   addZeroBefore(n) {
@@ -78,14 +97,19 @@ class getScheduleCitizen extends Component {
     )
   }
 
-  
+  handleSubmit() {
+    this.setState({ confirm: 1 })
+  }
 
+  prev() {
+    browserHistory.push(`citizens/${this.props.params.citizen_id}/schedules/schedule`)
+  }  
 
 	confirmButton() {
 		return (
 			<div className="card-action">
-				<a className='back-bt waves-effect btn-flat' onClick={() => this.props.prev()} > Voltar </a>
-				<button className="waves-effect btn right" name="commit" type="submit">Continuar</button>
+				<a className='back-bt waves-effect btn-flat' onClick={() => this.prev} > Voltar </a>
+				<button className="waves-effect btn right" name="commit" onClick={this.handleSubmit.bind(this)} type="submit">Continuar</button>
       </div>
 		)
 	}
@@ -111,7 +135,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const ScheduleCitizen = connect(
+const ScheduleFinish = connect(
   mapStateToProps
-)(getScheduleCitizen)
-export default ScheduleCitizen 
+)(getScheduleFinish)
+export default ScheduleFinish
