@@ -33,7 +33,16 @@ class getScheduleFinish extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       self.setState({ schedule: resp })
-    });
+    }).catch(({errors}) => {
+      if(errors) {
+        console.log(errors)
+        let full_error_msg = "";
+        errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+        browserHistory.push(`citizens/${this.props.params.citizen_id}/schedules/schedule`)
+        Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+        throw errors;
+      }
+    })
   }
 
   componentDidUpdate() {
@@ -47,9 +56,16 @@ class getScheduleFinish extends Component {
           "Content-Type": "application/json" },
           method: "put",
       }).then(parseResponse).then(resp => {
-        console.log(resp)
-        browserHistory.push(`/citizens/schedules`)
-      });
+        browserHistory.push(`citizens/schedules`)
+        Materialize.toast("Agendamento criado com sucesso", 10000, "green",function(){$("#toast-container").remove()});
+      }).catch(({errors}) => {
+        if(errors) {
+          let full_error_msg = "";
+          errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+          Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+          throw errors;
+        }
+      })
       this.setState({ confirm: 0 })
     }
   }
@@ -113,7 +129,7 @@ class getScheduleFinish extends Component {
 	confirmButton() {
 		return (
 			<div className="card-action">
-				<a className='back-bt waves-effect btn-flat' onClick={() => this.prev} > Voltar </a>
+				<a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
 				<button className="waves-effect btn right" name="commit" onClick={this.handleSubmit.bind(this)} type="submit">Continuar</button>
       </div>
 		)
