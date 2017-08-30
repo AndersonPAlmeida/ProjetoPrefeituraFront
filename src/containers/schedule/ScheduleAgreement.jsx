@@ -50,7 +50,7 @@ class getScheduleAgreement extends Component {
     return (
       <div className="card-action">
         <button className="btn waves-effect btn" name="anterior" type="submit">Não concordo</button>
-        <button onClick={() =>browserHistory.push(`/citizens/${this.props.user.citizen.id}/schedules/schedule`)} className="waves-effect btn right" name="commit" type="submit">Concordar e continuar</button>
+        <button onClick={() =>browserHistory.push(`/citizens/${this.props.user.citizen.id}/schedules/choose`)} className="waves-effect btn right" name="commit" type="submit">Concordar e continuar</button>
         </div>
     )
   }

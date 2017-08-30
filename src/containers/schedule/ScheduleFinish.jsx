@@ -91,6 +91,11 @@ class getScheduleFinish extends Component {
                 {time}
               </p>
 
+              <p>
+                <b> Observações*: </b>
+              </p>
+              <textarea id='obs_agendamento' className='materialize-textarea' maxlength='140'></textarea>
+              
             </div>
             {this.confirmButton()}
         </div>

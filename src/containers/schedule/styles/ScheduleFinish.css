@@ -7,3 +7,7 @@
 	font-family: 'Roboto', 'Arial';
 	font-size: 13px;
 }
+
+#obs_agendamento {
+	width: 300px;
+}

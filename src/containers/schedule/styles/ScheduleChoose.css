@@ -1,0 +1,10 @@
+.collection-item {
+	font-family: 'Roboto', 'Arial';
+	font-size: 13px;
+}
+
+.collection-item a {
+	color: #1e4e79;
+	font-family: 'Roboto', 'Arial';
+	font-size: 13px;
+}
