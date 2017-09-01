@@ -21,8 +21,8 @@ class getScheduleChoose extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.params.citizen_id}/dependants`;
-    const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.user.citizen.id}`
+    const collection = `citizens/${this.props.params.citizen_id}/schedule_options`;
+    const params = `permission=${this.props.user.current_role}`
     
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -30,8 +30,8 @@ class getScheduleChoose extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
+      resp.shift()
       self.setState({ dependants: resp })
-      console.log(resp)
     });
   }
 
@@ -56,7 +56,7 @@ class getScheduleChoose extends Component {
   agreeButton() {
     return (
       <div className="card-action">
-        <a className='back-bt waves-effect btn-flat'> Voltar </a>
+        <a className='back-bt waves-effect btn-flat' onClick={this.prev} > Voltar </a>
       </div>
     )
   }
@@ -77,7 +77,7 @@ class getScheduleChoose extends Component {
         <img 
           className="material-icons circle right" 
           src={UserImg} />
-        <span className="title"><a href=""> {this.props.user.citizen.name} </a></span>
+        <span className="title"><a href="" onClick={() =>browserHistory.push(`/citizens/${current_citizen.id}/schedules/schedule`)} > {current_citizen.name} </a></span>
         <p>Data de nascimento: {date}
         </p>
         <p>
@@ -85,6 +85,10 @@ class getScheduleChoose extends Component {
         </p>
       </li>
     )
+  }
+
+  prev() {
+    browserHistory.push("citizens/schedules/agreement")
   }
 
   addZeroBefore(n) {
@@ -108,7 +112,7 @@ class getScheduleChoose extends Component {
             <img 
               className="material-icons circle right" 
               src={UserImg} />
-            <span className="title"><a href="">{dependant.name}</a></span>
+            <span className="title"><a href="" onClick={() =>browserHistory.push(`/citizens/${dependant.id}/schedules/schedule`)} >{dependant.name}</a></span>
             <p>Data de nascimento: {date}<br></br>
               RG: {this.formatRG(dependant.rg)}
             </p>
