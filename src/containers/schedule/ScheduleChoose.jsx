@@ -9,11 +9,30 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response"
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 
-class ScheduleChoose extends Component {
+class getScheduleChoose extends Component {
 
   constructor(props) {
       super(props)
+      this.state = {
+          dependants: []
+      };
+  }
 
+  componentDidMount() {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `citizens/${this.props.params.citizen_id}/dependants`;
+    const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.user.citizen.id}`
+    
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get",
+    }).then(parseResponse).then(resp => {
+      self.setState({ dependants: resp })
+      console.log(resp)
+    });
   }
 
   mainComponent() {
@@ -25,9 +44,9 @@ class ScheduleChoose extends Component {
               {this.scheduleCitizen()}
             </ul>
             <br></br>
-            <ul className="collection">
-              {this.scheduleCitizen()}
-            </ul>
+            
+              {this.scheduleDependants()}
+            
           </div>
           {this.agreeButton()}
       </div>
@@ -38,39 +57,69 @@ class ScheduleChoose extends Component {
     return (
       <div className="card-action">
         <a className='back-bt waves-effect btn-flat'> Voltar </a>
-        <button onClick={() =>browserHistory.push(`/citizens/${this.props.user.citizen.id}/schedules/schedule`)} className="waves-effect btn right" name="commit" type="submit">Continuar</button>
       </div>
     )
   }
 
+  formatCPF(n) {
+    n = n.replace(/\D/g,"");
+    n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
+    return (n);
+  }
+
   scheduleCitizen() {
+    var current_citizen = this.props.user.citizen
+    var d, date;
+    d = new Date(current_citizen.birth_date)
+    date = this.addZeroBefore(d.getDate()) + "/" + this.addZeroBefore(d.getMonth()+1) + "/" + this.addZeroBefore(d.getFullYear())
     return (
       <li className="collection-item avatar">
         <img 
           className="material-icons circle right" 
           src={UserImg} />
-        <span className="title"><a href="">Alan Martins de Souza</a></span>
-        <p>Data de nascimento: 
-          01/01/1993
+        <span className="title"><a href=""> {this.props.user.citizen.name} </a></span>
+        <p>Data de nascimento: {date}
         </p>
         <p>
-          CPF: 
-          306.889.437-99
+          CPF: {this.formatCPF(current_citizen.cpf)}
         </p>
       </li>
     )
   }
 
-  scheduleDependents() {
+  addZeroBefore(n) {
+    return (n < 10 ? '0' : '') + n;
+  }
+
+  formatRG(n) {
+    n = n.replace(/\D/g,"");
+    n = n.replace(/(\d{2})(\d{3})(\d{3})(\d{1})$/,"$1.$2.$3-$4");
+    return (n);
+  }
+
+  scheduleDependants() {
+    var d, date;
+    const listDependants = (
+      this.state.dependants.map((dependant) => {
+        d = new Date(dependant.birth_date)
+        date = this.addZeroBefore(d.getDate()) + "/" + this.addZeroBefore(d.getMonth()+1) + "/" + this.addZeroBefore(d.getFullYear())
+        return (
+          <li className="collection-item avatar">
+            <img 
+              className="material-icons circle right" 
+              src={UserImg} />
+            <span className="title"><a href="">{dependant.name}</a></span>
+            <p>Data de nascimento: {date}<br></br>
+              RG: {this.formatRG(dependant.rg)}
+            </p>
+          </li>
+        )
+      })
+    )
     return (
-      <li className="collection-item avatar">
-        <span className="title"><a href="">Alan Martins de Souza</a></span>
-        <p>Data de nascimento: 
-          01/01/1993<br></br>
-          CPF: 
-          306.889.437-99
-        </p>
-      </li>
+      <ul className="collection">
+        {listDependants}
+      </ul>
     )
   }
 
@@ -91,4 +140,13 @@ class ScheduleChoose extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  const user = state.get('user').getIn(['userInfo'])
+  return {
+    user
+  }
+}
+const ScheduleChoose = connect(
+  mapStateToProps
+)(getScheduleChoose)
 export default ScheduleChoose
