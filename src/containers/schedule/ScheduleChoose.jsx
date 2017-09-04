@@ -56,7 +56,7 @@ class getScheduleChoose extends Component {
   agreeButton() {
     return (
       <div className="card-action">
-        <a className='back-bt waves-effect btn-flat' onClick={this.prev} > Voltar </a>
+        <a className='back-bt waves-effect btn-flat' href='#' onClick={this.prev} > Voltar </a>
       </div>
     )
   }
@@ -77,7 +77,7 @@ class getScheduleChoose extends Component {
         <img 
           className="material-icons circle right" 
           src={UserImg} />
-        <span className="title"><a href="" onClick={() =>browserHistory.push(`/citizens/${current_citizen.id}/schedules/schedule`)} > {current_citizen.name} </a></span>
+        <span className="title"><a href='#' onClick={() =>browserHistory.push(`/citizens/${current_citizen.id}/schedules/schedule`)} > {current_citizen.name} </a></span>
         <p>Data de nascimento: {date}
         </p>
         <p>
@@ -112,7 +112,7 @@ class getScheduleChoose extends Component {
             <img 
               className="material-icons circle right" 
               src={UserImg} />
-            <span className="title"><a href="" onClick={() =>browserHistory.push(`/citizens/${dependant.id}/schedules/schedule`)} >{dependant.name}</a></span>
+            <span className="title"><a href='#' onClick={() =>browserHistory.push(`/citizens/${dependant.id}/schedules/schedule`)} >{dependant.name}</a></span>
             <p>Data de nascimento: {date}<br></br>
               RG: {this.formatRG(dependant.rg)}
             </p>

@@ -333,7 +333,7 @@ class getScheduleCitizen extends Component {
 	confirmButton() {
 		return (
 			<div className="card-action">
-				<a className='back-bt waves-effect btn-flat' onClick={this.prev}> Voltar </a>
+				<a className='back-bt waves-effect btn-flat' href='#' onClick={this.prev}> Voltar </a>
 				<button className="waves-effect btn right" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">Continuar</button>
       </div>
 		)
