@@ -61,7 +61,7 @@ class getMenu extends Component {
     return (
       <div className='body-div'> 
         <Navbar className= 'nav-bar container nav-component' right 
-          brand={ <img className='nav-logo' src={LogoImage} /> }>
+          brand={ <img className='nav-logo' src={LogoImage} /> } href="#">
           <a className="right black-text logout-icon modal-trigger" title="Sair" data-target="">
             <i className="material-icons">exit_to_app</i>
           </a>
