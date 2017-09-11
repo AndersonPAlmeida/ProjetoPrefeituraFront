@@ -10,3 +10,4 @@ export ScheduleAgreement from './schedule/ScheduleAgreement';
 export ScheduleChoose from './schedule/ScheduleChoose';
 export ScheduleCitizen from './schedule/ScheduleCitizen';
 export ScheduleFinish from './schedule/ScheduleFinish';
+export DependantList from './dependant/DependantList';

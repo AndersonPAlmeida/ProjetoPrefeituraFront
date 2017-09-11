@@ -5,7 +5,9 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule, 
-         ChooseRole, ScheduleAgreement, ScheduleChoose, ScheduleCitizen, ScheduleFinish } from './containers';
+         ChooseRole, ScheduleAgreement, ScheduleChoose, ScheduleCitizen, ScheduleFinish,
+         DependantList
+       } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware, routerActions } from 'react-router-redux';
@@ -75,6 +77,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="citizens/:citizen_id/schedules/choose" component={UserIsAuthenticated(ScheduleChoose)} />
         <Route path="citizens/:citizen_id/schedules/schedule" component={UserIsAuthenticated(ScheduleCitizen)} />
         <Route path="citizens/:citizen_id/schedules/:schedule_id/finish" component={UserIsAuthenticated(ScheduleFinish)} />
+        <Route path="dependants" component={UserIsAuthenticated(DependantList)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

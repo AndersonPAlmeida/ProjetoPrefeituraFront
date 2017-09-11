@@ -1,0 +1,69 @@
+.sector-select {
+	width: 100% !important;
+	margin-bottom: 0 !important;
+}
+
+.sector-select .input-field {
+	margin-top: 0 !important;
+}
+
+.select-field {
+	font-size: 13px;
+	font-family: 'Roboto', 'Arial';
+}
+
+.DayPicker-Day {
+	height: 39px;
+	width: 39px;
+}
+
+.DayPicker-Day--available {
+	background-color: #92BF23;
+	border-radius: 30px;
+}
+
+.DayPicker-Day--disabled {
+	border-radius: 1px !important;
+	background-color: #eff1f1 !important;
+}
+
+.DayPicker-wrapper {
+	padding: 0 !important;
+}
+
+.DayPicker-Month {
+	margin: 0 !important;
+}
+
+.DayPicker-Weekdays {
+	background-color: #92BF23;
+}
+
+.DayPicker-Weekday {
+	color: white !important;
+}
+
+.DayPicker-Caption {
+	background-color: #92BF23;
+	color: white;
+	height: 69px !important;
+}
+
+.DayPicker-Caption div {
+	padding-top: 8%;
+	font-size: 15px;
+	font-family: 'Roboto', 'Arial';
+}
+
+.DayPicker-NavButton--next {
+	margin-top: 5px;
+}
+
+.DayPicker-NavButton--prev {
+	margin-top: 5px;
+}
+
+.calendar-panel {
+	margin: .75rem;
+	padding: 0 !important;
+}
