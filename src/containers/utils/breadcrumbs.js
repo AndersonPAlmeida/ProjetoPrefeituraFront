@@ -1,10 +1,11 @@
 const breadcrumbs_hash = 
 { 
-  "pageone": [ 
-                { "name": "Home", "link": "/" }, 
-                { "name": "Page One", "link": "/pageone" } 
+  "example_path": [ 
+                { "name": "example", "link": "/" }, 
+                { "name": "example2", "link": "/citizens/schedules" } 
              ]
 }
+
 export const getBreadcrumbs = (bc_key) =>
 {
   if(breadcrumbs_hash[bc_key] != null)

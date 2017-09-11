@@ -1,12 +1,9 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, NavItem, Navbar } from 'react-materialize'
-import styles from './styles/PageOne.css'
-import { port, apiHost, apiPort, apiVer } from '../../../config/env';
-import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
-import {fetch} from "../../redux-auth";
+import styles from './styles/CitizenSchedule.css'
 
-class PageOne extends Component {
+class CitizenSchedule extends Component {
 
 	firstComponent() {
 		return (
@@ -73,16 +70,6 @@ class PageOne extends Component {
 	}
 
   render() {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = 'citizens';
-    fetch(`${apiUrl}/${collection}`, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get",
-    }).then(parseResponse).then(resp => {
-      console.log(resp);
-    });
     return (
       <div> 
 	      <main>
@@ -102,4 +89,4 @@ class PageOne extends Component {
   }
 }
 
-export default PageOne 
+export default CitizenSchedule 

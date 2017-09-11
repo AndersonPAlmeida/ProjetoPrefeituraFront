@@ -11,6 +11,7 @@ const initialState = Immutable.fromJS({
 
 const userReducer = (state = initialState, action) => {
   if (action.type === USER_SIGN_IN) {
+    action.user.current_role = "citizen";
     return state.set('userInfo', action.user);
   }
 

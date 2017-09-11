@@ -7,6 +7,13 @@ import { connect } from 'react-redux'
 import {userUpdate} from "../../actions/user"
 import { browserHistory } from 'react-router';
 
+const role_name = {
+  'citizen': "Cidadão",
+  'responsavel_atendimento': "Responsável Atendimento",
+  'adm_local': "Administrador Local",
+  'adm_prefeitura': "Administrador Prefeitura",
+  'adm_c3sl': "Administrador C3SL"
+}
 class getChooseRole extends Component {
 	firstComponent() {
 		return (
@@ -19,16 +26,16 @@ class getChooseRole extends Component {
 		)
 	}
   
-  handleClick(role) {
-    this.props.dispatch(userUpdate({ 'current_role': role }))
-    browserHistory.push('/pageone')
+  handleClick(selected_role) {
+    this.props.dispatch(userUpdate({ 'current_role': selected_role.id }))
+    browserHistory.push('/citizens/schedules')
   }
 
 	rolesPlaces() {
 		var rolesOptions = [];
 		var iconImg = ProfessionalIcon
 		for (var i in this.props.options) {
-			if (this.props.options[i].id == 'citizen'){
+			if (this.props.options[i].role == 'citizen'){
 				iconImg = CitizenIcon
 			} else {
 				iconImg = ProfessionalIcon
@@ -41,7 +48,7 @@ class getChooseRole extends Component {
 							  <img src={LocalIcon} />
 							</div>
 							<div className="text-chose-role truncate">
-				        {this.props.options[i].city}
+				        {this.props.options[i].city_name}
 				      </div>
 				    </div>
 						<div className="card-content">
@@ -49,7 +56,7 @@ class getChooseRole extends Component {
 								<img src={iconImg} />
 							</div>
 							<div className="text-chose-role truncate">
-				        {this.props.options[i].name}
+				        {role_name[this.props.options[i].role]}
 				      </div>
             </div>
           </li>
@@ -86,10 +93,9 @@ class getChooseRole extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const options = [
-            { 'id': "adm_prefeitura", 'name': "Administrador da Prefeitura", 'city': "Curitiba", 'city_id': 1 },
-            { 'id': "citizen", 'name': "Cidadão", 'city': "São José dos Pinhais", 'city_id': 2 }
-          ];
+  const user = state.get('user').getIn(['userInfo'])
+  const citizen_role = [{ 'id': "citizen", 'role': "citizen", 'city_id': user.citizen.city.id, 'city_name': user.citizen.city.name }] 
+  const options = citizen_role.concat(user.roles)
   return {
     options
   }

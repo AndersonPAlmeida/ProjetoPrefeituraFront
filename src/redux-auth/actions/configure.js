@@ -89,7 +89,7 @@ export function configure(endpoint={}, settings={}) {
 
           if (user) {
             dispatch(authenticateComplete(user));
-            dispatch(userSignIn(user.citizen));
+            dispatch(userSignIn(user));
 
             // do NOT send initial validation request.
             // instead use the credentials that were sent back by the server.
@@ -128,7 +128,7 @@ export function configure(endpoint={}, settings={}) {
     return promise
       .then(user => {
         dispatch(authenticateComplete(user));
-        dispatch(userSignIn(user.citizen));
+        dispatch(userSignIn(user));
 
         if (firstTimeLogin) {
           dispatch(showFirstTimeLoginSuccessModal());

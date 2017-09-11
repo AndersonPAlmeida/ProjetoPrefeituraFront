@@ -4,7 +4,10 @@ import { Provider } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
-import { App, Home, NotFound, Login, Register, RegisterCep, PageOne, ChooseRole } from './containers';
+import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule, 
+         ChooseRole, ScheduleAgreement, ScheduleChoose, ScheduleCitizen, ScheduleFinish,
+         DependantList
+       } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware, routerActions } from 'react-router-redux';
@@ -58,7 +61,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   const UserIsNotAuthenticated = UserAuthWrapper({
     authSelector: (state)  => { return (!(state.get('auth').getIn(['user','isSignedIn'])) ? { 'authentication' : true } : null ) },
     redirectAction: routerActions.replace, 
-    failureRedirectPath: '/pageone',
+    failureRedirectPath: '/citizens/schedules',
     wrapperDisplayName: 'UserIsNotAuthenticated' 
   })
   const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState);
@@ -68,8 +71,13 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <IndexRoute component={UserIsNotAuthenticated(Login)} />
         <Route path="signup" component={UserIsNotAuthenticated(RegisterCep)} />
         <Route path="signup2" component={UserIsNotAuthenticated(Register)} />
-        <Route path="pageone" component={UserIsAuthenticated(PageOne)} />
+        <Route path="citizens/schedules" component={UserIsAuthenticated(CitizenSchedule)} />
         <Route path="choose_role" component={UserIsAuthenticated(ChooseRole)} />
+        <Route path="citizens/schedules/agreement" component={UserIsAuthenticated(ScheduleAgreement)} />
+        <Route path="citizens/:citizen_id/schedules/choose" component={UserIsAuthenticated(ScheduleChoose)} />
+        <Route path="citizens/:citizen_id/schedules/schedule" component={UserIsAuthenticated(ScheduleCitizen)} />
+        <Route path="citizens/:citizen_id/schedules/:schedule_id/finish" component={UserIsAuthenticated(ScheduleFinish)} />
+        <Route path="dependants" component={UserIsAuthenticated(DependantList)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>
