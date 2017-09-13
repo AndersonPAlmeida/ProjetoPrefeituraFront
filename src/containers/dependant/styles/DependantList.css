@@ -12,58 +12,43 @@
 	font-family: 'Roboto', 'Arial';
 }
 
-.DayPicker-Day {
-	height: 39px;
-	width: 39px;
+.table-list th {
+	text-align: center;
 }
 
-.DayPicker-Day--available {
-	background-color: #92BF23;
-	border-radius: 30px;
-}
-
-.DayPicker-Day--disabled {
-	border-radius: 1px !important;
-	background-color: #eff1f1 !important;
-}
-
-.DayPicker-wrapper {
-	padding: 0 !important;
-}
-
-.DayPicker-Month {
-	margin: 0 !important;
-}
-
-.DayPicker-Weekdays {
-	background-color: #92BF23;
-}
-
-.DayPicker-Weekday {
-	color: white !important;
-}
-
-.DayPicker-Caption {
-	background-color: #92BF23;
-	color: white;
-	height: 69px !important;
-}
-
-.DayPicker-Caption div {
-	padding-top: 8%;
-	font-size: 15px;
+.table-list thead {
+	background-color: #92bf23;
+	border-bottom: 1px solid #d0d0d0;
 	font-family: 'Roboto', 'Arial';
+	font-size: 13px;
+	border-radius: 3px;
 }
 
-.DayPicker-NavButton--next {
-	margin-top: 5px;
+.table-list tbody tr:nth-child(odd) {
+	background-color: #f2f2f2;
 }
 
-.DayPicker-NavButton--prev {
-	margin-top: 5px;
+.table-list td {
+	text-align: center;
 }
 
-.calendar-panel {
-	margin: .75rem;
-	padding: 0 !important;
+.button-color {
+	background-color: #92bf23;
+	color: black;
+}
+
+.record-count {
+	display: none;
+}
+
+.filter-container {
+	width: 300px;
+}
+
+.header-row {
+	float: left;
+}
+
+.clear-filter {
+	display: none;
 }

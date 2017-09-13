@@ -2,21 +2,32 @@ import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
 import styles from './styles/DependantList.css'
-import DayPicker, { DateUtils } from 'react-day-picker'
 import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
+import FilterableTable from 'react-filterable-table';
 
-const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julia', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-const WEEKDAYS_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
 
-function addZeroBefore(n) {
-  return (n < 10 ? '0' : '') + n;
-}
+// Data for the table to display; can be anything
+  const data = [
+      { name: "Steve", birth: "09/01/2004", cpf: "Não informado",
+        edit: <i className="waves-effect material-icons tooltipped">edit</i> },
+      { name: "Gary", birth: "09/01/2004", cpf: "142.865.868-80",
+        edit: <i className="waves-effect material-icons tooltipped">edit</i> },
+      { name: "Greg", birth: "09/01/2014", cpf: "Não informado", 
+        edit: <i className="waves-effect material-icons tooltipped">edit</i> }
+  ];
+
+  // Fields to show in the table, and what object properties in the data they bind to
+  const fields = [
+      { name: 'name', displayName: "Nome", inputFilterable: true, sortable: true },
+      { name: 'birth', displayName: "Data de Nascimento", inputFilterable: true, exactFilterable: true, sortable: true },
+      { name: 'cpf', displayName: "CPF", inputFilterable: true, exactFilterable: true, sortable: true },
+      { name: 'edit', displayName: "" }
+  ];
 
 class getDependantList extends Component {
   constructor(props) {
@@ -41,6 +52,38 @@ class getDependantList extends Component {
     });
   }
 
+  mainComponent() {
+    return (
+      <div className='card'>
+        <div className='card-content'>
+          <h2 className='card-title h2-title-home'> Dependente </h2>
+          {this.tableList()}
+        </div>
+        <div className="card-action">
+          {this.newDependantButton()}
+        </div>
+      </div>
+      )
+  }
+
+  tableList() {
+    return (
+      <FilterableTable
+            namespace="People"
+            initialSort="name"
+            data={data}
+            fields={fields}
+            noRecordsMessage="Nenhum registro a ser mostrado!"
+            noFilteredRecordsMessage="Nenhum registro encontrado!"
+            topPagerVisible={false}
+            bottomPagerVisible={false}
+            tableClassName='table-list'
+            className='table-div'
+        />
+      )
+  }
+  
+
 	showList() {
     const dependantList = (
       this.state.dependants.map((dependant) => {
@@ -63,11 +106,9 @@ class getDependantList extends Component {
     browserHistory.push("citizens/schedules/agreement")
   }
 
-	confirmButton() {
+	newDependantButton() {
 		return (
-			<div className="card-action">
-				<a className='back-bt waves-effect btn-flat' href='#' onClick={this.prev}> Voltar </a>
-      </div>
+			<button onClick={() =>browserHistory.push(`/citizens`)} className="btn waves-effect btn button-color" name="anterior" type="submit">CADASTRAR NOVO DEPENDENTE</button>
 		)
 	}
 
@@ -77,7 +118,7 @@ class getDependantList extends Component {
       	<Row>
 	        <Col s={12}>
 		      	<div>
-		      		{this.showList()}
+		      		{this.mainComponent()}
 		      	</div>
 	      	</Col>
 	    </Row>
