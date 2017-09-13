@@ -45,7 +45,10 @@ class getDependantList extends Component {
     const dependantList = (
       this.state.dependants.map((dependant) => {
         return (
-          <div>{dependant.name}</div>
+          <div>
+            {dependant.name} 
+            <a className='back-bt waves-effect btn-flat' href='#' onClick={ () => browserHistory.push(`/dependants/${dependant.id}/edit`) }> Editar </a>
+          </div>
         )
       })
     )
