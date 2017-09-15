@@ -127,31 +127,75 @@ class getDependantEdit extends Component {
       <main>
       	<Row>
 	        <Col s={12}>
-		      	<div>
+            <div>
               <label>
-                Nome:
+                Nome*:
                 <input type="text" name="name" value={this.state.dependant.name} onChange={this.handleInputChange} />
               </label>
               <label>
-                CEP:
-                <input type="text" name="cep" value={this.state.dependant.cep} onChange={this.handleInputChange} />
+                Data de nascimento*:
+                <input type="text" name="birth_date" value={this.state.dependant.birth_date} onChange={this.handleInputChange} />
+              </label>
+              <label>
+                Possui algum tipo de deficiência:
+                <input type="text" name="pcd" value={this.state.dependant.pcd} onChange={this.handleInputChange} />
               </label>
               <label>
                 CPF:
                 <input type="text" name="cpf" value={this.state.dependant.cpf} onChange={this.handleInputChange} />
               </label>
               <label>
-                Email:
-                <input type="text" name="email" value={this.state.dependant.email} onChange={this.handleInputChange} />
-              </label>
-              <label>
                 RG:
                 <input type="text" name="rg" value={this.state.dependant.rg} onChange={this.handleInputChange} />
               </label>
-		      	</div>
-	      	</Col>
-	    </Row>
-	  </main>
+              <label>
+                CEP:
+                <input type="text" name="cep" value={this.state.dependant.cep} onChange={this.handleInputChange} />
+              </label>
+              <label>
+                Estado do endereço:
+                <input type="text" name="address_state" value={this.state.dependant.address_state} onChange={this.handleInputChange} />
+              </label>
+              <label>
+                Munícipio:
+                <input type="text" name="city" value={this.state.dependant.city} onChange={this.handleInputChange} />
+              </label>
+              <label>
+                Bairro:
+                <input type="text" name="address_neighborhood" value={this.state.dependant.address_neighborhood} onChange={this.handleInputChange} />
+              </label>
+              <label>
+                Endereço:
+                <input type="text" name="address_street" value={this.state.dependant.address_street} onChange={this.handleInputChange} />
+              </label>
+              <label>
+                Número:
+                <input type="text" name="address_number" value={this.state.dependant.address_number} onChange={this.handleInputChange} />
+              </label>
+              <label>
+                Complemento:
+                <input type="text" name="address_complement" value={this.state.dependant.address_complement} onChange={this.handleInputChange} />
+              </label>
+              <label>
+                Telefone 1:
+                <input type="text" name="phone1" value={this.state.dependant.phone1} onChange={this.handleInputChange} />
+              </label>
+              <label>
+                Telefone 2:
+                <input type="text" name="phone2" value={this.state.dependant.phone2} onChange={this.handleInputChange} />
+              </label>
+              <label>
+                E-mail:
+                <input type="text" name="email" value={this.state.dependant.email} onChange={this.handleInputChange} />
+              </label>
+              <label>
+                Observações:
+                <input type="text" name="note" value={this.state.dependant.note} onChange={this.handleInputChange} />
+              </label>
+            </div>
+          </Col>
+        </Row>
+      </main>
     )
   }
 }
