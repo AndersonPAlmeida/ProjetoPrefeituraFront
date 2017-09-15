@@ -52,7 +52,7 @@ class getDependantList extends Component {
     const data = (
       this.state.dependants.map((dependant) => {
         return (
-          { name: dependant.name, birth: dependant.birth_date, cpf: dependant.cpf, edit: <a className='back-bt waves-effect btn-flat' href='#' onClick={ () => browserHistory.push(`/dependants/${dependant.id}/edit`) }><i className="waves-effect material-icons tooltipped">edit</i></a> }
+          { name: <a className='back-bt waves-effect btn-flat' href='#' onClick={ () => browserHistory.push(`/dependants/${dependant.id}`) }>{dependant.name}</a>, birth: dependant.birth_date, cpf: dependant.cpf, edit: <a className='back-bt waves-effect btn-flat' href='#' onClick={ () => browserHistory.push(`/dependants/${dependant.id}/edit`) }><i className="waves-effect material-icons tooltipped">edit</i></a> }
         )
       })
     )
