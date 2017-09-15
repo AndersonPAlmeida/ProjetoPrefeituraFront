@@ -11,24 +11,6 @@ import { browserHistory } from 'react-router';
 import FilterableTable from 'react-filterable-table';
 
 
-// Data for the table to display; can be anything
-  const data = [
-      { name: "Steve", birth: "09/01/2004", cpf: "Não informado",
-        edit: <i className="waves-effect material-icons tooltipped">edit</i> },
-      { name: "Gary", birth: "09/01/2004", cpf: "142.865.868-80",
-        edit: <i className="waves-effect material-icons tooltipped">edit</i> },
-      { name: "Greg", birth: "09/01/2014", cpf: "Não informado", 
-        edit: <i className="waves-effect material-icons tooltipped">edit</i> }
-  ];
-
-  // Fields to show in the table, and what object properties in the data they bind to
-  const fields = [
-      { name: 'name', displayName: "Nome", inputFilterable: true, sortable: true },
-      { name: 'birth', displayName: "Data de Nascimento", inputFilterable: true, exactFilterable: true, sortable: true },
-      { name: 'cpf', displayName: "CPF", inputFilterable: true, exactFilterable: true, sortable: true },
-      { name: 'edit', displayName: "" }
-  ];
-
 class getDependantList extends Component {
   constructor(props) {
       super(props)
@@ -66,39 +48,36 @@ class getDependantList extends Component {
       )
   }
 
-  tableList() {
-    return (
-      <FilterableTable
-            namespace="People"
-            initialSort="name"
-            data={data}
-            fields={fields}
-            noRecordsMessage="Nenhum registro a ser mostrado!"
-            noFilteredRecordsMessage="Nenhum registro encontrado!"
-            topPagerVisible={false}
-            bottomPagerVisible={false}
-            tableClassName='table-list'
-            className='table-div'
-        />
-      )
-  }
-  
-
-	showList() {
-    const dependantList = (
+	tableList() {
+    const data = (
       this.state.dependants.map((dependant) => {
         return (
-          <div>{dependant.name}</div>
+          { name: dependant.name, birth: dependant.birth_date, cpf: dependant.cpf, edit: <a className='back-bt waves-effect btn-flat' href='#' onClick={ () => browserHistory.push(`/dependants/${dependant.id}/edit`) }><i className="waves-effect material-icons tooltipped">edit</i></a> }
         )
       })
     )
-		return (
-			<div className='select-field'>
-				<b>Dependentes:</b>
-				<div>
-          {dependantList}
-				</div>
-      </div>
+
+    // Fields to show in the table, and what object properties in the data they bind to
+    const fields = [
+        { name: 'name', displayName: "Nome", inputFilterable: true, sortable: true },
+        { name: 'birth', displayName: "Data de Nascimento", inputFilterable: true, exactFilterable: true, sortable: true },
+        { name: 'cpf', displayName: "CPF", inputFilterable: true, exactFilterable: true, sortable: true },
+        { name: 'edit', displayName: "" }
+    ];
+
+    return (
+      <FilterableTable
+        namespace="People"
+        initialSort="name"
+        data={data}
+        fields={fields}
+        noRecordsMessage="Nenhum registro a ser mostrado!"
+        noFilteredRecordsMessage="Nenhum registro encontrado!"
+        topPagerVisible={false}
+        bottomPagerVisible={false}
+        tableClassName='table-list'
+        className='table-div'
+      />
     )
 	}
 
