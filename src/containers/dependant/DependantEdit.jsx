@@ -56,8 +56,10 @@ class getDependantEdit extends Component {
           id: '',
           name: ''
         }
-      }
-    }
+      },
+      check: false
+    };
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
@@ -158,6 +160,10 @@ class getDependantEdit extends Component {
     browserHistory.push(`/dependants`)
   }
 
+  handleChange(event){
+    this.setState({check: event.target.value})
+  }
+
   prev() {
     browserHistory.push(`/dependants`)
   }
@@ -190,29 +196,36 @@ class getDependantEdit extends Component {
                           />
                         </div>
                     </div>
-                    <div>
+                    <div className="field-input" >
                       <h6>Nome*:</h6>
                       <label>
                         <input type="text" name="name" className='input-field' value={this.state.dependant.name} onChange={this.handleInputChange} />
                       </label>
                     </div>
-                    <div >
+                    <div className="field-input" >
                       <h6>Data de nascimento*:</h6>
                       {this.selectDate()}
                     </div>
-                    <div >
+                    <div className="field-input" >
                       <h6>Possui algum tipo de deficiência:</h6>
-                      <label>
-                        <input type="text" className='input-field' name="pcd" value={this.state.dependant.pcd} onChange={this.handleInputChange} />
-                      </label>
+                      <div className="check-input">
+                        <Input onChange={this.handleChange} s={12} l={12} name='group1' type='radio' value='true' label='Sim' />
+                        <Input onChange={this.handleChange} defaultChecked='true' s={12} l={12} name='group1' type='radio' value='' label='Não' />
+                        { this.state.check ? <div>
+                                              <h6>Qual tipo de deficiência:</h6>
+                                              <label>
+                                                <input type="text" className='input-field' name="cpf" value="" onChange={this.handleInputChange} />
+                                              </label>
+                                            </div> : null }
+                      </div>
                     </div>
-                    <div>
+                    <div className="field-input">
                       <h6>CPF:</h6>
                       <label>
                         <input type="text" className='input-field' name="cpf" value={this.state.dependant.cpf} onChange={this.handleInputChange} />
                       </label>
                     </div>
-                    <div>
+                    <div className="field-input">
                       <h6>RG:</h6>
                       <label>
                         <input type="text" className='input-field' name="rg" value={this.state.dependant.rg} onChange={this.handleInputChange} />
@@ -223,43 +236,43 @@ class getDependantEdit extends Component {
                     <div className='category-title'>
                       <p>Endereço</p>
                     </div>
-                    <div>
+                    <div className="field-input" >
                       <h6>CEP:</h6>
                       <label>
                         <input type="text" className='input-field' name="cep" value={this.state.dependant.cep} onChange={this.handleInputChange} />
                       </label>
                     </div>
-                    <div>
+                    <div className="field-input" >
                       <h6>Estado do endereço:</h6>
                       <label>
                         <input type="text" className='input-field' name="address_state" value={this.state.dependant.address_state} onChange={this.handleInputChange} />
                       </label>
                     </div>
-                    <div>
+                    <div className="field-input" >
                       <h6>Munícipio:</h6>
                       <label>
                         <input type="text" className='input-field' name="city" value={this.state.dependant.city} onChange={this.handleInputChange} />
                       </label>
                     </div>
-                    <div>
+                    <div className="field-input" >
                       <h6>Bairro:</h6>
                       <label>
                         <input type="text" className='input-field' name="address_neighborhood" value={this.state.dependant.address_neighborhood} onChange={this.handleInputChange} />
                       </label>
                     </div>
-                    <div>
+                    <div className="field-input" >
                       <h6>Endereço:</h6>
                       <label>
                         <input type="text" className='input-field' name="address_street" value={this.state.dependant.address_street} onChange={this.handleInputChange} />
                       </label>
                     </div>
-                    <div>
+                    <div className="field-input" >
                       <h6>Número:</h6>
                       <label>
                         <input type="text" className='input-field' name="address_number" value={this.state.dependant.address_number} onChange={this.handleInputChange} />
                       </label>
                     </div>
-                    <div>
+                    <div className="field-input" >
                       <h6>Complemento:</h6>
                       <label>
                         <input type="text" className='input-field' name="address_complement" value={this.state.dependant.address_complement} onChange={this.handleInputChange} />
@@ -268,19 +281,19 @@ class getDependantEdit extends Component {
                     <div className='category-title'>
                       <p>Informações de Contato</p>
                     </div>
-                    <div>
+                    <div className="field-input">
                       <h6>Telefone 1:</h6>
                       <label>
                         <input type="text" className='input-field' name="phone1" value={this.state.dependant.phone1} onChange={this.handleInputChange} />
                       </label>
                     </div>
-                    <div>
+                    <div className="field-input">
                       <h6>Telefone 2:</h6>
                       <label>
                         <input type="text" className='input-field' name="phone2" value={this.state.dependant.phone2} onChange={this.handleInputChange} />
                       </label>
                     </div>
-                    <div>
+                    <div className="field-input">
                       <h6>E-mail:</h6>
                       <label>
                         <input type="text" className='input-field' name="email" value={this.state.dependant.email} onChange={this.handleInputChange} />
