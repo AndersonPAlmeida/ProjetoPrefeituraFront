@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 import { UserImg } from '../images';
 import { Input as S_Input } from "./../../redux-auth/views/default/Input"; 
+import update from 'react-addons-update';
 
 class getDependantEdit extends Component {
   constructor(props) {
@@ -17,46 +18,26 @@ class getDependantEdit extends Component {
     this.state = {
       update_address: 0,
       dependant: { 
-        account_id: '',
-        active: '',
         address: {
           address: '',
-          complement: '',
-          complement2: '',
-          id: '',
           neighborhood: '',
           zipcode: ''
         },
         address_complement: '',
         address_number: '',
-        address_street: '',
-        avatar_content_type: '',
-        avatar_file_name: '',
-        avatar_file_size: '',
-        avatar_updated_at: '',
         birth_date: '',
         cep: '',
-        city: {
-          id: '',
-          name: ''
-        },
         cpf: '',
         email: '',
-        id: '',
         name: '',
-        neighborhood: '',
         note: '',
         pcd: '',
         phone1: '',
         phone2: '',
-        responsible_id: '',
         rg: '',
-        state: {
-          abbreviation: '',
-          id: '',
-          name: ''
-        }
       },
+      city_name: '',
+      state_abbreviation: '',
       check: false
     };
     this.handleChange = this.handleChange.bind(this);
@@ -73,29 +54,8 @@ class getDependantEdit extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ dependant: resp.citizen })
+      self.setState({ dependant: resp.citizen, city_name: resp.citizen.city.name, state_abbreviation: resp.citizen.state.abbreviation })
     });
-  }
-
-  componentDidUpdate() {
-    if(this.state.update_address != 0) { 
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-      const collection = 'validate_cep';
-      const params = `permission=${this.props.user.current_role}`
-      var formData = {};
-      formData["cep"] = {};
-      formData["cep"]["number"] = this.state.cep.replace(/(\.|-)/g,'');
-      fetch(`${apiUrl}/${collection}?${params}`, {
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json" },
-        method: "body",
-        body: JSON.stringify(formData)
-      }).then(parseResponse).then(resp => {
-        this.setState({ address: resp })
-        this.setState({ update_address: 0 })
-      }); 
-    }
   }
 
   handleInputChange(event) {
@@ -104,7 +64,7 @@ class getDependantEdit extends Component {
     const name = target.name;
 
     this.setState({
-      dependant: update(this.state.dependant, {name: {$set: value}})
+      dependant: update(this.state.dependant, { [name]: {$set: value} })
     })
   }
 
@@ -155,9 +115,30 @@ class getDependantEdit extends Component {
               )
   }
 
+  updateAddress() {
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'validate_cep';
+    const params = `permission=${this.props.user.current_role}`
+    var formData = {};
+    formData["cep"] = {};
+    formData["cep"]["number"] = this.state.dependant.cep.replace(/(\.|-)/g,'');
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+      method: "post",
+      body: JSON.stringify(formData)
+    }).then(parseResponse).then(resp => {
+      this.setState({ dependant: update(this.state.dependant, {address: {$set: resp}})})
+      this.setState({ city_name: resp.city_name, state_abbreviation: resp.state_name })
+      this.setState({ update_address: 0 })
+    }); 
+  }
+
 
   handleSubmit() {
-    browserHistory.push(`/dependants`)
+    this.updateAddress.bind(this)() 
+    //browserHistory.push(`/dependants`)
   }
 
   handleChange(event){
@@ -199,7 +180,7 @@ class getDependantEdit extends Component {
                     <div className="field-input" >
                       <h6>Nome*:</h6>
                       <label>
-                        <input type="text" name="name" className='input-field' value={this.state.dependant.name} onChange={this.handleInputChange} />
+                        <input type="text" name="name" className='input-field' value={this.state.dependant.name} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div className="field-input" >
@@ -214,7 +195,7 @@ class getDependantEdit extends Component {
                         { this.state.check ? <div>
                                               <h6>Qual tipo de deficiência:</h6>
                                               <label>
-                                                <input type="text" className='input-field' name="cpf" value="" onChange={this.handleInputChange} />
+                                                <input type="text" className='input-field' name="cpf" value="" onChange={this.handleInputChange.bind(this)} />
                                               </label>
                                             </div> : null }
                       </div>
@@ -222,13 +203,13 @@ class getDependantEdit extends Component {
                     <div className="field-input">
                       <h6>CPF:</h6>
                       <label>
-                        <input type="text" className='input-field' name="cpf" value={this.state.dependant.cpf} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="cpf" value={this.state.dependant.cpf} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div className="field-input">
                       <h6>RG:</h6>
                       <label>
-                        <input type="text" className='input-field' name="rg" value={this.state.dependant.rg} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="rg" value={this.state.dependant.rg} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                   </Col>
@@ -239,43 +220,43 @@ class getDependantEdit extends Component {
                     <div className="field-input" >
                       <h6>CEP:</h6>
                       <label>
-                        <input type="text" className='input-field' name="cep" value={this.state.dependant.cep} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="cep" value={this.state.dependant.cep} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div className="field-input" >
                       <h6>Estado do endereço:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_state" value={this.state.dependant.address_state} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="address_state" value={this.state.state_abbreviation} />
                       </label>
                     </div>
                     <div className="field-input" >
                       <h6>Munícipio:</h6>
                       <label>
-                        <input type="text" className='input-field' name="city" value={this.state.dependant.city} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="city" value={this.state.city_name} />
                       </label>
                     </div>
                     <div className="field-input" >
                       <h6>Bairro:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_neighborhood" value={this.state.dependant.address_neighborhood} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="address_neighborhood" value={this.state.dependant.address.neighborhood} />
                       </label>
                     </div>
                     <div className="field-input" >
                       <h6>Endereço:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_street" value={this.state.dependant.address_street} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="address_street" value={this.state.dependant.address.address} />
                       </label>
                     </div>
                     <div className="field-input" >
                       <h6>Número:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_number" value={this.state.dependant.address_number} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="address_number" value={this.state.dependant.address_number} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div className="field-input" >
                       <h6>Complemento:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_complement" value={this.state.dependant.address_complement} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="address_complement" value={this.state.dependant.address_complement} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div className='category-title'>
@@ -284,25 +265,25 @@ class getDependantEdit extends Component {
                     <div className="field-input">
                       <h6>Telefone 1:</h6>
                       <label>
-                        <input type="text" className='input-field' name="phone1" value={this.state.dependant.phone1} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="phone1" value={this.state.dependant.phone1} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div className="field-input">
                       <h6>Telefone 2:</h6>
                       <label>
-                        <input type="text" className='input-field' name="phone2" value={this.state.dependant.phone2} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="phone2" value={this.state.dependant.phone2} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div className="field-input">
                       <h6>E-mail:</h6>
                       <label>
-                        <input type="text" className='input-field' name="email" value={this.state.dependant.email} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="email" value={this.state.dependant.email} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div>
                       <h6>Observações:</h6>
                       <label>
-                        <input type="text" className='input-field' name="note" value={this.state.dependant.note} onChange={this.handleInputChange} />
+                        <input type="text" className='input-field' name="note" value={this.state.dependant.note} onChange={this.handleInputChange.bind(this)} />
                       </label>
                   </div></
                   Col>

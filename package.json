@@ -47,6 +47,7 @@
     "query-string": "^4.3.1",
     "rc-dialog": "^6.5.6",
     "react": "^15.6.1",
+    "react-addons-update": "^15.6.0",
     "react-day-picker": "^6.1.0",
     "react-dom": "15.6.1",
     "react-filterable-table": "^0.2.9",
