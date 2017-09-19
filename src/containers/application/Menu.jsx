@@ -12,7 +12,8 @@ class getMenu extends Component {
     super(props);
   }
 
-  handleClick(path) {
+  handleClick(path, e) {
+    e.preventDefault();
     browserHistory.push(path)
   }
 
@@ -23,7 +24,7 @@ class getMenu extends Component {
       if (props[i].rolldown) {
         for (var j in props[i].fields){
           navDropDown.push(
-            <NavItem key={(props[i].fields[j].link)+i+j} className={styles['nav-item-li']} onClick={this.handleClick.bind(this, props[i].fields[j].link)}>{props[i].fields[j].name}</NavItem>
+            <NavItem key={(props[i].fields[j].link)+i+j} className={styles['nav-item-li']} href="#" onClick={this.handleClick.bind(this, props[i].fields[j].link)}>{props[i].fields[j].name}</NavItem>
           )
           if(props[i].fields[j].separator){
             navDropDown.push(<NavItem key={"sep"+i+j}divider />)
@@ -50,7 +51,7 @@ class getMenu extends Component {
       }
       else { 
         navOptions.push(
-          <NavItem key={(props[i].link)+i+j} className={styles['nav-item']} onClick={this.handleClick.bind(this, props[i].link)}> {props[i].name} </NavItem>
+          <NavItem key={(props[i].link)+i+j} className={styles['nav-item']} href="#" onClick={this.handleClick.bind(this, props[i].link)}>{props[i].name}</NavItem>
         );
       }
     }
