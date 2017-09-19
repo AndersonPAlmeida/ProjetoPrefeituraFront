@@ -1,204 +1,102 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/ScheduleCitizen.css'
-import DayPicker, { DateUtils } from 'react-day-picker'
+import styles from './styles/DependantEdit.css'
 import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
+import { UserImg } from '../images';
+import { Input as S_Input } from "./../../redux-auth/views/default/Input"; 
 
-const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julia', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-const WEEKDAYS_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
-
-function addZeroBefore(n) {
-  return (n < 10 ? '0' : '') + n;
-}
-
-class getScheduleCitizen extends Component {
+class getDependantEdit extends Component {
   constructor(props) {
-      super(props)
-      var today = new Date()
-      var today_3months = new Date()
-      today_3months.setMonth(today_3months.getMonth()+3)
-      this.state = {
-          selected_sector: '0',
-          selected_service_type: '0',
-          selected_service_place: '0',
-          selected_time: '0',
-          update_service_types: 0,
-          update_service_places: 0,
-          update_calendar: 0,
-          update_times: 0,
-          update_schedule: 0,
-          sectors: [],
-          service_types: [],
-          service_places: [],
-          selectedDay: null,
-          disabledDays: [{ after: today_3months, before: today }],
-          available_days: {start_times: [], end_times: []},
-          times: [],
-          schedule_id: null
-      };
+    super(props)
+    this.state = {
+      update_address: 0,
+      dependant: { 
+        account_id: '',
+        active: '',
+        address: {
+          address: '',
+          complement: '',
+          complement2: '',
+          id: '',
+          neighborhood: '',
+          zipcode: ''
+        },
+        address_complement: '',
+        address_number: '',
+        address_street: '',
+        avatar_content_type: '',
+        avatar_file_name: '',
+        avatar_file_size: '',
+        avatar_updated_at: '',
+        birth_date: '',
+        cep: '',
+        city: {
+          id: '',
+          name: ''
+        },
+        cpf: '',
+        email: '',
+        id: '',
+        name: '',
+        neighborhood: '',
+        note: '',
+        pcd: '',
+        phone1: '',
+        phone2: '',
+        responsible_id: '',
+        rg: '',
+        state: {
+          abbreviation: '',
+          id: '',
+          name: ''
+        }
+      },
+      check: false
+    };
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = 'sectors';
-    const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.params.citizen_id}`
+    const collection = `citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`;
+    const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ sectors: resp })
+      self.setState({ dependant: resp.citizen })
     });
   }
 
   componentDidUpdate() {
-    if(this.state.update_service_types != 0) { 
+    if(this.state.update_address != 0) { 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-      const collection = 'service_types';
-      const params = `permission=${this.props.user.current_role}&schedule=true&citizen_id=${this.props.params.citizen_id}&sector_id=${this.state.selected_sector}`
+      const collection = 'validate_cep';
+      const params = `permission=${this.props.user.current_role}`
+      var formData = {};
+      formData["cep"] = {};
+      formData["cep"]["number"] = this.state.cep.replace(/(\.|-)/g,'');
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json" },
-          method: "get",
+        method: "body",
+        body: JSON.stringify(formData)
       }).then(parseResponse).then(resp => {
-        this.setState({ service_types: resp })
-        this.setState({ update_service_types: 0, schedule_id: null })
+        this.setState({ address: resp })
+        this.setState({ update_address: 0 })
       }); 
     }
-
-    if(this.state.update_service_places != 0) { 
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-      const collection = 'service_places';
-      const params = `permission=${this.props.user.current_role}&schedule=true&citizen_id=${this.props.params.citizen_id}&service_type_id=${this.state.selected_service_type}`
-      fetch(`${apiUrl}/${collection}?${params}`, {
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json" },
-          method: "get",
-      }).then(parseResponse).then(resp => {
-        this.setState({ service_places: resp })
-        this.setState({ update_service_places: 0, schedule_id: null })
-      }); 
-    }
-
-    if(this.state.update_calendar != 0) { 
-      const schedules = (this.state.service_places[this.state.selected_service_place-1].schedules)
-      this.state.available_days = {start_times: [], end_times: []}
-      this.state.service_places[this.state.selected_service_place-1].schedules.map((schedule,idx) => {
-        this.state.available_days.start_times[idx] = new Date(schedule.service_start_time);
-        this.state.available_days.end_times[idx] = new Date(schedule.service_end_time);
-      })
-      this.setState({ update_calendar: 0, schedule_id: null  })
-    }
-
-    if(this.state.update_times != 0) { 
-      this.state.times = []
-      if(this.state.selectedDay) {
-        this.state.available_days.start_times.map((time, idx) => {
-          if(time.getDate() == this.state.selectedDay.getDate()) {
-            this.state.times.push(time)
-          }
-        })
-      }
-      this.setState({ update_times: 0, schedule_id: null })
-    }
-
-    if(this.state.update_schedule != 0) { 
-      this.state.schedule_id = null
-      const chosen_date = this.state.times[this.state.selected_time-1].getTime()
-      var schedule_date
-      if(this.state.selected_time) {
-        this.state.service_places[this.state.selected_service_place-1].schedules.map((schedule) => {
-          schedule_date = new Date(schedule.service_start_time).getTime()
-          if(schedule_date == chosen_date) {
-            this.state.schedule_id = schedule.id
-          }
-        })
-      }
-      this.setState({ update_schedule: 0 })
-    }
-
   }
-
-	mainComponent() {
-		return (
-			<div className='card'>
-	          <div className='card-content'>
-	            <h2 className='card-title h2-title-home'> Passo 2 de 3 - Agendamento </h2>
-	            {this.pickSector()}
-	            {this.pickServiceType()}
-	            {this.pickServicePlace()}
-	          	{this.calendarComponent()}
-	          </div>
-	          {this.confirmButton()}
-	    	</div>
-		)
-	}
-
-	handleDayClick = (day, modifiers) => {
-	   if (this.state.selectedDay == day) {
-	      this.setState({ selectedDay: null, update_times: 1 });
-	    } else if(modifiers.available) {
-	      this.setState({ selectedDay: day, update_times: 1 });
-	    }
-	  };
-
-	calendarComponent() {
-    const timeList = (
-      this.state.times.map((time, idx) => {
-        return (
-          <option value={idx+1}>{`${addZeroBefore(time.getHours())}:${addZeroBefore(time.getMinutes())}`}</option>
-        )
-      })
-    )
-		return (
-			<div>
-				<div className='select-field'>
-					<b>4. Escolha o tipo de atendimento:</b>
-					<br></br>
-					<Row>
-						<Col className='card-panel calendar-panel'>
-								<DayPicker
-										enableOutsideDays
-										modifiers={ {
-												available: this.state.available_days.start_times
-											} }
-										locale="pt"
-								        months={MONTHS}
-								        weekdaysLong={WEEKDAYS_LONG}
-								        weekdaysShort={WEEKDAYS_SHORT}
-						          		selectedDays={this.state.selectedDay}
-					          			onDayClick={this.handleDayClick}
-					          			disabledDays={this.state.disabledDays}
-					          		/>
-				        </Col>
-				        <Col>
-				          	<div className='card-panel'>
-					          	<b>Horários disponíveis na data selecionada </b>
-								<br></br>
-				          		<Row className='sector-select'>
-								  <Input name="selected_time" type='select' value={this.state.selected_time} onChange={ (event) => { this.handleInputChange(event); this.setState({ update_schedule: 1 }) } } >
-                    <option value='0' disabled>Escolha o horário</option>
-                    {timeList}
-								  </Input>
-								</Row>
-				          	</div>
-				         </Col>
-				    </Row>
-			    </div>
-			</div>
-          	)
-	}
 
   handleInputChange(event) {
     const target = event.target;
@@ -206,135 +104,75 @@ class getScheduleCitizen extends Component {
     const name = target.name;
 
     this.setState({
-      [name]: value,
-    });
+      dependant: update(this.state.dependant, {name: {$set: value}})
+    })
   }
 
-	pickSector() {
-    const sectorsList = (
-      this.state.sectors.map((sector) => {
-        return (
-          <option value={sector.id}>{sector.name}</option>
-        )
-      })
-    )
-		return (
-			<div className='select-field'>
-				<b>1. Escolha o setor:</b>
-				<br></br>
-				<span>
-				Se um setor está desabilitado é porque você ultrapassou o número máximo de agendamentos permitidos.
-				</span>
-				<div>
-					<Row className='sector-select'>
-					  <Input s={12} l={4} m={12} name="selected_sector" type='select' value={this.state.selected_sector} 
-              onChange={ 
-                (event) => { 
-                  if(event.target.value != this.state.selected_sector) {
-                    this.handleInputChange(event); 
-                    this.setState({ 
-                      update_service_types: 1,
-                      selected_service_type: '0',
-                      selected_service_place: '0',
-                      selectedDay: null,      
-                      times: [],       
-                      available_days: {start_times: [], end_times: []}    
-                    });
-                  }
-                }
-              }
-            >
-              <option value='0' disabled>Escolha o setor</option>
-              {sectorsList}
-					  </Input>
-					</Row>
-				</div>
-      </div>
-    )
-	}
+  selectDate(){ 
+      var optionsDays = []; 
+      optionsDays.push(<option key={0} value="" disabled>Dia</option>);
+      for(var i = 1; i <= 31; i++){
+        optionsDays.push(
+          <option key={i} value={i}>{i}</option>
+        );
+      }
+      var optionsMonths = []
+      optionsMonths.push(<option key={0} value="" disabled>Mês</option>);
+      var months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      for(var i = 0; i < 12; i++){
+        optionsMonths.push(
+          <option key={i+1} value={i+1}>{months[i]}</option>
+        );
+      }
+      var optionsYears = []
+      optionsYears.push(<option key={0} value="" disabled>Ano</option>);
+      var year = new Date().getFullYear()
+      for(var i = 1900; i < year; i++){
+        optionsYears.push(
+          <option key={i-1899} value={i-1899}>{i}</option>
+        );
+      }
+      return (
+            <div>
+              <Input s={12} l={3} type='select'
+              >
+                {optionsDays}
+              </Input>
+            
+              <Input s={12} l={4} type='select'
+                materializeComp={true}
+              >
+                {optionsMonths}
+              </Input>
 
-	pickServiceType() {
-    const serviceTypeList = (
-      this.state.service_types.map((service_type) => {
-        return (
-          <option value={service_type.id}>{service_type.description}</option>
-        )
-      })
-    )
-		return (
-			<div className='select-field'>
-				<b>2. Escolha o tipo de atendimento:</b>
-				<br></br>
-				<div>
-					<Row className='sector-select'>
-					  <Input s={12} l={4} m={12} name="selected_service_type" type='select' value={this.state.selected_service_type} 
-              onChange= { 
-                (event) => { 
-                  if(this.state.selected_service_type != event.target.value) {
-                    this.handleInputChange(event); 
-                    this.setState({ 
-                      update_service_places: 1, 
-                      selected_service_place: '0',
-                      selectedDay: null, 
-                      times: [], 
-                      available_days: {start_times: [], end_times: []} 
-                    }); 
-                  }
-                } 
-              } 
-            >
-              <option value='0' disabled>Escolha o tipo de atendimento</option>
-              {serviceTypeList}
-					  </Input>
-					</Row>
-				</div>
-	        </div>
-	    )
-	}
+              <Input s={12} l={4} type='select'
+                materializeComp={true}
+              >
+                {optionsYears}
+              </Input>
 
-	pickServicePlace() {
-    const servicePlaceList = (
-      this.state.service_places.map((service_place, idx) => {
-        return (
-          <option value={idx+1}>{service_place.name}</option>
-        )
-      })
-    )
-		return (
-			<div className='select-field'>
-				<b>3. Escolha o local de atendimento:</b>
-				<br></br>
-				<div>
-					<Row className='sector-select'>
-            <Input s={12} l={4} m={12} name="selected_service_place" value={this.state.selected_service_place} onChange={ (event) => { this.handleInputChange(event); 
-              this.setState({ update_calendar: 1, 
-                              selectedDay: null, 
-                              times: [], 
-                            }); 
-            } } s={12} l={4} m={12} type='select'>
-              <option value='0' disabled>Escolha o local de atendimento</option>
-              {servicePlaceList}
-					  </Input>
-					</Row>
-				</div>
-	        </div>
-	    )
-	}
+            </div>
+              )
+  }
+
 
   handleSubmit() {
-    if(this.state.schedule_id != null)
-      browserHistory.push(`/citizens/${this.props.params.citizen_id}/schedules/${this.state.schedule_id}/finish`)
+    browserHistory.push(`/dependants`)
+  }
+
+  handleChange(event){
+    this.setState({check: event.target.value})
   }
 
   prev() {
-    browserHistory.push("citizens/schedules/agreement")
+    browserHistory.push(`/dependants`)
   }
 
 	confirmButton() {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' href='#' onClick={this.prev}> Voltar </a>
-				<button className="waves-effect btn right" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">Continuar</button>
+				<button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">Atualizar</button>
       </div>
 		)
 	}
@@ -344,12 +182,137 @@ class getScheduleCitizen extends Component {
       <main>
       	<Row>
 	        <Col s={12}>
-		      	<div>
-		      		{this.mainComponent()}
-		      	</div>
-	      	</Col>
-	    </Row>
-	  </main>
+            <div className='card'>
+              <div className='card-content'>
+                <h2 className="card-title">Alterar dependente: Dependente C</h2>
+
+                <Row className='first-line'>
+                  <Col s={12} m={12} l={6}>
+                    <div>
+                        <img
+                          src={UserImg} />
+                        <div className='file-input'>
+                          <Input type='file'
+                          />
+                        </div>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Nome*:</h6>
+                      <label>
+                        <input type="text" name="name" className='input-field' value={this.state.dependant.name} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Data de nascimento*:</h6>
+                      {this.selectDate()}
+                    </div>
+                    <div className="field-input" >
+                      <h6>Possui algum tipo de deficiência:</h6>
+                      <div className="check-input">
+                        <Input onChange={this.handleChange} s={12} l={12} name='group1' type='radio' value='true' label='Sim' />
+                        <Input onChange={this.handleChange} defaultChecked='true' s={12} l={12} name='group1' type='radio' value='' label='Não' />
+                        { this.state.check ? <div>
+                                              <h6>Qual tipo de deficiência:</h6>
+                                              <label>
+                                                <input type="text" className='input-field' name="cpf" value="" onChange={this.handleInputChange} />
+                                              </label>
+                                            </div> : null }
+                      </div>
+                    </div>
+                    <div className="field-input">
+                      <h6>CPF:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="cpf" value={this.state.dependant.cpf} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div className="field-input">
+                      <h6>RG:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="rg" value={this.state.dependant.rg} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                  </Col>
+                  <Col s={12} m={12} l={6}>
+                    <div className='category-title'>
+                      <p>Endereço</p>
+                    </div>
+                    <div className="field-input" >
+                      <h6>CEP:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="cep" value={this.state.dependant.cep} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Estado do endereço:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="address_state" value={this.state.dependant.address_state} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Munícipio:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="city" value={this.state.dependant.city} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Bairro:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="address_neighborhood" value={this.state.dependant.address_neighborhood} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Endereço:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="address_street" value={this.state.dependant.address_street} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Número:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="address_number" value={this.state.dependant.address_number} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Complemento:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="address_complement" value={this.state.dependant.address_complement} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div className='category-title'>
+                      <p>Informações de Contato</p>
+                    </div>
+                    <div className="field-input">
+                      <h6>Telefone 1:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="phone1" value={this.state.dependant.phone1} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div className="field-input">
+                      <h6>Telefone 2:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="phone2" value={this.state.dependant.phone2} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div className="field-input">
+                      <h6>E-mail:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="email" value={this.state.dependant.email} onChange={this.handleInputChange} />
+                      </label>
+                    </div>
+                    <div>
+                      <h6>Observações:</h6>
+                      <label>
+                        <input type="text" className='input-field' name="note" value={this.state.dependant.note} onChange={this.handleInputChange} />
+                      </label>
+                  </div></
+                  Col>
+                </Row>
+                {this.confirmButton()}
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </main>
     )
   }
 }
@@ -360,7 +323,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const ScheduleCitizen = connect(
+const DependantEdit = connect(
   mapStateToProps
-)(getScheduleCitizen)
-export default ScheduleCitizen 
+)(getDependantEdit)
+export default DependantEdit

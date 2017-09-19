@@ -11,3 +11,5 @@ export ScheduleChoose from './schedule/ScheduleChoose';
 export ScheduleCitizen from './schedule/ScheduleCitizen';
 export ScheduleFinish from './schedule/ScheduleFinish';
 export DependantList from './dependant/DependantList';
+export DependantEdit from './dependant/DependantEdit';
+export DependantShow from './dependant/DependantShow';

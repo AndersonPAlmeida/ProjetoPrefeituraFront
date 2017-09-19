@@ -1,0 +1,27 @@
+.sector-select {
+	width: 100% !important;
+	margin-bottom: 0 !important;
+}
+
+.sector-select .input-field {
+	margin-top: 0 !important;
+}
+
+.select-field {
+	font-size: 13px;
+	font-family: 'Roboto', 'Arial';
+}
+
+.file-input {
+	overflow: auto;
+	margin-bottom: 20px;
+}
+
+.field-input {
+	width: 300px !important;
+}
+
+.check-input {
+	margin-bottom: 5px;
+	overflow: auto;
+}

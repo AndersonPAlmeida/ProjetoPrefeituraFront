@@ -5,9 +5,8 @@ import {
   USER_UPDATE
 } from '../actions/user';
 
-const initialState = Immutable.fromJS({
-  userInfo: null
-});
+const initialUser = { userInfo: { citizen: { name: '', city: { id: 0, name: '' } }, current_role: 'citizen', roles: [] } }
+const initialState = Immutable.Map(initialUser)
 
 const userReducer = (state = initialState, action) => {
   if (action.type === USER_SIGN_IN) {

@@ -38,8 +38,8 @@ class getScheduleAgreement extends Component {
             <div className='card-content'>
               <h2 className='card-title h2-title-home'> Passo 1 de 3 - Termo de Compromisso </h2>
               <ul className="collection">
-          {this.scheduleRules()}
-        </ul>
+              {this.scheduleRules()}
+              </ul>
             </div>
             {this.agreeButton()}
         </div>
@@ -51,7 +51,7 @@ class getScheduleAgreement extends Component {
       <div className="card-action">
         <button className="btn waves-effect btn" name="anterior" type="submit">Não concordo</button>
         <button onClick={() =>browserHistory.push(`/citizens/${this.props.user.citizen.id}/schedules/choose`)} className="waves-effect btn right" name="commit" type="submit">Concordar e continuar</button>
-        </div>
+      </div>
     )
   }
 
