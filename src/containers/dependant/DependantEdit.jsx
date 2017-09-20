@@ -5,6 +5,7 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import UserForm from '../utils/UserForm'
+import { browserHistory } from 'react-router';
 
 class getDependantEdit extends Component {
   constructor(props) {
@@ -30,10 +31,24 @@ class getDependantEdit extends Component {
     });
   }
 
+  prev() {
+    browserHistory.push(`/dependants`)
+  }
+
   render() {
     return (
       <div>
-        {this.state.fetching ? <div /> : <UserForm user_data={this.state.dependant} is_edit={true} />}
+        {
+          this.state.fetching ? <div /> : 
+            <UserForm 
+              user_data={this.state.dependant} 
+              is_edit={true} 
+              prev={this.prev}
+              collection={`citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}}`;
+              fetch_method='put'
+              submit_url={`/dependants/`}
+            />
+        }
       </div>
     )
   }

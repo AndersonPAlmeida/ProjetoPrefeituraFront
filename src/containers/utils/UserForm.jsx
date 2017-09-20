@@ -135,29 +135,37 @@ class getUserForm extends Component {
 
 
   handleSubmit() {
-    this.updateAddress.bind(this)() 
-    //browserHistory.push(`/user`)
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = this.props.collection;
+    const params = `permission=${this.props.user.current_role}`
+    var formData = {};
+    formData["cep"] = {};
+    formData["cep"]["number"] = this.state.user.cep.replace(/(\.|-)/g,'');
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+      method: this.props.fetch_method,
+      body: JSON.stringify(formData)
+    }).then(parseResponse).then(resp => {
+      browserHistory.push(this.props.submit_url)
+    }); 
   }
 
   handleChange(event){
     this.setState({check: event.target.value})
   }
 
-  prev() {
-    browserHistory.push(`/users`)
-  }
-
 	confirmButton() {
 		return (
 			<div className="card-action">
-				<a className='back-bt waves-effect btn-flat' href='#' onClick={this.prev}> Voltar </a>
+				<a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
 				<button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">Atualizar</button>
       </div>
 		)
 	}
 
   render() {
-    console.log(this.state)
     return (
       <main>
       	<Row>
@@ -186,106 +194,229 @@ class getUserForm extends Component {
                       <h6>Data de nascimento*:</h6>
                       {this.selectDate()}
                     </div>
+
                     <div className="field-input" >
                       <h6>Possui algum tipo de deficiência:</h6>
                       <div className="check-input">
-                        <Input onChange={this.handleChange} checked={this.state.check} s={12} l={12} name='group1' type='radio' value='true' label='Sim' />
-                        <Input onChange={this.handleChange} checked={!this.state.check} s={12} l={12} name='group1' type='radio' value='' label='Não' />
-                        { this.state.check ? <div>
-                                              <h6>Qual tipo de deficiência:</h6>
-                                                <label>
-                                                  <input type="text" className='input-field' name="cpf" value="" onChange={this.handleInputChange.bind(this)} />
-                                                </label>
-                                              </div> : null }
+                        <Input 
+                          onChange={this.handleChange} 
+                          checked={this.state.check} 
+                          s={12} l={12} 
+                          name='group1' 
+                          type='radio' 
+                          value='true' 
+                          label='Sim' 
+                        />
+                        <Input 
+                          onChange={this.handleChange} 
+                          checked={!this.state.check} 
+                          s={12} l={12} 
+                          name='group1' 
+                          type='radio' 
+                          value='' 
+                          label='Não' 
+                        />
+
+                        { this.state.check ? 
+                          <div>
+                            <h6>Qual tipo de deficiência:</h6>
+                            <label>
+                              <input 
+                                type="text" 
+                                className='input-field' 
+                                name="cpf" value="" 
+                                onChange={this.handleInputChange.bind(this)}
+                                />
+                            </label>
+                          </div> 
+                          : null 
+                        }
                       </div>
                     </div>
+
                     <div className="field-input">
                       <h6>CPF:</h6>
                       <label>
-                        <MaskedInput type="text" className='input-field' mask="111.111.111-11" name="cpf" value={this.state.user.cpf} onChange={this.handleInputChange.bind(this)} />
+                        <MaskedInput 
+                          type="text" 
+                          className='input-field' 
+                          mask="111.111.111-11" 
+                          name="cpf" 
+                          value={this.state.user.cpf} 
+                          onChange={this.handleInputChange.bind(this)} 
+                        />
                       </label>
                     </div>
+                    
                     <div className="field-input">
                       <h6>RG:</h6>
                       <label>
-                        <MaskedInput type="text" className='input-field' mask="11.111.111-1" name="rg" value={this.state.user.rg} onChange={this.handleInputChange.bind(this)} />
+                        <MaskedInput 
+                          type="text" 
+                          className='input-field' 
+                          mask="11.111.111-1" 
+                          name="rg" 
+                          value={this.state.user.rg} 
+                          onChange={this.handleInputChange.bind(this)} 
+                        />
                       </label>
                     </div>
                   </Col>
+
                   <Col s={12} m={12} l={6}>
                     <div className='category-title'>
                       <p>Endereço</p>
                     </div>
+
                     <div className="field-input" >
                       <h6>CEP:</h6>
                       <label>
-                        <MaskedInput type="text" className='input-field' mask="11111-111" name="cep" value={this.state.user.cep} onChange={this.handleInputChange.bind(this)} />
+                        <MaskedInput 
+                          type="text" 
+                          className='input-field' 
+                          mask="11111-111" name="cep" 
+                          value={this.state.user.cep} 
+                          onChange=
+                          {
+                            () => {
+                              this.handleInputChange.bind(this)()
+                              if(this.state.user.cep.length == 9)
+                                this.updateAddress.bind(this)() 
+                            }
+                          } 
+                        />
                       </label>
                     </div>
+
                     <div className="field-input" >
                       <h6>Estado do endereço:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_state" value={this.state.state_abbreviation}  disabled />
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="address_state" 
+                          value={this.state.state_abbreviation}  
+                          disabled />
                       </label>
                     </div>
+
                     <div className="field-input" >
                       <h6>Munícipio:</h6>
                       <label>
-                        <input type="text" className='input-field' name="city" value={this.state.city_name}  disabled />
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="city" 
+                          value={this.state.city_name}  
+                          disabled 
+                        />
                       </label>
                     </div>
                     <div className="field-input" >
                       <h6>Bairro:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_neighborhood" value={this.state.user.address.neighborhood} />
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="address_neighborhood" 
+                          value={this.state.user.address.neighborhood} 
+                        />
                       </label>
                     </div>
+
                     <div className="field-input" >
                       <h6>Endereço:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_street" value={this.state.user.address.address} />
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="address_street" 
+                          value={this.state.user.address.address} 
+                        />
                       </label>
                     </div>
+                    
                     <div className="field-input" >
                       <h6>Número:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_number" value={this.state.user.address_number} onChange={this.handleInputChange.bind(this)} />
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="address_number" 
+                          value={this.state.user.address_number} 
+                          onChange={this.handleInputChange.bind(this)} 
+                        />
                       </label>
                     </div>
+
                     <div className="field-input" >
                       <h6>Complemento:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_complement" value={this.state.user.address_complement} onChange={this.handleInputChange.bind(this)} />
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="address_complement" 
+                          value={this.state.user.address_complement} 
+                          onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
+
                     <div className='category-title'>
                       <p>Informações de Contato</p>
                     </div>
+
                     <div className="field-input">
                       <h6>Telefone 1:</h6>
                       <label>
-                        <input type="text" className='input-field' name="phone1" value={this.state.user.phone1} onChange={this.handleInputChange.bind(this)} />
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="phone1" 
+                          value={this.state.user.phone1} 
+                          onChange={this.handleInputChange.bind(this)} 
+                        />
                       </label>
                     </div>
+
                     <div className="field-input">
                       <h6>Telefone 2:</h6>
                       <label>
-                        <input type="text" className='input-field' name="phone2" value={this.state.user.phone2} onChange={this.handleInputChange.bind(this)} />
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="phone2" 
+                          value={this.state.user.phone2} 
+                          onChange={this.handleInputChange.bind(this)} 
+                        />
                       </label>
                     </div>
+
                     <div className="field-input">
                       <h6>E-mail:</h6>
                       <label>
-                        <input type="text" className='input-field' name="email" value={this.state.user.email} onChange={this.handleInputChange.bind(this)} />
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="email" 
+                          value={this.state.user.email} 
+                          onChange={this.handleInputChange.bind(this)} 
+                        />
                       </label>
                     </div>
+
                     <div>
                       <h6>Observações:</h6>
                       <label>
-                        <input type="text" className='input-field' name="note" value={this.state.user.note} onChange={this.handleInputChange.bind(this)} />
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="note" 
+                          value={this.state.user.note} 
+                          onChange={this.handleInputChange.bind(this)} 
+                        />
                       </label>
-                  </div></
-                  Col>
+                  </div>
+                  </Col>
                 </Row>
                 {this.confirmButton()}
               </div>
