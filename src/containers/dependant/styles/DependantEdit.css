@@ -21,8 +21,8 @@
 	width: 300px !important;
 }
 
-.input-field input:focus + label {
-   color: black !important;
+input {
+   color: black;
  }
 
 .check-input {

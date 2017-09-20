@@ -45,6 +45,7 @@ class getDependantEdit extends Component {
       check: false
     };
     this.handleChange = this.handleChange.bind(this);
+    this.state.check = false || this.state.dependant.pcd;
   }
 
   componentDidMount() {
@@ -226,26 +227,26 @@ class getDependantEdit extends Component {
                     <div className="field-input" >
                       <h6>Possui algum tipo de deficiência:</h6>
                       <div className="check-input">
-                        <Input onChange={this.handleChange} defaultChecked={(this.state.dependant.pcd)} s={12} l={12} name='group1' type='radio' value='true' label='Sim' />
-                        <Input onChange={this.handleChange} defaultChecked={!(this.state.dependant.pcd)} s={12} l={12} name='group1' type='radio' value='' label='Não' />
+                        <Input onChange={this.handleChange} checked={this.state.check} s={12} l={12} name='group1' type='radio' value='true' label='Sim' />
+                        <Input onChange={this.handleChange} checked={!this.state.check} s={12} l={12} name='group1' type='radio' value='' label='Não' />
                         { this.state.check ? <div>
-                                              <h6>Qual tipo de deficiência:</h6>
-                                              <label>
-                                                <input type="text" className='input-field' name="cpf" value="" onChange={this.handleInputChange.bind(this)} />
-                                              </label>
-                                            </div> : null }
+                                                <h6>Qual tipo de deficiência:</h6>
+                                                <label>
+                                                  <input type="text" className='input-field' name="cpf" value="" onChange={this.handleInputChange.bind(this)} />
+                                                </label>
+                                              </div> : null }
                       </div>
                     </div>
                     <div className="field-input">
                       <h6>CPF:</h6>
                       <label>
-                        <input type="text" className='input-field' name="cpf" value={this.state.dependant.cpf} onChange={this.handleInputChange.bind(this)} />
+                        <MaskedInput type="text" className='input-field' mask="111.111.111-11" name="cpf" value={this.state.dependant.cpf} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div className="field-input">
                       <h6>RG:</h6>
                       <label>
-                        <input type="text" className='input-field' name="rg" value={this.state.dependant.rg} onChange={this.handleInputChange.bind(this)} />
+                        <MaskedInput type="text" className='input-field' mask="11.111.111-1" name="rg" value={this.state.dependant.rg} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                   </Col>
