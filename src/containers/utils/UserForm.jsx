@@ -9,7 +9,7 @@ import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 import { UserImg } from '../images';
-import { Input as S_Input } from "./../../redux-auth/views/default/Input"; 
+import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
 
 class getUserForm extends Component {
@@ -42,6 +42,7 @@ class getUserForm extends Component {
       check: false
     };
     this.handleChange = this.handleChange.bind(this);
+    this.state.check = false || this.state.user.pcd;
   }
 
   componentDidMount() {
@@ -188,26 +189,26 @@ class getUserForm extends Component {
                     <div className="field-input" >
                       <h6>Possui algum tipo de deficiência:</h6>
                       <div className="check-input">
-                        <Input onChange={this.handleChange} s={12} l={12} name='group1' type='radio' value='true' label='Sim' />
-                        <Input onChange={this.handleChange} defaultChecked='true' s={12} l={12} name='group1' type='radio' value='' label='Não' />
+                        <Input onChange={this.handleChange} checked={this.state.check} s={12} l={12} name='group1' type='radio' value='true' label='Sim' />
+                        <Input onChange={this.handleChange} checked={!this.state.check} s={12} l={12} name='group1' type='radio' value='' label='Não' />
                         { this.state.check ? <div>
                                               <h6>Qual tipo de deficiência:</h6>
-                                              <label>
-                                                <input type="text" className='input-field' name="cpf" value="" onChange={this.handleInputChange.bind(this)} />
-                                              </label>
-                                            </div> : null }
+                                                <label>
+                                                  <input type="text" className='input-field' name="cpf" value="" onChange={this.handleInputChange.bind(this)} />
+                                                </label>
+                                              </div> : null }
                       </div>
                     </div>
                     <div className="field-input">
                       <h6>CPF:</h6>
                       <label>
-                        <input type="text" className='input-field' name="cpf" value={this.state.user.cpf} onChange={this.handleInputChange.bind(this)} />
+                        <MaskedInput type="text" className='input-field' mask="111.111.111-11" name="cpf" value={this.state.user.cpf} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div className="field-input">
                       <h6>RG:</h6>
                       <label>
-                        <input type="text" className='input-field' name="rg" value={this.state.user.rg} onChange={this.handleInputChange.bind(this)} />
+                        <MaskedInput type="text" className='input-field' mask="11.111.111-1" name="rg" value={this.state.user.rg} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                   </Col>
@@ -218,19 +219,19 @@ class getUserForm extends Component {
                     <div className="field-input" >
                       <h6>CEP:</h6>
                       <label>
-                        <input type="text" className='input-field' name="cep" value={this.state.user.cep} onChange={this.handleInputChange.bind(this)} />
+                        <MaskedInput type="text" className='input-field' mask="11111-111" name="cep" value={this.state.user.cep} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div className="field-input" >
                       <h6>Estado do endereço:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_state" value={this.state.state_abbreviation} />
+                        <input type="text" className='input-field' name="address_state" value={this.state.state_abbreviation}  disabled />
                       </label>
                     </div>
                     <div className="field-input" >
                       <h6>Munícipio:</h6>
                       <label>
-                        <input type="text" className='input-field' name="city" value={this.state.city_name} />
+                        <input type="text" className='input-field' name="city" value={this.state.city_name}  disabled />
                       </label>
                     </div>
                     <div className="field-input" >
