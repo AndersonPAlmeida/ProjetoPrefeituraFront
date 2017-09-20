@@ -35,6 +35,10 @@ class getDependantEdit extends Component {
         phone1: '',
         phone2: '',
         rg: '',
+        birth_day: 0,
+        birth_month: 0,
+        birth_year: 0,
+        birth_year_id: 0,
       },
       city_name: '',
       state_abbreviation: '',
@@ -54,7 +58,20 @@ class getDependantEdit extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ dependant: resp.citizen, city_name: resp.citizen.city.name, state_abbreviation: resp.citizen.state.abbreviation })
+      self.setState({ dependant: resp.citizen, 
+                      city_name: resp.citizen.city.name, 
+                      state_abbreviation: resp.citizen.state.abbreviation
+                   })
+      const year = resp.citizen.birth_date.substring(0,4)
+      self.setState({
+        dependant: update(this.state.dependant, 
+        { 
+          birth_day: {$set:  parseInt(resp.citizen.birth_date.substring(9,10))},
+          birth_month: {$set:  parseInt(resp.citizen.birth_date.substring(5,7))},
+          birth_year: {$set: year},
+          birth_year_id: {$set: year-1899}
+        })
+      })
     });
   }
 
@@ -93,26 +110,43 @@ class getDependantEdit extends Component {
         );
       }
       return (
-            <div>
-              <Input s={12} l={3} type='select'
-              >
-                {optionsDays}
-              </Input>
-            
-              <Input s={12} l={4} type='select'
-                materializeComp={true}
-              >
-                {optionsMonths}
-              </Input>
+          <div>
+            <Input s={12} l={3} type='select'
+              name='birth_day'
+              value={this.state.dependant.birth_day}
+              onChange={this.handleInputChange.bind(this)}
+            >
+              {optionsDays}
+            </Input>
+          
+            <Input s={12} l={4} type='select'
+              name='birth_month'
+              value={this.state.dependant.birth_month}
+              onChange={this.handleInputChange.bind(this)}
+            >
+              {optionsMonths}
+            </Input>
 
-              <Input s={12} l={4} type='select'
-                materializeComp={true}
-              >
-                {optionsYears}
-              </Input>
+            <Input s={12} l={4} type='select'
+              name='birth_year_id'
+              value={this.state.dependant.birth_year_id}
+              onChange={ () => 
+                          {
+                            this.handleInputChange.bind(this)() 
+                            this.setState({
+                              dependant: update(this.state.dependant, 
+                              { 
+                                birth_year: {$set: this.state.dependant.birth_year_id+1899},
+                              })
+                            })
+                        }
+                      }
 
-            </div>
-              )
+            >
+              {optionsYears}
+            </Input>
+          </div>
+      )
   }
 
   updateAddress() {
@@ -129,9 +163,11 @@ class getDependantEdit extends Component {
       method: "post",
       body: JSON.stringify(formData)
     }).then(parseResponse).then(resp => {
-      this.setState({ dependant: update(this.state.dependant, {address: {$set: resp}})})
-      this.setState({ city_name: resp.city_name, state_abbreviation: resp.state_name })
-      this.setState({ update_address: 0 })
+      this.setState({ 
+                      dependant: update(this.state.dependant, {address: {$set: resp}}),
+                      city_name: resp.city_name, state_abbreviation: resp.state_name, 
+                      update_address: 0 
+                    })
     }); 
   }
 
@@ -190,8 +226,8 @@ class getDependantEdit extends Component {
                     <div className="field-input" >
                       <h6>Possui algum tipo de deficiência:</h6>
                       <div className="check-input">
-                        <Input onChange={this.handleChange} s={12} l={12} name='group1' type='radio' value='true' label='Sim' />
-                        <Input onChange={this.handleChange} defaultChecked='true' s={12} l={12} name='group1' type='radio' value='' label='Não' />
+                        <Input onChange={this.handleChange} defaultChecked={(this.state.dependant.pcd)} s={12} l={12} name='group1' type='radio' value='true' label='Sim' />
+                        <Input onChange={this.handleChange} defaultChecked={!(this.state.dependant.pcd)} s={12} l={12} name='group1' type='radio' value='' label='Não' />
                         { this.state.check ? <div>
                                               <h6>Qual tipo de deficiência:</h6>
                                               <label>
