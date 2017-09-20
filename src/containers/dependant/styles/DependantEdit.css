@@ -21,6 +21,10 @@
 	width: 300px !important;
 }
 
+.input-field input:focus + label {
+   color: black !important;
+ }
+
 .check-input {
 	margin-bottom: 5px;
 	overflow: auto;

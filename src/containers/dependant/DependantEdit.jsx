@@ -9,7 +9,7 @@ import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 import { UserImg } from '../images';
-import { Input as S_Input } from "./../../redux-auth/views/default/Input"; 
+import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
 
 class getDependantEdit extends Component {
@@ -256,19 +256,19 @@ class getDependantEdit extends Component {
                     <div className="field-input" >
                       <h6>CEP:</h6>
                       <label>
-                        <input type="text" className='input-field' name="cep" value={this.state.dependant.cep} onChange={this.handleInputChange.bind(this)} />
+                        <MaskedInput type="text" className='input-field' mask="11111-111" name="cep" value={this.state.dependant.cep} onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
                     <div className="field-input" >
                       <h6>Estado do endereço:</h6>
                       <label>
-                        <input type="text" className='input-field' name="address_state" value={this.state.state_abbreviation} />
+                        <input type="text" className='input-field' name="address_state" value={this.state.state_abbreviation}  disabled />
                       </label>
                     </div>
                     <div className="field-input" >
                       <h6>Munícipio:</h6>
                       <label>
-                        <input type="text" className='input-field' name="city" value={this.state.city_name} />
+                        <input type="text" className='input-field' name="city" value={this.state.city_name}  disabled />
                       </label>
                     </div>
                     <div className="field-input" >
