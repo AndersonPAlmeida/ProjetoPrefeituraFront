@@ -17,7 +17,6 @@ class getUserForm extends Component {
  constructor(props) {
     super(props)
     this.state = {
-      update_address: 0,
       user: { 
         address: {
           address: '',
@@ -36,6 +35,10 @@ class getUserForm extends Component {
         phone1: '',
         phone2: '',
         rg: '',
+        birth_day: 0,
+        birth_month: 0,
+        birth_year: 0,
+        birth_year_id: 0,
       },
       city_name: '',
       state_abbreviation: '',
@@ -45,14 +48,21 @@ class getUserForm extends Component {
     this.state.check = false || this.state.user.pcd;
   }
 
-  componentDidMount() {
+  componentWillMount() {
     var self = this;
     if(this.props.is_edit) {
+      var year = parseInt(this.props.user_data.birth_date.substring(0,4))
       self.setState({
-        user: this.props.user_data,
         city_name: this.props.user_data.city.name,
-        state_abbreviation: this.props.user_data.state.abbreviation
-      });
+        state_abbreviation: this.props.user_data.state.abbreviation,
+        user: update(this.props.user_data, 
+        { 
+          birth_day: {$set:  parseInt(this.props.user_data.birth_date.substring(8,10))},
+          birth_month: {$set:  parseInt(this.props.user_data.birth_date.substring(5,7))},
+          birth_year: {$set: year},
+          birth_year_id: {$set: year-1899}
+        })
+      })
     }
   }
 
@@ -91,35 +101,53 @@ class getUserForm extends Component {
         );
       }
       return (
-            <div>
-              <Input s={12} l={3} type='select'
-              >
-                {optionsDays}
-              </Input>
-            
-              <Input s={12} l={4} type='select'
-                materializeComp={true}
-              >
-                {optionsMonths}
-              </Input>
+        <div>
+          <Input s={12} l={3} 
+            type='select'
+            name='birth_day'
+            value={this.state.user.birth_day}
+            onChange={this.handleInputChange.bind(this)}
+          >
+            {optionsDays}
+          </Input>
 
-              <Input s={12} l={4} type='select'
-                materializeComp={true}
-              >
-                {optionsYears}
-              </Input>
+          <Input s={12} l={4} 
+            type='select'
+            name='birth_month'
+            value={this.state.user.birth_month}
+            onChange={this.handleInputChange.bind(this)}
+          >
+            {optionsMonths}
+          </Input>
 
-            </div>
-              )
+          <Input s={12} l={4} 
+            type='select'
+            name='birth_year_id'
+            value={this.state.user.birth_year_id}
+            onChange={ (event) => {
+                this.handleInputChange.bind(this)(event) 
+                this.setState({
+                  user: update(this.state.user, 
+                  { 
+                    birth_year: {$set: parseInt(this.state.user.birth_year_id)+parseInt(1899)}
+                  })
+                })
+              }
+            }
+          >
+            {optionsYears}
+          </Input>
+        </div>
+      )
   }
 
-  updateAddress() {
+  updateAddress(cep) {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'validate_cep';
     const params = `permission=${this.props.user.current_role}`
     var formData = {};
     formData["cep"] = {};
-    formData["cep"]["number"] = this.state.user.cep.replace(/(\.|-)/g,'');
+    formData["cep"]["number"] = cep;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -129,27 +157,61 @@ class getUserForm extends Component {
     }).then(parseResponse).then(resp => {
       this.setState({ user: update(this.state.user, {address: {$set: resp}})})
       this.setState({ city_name: resp.city_name, state_abbreviation: resp.state_name })
-      this.setState({ update_address: 0 })
-    }); 
+    }).catch(() => {
+      Materialize.toast('CEP inválido.', 10000, "red",function(){$("#toast-container").remove()});
+    })
   }
 
 
   handleSubmit() {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = this.props.collection;
-    const params = `permission=${this.props.user.current_role}`
-    var formData = {};
-    formData["cep"] = {};
-    formData["cep"]["number"] = this.state.user.cep.replace(/(\.|-)/g,'');
-    fetch(`${apiUrl}/${collection}?${params}`, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-      method: this.props.fetch_method,
-      body: JSON.stringify(formData)
-    }).then(parseResponse).then(resp => {
-      browserHistory.push(this.props.submit_url)
-    }); 
+    var monthNames = [
+      "Jan", "Feb", "Mar",
+      "Apr", "May", "Jun", 
+      "Jul", "Aug", "Sep", 
+      "Oct", "Nov", "Dec"
+    ];
+
+    let errors = [];
+    let formData = {};
+    formData = this.state.user;
+    if(!formData['cpf'])
+      errors.push("Campo CPF é obrigatório.");
+    if(!formData['birth_day'] || !formData['birth_month'] || !formData['birth_year'])
+      errors.push("Campo Data de Nascimento é obrigatório.");
+    if(!formData['cep'])
+      errors.push("Campo CEP é obrigatório.");
+    if(errors.length > 0) {
+      let full_error_msg = "";
+      errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+      Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+    } else {
+      formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
+      formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
+      formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
+      formData['birth_date'] = `${monthNames[formData['birth_month']-1]} ${formData['birth_day']} ${formData['birth_year']}`
+      console.log(formData['birth_date'])
+      var { birth_day, birth_month, birth_year, birth_year_id, address, ...other } = formData;
+
+      let fetch_body = {};
+      if(this.props.user_class == `dependant`) {
+        fetch_body['dependant'] = formData;
+      } else {
+        fetch_body = formData;
+      }
+
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = this.props.collection;
+      const params = `permission=${this.props.user.current_role}`
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+        method: this.props.fetch_method,
+        body: JSON.stringify(fetch_body)
+      }).then(parseResponse).then(resp => {
+        browserHistory.push(this.props.submit_url)
+      }); 
+    }
   }
 
   handleChange(event){
@@ -278,10 +340,11 @@ class getUserForm extends Component {
                           value={this.state.user.cep} 
                           onChange=
                           {
-                            () => {
-                              this.handleInputChange.bind(this)()
-                              if(this.state.user.cep.length == 9)
-                                this.updateAddress.bind(this)() 
+                            (event) => {
+                              this.handleInputChange.bind(this)(event)
+                              var cep = event.target.value.replace(/(\.|-|_)/g,'')
+                              if(cep.length == 8)
+                                this.updateAddress.bind(this)(cep) 
                             }
                           } 
                         />

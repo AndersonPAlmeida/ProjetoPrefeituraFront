@@ -42,10 +42,11 @@ class getDependantEdit extends Component {
           this.state.fetching ? <div /> : 
             <UserForm 
               user_data={this.state.dependant} 
+              user_class={`dependant`}
               is_edit={true} 
               prev={this.prev}
-              collection={`citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}}`;
-              fetch_method='put'
+              collection={`citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`}
+              fetch_method={'put'}
               submit_url={`/dependants/`}
             />
         }
