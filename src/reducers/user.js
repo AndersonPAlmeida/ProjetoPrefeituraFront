@@ -5,7 +5,23 @@ import {
   USER_UPDATE
 } from '../actions/user';
 
-const initialUser = { userInfo: { citizen: { name: '', city: { id: 0, name: '' } }, current_role: 'citizen', roles: [] } }
+const initialUser = { 
+                      userInfo: { 
+                        citizen: { 
+                                   id: 0,
+                                   name: '', 
+                                   cpf: '',
+                                   rg: '',
+                                   birth_date: '',
+                                   city: { 
+                                           id: 0, 
+                                           name: '' 
+                                         } 
+                                 }, 
+                        current_role: 'citizen', 
+                        roles: [] 
+                      } 
+                    }
 const initialState = Immutable.Map(initialUser)
 
 const userReducer = (state = initialState, action) => {
