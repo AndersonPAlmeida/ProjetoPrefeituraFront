@@ -11,6 +11,7 @@ import { browserHistory } from 'react-router';
 import { UserImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
+import InputMask from 'react-input-mask';
 
 class getUserForm extends Component {
 
@@ -218,14 +219,15 @@ class getUserForm extends Component {
     this.setState({check: event.target.value})
   }
 
-	confirmButton() {
-		return (
-			<div className="card-action">
-				<a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
-				<button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">{this.props.is_edit ? "Atualizar" : "Criar"}</button>
+
+  confirmButton() {
+    return (
+      <div className="card-action">
+        <a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
+        <button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">{this.props.is_edit ? "Atualizar" : "Criar"}</button>
       </div>
-		)
-	}
+    )
+  }
 
   render() {
     return (
@@ -423,6 +425,10 @@ class getUserForm extends Component {
                           onChange={this.handleInputChange.bind(this)} />
                       </label>
                     </div>
+                    </Col>
+                </Row>
+                <Row className='first-line'>
+                  <Col s={12} m={12} l={6}>
 
                     <div className='category-title'>
                       <p>Informações de Contato</p>
@@ -431,7 +437,9 @@ class getUserForm extends Component {
                     <div className="field-input">
                       <h6>Telefone 1:</h6>
                       <label>
-                        <input 
+                        <InputMask
+                          mask="(99) 9999 - 9999 9"
+                          maskChar=" "                      
                           type="text" 
                           className='input-field' 
                           name="phone1" 
@@ -444,7 +452,9 @@ class getUserForm extends Component {
                     <div className="field-input">
                       <h6>Telefone 2:</h6>
                       <label>
-                        <input 
+                        <InputMask
+                          mask="(99) 9999 - 9999 9" 
+                          maskChar=" "
                           type="text" 
                           className='input-field' 
                           name="phone2" 
@@ -478,8 +488,59 @@ class getUserForm extends Component {
                           onChange={this.handleInputChange.bind(this)} 
                         />
                       </label>
-                  </div>
-                  </Col>
+                    </div>
+                    </Col>
+
+                    {this.props.user_class == `citizen` ?
+                      <Col s={12} m={12} l={6}>
+
+                        <div className='category-title'>
+                          <p>Senha</p>
+                        </div>
+
+                        <div className="field-input">
+                          <h6>Senha atual:</h6>
+                          <label>
+                            <input 
+                              type="text" 
+                              className='input-field' 
+                              name="senha" 
+                              value="" 
+                              onChange={this.handleInputChange.bind(this)} 
+                            />
+                          </label>
+                        </div>
+                        
+                        <div className="field-input">
+                          <h6>Nova senha: <i>(mínimo 6 caracteres)</i></h6>
+                          <label>
+                            <input 
+                              type="text" 
+                              className='input-field' 
+                              name="senha" 
+                              value="" 
+                              onChange={this.handleInputChange.bind(this)} 
+                            />
+                          </label>
+                        </div>
+
+                        <div className="field-input">
+                          <h6>Confirmação de senha:</h6>
+                          <label>
+                            <input 
+                              type="text" 
+                              className='input-field' 
+                              name="senha2" 
+                              value="" 
+                              onChange={this.handleInputChange.bind(this)} 
+                            />
+                          </label>
+                        </div>
+                        <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
+                      </Col> : null
+                    } 
+
+
                 </Row>
                 {this.confirmButton()}
               </div>
