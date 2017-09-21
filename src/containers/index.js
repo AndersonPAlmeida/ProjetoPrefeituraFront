@@ -13,3 +13,4 @@ export ScheduleFinish from './schedule/ScheduleFinish';
 export DependantList from './dependant/DependantList';
 export DependantEdit from './dependant/DependantEdit';
 export DependantShow from './dependant/DependantShow';
+export DependantCreate from './dependant/DependantCreate';

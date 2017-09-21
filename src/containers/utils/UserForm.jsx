@@ -174,7 +174,7 @@ class getUserForm extends Component {
     let errors = [];
     let formData = {};
     formData = this.state.user;
-    if(!formData['cpf'])
+    if(this.props.user_class == `citizen` && !formData['cpf'])
       errors.push("Campo CPF é obrigatório.");
     if(!formData['birth_day'] || !formData['birth_month'] || !formData['birth_year'])
       errors.push("Campo Data de Nascimento é obrigatório.");
@@ -222,7 +222,7 @@ class getUserForm extends Component {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
-				<button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">Atualizar</button>
+				<button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">{this.props.is_edit ? "Atualizar" : "Criar"}</button>
       </div>
 		)
 	}

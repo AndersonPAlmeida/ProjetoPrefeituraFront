@@ -87,7 +87,7 @@ class getDependantList extends Component {
 
 	newDependantButton() {
 		return (
-			<button onClick={() =>browserHistory.push(`/citizens`)} className="btn waves-effect btn button-color" name="anterior" type="submit">CADASTRAR NOVO DEPENDENTE</button>
+			<button onClick={() =>browserHistory.push(`/dependants/new`)} className="btn waves-effect btn button-color" name="anterior" type="submit">CADASTRAR NOVO DEPENDENTE</button>
 		)
 	}
 
