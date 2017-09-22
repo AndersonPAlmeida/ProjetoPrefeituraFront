@@ -11,7 +11,6 @@ import { browserHistory } from 'react-router';
 import { UserImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
-import InputMask from 'react-input-mask';
 
 class getUserForm extends Component {
 
@@ -43,7 +42,8 @@ class getUserForm extends Component {
       },
       city_name: '',
       state_abbreviation: '',
-      check: false
+      check: false,
+      phonemask: "(11) 1111-11111"
     };
     this.handleChange = this.handleChange.bind(this);
     this.state.check = false || this.state.user.pcd;
@@ -437,14 +437,21 @@ class getUserForm extends Component {
                     <div className="field-input">
                       <h6>Telefone 1:</h6>
                       <label>
-                        <InputMask
-                          mask="(99) 9999 - 9999 9"
-                          maskChar=" "                      
+                        <MaskedInput
+                          mask={this.state.phonemask}
                           type="text" 
                           className='input-field' 
                           name="phone1" 
                           value={this.state.user.phone1} 
-                          onChange={this.handleInputChange.bind(this)} 
+                          onChange={
+                            (event) => {
+                              this.handleInputChange.bind(this)(event)
+                              if(event.target.value.replace(/(_|-|(|))/g,'').length == 13)
+                                this.setState({phonemask: "(11) 11111-1111"})
+                              else
+                                this.setState({phonemask: "(11) 1111-11111"})
+                            }
+                          }
                         />
                       </label>
                     </div>
@@ -452,9 +459,8 @@ class getUserForm extends Component {
                     <div className="field-input">
                       <h6>Telefone 2:</h6>
                       <label>
-                        <InputMask
-                          mask="(99) 9999 - 9999 9" 
-                          maskChar=" "
+                        <MaskedInput
+                          mask={this.state.phonemask} 
                           type="text" 
                           className='input-field' 
                           name="phone2" 
@@ -480,9 +486,9 @@ class getUserForm extends Component {
                     <div>
                       <h6>Observações:</h6>
                       <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
+                        <textarea  
+                          className='field-input materialize-textarea'
+                          placeholder="Deixe este campo em branco caso não exista observações a serem feitas" 
                           name="note" 
                           value={this.state.user.note} 
                           onChange={this.handleInputChange.bind(this)} 
