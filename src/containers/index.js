@@ -2,6 +2,7 @@ export App from './application/App';
 export Home from './application/Home';
 export NotFound from './application/NotFound';
 export CitizenSchedule from './citizen/CitizenSchedule';
+export CitizenEdit from './citizen/CitizenEdit';
 export Login from './account/Login';
 export Register from './account/Register';
 export RegisterCep from './account/RegisterCep';

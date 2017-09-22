@@ -6,7 +6,7 @@ import createHistory from 'react-router/lib/createMemoryHistory';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule, 
          ChooseRole, ScheduleAgreement, ScheduleChoose, ScheduleCitizen, ScheduleFinish,
-         DependantList, DependantEdit, DependantShow, DependantCreate
+         DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit
        } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -71,8 +71,9 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <IndexRoute component={UserIsNotAuthenticated(Login)} />
         <Route path="signup" component={UserIsNotAuthenticated(RegisterCep)} />
         <Route path="signup2" component={UserIsNotAuthenticated(Register)} />
-        <Route path="citizens/schedules" component={UserIsAuthenticated(CitizenSchedule)} />
         <Route path="choose_role" component={UserIsAuthenticated(ChooseRole)} />
+        <Route path="citizens/schedules" component={UserIsAuthenticated(CitizenSchedule)} />
+        <Route path="citizens/edit" component={UserIsAuthenticated(CitizenEdit)} />
         <Route path="citizens/schedules/agreement" component={UserIsAuthenticated(ScheduleAgreement)} />
         <Route path="citizens/:citizen_id/schedules/choose" component={UserIsAuthenticated(ScheduleChoose)} />
         <Route path="citizens/:citizen_id/schedules/schedule" component={UserIsAuthenticated(ScheduleCitizen)} />
