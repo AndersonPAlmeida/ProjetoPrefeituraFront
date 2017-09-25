@@ -28,8 +28,10 @@ class getDependantCreate extends Component {
               user_class={`dependant`}
               is_edit={false} 
               prev={this.prev}
-              collection={`citizens/${this.props.user.citizen.id}/dependants`}
+              fetch_collection={`citizens/${this.props.user.citizen.id}/dependants`}
+              fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
+              fetch_function={fetch}
               submit_url={`/dependants/`}
             />
         }

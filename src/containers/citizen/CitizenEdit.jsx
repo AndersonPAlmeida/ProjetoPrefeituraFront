@@ -19,8 +19,10 @@ class getCitizenEdit extends Component {
         user_class={`citizen`}
         is_edit={true} 
         prev={this.prev}
-        collection={`v1/auth`}
+        fetch_collection={`auth`}
+        fetch_params={`permission=${this.props.user.current_role}`}
         fetch_method={'put'}
+        fetch_function={fetch}
         submit_url={`/citizens/schedules`}
       />
     )

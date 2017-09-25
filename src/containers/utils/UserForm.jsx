@@ -11,6 +11,7 @@ import { browserHistory } from 'react-router';
 import { UserImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
+import {userSignIn} from '../../actions/user';
 
 class getUserForm extends Component {
 
@@ -18,11 +19,6 @@ class getUserForm extends Component {
     super(props)
     this.state = {
       user: { 
-        address: {
-          address: '',
-          neighborhood: '',
-          zipcode: ''
-        },
         address_complement: '',
         address_number: '',
         birth_date: '',
@@ -34,19 +30,23 @@ class getUserForm extends Component {
         pcd: '',
         phone1: '',
         phone2: '',
-        rg: '',
+        rg: ''
+      },
+      aux: {
+        address: '',
         birth_day: 0,
         birth_month: 0,
         birth_year: 0,
         birth_year_id: 0,
+        city_name: '',
+        neighborhood: '',
+        password: "",
+        current_password: "",
+        password_confirmation: "",
+        state_abbreviation: '',
       },
-      city_name: '',
-      state_abbreviation: '',
-      check: false,
       phonemask: "(11) 1111-11111"
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.state.check = false || this.state.user.pcd;
   }
 
   componentWillMount() {
@@ -54,20 +54,20 @@ class getUserForm extends Component {
     if(this.props.is_edit) {
       var year = parseInt(this.props.user_data.birth_date.substring(0,4))
       self.setState({
-        city_name: this.props.user_data.city.name,
-        state_abbreviation: this.props.user_data.state.abbreviation,
-        user: update(this.props.user_data, 
-        { 
-          birth_day: {$set:  parseInt(this.props.user_data.birth_date.substring(8,10))},
-          birth_month: {$set:  parseInt(this.props.user_data.birth_date.substring(5,7))},
+        user: this.props.user_data,
+        aux: update(this.state.aux, 
+        {
+          birth_day: {$set: parseInt(this.props.user_data.birth_date.substring(8,10))},
+          birth_month: {$set: parseInt(this.props.user_data.birth_date.substring(5,7))},
           birth_year: {$set: year},
           birth_year_id: {$set: year-1899}
         })
       })
+      this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
     }
   }
 
-  handleInputChange(event) {
+  handleInputUserChange(event) {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
@@ -75,6 +75,17 @@ class getUserForm extends Component {
     this.setState({
       user: update(this.state.user, { [name]: {$set: value} })
     })
+  }
+
+  handleChange(event){
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+
+    this.setState({
+      aux: update(this.state.aux, { [name]: {$set: value} })
+    })
+
   }
 
   selectDate(){ 
@@ -106,8 +117,8 @@ class getUserForm extends Component {
           <Input s={12} l={3} 
             type='select'
             name='birth_day'
-            value={this.state.user.birth_day}
-            onChange={this.handleInputChange.bind(this)}
+            value={this.state.aux.birth_day}
+            onChange={this.handleChange.bind(this)}
           >
             {optionsDays}
           </Input>
@@ -115,8 +126,8 @@ class getUserForm extends Component {
           <Input s={12} l={4} 
             type='select'
             name='birth_month'
-            value={this.state.user.birth_month}
-            onChange={this.handleInputChange.bind(this)}
+            value={this.state.aux.birth_month}
+            onChange={this.handleChange.bind(this)}
           >
             {optionsMonths}
           </Input>
@@ -124,13 +135,12 @@ class getUserForm extends Component {
           <Input s={12} l={4} 
             type='select'
             name='birth_year_id'
-            value={this.state.user.birth_year_id}
+            value={this.state.aux.birth_year_id}
             onChange={ (event) => {
-                this.handleInputChange.bind(this)(event) 
-                this.setState({
-                  user: update(this.state.user, 
-                  { 
-                    birth_year: {$set: parseInt(this.state.user.birth_year_id)+parseInt(1899)}
+                this.handleChange.bind(this)(event) 
+                this.setState({aux: update(this.state.aux, 
+                  {
+                    birth_year: {$set: parseInt(this.state.aux.birth_year_id)+parseInt(1899)},
                   })
                 })
               }
@@ -145,80 +155,99 @@ class getUserForm extends Component {
   updateAddress(cep) {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'validate_cep';
-    const params = `permission=${this.props.user.current_role}`
     var formData = {};
     formData["cep"] = {};
     formData["cep"]["number"] = cep;
-    fetch(`${apiUrl}/${collection}?${params}`, {
+    fetch(`${apiUrl}/${collection}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
       method: "post",
       body: JSON.stringify(formData)
     }).then(parseResponse).then(resp => {
-      this.setState({ user: update(this.state.user, {address: {$set: resp}})})
-      this.setState({ city_name: resp.city_name, state_abbreviation: resp.state_name })
+      this.setState(
+      { aux: update(this.state.aux, 
+        {
+          address: {$set: resp.address},
+          neighborhood: {$set: resp.neighborhood},
+          city_name: {$set: resp.city_name}, 
+          state_abbreviation: {$set: resp.state_name}
+        })
+      });
     }).catch(() => {
       Materialize.toast('CEP inválido.', 10000, "red",function(){$("#toast-container").remove()});
     })
   }
 
-
   handleSubmit() {
-    var monthNames = [
+    const monthNames = [
       "Jan", "Feb", "Mar",
       "Apr", "May", "Jun", 
       "Jul", "Aug", "Sep", 
       "Oct", "Nov", "Dec"
     ];
-
     let errors = [];
     let formData = {};
+    let auxData = {};
+    var send_password = false;
     formData = this.state.user;
-    if(this.props.user_class == `citizen` && !formData['cpf'])
-      errors.push("Campo CPF é obrigatório.");
-    if(!formData['birth_day'] || !formData['birth_month'] || !formData['birth_year'])
+    auxData = this.state.aux;
+
+    if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
       errors.push("Campo Data de Nascimento é obrigatório.");
     if(!formData['cep'])
       errors.push("Campo CEP é obrigatório.");
+    if(this.props.user_class == `citizen`) {
+      if(!formData['cpf'])
+        errors.push("Campo CPF é obrigatório.");
+      else
+        formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
+      if(!this.props.is_edit || auxData['password']) {
+        send_password = true;
+        if(auxData['password_confirmation'] != auxData['password'])
+          errors.push("A senha de confirmação não corresponde a senha atual.");
+      }
+    }
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
-      formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
       formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
       formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
-      formData['birth_date'] = `${monthNames[formData['birth_month']-1]} ${formData['birth_day']} ${formData['birth_year']}`
-      console.log(formData['birth_date'])
-      var { birth_day, birth_month, birth_year, birth_year_id, address, ...other } = formData;
-
+      formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`
       let fetch_body = {};
       if(this.props.user_class == `dependant`) {
         fetch_body['dependant'] = formData;
       } else {
-        fetch_body = formData;
+        if(this.props.is_edit)
+          fetch_body['citizen'] = formData;
+        if(send_password) {
+          fetch_body['password'] = auxData['password'] 
+          fetch_body['password_confirmation'] = auxData['password_confirmation'] 
+          if(auxData['current_password'])
+            fetch_body['current_password'] = auxData['current_password'] 
+        }
       }
 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-      const collection = this.props.collection;
-      const params = `permission=${this.props.user.current_role}`
-      fetch(`${apiUrl}/${collection}?${params}`, {
+      const collection = this.props.fetch_collection;
+      const params = this.props.fetch_params; 
+      this.props.fetch_function(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json" },
         method: this.props.fetch_method,
         body: JSON.stringify(fetch_body)
       }).then(parseResponse).then(resp => {
+        if(this.props.is_edit && this.props.user_class == `citizen`)
+          this.props.dispatch(userSignIn(resp.data))
         browserHistory.push(this.props.submit_url)
-      }); 
+      }).catch((e) => {
+        console.log(e)
+      }) ; 
     }
   }
-
-  handleChange(event){
-    this.setState({check: event.target.value})
-  }
-
 
   confirmButton() {
     return (
@@ -230,6 +259,7 @@ class getUserForm extends Component {
   }
 
   render() {
+    console.log(this.state)
     return (
       <main>
       	<Row>
@@ -251,7 +281,7 @@ class getUserForm extends Component {
                     <div className="field-input" >
                       <h6>Nome*:</h6>
                       <label>
-                        <input type="text" name="name" className='input-field' value={this.state.user.name} onChange={this.handleInputChange.bind(this)} />
+                        <input type="text" name="name" className='input-field' value={this.state.user.name} onChange={this.handleInputUserChange.bind(this)} />
                       </label>
                     </div>
                     <div className="field-input" >
@@ -263,33 +293,33 @@ class getUserForm extends Component {
                       <h6>Possui algum tipo de deficiência:</h6>
                       <div className="check-input">
                         <Input 
-                          onChange={this.handleChange} 
-                          checked={this.state.check} 
+                          onChange={this.handleUserInputChange} 
+                          checked={this.state.user.pcd} 
                           s={12} l={12} 
-                          name='group1' 
+                          name='pcd' 
                           type='radio' 
                           value='true' 
                           label='Sim' 
                         />
                         <Input 
-                          onChange={this.handleChange} 
-                          checked={!this.state.check} 
+                          onChange={this.handleUserInputChange} 
+                          checked={!this.state.user.pcd} 
                           s={12} l={12} 
-                          name='group1' 
+                          name='pcd' 
                           type='radio' 
                           value='' 
                           label='Não' 
                         />
 
-                        { this.state.check ? 
+                        { this.state.user.pcd ? 
                           <div>
                             <h6>Qual tipo de deficiência:</h6>
                             <label>
                               <input 
                                 type="text" 
                                 className='input-field' 
-                                name="cpf" value="" 
-                                onChange={this.handleInputChange.bind(this)}
+                                name="pcd_description" value="" 
+                                onChange={this.handleInputUserChange.bind(this)}
                                 />
                             </label>
                           </div> 
@@ -307,7 +337,7 @@ class getUserForm extends Component {
                           mask="111.111.111-11" 
                           name="cpf" 
                           value={this.state.user.cpf} 
-                          onChange={this.handleInputChange.bind(this)} 
+                          onChange={this.handleInputUserChange.bind(this)} 
                         />
                       </label>
                     </div>
@@ -321,7 +351,7 @@ class getUserForm extends Component {
                           mask="11.111.111-1" 
                           name="rg" 
                           value={this.state.user.rg} 
-                          onChange={this.handleInputChange.bind(this)} 
+                          onChange={this.handleInputUserChange.bind(this)} 
                         />
                       </label>
                     </div>
@@ -343,7 +373,7 @@ class getUserForm extends Component {
                           onChange=
                           {
                             (event) => {
-                              this.handleInputChange.bind(this)(event)
+                              this.handleInputUserChange.bind(this)(event)
                               var cep = event.target.value.replace(/(\.|-|_)/g,'')
                               if(cep.length == 8)
                                 this.updateAddress.bind(this)(cep) 
@@ -359,8 +389,8 @@ class getUserForm extends Component {
                         <input 
                           type="text" 
                           className='input-field' 
-                          name="address_state" 
-                          value={this.state.state_abbreviation}  
+                          name="state_abbreviation" 
+                          value={this.state.aux.state_abbreviation}  
                           disabled />
                       </label>
                     </div>
@@ -372,7 +402,7 @@ class getUserForm extends Component {
                           type="text" 
                           className='input-field' 
                           name="city" 
-                          value={this.state.city_name}  
+                          value={this.state.aux.city_name}  
                           disabled 
                         />
                       </label>
@@ -383,8 +413,8 @@ class getUserForm extends Component {
                         <input 
                           type="text" 
                           className='input-field' 
-                          name="address_neighborhood" 
-                          value={this.state.user.address.neighborhood} 
+                          name="neighborhood" 
+                          value={this.state.aux.neighborhood} 
                         />
                       </label>
                     </div>
@@ -395,8 +425,8 @@ class getUserForm extends Component {
                         <input 
                           type="text" 
                           className='input-field' 
-                          name="address_street" 
-                          value={this.state.user.address.address} 
+                          name="address" 
+                          value={this.state.aux.address} 
                         />
                       </label>
                     </div>
@@ -409,7 +439,7 @@ class getUserForm extends Component {
                           className='input-field' 
                           name="address_number" 
                           value={this.state.user.address_number} 
-                          onChange={this.handleInputChange.bind(this)} 
+                          onChange={this.handleInputUserChange.bind(this)} 
                         />
                       </label>
                     </div>
@@ -422,7 +452,7 @@ class getUserForm extends Component {
                           className='input-field' 
                           name="address_complement" 
                           value={this.state.user.address_complement} 
-                          onChange={this.handleInputChange.bind(this)} />
+                          onChange={this.handleInputUserChange.bind(this)} />
                       </label>
                     </div>
                     </Col>
@@ -445,7 +475,7 @@ class getUserForm extends Component {
                           value={this.state.user.phone1} 
                           onChange={
                             (event) => {
-                              this.handleInputChange.bind(this)(event)
+                              this.handleInputUserChange.bind(this)(event)
                               if(event.target.value.replace(/(_|-|(|))/g,'').length == 13)
                                 this.setState({phonemask: "(11) 11111-1111"})
                               else
@@ -465,7 +495,7 @@ class getUserForm extends Component {
                           className='input-field' 
                           name="phone2" 
                           value={this.state.user.phone2} 
-                          onChange={this.handleInputChange.bind(this)} 
+                          onChange={this.handleInputUserChange.bind(this)} 
                         />
                       </label>
                     </div>
@@ -478,7 +508,7 @@ class getUserForm extends Component {
                           className='input-field' 
                           name="email" 
                           value={this.state.user.email} 
-                          onChange={this.handleInputChange.bind(this)} 
+                          onChange={this.handleInputUserChange.bind(this)} 
                         />
                       </label>
                     </div>
@@ -487,11 +517,11 @@ class getUserForm extends Component {
                       <h6>Observações:</h6>
                       <label>
                         <textarea  
-                          className='field-input materialize-textarea'
+                          className='input-field materialize-textarea'
                           placeholder="Deixe este campo em branco caso não exista observações a serem feitas" 
                           name="note" 
                           value={this.state.user.note} 
-                          onChange={this.handleInputChange.bind(this)} 
+                          onChange={this.handleInputUserChange.bind(this)} 
                         />
                       </label>
                     </div>
@@ -508,11 +538,11 @@ class getUserForm extends Component {
                           <h6>Senha atual:</h6>
                           <label>
                             <input 
-                              type="text" 
+                              type="password" 
                               className='input-field' 
-                              name="senha" 
-                              value="" 
-                              onChange={this.handleInputChange.bind(this)} 
+                              name="password" 
+                              value={this.state.aux.password}
+                              onChange={this.handleChange.bind(this)} 
                             />
                           </label>
                         </div>
@@ -521,11 +551,11 @@ class getUserForm extends Component {
                           <h6>Nova senha: <i>(mínimo 6 caracteres)</i></h6>
                           <label>
                             <input 
-                              type="text" 
+                              type="password" 
                               className='input-field' 
-                              name="senha" 
-                              value="" 
-                              onChange={this.handleInputChange.bind(this)} 
+                              name="current_password" 
+                              value={this.state.aux.current_password}
+                              onChange={this.handleChange.bind(this)} 
                             />
                           </label>
                         </div>
@@ -534,19 +564,17 @@ class getUserForm extends Component {
                           <h6>Confirmação de senha:</h6>
                           <label>
                             <input 
-                              type="text" 
+                              type="password" 
                               className='input-field' 
-                              name="senha2" 
-                              value="" 
-                              onChange={this.handleInputChange.bind(this)} 
+                              name="password_confirmation" 
+                              value={this.state.aux.password_confirmation} 
+                              onChange={this.handleChange.bind(this)} 
                             />
                           </label>
                         </div>
                         <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
                       </Col> : null
                     } 
-
-
                 </Row>
                 {this.confirmButton()}
               </div>
@@ -558,13 +586,5 @@ class getUserForm extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  const user = state.get('user').getIn(['userInfo'])
-  return {
-    user
-  }
-}
-const UserForm = connect(
-  mapStateToProps
-)(getUserForm)
+const UserForm = connect()(getUserForm)
 export default UserForm
