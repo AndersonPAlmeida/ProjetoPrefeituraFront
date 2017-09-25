@@ -266,7 +266,17 @@ class getUserForm extends Component {
 	        <Col s={12}>
             <div className='card'>
               <div className='card-content'>
-                <h2 className="card-title">Alterar dependente: Dependente C</h2>
+              {this.props.is_edit ?
+                this.props.user_class == `citizen` ?
+                  <h2 className="card-title">Alterar cadastro: {this.props.user_data.name}</h2>
+                  :
+                  <h2 className="card-title">Alterar dependente: {this.props.user_data.name}</h2> 
+                  :
+                  this.props.user_class == `citizen` ?
+                    <h2 className="card-title">Cadastrar cidadão</h2>
+                    :
+                    <h2 className="card-title">Cadastrar dependente</h2> 
+              }
 
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>

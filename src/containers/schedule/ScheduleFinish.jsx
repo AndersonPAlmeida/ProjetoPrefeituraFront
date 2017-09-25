@@ -8,10 +8,6 @@ import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 
-function addZeroBefore(n) {
-  return (n < 10 ? '0' : '') + n;
-}
-
 class getScheduleFinish extends Component {
   constructor(props) {
       super(props)

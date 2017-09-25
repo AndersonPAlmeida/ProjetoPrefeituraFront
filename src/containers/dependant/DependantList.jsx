@@ -9,6 +9,7 @@ import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import FilterableTable from 'react-filterable-table';
+import strftime from 'strftime';
 
 
 class getDependantList extends Component {
@@ -48,11 +49,32 @@ class getDependantList extends Component {
       )
   }
 
+  formatDate (n) {
+  	console.log(n)
+  	var d = new Date(n)
+  	console.log(d)
+    var date = d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear()
+    console.log(date)
+    return date
+  }
+
+  formatCPF(n) {
+    n = n.replace(/\D/g,"");
+    n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
+    return (n);
+  }
+
 	tableList() {
     const data = (
       this.state.dependants.map((dependant) => {
         return (
-          { name: <a className='back-bt waves-effect btn-flat' href='#' onClick={ () => browserHistory.push(`/dependants/${dependant.id}`) }>{dependant.name}</a>, birth: dependant.birth_date, cpf: dependant.cpf, edit: <a className='back-bt waves-effect btn-flat' href='#' onClick={ () => browserHistory.push(`/dependants/${dependant.id}/edit`) }><i className="waves-effect material-icons tooltipped">edit</i></a> }
+          { name: <a className='back-bt waves-effect btn-flat' href='#' 
+          		onClick={ () => browserHistory.push(`/dependants/${dependant.id}`) }>{dependant.name}</a>, 
+          	birth: this.formatDate(dependant.birth_date), 
+          	cpf: this.formatCPF(dependant.cpf), 
+          	edit: <a className='back-bt waves-effect btn-flat' href='#' 
+          		onClick={ () => browserHistory.push(`/dependants/${dependant.id}/edit`) }>
+          		<i className="waves-effect material-icons tooltipped">edit</i></a> }
         )
       })
     )
