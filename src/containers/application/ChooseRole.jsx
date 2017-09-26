@@ -19,7 +19,7 @@ class getChooseRole extends Component {
 		return (
 			<div className='card'>
 	          <div className='card-content center'>
-	            <h2 className='card-title h2-title-home'> "Nome usuário", 
+	            <h2 className='card-title h2-title-home'> {this.props.user.citizen.name}, 
 	            	escolha o local e a permissão os quais deseja acessar:! </h2>
 	          </div>
 	    	</div>
@@ -95,8 +95,13 @@ class getChooseRole extends Component {
 const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
   const citizen_role = [{ 'id': "citizen", 'role': "citizen", 'city_id': user.citizen.city.id, 'city_name': user.citizen.city.name }] 
-  const options = citizen_role.concat(user.roles)
+  var options
+  if(user.roles)
+    options = citizen_role.concat(user.roles)
+  else
+    options = citizen_role
   return {
+    user,
     options
   }
 }

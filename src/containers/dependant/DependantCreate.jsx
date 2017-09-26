@@ -7,28 +7,12 @@ import { connect } from 'react-redux'
 import UserForm from '../utils/UserForm'
 import { browserHistory } from 'react-router';
 
-class getDependantEdit extends Component {
+class getDependantCreate extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      dependant: [],
-      fetching: true
+      dependant: []
     };
-  }
-
-  componentDidMount() {
-    var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`;
-    const params = `permission=${this.props.user.current_role}`
-    fetch(`${apiUrl}/${collection}?${params}`, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get",
-    }).then(parseResponse).then(resp => {
-      self.setState({ dependant: resp.citizen, fetching: false })
-    });
   }
 
   prev() {
@@ -41,13 +25,12 @@ class getDependantEdit extends Component {
         {
           this.state.fetching ? <div /> : 
             <UserForm 
-              user_data={this.state.dependant} 
               user_class={`dependant`}
-              is_edit={true} 
+              is_edit={false} 
               prev={this.prev}
-              fetch_collection={`citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`}
+              fetch_collection={`citizens/${this.props.user.citizen.id}/dependants`}
               fetch_params={`permission=${this.props.user.current_role}`}
-              fetch_method={'put'}
+              fetch_method={'post'}
               fetch_function={fetch}
               submit_url={`/dependants/`}
             />
@@ -63,7 +46,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const DependantEdit = connect(
+const DependantCreate = connect(
   mapStateToProps
-)(getDependantEdit)
-export default DependantEdit
+)(getDependantCreate)
+export default DependantCreate

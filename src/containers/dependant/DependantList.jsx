@@ -8,8 +8,7 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
-import FilterableTable from 'react-filterable-table';
-
+import strftime from 'strftime';
 
 class getDependantList extends Component {
   constructor(props) {
@@ -47,37 +46,68 @@ class getDependantList extends Component {
       </div>
       )
   }
+  
+  formatCPF(n) {
+    n = n.replace(/\D/g,"");
+    n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
+    return (n);
+  }
 
 	tableList() {
     const data = (
       this.state.dependants.map((dependant) => {
         return (
-          { name: <a className='back-bt waves-effect btn-flat' href='#' onClick={ () => browserHistory.push(`/dependants/${dependant.id}`) }>{dependant.name}</a>, birth: dependant.birth_date, cpf: dependant.cpf, edit: <a className='back-bt waves-effect btn-flat' href='#' onClick={ () => browserHistory.push(`/dependants/${dependant.id}/edit`) }><i className="waves-effect material-icons tooltipped">edit</i></a> }
+          <tr>
+            <td>
+              <a className='back-bt waves-effect btn-flat' 
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/dependants/${dependant.id}`) 
+                }>
+                {dependant.name}
+              </a>
+            </td>
+            <td>
+              {strftime.timezone('+0000')('%d/%m/%Y', new Date(dependant.birth_date))}
+            </td>
+            <td>
+              {this.formatCPF(dependant.cpf)}
+            </td>
+            <td>
+              <a className='back-bt waves-effect btn-flat' 
+                 href='#' 
+                 onClick={ () => 
+                 browserHistory.push(`/dependants/${dependant.id}/edit`) 
+                }>
+                  <i className="waves-effect material-icons tooltipped">
+                    edit
+                  </i>
+              </a> 
+            </td>
+          </tr>
         )
       })
     )
 
     // Fields to show in the table, and what object properties in the data they bind to
-    const fields = [
-        { name: 'name', displayName: "Nome", inputFilterable: true, sortable: true },
-        { name: 'birth', displayName: "Data de Nascimento", inputFilterable: true, exactFilterable: true, sortable: true },
-        { name: 'cpf', displayName: "CPF", inputFilterable: true, exactFilterable: true, sortable: true },
-        { name: 'edit', displayName: "" }
-    ];
+    const fields = (
+      <tr>
+        <th>Nome</th>
+        <th>Data de Nascimento</th>
+        <th>CPF</th>
+        <th></th>
+      </tr>
+    )
 
     return (
-      <FilterableTable
-        namespace="People"
-        initialSort="name"
-        data={data}
-        fields={fields}
-        noRecordsMessage="Nenhum registro a ser mostrado!"
-        noFilteredRecordsMessage="Nenhum registro encontrado!"
-        topPagerVisible={false}
-        bottomPagerVisible={false}
-        tableClassName='table-list'
-        className='table-div'
-      />
+      <table className={styles['table-list']}>
+        <thead>
+          {fields}
+        </thead>
+        <tbody>
+          {data}
+        </tbody>
+      </table>
     )
 	}
 
@@ -87,7 +117,15 @@ class getDependantList extends Component {
 
 	newDependantButton() {
 		return (
-			<button onClick={() =>browserHistory.push(`/citizens`)} className="btn waves-effect btn button-color" name="anterior" type="submit">CADASTRAR NOVO DEPENDENTE</button>
+			<button 
+        onClick={() =>
+          browserHistory.push({ pathname: `/dependants/new`, query: {cep: this.props.user.citizen.cep}}) 
+        }
+        className="btn waves-effect btn button-color" 
+        name="anterior" 
+        type="submit">
+          CADASTRAR NOVO DEPENDENTE
+      </button>
 		)
 	}
 
