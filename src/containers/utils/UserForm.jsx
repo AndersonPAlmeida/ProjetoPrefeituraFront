@@ -244,8 +244,13 @@ class getUserForm extends Component {
           this.props.dispatch(userSignIn(resp.data))
         browserHistory.push(this.props.submit_url)
       }).catch((e) => {
-        console.log(e)
-      }) ; 
+        if(e) {
+          let full_error_msg = "";
+          e.forEach(function(elem){ full_error_msg += elem + '\n' });
+          Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+          throw e;
+        }
+      }); 
     }
   }
 
@@ -259,7 +264,6 @@ class getUserForm extends Component {
   }
 
   render() {
-    console.log(this.state)
     return (
       <main>
       	<Row>

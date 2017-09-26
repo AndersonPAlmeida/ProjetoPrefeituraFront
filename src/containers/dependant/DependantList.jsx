@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import FilterableTable from 'react-filterable-table';
 import strftime from 'strftime';
-
+import ReactTable from 'react-table'
 
 class getDependantList extends Component {
   constructor(props) {
@@ -50,11 +50,8 @@ class getDependantList extends Component {
   }
 
   formatDate (n) {
-  	console.log(n)
   	var d = new Date(n)
-  	console.log(d)
     var date = d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear()
-    console.log(date)
     return date
   }
 
@@ -68,38 +65,57 @@ class getDependantList extends Component {
     const data = (
       this.state.dependants.map((dependant) => {
         return (
-          { name: <a className='back-bt waves-effect btn-flat' href='#' 
-          		onClick={ () => browserHistory.push(`/dependants/${dependant.id}`) }>{dependant.name}</a>, 
-          	birth: this.formatDate(dependant.birth_date), 
-          	cpf: this.formatCPF(dependant.cpf), 
-          	edit: <a className='back-bt waves-effect btn-flat' href='#' 
-          		onClick={ () => browserHistory.push(`/dependants/${dependant.id}/edit`) }>
-          		<i className="waves-effect material-icons tooltipped">edit</i></a> }
+          <tr>
+            <td>
+              <a className='back-bt waves-effect btn-flat' 
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/dependants/${dependant.id}`) 
+                }>
+                {dependant.name}
+              </a>
+            </td>
+            <td>
+              {this.formatDate(dependant.birth_date)}
+            </td>
+            <td>
+              {this.formatCPF(dependant.cpf)}
+            </td>
+            <td>
+              <a className='back-bt waves-effect btn-flat' 
+                 href='#' 
+                 onClick={ () => 
+                 browserHistory.push(`/dependants/${dependant.id}/edit`) 
+                }>
+                  <i className="waves-effect material-icons tooltipped">
+                    edit
+                  </i>
+              </a> 
+            </td>
+          </tr>
         )
       })
     )
 
     // Fields to show in the table, and what object properties in the data they bind to
-    const fields = [
-        { name: 'name', displayName: "Nome", inputFilterable: true, sortable: true },
-        { name: 'birth', displayName: "Data de Nascimento", inputFilterable: true, exactFilterable: true, sortable: true },
-        { name: 'cpf', displayName: "CPF", inputFilterable: true, exactFilterable: true, sortable: true },
-        { name: 'edit', displayName: "" }
-    ];
+    const fields = (
+      <tr>
+        <th>Nome</th>
+        <th>Data de Nascimento</th>
+        <th>CPF</th>
+        <th></th>
+      </tr>
+    )
 
     return (
-      <FilterableTable
-        namespace="People"
-        initialSort="name"
-        data={data}
-        fields={fields}
-        noRecordsMessage="Nenhum registro a ser mostrado!"
-        noFilteredRecordsMessage="Nenhum registro encontrado!"
-        topPagerVisible={false}
-        bottomPagerVisible={false}
-        tableClassName='table-list'
-        className='table-div'
-      />
+      <table className={styles['table-list']}>
+        <thead>
+          {fields}
+        </thead>
+        <tbody>
+          {data}
+        </tbody>
+      </table>
     )
 	}
 
