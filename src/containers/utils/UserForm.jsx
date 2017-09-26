@@ -66,11 +66,14 @@ class getUserForm extends Component {
       this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
     }
     else {
-      console.log(this)
-      if(this.state.cep)
+      if(location.search) {
+        var search = location.search.substring(1);
+        var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
         self.setState({
-          user: update(this.state.user, { cep: {$set: this.state.cep} })
+          user: update(this.state.user, { cep: {$set: query['cep']} })
         })
+        this.updateAddress.bind(this)(query['cep'].replace(/(\.|-|_)/g,'')) 
+      }
     }
   }
 
