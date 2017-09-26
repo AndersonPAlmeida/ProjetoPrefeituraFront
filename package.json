@@ -50,7 +50,6 @@
     "react-addons-update": "^15.6.0",
     "react-day-picker": "^6.1.0",
     "react-dom": "15.6.1",
-    "react-filterable-table": "^0.2.9",
     "react-loader": "^2.4.0",
     "react-maskedinput": "^3.3.4",
     "react-materialize": "^1.0.6",

@@ -68,7 +68,6 @@ class getDependantShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      console.log(resp)
       self.setState({ dependant: resp.citizen })
     });
   }

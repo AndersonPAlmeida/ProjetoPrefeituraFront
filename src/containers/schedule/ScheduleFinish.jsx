@@ -32,7 +32,6 @@ class getScheduleFinish extends Component {
       self.setState({ schedule: resp })
     }).catch(({errors}) => {
       if(errors) {
-        console.log(errors)
         let full_error_msg = "";
         errors.forEach(function(elem){ full_error_msg += elem + '\n' });
         browserHistory.push(`citizens/${this.props.params.citizen_id}/schedules/schedule`)
