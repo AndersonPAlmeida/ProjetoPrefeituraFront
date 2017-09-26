@@ -8,9 +8,7 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
-import FilterableTable from 'react-filterable-table';
 import strftime from 'strftime';
-import ReactTable from 'react-table'
 
 class getDependantList extends Component {
   constructor(props) {
