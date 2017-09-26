@@ -34,10 +34,10 @@ class getUserForm extends Component {
       },
       aux: {
         address: '',
-        birth_day: 0,
-        birth_month: 0,
-        birth_year: 0,
-        birth_year_id: 0,
+        birth_day: '',
+        birth_month: '',
+        birth_year: '',
+        birth_year_id: '',
         city_name: '',
         neighborhood: '',
         password: "",
@@ -64,6 +64,13 @@ class getUserForm extends Component {
         })
       })
       this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
+    }
+    else {
+      console.log(this)
+      if(this.state.cep)
+        self.setState({
+          user: update(this.state.user, { cep: {$set: this.state.cep} })
+        })
     }
   }
 
@@ -222,6 +229,8 @@ class getUserForm extends Component {
       } else {
         if(this.props.is_edit)
           fetch_body['citizen'] = formData;
+        else
+          fetch_body = formData;
         if(send_password) {
           fetch_body['password'] = auxData['password'] 
           fetch_body['password_confirmation'] = auxData['password_confirmation'] 
@@ -242,12 +251,14 @@ class getUserForm extends Component {
       }).then(parseResponse).then(resp => {
         if(this.props.is_edit && this.props.user_class == `citizen`)
           this.props.dispatch(userSignIn(resp.data))
+        Materialize.toast('Cadastro efetuado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
       }).catch((e) => {
         if(e) {
           let full_error_msg = "";
-          e.forEach(function(elem){ full_error_msg += elem + '\n' });
-          Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+          console.log(e.errors)
+          //e.errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+          //Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
           throw e;
         }
       }); 
@@ -562,19 +573,6 @@ class getUserForm extends Component {
                         </div>
                         
                         <div className="field-input">
-                          <h6>Nova senha: <i>(mínimo 6 caracteres)</i></h6>
-                          <label>
-                            <input 
-                              type="password" 
-                              className='input-field' 
-                              name="current_password" 
-                              value={this.state.aux.current_password}
-                              onChange={this.handleChange.bind(this)} 
-                            />
-                          </label>
-                        </div>
-
-                        <div className="field-input">
                           <h6>Confirmação de senha:</h6>
                           <label>
                             <input 
@@ -586,6 +584,22 @@ class getUserForm extends Component {
                             />
                           </label>
                         </div>
+
+                        {this.props.is_edit ?
+                          <div className="field-input">
+                            <h6>Nova senha: <i>(mínimo 6 caracteres)</i></h6>
+                            <label>
+                              <input 
+                                type="password" 
+                                className='input-field' 
+                                name="current_password" 
+                                value={this.state.aux.current_password}
+                                onChange={this.handleChange.bind(this)} 
+                              />
+                            </label>
+                          </div>
+                        : null}
+
                         <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
                       </Col> : null
                     } 
