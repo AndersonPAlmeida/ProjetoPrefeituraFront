@@ -214,6 +214,10 @@ class getUserForm extends Component {
         formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
       if(!this.props.is_edit || auxData['password']) {
         send_password = true;
+        if(!auxData['password'])
+          errors.push("Campo Senha é obrigatório.");
+        if(!auxData['password'])
+          errors.push("Campo Confirmação de Senha é obrigatório..");
         if(auxData['password_confirmation'] != auxData['password'])
           errors.push("A senha de confirmação não corresponde a senha atual.");
       }
@@ -256,15 +260,14 @@ class getUserForm extends Component {
           this.props.dispatch(userSignIn(resp.data))
         Materialize.toast('Cadastro efetuado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
-      }).catch((e) => {
-        if(e) {
+      }).catch(({errors}) => {
+        if(errors) {
           let full_error_msg = "";
-          console.log(e.errors)
-          //e.errors.forEach(function(elem){ full_error_msg += elem + '\n' });
-          //Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
-          throw e;
+          errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n' });
+          Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+          throw errors;
         }
-      }); 
+      });
     }
   }
 

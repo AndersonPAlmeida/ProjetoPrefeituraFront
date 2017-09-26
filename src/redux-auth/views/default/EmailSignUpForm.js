@@ -132,7 +132,7 @@ class EmailSignUpForm extends React.Component {
       formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
       formData['birth_date'] = formData['birth_day'] + '/' + formData['birth_month'] + '/' + formData['birth_year'];
       var { birth_day, birth_month, birth_year, confirm_success_url, config_name, registration, ...other } = formData;
-      this.props.dispatch(emailSignUp(other, this.getEndpoint(), this.props.next)).catch(() => {});
+      this.props.dispatch(emailSignUp(other, this.getEndpoint(), this.props.next));
     }
   }
 
