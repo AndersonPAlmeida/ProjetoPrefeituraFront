@@ -7,6 +7,7 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
+import strftime from 'strftime';
 
 class getScheduleFinish extends Component {
   constructor(props) {
@@ -71,8 +72,7 @@ class getScheduleFinish extends Component {
   }
 
   mainComponent() {
-    var d = new Date(this.state.schedule.service_start_time)
-    var date = d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear()
+    var date = strftime.timezone('+0000')('%d/%m/%Y', new Date(this.state.schedule.service_start_time))
     var time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes())
     return (
       <div className='card'>

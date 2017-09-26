@@ -49,15 +49,6 @@ class getDependantList extends Component {
       )
   }
 
-  formatDate (n) {
-  	console.log(n)
-  	var d = new Date(n)
-  	console.log(d)
-    var date = d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear()
-    console.log(date)
-    return date
-  }
-
   formatCPF(n) {
     n = n.replace(/\D/g,"");
     n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
@@ -70,7 +61,7 @@ class getDependantList extends Component {
         return (
           { name: <a className='back-bt waves-effect btn-flat' href='#' 
           		onClick={ () => browserHistory.push(`/dependants/${dependant.id}`) }>{dependant.name}</a>, 
-          	birth: this.formatDate(dependant.birth_date), 
+          	birth: strftime.timezone('+0000')('%d/%m/%Y', new Date(dependant.birth_date)), 
           	cpf: this.formatCPF(dependant.cpf), 
           	edit: <a className='back-bt waves-effect btn-flat' href='#' 
           		onClick={ () => browserHistory.push(`/dependants/${dependant.id}/edit`) }>
