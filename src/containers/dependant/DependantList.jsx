@@ -46,13 +46,7 @@ class getDependantList extends Component {
       </div>
       )
   }
-
-  formatDate (n) {
-  	var d = new Date(n)
-    var date = d.getDate()  + "/" + (d.getMonth()+1) + "/" + d.getFullYear()
-    return date
-  }
-
+  
   formatCPF(n) {
     n = n.replace(/\D/g,"");
     n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
@@ -74,7 +68,7 @@ class getDependantList extends Component {
               </a>
             </td>
             <td>
-              {this.formatDate(dependant.birth_date)}
+              {strftime.timezone('+0000')('%d/%m/%Y', new Date(dependant.birth_date))}
             </td>
             <td>
               {this.formatCPF(dependant.cpf)}
