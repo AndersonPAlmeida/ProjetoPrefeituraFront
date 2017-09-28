@@ -7,11 +7,11 @@ import { connect } from 'react-redux'
 import SectorForm from './SectorForm'
 import { browserHistory } from 'react-router';
 
-class getDependantEdit extends Component {
+class getSectorEdit extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      dependant: [],
+      sector: [],
       fetching: true
     };
   }
@@ -19,7 +19,7 @@ class getDependantEdit extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`;
+    const collection = `citizens/${this.props.user.citizen.id}/sectors/${this.props.params.sector_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -27,12 +27,12 @@ class getDependantEdit extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ dependant: resp.citizen, fetching: false })
+      self.setState({ sector: resp, fetching: false })
     });
   }
 
   prev() {
-    browserHistory.push(`/dependants`)
+    browserHistory.push(`/sectors`)
   }
 
   render() {
@@ -41,15 +41,14 @@ class getDependantEdit extends Component {
         {
           this.state.fetching ? <div /> : 
             <UserForm 
-              user_data={this.state.dependant} 
-              user_class={`dependant`}
+              user_data={this.state.sector} 
+              user_class={`edit`}
               is_edit={true} 
               prev={this.prev}
-              fetch_collection={`citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`}
+              fetch_collection={`citizens/${this.props.user.citizen.id}/sectors/${this.props.params.edit_id}`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'put'}
-              fetch_function={fetch}
-              submit_url={`/dependants/`}
+              submit_url={`/edits/`}
             />
         }
       </div>
@@ -63,7 +62,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const DependantEdit = connect(
+const SectorEdit = connect(
   mapStateToProps
-)(getDependantEdit)
-export default DependantEdit
+)(getSectorEdit)
+export default SectorEdit

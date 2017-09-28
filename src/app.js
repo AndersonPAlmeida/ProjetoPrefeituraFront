@@ -6,7 +6,7 @@ import createHistory from 'react-router/lib/createMemoryHistory';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule, 
          ChooseRole, ScheduleAgreement, ScheduleChoose, ScheduleCitizen, ScheduleFinish,
-         DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit
+         DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit,
          SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
          ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
          ServiceTypeCreate, ServiceTypeShow, ServiceTypeList
