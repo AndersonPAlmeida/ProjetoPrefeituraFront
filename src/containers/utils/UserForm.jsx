@@ -66,7 +66,7 @@ class getUserForm extends Component {
           birth_month: {$set: parseInt(this.props.user_data.birth_date.substring(5,7))},
           birth_year: {$set: year},
           birth_year_id: {$set: year-1899},
-          pcd_value: {$set: true}
+          pcd_value: {$set: is_pcd}
         })
       })
       this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
@@ -226,6 +226,9 @@ class getUserForm extends Component {
         if(auxData['password_confirmation'] != auxData['password'])
           errors.push("A senha de confirmação não corresponde a senha atual.");
       }
+    }
+    if(!auxData['pcd_value']) {
+      formData['pcd'] = ''
     }
     if(errors.length > 0) {
       let full_error_msg = "";
