@@ -4,19 +4,19 @@ import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
-import UserForm from '../utils/UserForm'
+import ServiceTypeForm from './ServiceTypeForm'
 import { browserHistory } from 'react-router';
 
-class getDependantCreate extends Component {
+class getServiceTypeCreate extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      dependant: []
+      service_type: []
     };
   }
 
   prev() {
-    browserHistory.push(`/dependants`)
+    browserHistory.push(`/service_types`)
   }
 
   render() {
@@ -25,14 +25,13 @@ class getDependantCreate extends Component {
         {
           this.state.fetching ? <div /> : 
             <UserForm 
-              user_class={`dependant`}
+              user_class={`service_type`}
               is_edit={false} 
               prev={this.prev}
-              fetch_collection={`citizens/${this.props.user.citizen.id}/dependants`}
+              fetch_collection={`citizens/${this.props.user.citizen.id}/service_types`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
-              fetch_function={fetch}
-              submit_url={`/dependants/`}
+              submit_url={`/service_types/`}
             />
         }
       </div>
@@ -46,7 +45,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const DependantCreate = connect(
+const ServiceTypeCreate = connect(
   mapStateToProps
-)(getDependantCreate)
-export default DependantCreate
+)(getServiceTypeCreate)
+export default ServiceTypeCreate

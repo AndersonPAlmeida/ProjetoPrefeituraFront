@@ -1,19 +1,19 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/DependantShow.css'
+import styles from './styles/SectorShow.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 
-class getDependantShow extends Component {
+class getSectorShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
       update_address: 0,
-      dependant: {
+      sector: {
         account_id: '',
         active: '',
         address: {
@@ -60,7 +60,7 @@ class getDependantShow extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`;
+    const collection = `citizens/${this.props.user.citizen.id}/sectors/${this.props.params.sector_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -68,7 +68,7 @@ class getDependantShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ dependant: resp.citizen })
+      self.setState({ sector: resp.citizen })
     });
   }
 
@@ -79,59 +79,59 @@ class getDependantShow extends Component {
               <h2 className='card-title h2-title-home'> Informações do Dependente: </h2>
               <p> 
                 <b>Nome: </b>
-                {this.state.dependant.name}
+                {this.state.sector.name}
               </p>
               <p> 
                 <b>CPF: </b>
-                {this.state.dependant.cpf}
+                {this.state.sector.cpf}
               </p>
               <p> 
                 <b>RG: </b>
-                {this.state.dependant.rg}
+                {this.state.sector.rg}
               </p>
               <p> 
                 <b>Data de Nascimento: </b>
-                {this.state.dependant.birth_date}
+                {this.state.sector.birth_date}
               </p>
               <p> 
                 <b>Telefone 1: </b>
-                {this.state.dependant.phone1}
+                {this.state.sector.phone1}
               </p>
               <p> 
                 <b>Telefone 2: </b>
-                {this.state.dependant.phone2}
+                {this.state.sector.phone2}
               </p>
               <p> 
                 <b>E-mail: </b>
-                {this.state.dependant.email}
+                {this.state.sector.email}
               </p>
               <p> 
                 <b>CEP: </b>
-                {this.state.dependant.cep}
+                {this.state.sector.cep}
               </p>
               <p> 
                 <b>Estado: </b>
-                {this.state.dependant.state.name}
+                {this.state.sector.state.name}
               </p>
               <p> 
                 <b>Município: </b>
-                {this.state.dependant.city.name}
+                {this.state.sector.city.name}
               </p>
               <p> 
                 <b>Bairro: </b>
-                {this.state.dependant.address.neighborhood}
+                {this.state.sector.address.neighborhood}
               </p>
               <p> 
                 <b>Endereço: </b>
-                {this.state.dependant.address.address}
+                {this.state.sector.address.address}
               </p>
               <p> 
                 <b>Complemento do endereço: </b>
-                {this.state.dependant.address.complement}
+                {this.state.sector.address.complement}
               </p>
               <p> 
                 <b>Observações: </b>
-                {this.state.dependant.note}
+                {this.state.sector.note}
               </p>
             </div>
             {this.editButton()}
@@ -139,19 +139,19 @@ class getDependantShow extends Component {
     )
   }
 
-  editDependant () {
-    browserHistory.push(`dependants/${this.props.params.dependant_id}/edit`)
+  editSector () {
+    browserHistory.push(`sectors/${this.props.params.sector_id}/edit`)
   }
 
   prev() {
-    browserHistory.push(`dependants`)
+    browserHistory.push(`sectors`)
   }  
 
 	editButton() {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
-				<button className="waves-effect btn right" name="commit" onClick={this.editDependant.bind(this)} type="submit">Editar</button>
+				<button className="waves-effect btn right" name="commit" onClick={this.editSector.bind(this)} type="submit">Editar</button>
       </div>
 		)
 	}
@@ -177,7 +177,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const DependantShow = connect(
+const SectorShow = connect(
   mapStateToProps
-)(getDependantShow)
-export default DependantShow
+)(getSectorShow)
+export default SectorShow

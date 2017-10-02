@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/UserForm.css'
+import styles from './styles/SectorForm.css'
 import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
@@ -231,8 +231,8 @@ class getUserForm extends Component {
       formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
       formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`
       let fetch_body = {};
-      if(this.props.user_class == `dependant`) {
-        fetch_body['dependant'] = formData;
+      if(this.props.user_class == `sector`) {
+        fetch_body['sector'] = formData;
       } else {
         if(this.props.is_edit)
           fetch_body['citizen'] = formData;
