@@ -44,6 +44,7 @@ class getUserForm extends Component {
         current_password: "",
         password_confirmation: "",
         state_abbreviation: '',
+        pcd_value: '',
       },
       phonemask: "(11) 1111-11111"
     };
@@ -51,7 +52,11 @@ class getUserForm extends Component {
 
   componentWillMount() {
     var self = this;
+    var is_pcd = false;
     if(this.props.is_edit) {
+      if(this.props.user_data.pcd) {
+        is_pcd = true;
+      }
       var year = parseInt(this.props.user_data.birth_date.substring(0,4))
       self.setState({
         user: this.props.user_data,
@@ -60,7 +65,8 @@ class getUserForm extends Component {
           birth_day: {$set: parseInt(this.props.user_data.birth_date.substring(8,10))},
           birth_month: {$set: parseInt(this.props.user_data.birth_date.substring(5,7))},
           birth_year: {$set: year},
-          birth_year_id: {$set: year-1899}
+          birth_year_id: {$set: year-1899},
+          pcd_value: {$set: is_pcd}
         })
       })
       this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
@@ -81,7 +87,6 @@ class getUserForm extends Component {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
-
     this.setState({
       user: update(this.state.user, { [name]: {$set: value} })
     })
@@ -222,6 +227,9 @@ class getUserForm extends Component {
           errors.push("A senha de confirmação não corresponde a senha atual.");
       }
     }
+    if(!auxData['pcd_value']) {
+      formData['pcd'] = ''
+    }
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
@@ -324,32 +332,33 @@ class getUserForm extends Component {
                       <h6>Possui algum tipo de deficiência:</h6>
                       <div className="check-input">
                         <Input 
-                          onChange={this.handleUserInputChange} 
-                          checked={this.state.user.pcd} 
+                          onChange={this.handleChange.bind(this)} 
+                          checked={this.state.aux.pcd_value} 
                           s={12} l={12} 
-                          name='pcd' 
+                          name='pcd_value' 
                           type='radio' 
                           value='true' 
                           label='Sim' 
                         />
                         <Input 
-                          onChange={this.handleUserInputChange} 
-                          checked={!this.state.user.pcd} 
+                          onChange={this.handleChange.bind(this)} 
+                          checked={!this.state.aux.pcd_value} 
                           s={12} l={12} 
-                          name='pcd' 
+                          name='pcd_value' 
                           type='radio' 
                           value='' 
                           label='Não' 
                         />
 
-                        { this.state.user.pcd ? 
+                        { this.state.aux.pcd_value ? 
                           <div>
                             <h6>Qual tipo de deficiência:</h6>
                             <label>
                               <input 
                                 type="text" 
                                 className='input-field' 
-                                name="pcd_description" value="" 
+                                name="pcd" 
+                                value={this.state.user.pcd} 
                                 onChange={this.handleInputUserChange.bind(this)}
                                 />
                             </label>
