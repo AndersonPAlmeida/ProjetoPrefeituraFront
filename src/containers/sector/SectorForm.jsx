@@ -8,7 +8,7 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
-import { UserImg } from '../images';
+import { SectorImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
 
@@ -24,6 +24,7 @@ class getSectorForm extends Component {
         cancel_limt: '',
         description: '',
         name: '',
+        previous_notice: '',
         schedules_by_sector: '' 
       },
     };
@@ -36,7 +37,7 @@ class getSectorForm extends Component {
     }
   }
 
-  handleInputUserChange(event) {
+  handleInputSectorChange(event) {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
@@ -105,13 +106,99 @@ class getSectorForm extends Component {
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
                     <div className="field-input" >
-                      <h6>Endereço:</h6>
+                      <h6>Situação:</h6>
+                      <label>
+                        <Input s={12} l={3} 
+                               type='select'
+                               name='birth_day'
+                               value={this.state.sector.active}
+                               onChange={this.handleInputSectorChange.bind(this)} 
+                        >
+                          <option key={0} value={true}>Ativo</option>
+                          <option key={1} value={false}>Inativo</option>
+                        </Input>
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Nome:</h6>
                       <label>
                         <input 
                           type="text" 
                           className='input-field' 
-                          name="address" 
-                          value={this.state.aux.address} 
+                          name="name" 
+                          value={this.state.sector.name} 
+                          onChange={this.handleInputSectorChange.bind(this)} 
+                        />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Número de agendamentos por setor:</h6>
+                      <label>
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="schedules_by_sector" 
+                          value={this.state.sector.schedules_by_sector} 
+                          onChange={this.handleInputSectorChange.bind(this)} 
+                        />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Número de dias de impedimento de novos agendamentos:</h6>
+                      <label>
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="blocking_days" 
+                          value={this.state.sector.blocking_days} 
+                          onChange={this.handleInputSectorChange.bind(this)} 
+                        />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Limite de cancelamentos:</h6>
+                      <label>
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="cancel_limit" 
+                          value={this.state.sector.cancel_limit} 
+                          onChange={this.handleInputSectorChange.bind(this)} 
+                        />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Horas de antecedências para poder cancelar um atendimento:</h6>
+                      <label>
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="previous_notice" 
+                          value={this.state.sector.previous_notice} 
+                          onChange={this.handleInputSectorChange.bind(this)} 
+                        />
+                      </label>
+                    </div>
+                    <div className="field-input" >
+                      <h6>Número de faltas que gera impedimento de novos agendamentos:</h6>
+                      <label>
+                        <input 
+                          type="text" 
+                          className='input-field' 
+                          name="absence_max" 
+                          value={this.state.sector.absence_max} 
+                          onChange={this.handleInputSectorChange.bind(this)} 
+                        />
+                      </label>
+                    </div>
+                    <div>
+                      <h6>Descrição:</h6>
+                      <label>
+                        <textarea  
+                          className='input-field materialize-textarea'
+                          name="description" 
+                          value={this.state.sector.description} 
+                          onChange={this.handleInputUserChange.bind(this)} 
                         />
                       </label>
                     </div>
