@@ -110,7 +110,7 @@ class getSectorForm extends Component {
                       <label>
                         <Input s={12} l={3} 
                                type='select'
-                               name='birth_day'
+                               name='situation'
                                value={this.state.sector.active}
                                onChange={this.handleInputSectorChange.bind(this)} 
                         >
@@ -198,7 +198,7 @@ class getSectorForm extends Component {
                           className='input-field materialize-textarea'
                           name="description" 
                           value={this.state.sector.description} 
-                          onChange={this.handleInputUserChange.bind(this)} 
+                          onChange={this.handleInputSectorChange.bind(this)} 
                         />
                       </label>
                     </div>

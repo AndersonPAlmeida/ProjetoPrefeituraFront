@@ -12,55 +12,23 @@ class getSectorShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      update_address: 0,
       sector: {
-        account_id: '',
         active: '',
-        address: {
-          address: '',
-          complement: '',
-          complement2: '',
-          id: '',
-          neighborhood: '',
-          zipcode: ''
-        },
-        address_complement: '',
-        address_number: '',
-        address_street: '',
-        avatar_content_type: '',
-        avatar_file_name: '',
-        avatar_file_size: '',
-        avatar_updated_at: '',
-        birth_date: '',
-        cep: '',
-        city: {
-          id: '',
-          name: ''
-        },
-        cpf: '',
-        email: '',
-        id: '',
+        absence_max: '',
+        blocking_days: '',
+        cancel_limt: '',
+        description: '',
         name: '',
-        neighborhood: '',
-        note: '',
-        pcd: '',
-        phone1: '',
-        phone2: '',
-        responsible_id: '',
-        rg: '',
-        state: {
-          abbreviation: '',
-          id: '',
-          name: ''
-        }
-      }
+        previous_notice: '',
+        schedules_by_sector: ''
+      },
     }
   }
 
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/sectors/${this.props.params.sector_id}`;
+    const collection = `sectors/${this.props.params.sector_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -68,7 +36,7 @@ class getSectorShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ sector: resp.citizen })
+      self.setState({ sector: resp })
     });
   }
 
@@ -78,60 +46,36 @@ class getSectorShow extends Component {
             <div className='card-content'>
               <h2 className='card-title h2-title-home'> Informações do Dependente: </h2>
               <p> 
+                <b>Situação: </b>
+                {this.state.sector.active ? 'Ativo' : 'Inativo'}
+              </p>
+              <p> 
                 <b>Nome: </b>
                 {this.state.sector.name}
               </p>
               <p> 
-                <b>CPF: </b>
-                {this.state.sector.cpf}
+                <b>Descrição: </b>
+                {this.state.sector.description}
               </p>
               <p> 
-                <b>RG: </b>
-                {this.state.sector.rg}
+                <b>Número de Agendamentos por Setor: </b>
+                {this.state.sector.schedules_by_sector}
               </p>
               <p> 
-                <b>Data de Nascimento: </b>
-                {this.state.sector.birth_date}
+                <b>Número de dias de impedimento de novos agendamentos: </b>
+                {this.state.sector.blocking_days}
               </p>
               <p> 
-                <b>Telefone 1: </b>
-                {this.state.sector.phone1}
+                <b>Limite de cancelamentos: </b>
+                {this.state.sector.cancel_limit}
               </p>
               <p> 
-                <b>Telefone 2: </b>
-                {this.state.sector.phone2}
+                <b>Horas de antecedência para poder cancelar um atendimento: </b>
+                {this.state.sector.previous_notice}
               </p>
               <p> 
-                <b>E-mail: </b>
-                {this.state.sector.email}
-              </p>
-              <p> 
-                <b>CEP: </b>
-                {this.state.sector.cep}
-              </p>
-              <p> 
-                <b>Estado: </b>
-                {this.state.sector.state.name}
-              </p>
-              <p> 
-                <b>Município: </b>
-                {this.state.sector.city.name}
-              </p>
-              <p> 
-                <b>Bairro: </b>
-                {this.state.sector.address.neighborhood}
-              </p>
-              <p> 
-                <b>Endereço: </b>
-                {this.state.sector.address.address}
-              </p>
-              <p> 
-                <b>Complemento do endereço: </b>
-                {this.state.sector.address.complement}
-              </p>
-              <p> 
-                <b>Observações: </b>
-                {this.state.sector.note}
+                <b>Número de faltas que gera impedimento de novos agendamentos: </b>
+                {this.state.sector.absence_max}
               </p>
             </div>
             {this.editButton()}

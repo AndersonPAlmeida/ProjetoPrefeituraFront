@@ -21,7 +21,7 @@ class getSectorList extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/sectors`;
+    const collection = `sectors`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -37,7 +37,7 @@ class getSectorList extends Component {
     return (
       <div className='card'>
         <div className='card-content'>
-          <h2 className='card-title h2-title-home'> Dependente </h2>
+          <h2 className='card-title h2-title-home'> Setor </h2>
           {this.tableList()}
         </div>
         <div className="card-action">
@@ -47,12 +47,6 @@ class getSectorList extends Component {
       )
   }
   
-  formatCPF(n) {
-    n = n.replace(/\D/g,"");
-    n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
-    return (n);
-  }
-
 	tableList() {
     const data = (
       this.state.sectors.map((sector) => {
@@ -68,10 +62,13 @@ class getSectorList extends Component {
               </a>
             </td>
             <td>
-              {strftime.timezone('+0000')('%d/%m/%Y', new Date(sector.birth_date))}
+              {sector.description}
             </td>
             <td>
-              {this.formatCPF(sector.cpf)}
+              {sector.situation}
+            </td>
+            <td>
+              {sector.schedules_by_sector}
             </td>
             <td>
               <a className='back-bt waves-effect btn-flat' 
@@ -93,8 +90,9 @@ class getSectorList extends Component {
     const fields = (
       <tr>
         <th>Nome</th>
-        <th>Data de Nascimento</th>
-        <th>CPF</th>
+        <th>Descrição</th>
+        <th>Situação</th>
+        <th>Agendamentos por setor</th>
         <th></th>
       </tr>
     )
