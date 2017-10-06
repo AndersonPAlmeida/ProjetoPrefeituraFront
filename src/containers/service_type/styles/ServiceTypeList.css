@@ -49,6 +49,7 @@
 	float: left;
 }
 
-.clear-filter {
-	display: none;
+
+.filter-box {
+	text-decoration: bold;
 }
