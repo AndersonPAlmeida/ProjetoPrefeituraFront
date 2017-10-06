@@ -24,11 +24,11 @@ class getSectorCreate extends Component {
       <div>
         {
           this.state.fetching ? <div /> : 
-            <UserForm 
+            <SectorForm 
               user_class={`sector`}
               is_edit={false} 
               prev={this.prev}
-              fetch_collection={`citizens/${this.props.user.citizen.id}/sectors`}
+              fetch_collection={`sectors`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
               submit_url={`/sectors/`}
