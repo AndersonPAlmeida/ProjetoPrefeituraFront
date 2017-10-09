@@ -2,13 +2,11 @@ import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
 import styles from './styles/ServiceTypeList.css'
-import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
-import strftime from 'strftime';
 
 class getServiceTypeList extends Component {
   constructor(props) {
@@ -37,7 +35,8 @@ class getServiceTypeList extends Component {
     return (
       <div className='card'>
         <div className='card-content'>
-          <h2 className='card-title h2-title-home'> Dependente </h2>
+          <h2 className='card-title h2-title-home'> Tipos de Atendimento </h2>
+          {this.filterForm()}
           {this.tableList()}
         </div>
         <div className="card-action">
@@ -46,13 +45,49 @@ class getServiceTypeList extends Component {
       </div>
       )
   }
-  
-  formatCPF(n) {
-    n = n.replace(/\D/g,"");
-    n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
-    return (n);
-  }
 
+  filterForm() {
+    return (
+      <div>
+        <Row className='left filter-box'>
+          <Col s={12} m={4} l={4}>
+              <h6>Descrição:</h6>
+              <label>
+                <input 
+                  type="text" 
+                  className='input-field' 
+                  name="description-search" 
+                  value="" 
+                  />
+              </label>
+          </Col>
+          <Col s={12} m={4} l={4}>
+              <h6>Prefeitura:</h6>
+              <label>
+                <input 
+                  type="text" 
+                  className='input-field' 
+                  name="cityhall-search" 
+                  value="" 
+                  />
+              </label>
+          </Col>
+          <Col s={12} m={4} l={4}>
+              <h6>Situação:</h6>
+              <label>
+                <input 
+                  type="text" 
+                  className='input-field' 
+                  name="situation-search" 
+                  value="" 
+                  />
+              </label>
+          </Col>
+        </Row>
+      </div>
+      )
+  }
+  
 	tableList() {
     const data = (
       this.state.service_types.map((service_type) => {
@@ -64,14 +99,17 @@ class getServiceTypeList extends Component {
                 onClick={ () => 
                   browserHistory.push(`/service_types/${service_type.id}`) 
                 }>
-                {service_type.name}
+                {service_type.description}
               </a>
             </td>
             <td>
-              {strftime.timezone('+0000')('%d/%m/%Y', new Date(service_type.birth_date))}
+              {service_type.situation}
             </td>
             <td>
-              {this.formatCPF(service_type.cpf)}
+              {service_type.name}
+            </td>
+            <td>
+              {service_type.city_hall}
             </td>
             <td>
               <a className='back-bt waves-effect btn-flat' 
@@ -85,16 +123,17 @@ class getServiceTypeList extends Component {
               </a> 
             </td>
           </tr>
-        )
+       )
       })
     )
 
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>Nome</th>
-        <th>Data de Nascimento</th>
-        <th>CPF</th>
+        <th>Descrição</th>
+        <th>Situação</th>
+        <th>Setor</th>
+        <th>Prefeitura</th>
         <th></th>
       </tr>
     )
@@ -124,7 +163,7 @@ class getServiceTypeList extends Component {
         className="btn waves-effect btn button-color" 
         name="anterior" 
         type="submit">
-          CADASTRAR NOVO SETOR
+          NOVO TIPO DE ATENDIMENTO
       </button>
 		)
 	}
