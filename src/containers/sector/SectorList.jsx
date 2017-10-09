@@ -61,7 +61,7 @@ class getSectorList extends Component {
                 {sector.name}
               </a>
             </td>
-            <td>
+            <td className='description-column' >
               {sector.description}
             </td>
             <td>

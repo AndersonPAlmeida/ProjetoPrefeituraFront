@@ -62,14 +62,22 @@ class getSectorForm extends Component {
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
+      let fetch_body = {}
+      if(this.props.is_edit)
+        fetch_body['sector'] = formData
+      else
+        fetch_body = formData
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json" },
         method: this.props.fetch_method,
-        body: JSON.stringify(formData)
+        body: JSON.stringify(fetch_body)
       }).then(parseResponse).then(resp => {
-        Materialize.toast('Cadastro efetuado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+        if(this.props.is_edit)
+          Materialize.toast('Setor editado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+        else
+          Materialize.toast('Setor criado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
       }).catch(({errors}) => {
         if(errors) {
@@ -107,8 +115,8 @@ class getSectorForm extends Component {
                   <Col s={12} m={12} l={6}>
                     <div className="field-input" >
                       <h6>Situação:</h6>
-                      <label>
-                        <Input s={12} l={3} 
+                      <div>
+                        <Input s={6} m={32} l={6} 
                                type='select'
                                name='situation'
                                value={this.state.sector.active}
@@ -117,7 +125,7 @@ class getSectorForm extends Component {
                           <option key={0} value={true}>Ativo</option>
                           <option key={1} value={false}>Inativo</option>
                         </Input>
-                      </label>
+                      </div>
                     </div>
                     <div className="field-input" >
                       <h6>Nome:</h6>
