@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/UserForm.css'
+import styles from './styles/ServicePlaceForm.css'
 import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
@@ -40,11 +40,10 @@ class getUserForm extends Component {
         birth_year_id: '',
         city_name: '',
         neighborhood: '',
-        password: '',
-        current_password: '',
+        password: "",
+        current_password: "",
         password_confirmation: "",
         state_abbreviation: '',
-        pcd_value: '',
       },
       phonemask: "(11) 1111-11111"
     };
@@ -52,28 +51,22 @@ class getUserForm extends Component {
 
   componentWillMount() {
     var self = this;
-    var is_pcd = false;
     if(this.props.is_edit) {
-      if(this.props.user_data.pcd) {
-        is_pcd = true;
-      }
-      var year = parseInt(this.props.user_data.birth_date.substring(0,4))
+      var year = parseInt(this.props.data.birth_date.substring(0,4))
       self.setState({
-        user: this.props.user_data,
+        user: this.props.data,
         aux: update(this.state.aux, 
         {
-          birth_day: {$set: parseInt(this.props.user_data.birth_date.substring(8,10))},
-          birth_month: {$set: parseInt(this.props.user_data.birth_date.substring(5,7))},
+          birth_day: {$set: parseInt(this.props.data.birth_date.substring(8,10))},
+          birth_month: {$set: parseInt(this.props.data.birth_date.substring(5,7))},
           birth_year: {$set: year},
-          birth_year_id: {$set: year-1899},
-          pcd_value: {$set: is_pcd}
+          birth_year_id: {$set: year-1899}
         })
       })
-      if(this.props.user_data.cep)
-        this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
+      this.updateAddress.bind(this)(this.props.data.cep.replace(/(\.|-|_)/g,'')) 
     }
     else {
-      if(typeof location !== 'undefined' && location.search) {
+      if(location.search) {
         var search = location.search.substring(1);
         var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
         self.setState({
@@ -88,6 +81,7 @@ class getUserForm extends Component {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
+
     this.setState({
       user: update(this.state.user, { [name]: {$set: value} })
     })
@@ -228,9 +222,6 @@ class getUserForm extends Component {
           errors.push("A senha de confirmação não corresponde a senha atual.");
       }
     }
-    if(!auxData['pcd_value']) {
-      formData['pcd'] = ''
-    }
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
@@ -240,8 +231,8 @@ class getUserForm extends Component {
       formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
       formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`
       let fetch_body = {};
-      if(this.props.user_class == `dependant`) {
-        fetch_body['dependant'] = formData;
+      if(this.props.user_class == `service_place`) {
+        fetch_body['service_place'] = formData;
       } else {
         if(this.props.is_edit)
           fetch_body['citizen'] = formData;
@@ -258,7 +249,7 @@ class getUserForm extends Component {
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
-      this.props.fetch_function(`${apiUrl}/${collection}?${params}`, {
+      fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json" },
@@ -298,9 +289,9 @@ class getUserForm extends Component {
               <div className='card-content'>
               {this.props.is_edit ?
                 this.props.user_class == `citizen` ?
-                  <h2 className="card-title">Alterar cadastro: {this.props.user_data.name}</h2>
+                  <h2 className="card-title">Alterar cadastro: {this.props.data.name}</h2>
                   :
-                  <h2 className="card-title">Alterar dependente: {this.props.user_data.name}</h2> 
+                  <h2 className="card-title">Alterar dependente: {this.props.data.name}</h2> 
                   :
                   this.props.user_class == `citizen` ?
                     <h2 className="card-title">Cadastrar cidadão</h2>
@@ -333,33 +324,32 @@ class getUserForm extends Component {
                       <h6>Possui algum tipo de deficiência:</h6>
                       <div className="check-input">
                         <Input 
-                          onChange={this.handleChange.bind(this)} 
-                          checked={this.state.aux.pcd_value} 
+                          onChange={this.handleUserInputChange} 
+                          checked={this.state.user.pcd} 
                           s={12} l={12} 
-                          name='pcd_value' 
+                          name='pcd' 
                           type='radio' 
                           value='true' 
                           label='Sim' 
                         />
                         <Input 
-                          onChange={this.handleChange.bind(this)} 
-                          checked={!this.state.aux.pcd_value} 
+                          onChange={this.handleUserInputChange} 
+                          checked={!this.state.user.pcd} 
                           s={12} l={12} 
-                          name='pcd_value' 
+                          name='pcd' 
                           type='radio' 
                           value='' 
                           label='Não' 
                         />
 
-                        { this.state.aux.pcd_value ? 
+                        { this.state.user.pcd ? 
                           <div>
                             <h6>Qual tipo de deficiência:</h6>
                             <label>
                               <input 
                                 type="text" 
                                 className='input-field' 
-                                name="pcd" 
-                                value={this.state.user.pcd} 
+                                name="pcd_description" value="" 
                                 onChange={this.handleInputUserChange.bind(this)}
                                 />
                             </label>

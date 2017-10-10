@@ -6,7 +6,10 @@ import createHistory from 'react-router/lib/createMemoryHistory';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule, 
          ChooseRole, ScheduleAgreement, ScheduleChoose, ScheduleCitizen, ScheduleFinish,
-         DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit
+         DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit,
+         SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
+         ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
+         ServiceTypeCreate, ServiceTypeShow, ServiceTypeList
        } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -82,6 +85,18 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="dependants/:dependant_id/edit" component={UserIsAuthenticated(DependantEdit)} />
         <Route path="dependants/new" component={UserIsAuthenticated(DependantCreate)} />
         <Route path="dependants/:dependant_id" component={UserIsAuthenticated(DependantShow)} />
+        <Route path="sectors" component={UserIsAuthenticated(SectorList)} />
+        <Route path="sectors/:sector_id/edit" component={UserIsAuthenticated(SectorEdit)} />
+        <Route path="sectors/new" component={UserIsAuthenticated(SectorCreate)} />
+        <Route path="sectors/:sector_id" component={UserIsAuthenticated(SectorShow)} />
+        <Route path="service_places" component={UserIsAuthenticated(ServicePlaceList)} />
+        <Route path="service_places/:service_place_id/edit" component={UserIsAuthenticated(ServicePlaceEdit)} />
+        <Route path="service_places/new" component={UserIsAuthenticated(ServicePlaceCreate)} />
+        <Route path="service_places/:service_place_id" component={UserIsAuthenticated(ServicePlaceShow)} />
+        <Route path="service_types" component={UserIsAuthenticated(ServiceTypeList)} />
+        <Route path="service_types/:service_type_id/edit" component={UserIsAuthenticated(ServiceTypeEdit)} />
+        <Route path="service_types/new" component={UserIsAuthenticated(ServiceTypeCreate)} />
+        <Route path="service_types/:service_type_id" component={UserIsAuthenticated(ServiceTypeShow)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>
