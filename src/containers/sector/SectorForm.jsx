@@ -63,10 +63,13 @@ class getSectorForm extends Component {
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
       let fetch_body = {}
-      if(this.props.is_edit)
+      if(this.props.is_edit) {
+        formData['city_hall_id'] = this.props.city_hall_id
         fetch_body['sector'] = formData
-      else
+      }
+      else {
         fetch_body = formData
+      }
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",

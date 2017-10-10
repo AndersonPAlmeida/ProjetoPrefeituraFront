@@ -32,6 +32,7 @@ class getSectorCreate extends Component {
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
               submit_url={`/sectors/`}
+              city_hall_id={this.props.user.roles}
             />
         }
       </div>

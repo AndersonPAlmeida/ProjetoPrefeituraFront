@@ -40,8 +40,8 @@ class getUserForm extends Component {
         birth_year_id: '',
         city_name: '',
         neighborhood: '',
-        password: "",
-        current_password: "",
+        password: '',
+        current_password: '',
         password_confirmation: "",
         state_abbreviation: '',
         pcd_value: '',
@@ -69,10 +69,11 @@ class getUserForm extends Component {
           pcd_value: {$set: is_pcd}
         })
       })
-      this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
+      if(this.props.user_data.cep)
+        this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
     }
     else {
-      if(location.search) {
+      if(typeof location !== 'undefined' && location.search) {
         var search = location.search.substring(1);
         var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
         self.setState({
