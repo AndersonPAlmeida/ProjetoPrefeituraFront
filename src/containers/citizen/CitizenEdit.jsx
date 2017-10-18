@@ -22,7 +22,6 @@ class getCitizenEdit extends Component {
         fetch_collection={`auth`}
         fetch_params={`permission=${this.props.user.current_role}`}
         fetch_method={'put'}
-        fetch_function={fetch}
         submit_url={`/citizens/schedules`}
       />
     )

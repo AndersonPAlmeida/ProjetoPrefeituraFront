@@ -95,6 +95,8 @@ class getUserForm extends Component {
     this.setState({
       aux: update(this.state.aux, { [name]: {$set: value} })
     })
+  
+    console.log(this.state.aux[name])
 
   }
 
@@ -305,7 +307,11 @@ class getUserForm extends Component {
                         <img
                           src={UserImg} />
                         <div className='file-input'>
-                          <Input type='file'
+                          <Input 
+                            type='file'
+                            name='photo'
+                            value={this.state.aux.photo}
+                            onChange={this.handleChange.bind(this)} 
                           />
                         </div>
                     </div>
