@@ -40,6 +40,8 @@ class getUserForm extends Component {
         birth_year_id: '',
         city_name: '',
         neighborhood: '',
+        photo: '',
+        photo_obj: '',
         password: "",
         current_password: "",
         password_confirmation: "",
@@ -95,10 +97,24 @@ class getUserForm extends Component {
     this.setState({
       aux: update(this.state.aux, { [name]: {$set: value} })
     })
-  
-    console.log(this.state.aux[name])
+  }
+
+  handleFile(event){
+    const target = event.target;
+    const value = target.files[0];
+    const name = target.name;
+    var reader = new FileReader();
+
+    this.setState({
+      aux: update(this.state.aux, { name: {$set: value.name} })
+    })
+
+    this.setState({
+      aux: update(this.state.aux, { photo_obj: {$set: value} })
+    })
 
   }
+
 
   selectDate(){ 
       var optionsDays = []; 
@@ -311,7 +327,7 @@ class getUserForm extends Component {
                             type='file'
                             name='photo'
                             value={this.state.aux.photo}
-                            onChange={this.handleChange.bind(this)} 
+                            onChange={this.handleFile.bind(this)} 
                           />
                         </div>
                     </div>
