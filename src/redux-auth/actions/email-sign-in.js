@@ -53,7 +53,6 @@ export function emailSignIn(body, endpointKey) {
         const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
         const collection = `citizens/${user.data.citizen.id}/picture`;
         const params = `size=large&permission=citizen`;
-        console.log(`${apiUrl}/${collection}?${params}`)
         fetch(`${apiUrl}/${collection}?${params}`, {
           headers: {
             "Accept": "application/json",

@@ -105,16 +105,23 @@ class getUserForm extends Component {
     const name = target.name;
     var reader = new FileReader();
 
-    this.setState({
-      aux: update(this.state.aux, { name: {$set: value.name} })
-    })
+    reader.onload = function(e) {
+      var dataURL = reader.result;
+      var output = document.getElementById('user_photo');
+      output.src = dataURL;
+    };
+    reader.readAsArrayBuffer(value)
 
     this.setState({
-      aux: update(this.state.aux, { photo_obj: {$set: value} })
+      aux: update(
+       this.state.aux, { 
+                         [name]: {$set: value.name}, 
+                         photo_obj: {$set: value}
+                       }
+      )
     })
 
   }
-
 
   selectDate(){ 
       var optionsDays = []; 
@@ -321,12 +328,14 @@ class getUserForm extends Component {
                   <Col s={12} m={12} l={6}>
                     <div>
                         <img
-                          src={UserImg} />
+                          id='user_photo'
+                          accept='image/*'
+                          src={UserImg} 
+                        />
                         <div className='file-input'>
                           <Input 
                             type='file'
                             name='photo'
-                            value={this.state.aux.photo}
                             onChange={this.handleFile.bind(this)} 
                           />
                         </div>
