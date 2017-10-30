@@ -101,8 +101,8 @@ class getUserForm extends Component {
 
   handleFile(event){
     const target = event.target;
-    const value = target.files[0];
     const name = target.name;
+    var value = target.files[0];
     var reader = new FileReader();
 
     reader.onload = function(e) {
@@ -110,7 +110,7 @@ class getUserForm extends Component {
       var output = document.getElementById('user_photo');
       output.src = dataURL;
     };
-    reader.readAsArrayBuffer(value)
+    reader.readAsDataURL(value)
 
     this.setState({
       aux: update(
@@ -120,7 +120,6 @@ class getUserForm extends Component {
                        }
       )
     })
-
   }
 
   selectDate(){ 
@@ -329,13 +328,14 @@ class getUserForm extends Component {
                     <div>
                         <img
                           id='user_photo'
-                          accept='image/*'
-                          src={UserImg} 
+                          width='230'
+                          height='230'
                         />
                         <div className='file-input'>
                           <Input 
                             type='file'
                             name='photo'
+                            accept='image/*'
                             onChange={this.handleFile.bind(this)} 
                           />
                         </div>
