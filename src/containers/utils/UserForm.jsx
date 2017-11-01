@@ -41,7 +41,7 @@ class getUserForm extends Component {
         city_name: '',
         neighborhood: '',
         photo: '',
-        photo_obj: '',
+        photo_src: '',
         password: "",
         current_password: "",
         password_confirmation: "",
@@ -54,6 +54,11 @@ class getUserForm extends Component {
   componentWillMount() {
     var self = this;
     if(this.props.is_edit) {
+      var img;
+      if(!this.props.photo)
+        img = UserImg
+      else
+        img = this.props.photo
       var year = parseInt(this.props.user_data.birth_date.substring(0,4))
       self.setState({
         user: this.props.user_data,
@@ -62,10 +67,12 @@ class getUserForm extends Component {
           birth_day: {$set: parseInt(this.props.user_data.birth_date.substring(8,10))},
           birth_month: {$set: parseInt(this.props.user_data.birth_date.substring(5,7))},
           birth_year: {$set: year},
-          birth_year_id: {$set: year-1899}
+          birth_year_id: {$set: year-1899},
+          photo_src: {$set: img}
         })
       })
       this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
+        
     }
     else {
       if(location.search) {
@@ -99,27 +106,25 @@ class getUserForm extends Component {
     })
   }
 
-  handleFile(event){
+  handleFile(event) {
     const target = event.target;
     const name = target.name;
     var value = target.files[0];
     var reader = new FileReader();
 
-    reader.onload = function(e) {
+    const onLoad = function(e) {
       var dataURL = reader.result;
-      var output = document.getElementById('user_photo');
-      output.src = dataURL;
+      this.setState({
+        aux: update(
+          this.state.aux, { 
+                            [name]: {$set: value.name}, 
+                            photo_src: {$set: dataURL}
+                          }
+        )
+      })
     };
+    reader.onload = onLoad.bind(this)
     reader.readAsDataURL(value)
-
-    this.setState({
-      aux: update(
-       this.state.aux, { 
-                         [name]: {$set: value.name}, 
-                         photo_obj: {$set: value}
-                       }
-      )
-    })
   }
 
   selectDate(){ 
@@ -330,6 +335,7 @@ class getUserForm extends Component {
                           id='user_photo'
                           width='230'
                           height='230'
+                          src={this.state.aux.photo_src}
                         />
                         <div className='file-input'>
                           <Input 
