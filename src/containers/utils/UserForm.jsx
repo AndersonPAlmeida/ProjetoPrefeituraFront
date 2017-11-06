@@ -263,6 +263,14 @@ class getUserForm extends Component {
       formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
       formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`
       let fetch_body = {};
+
+      if(this.state.aux.photo_has_changed) {
+        image['content'] = this.state.aux.photo_obj.split(',')[1];
+        image['content_type'] = this.state.aux.photo_obj.slice(5,14);
+        image['filename'] = this.state.aux.photo;
+        formData['image'] = image;
+      }
+
       if(this.props.user_class == `dependant`) {
         fetch_body['dependant'] = formData;
       } else {
@@ -278,12 +286,7 @@ class getUserForm extends Component {
         }
       }
 
-      if(this.state.aux.photo_has_changed) {
-        image['content'] = this.state.aux.photo_obj.split(',')[1];
-        image['content_type'] = this.state.aux.photo_obj.slice(5,14);
-        image['filename'] = this.state.aux.photo;
-        fetch_body['image'] = image;
-      }
+      console.log(fetch_body)
 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
