@@ -8,3 +8,19 @@
 	height: 100%;
 	margin-bottom: 5%;
 }
+
+.email-sign-up-submit {
+  background-color: #92bf23;
+}
+.email-sign-up-submit:active {
+  background-color: #92bf23;
+}
+.email-sign-up-submit:hover {
+  background-color: #92bf23;
+}
+.email-sign-up-submit:visited {
+  background-color: #92bf23;
+}
+.email-sign-up-submit:focus {
+  background-color: #92bf23;
+}
