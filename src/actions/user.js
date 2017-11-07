@@ -28,7 +28,9 @@ export function userUpdatePicture(user) {
       },
       method: "get"
     }).then(resp => {
-      dispatch(userUpdate({ 'image': resp }))
-    }).catch((errors) => {})
+      return resp.blob();
+    }).then(photo => {
+      dispatch(userUpdate({ 'image': URL.createObjectURL(photo)}));
+    })
   };
 }

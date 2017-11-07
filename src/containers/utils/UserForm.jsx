@@ -59,7 +59,8 @@ class getUserForm extends Component {
       if(!this.props.photo)
         img = UserImg
       else
-        img = this.props.photo.url
+        img = this.props.photo
+      console.log(this.props.photo)
       var year = parseInt(this.props.user_data.birth_date.substring(0,4))
       self.setState({
         user: this.props.user_data,
@@ -330,7 +331,6 @@ class getUserForm extends Component {
 	        <Col s={12}>
             <div className='card'>
               <div className='card-content'>
-              <img>
                 {this.props.is_edit ?
                   this.props.user_class == `citizen` ?
                     <h2 className="card-title">Alterar cadastro: {this.props.user_data.name}</h2>
@@ -342,21 +342,9 @@ class getUserForm extends Component {
                       :
                       <h2 className="card-title">Cadastrar dependente</h2> 
                 }
-              </img>
-
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
                     <div>
-                      {
-                        fetch(`${apiUrl}/${collection}?${params}`, {
-                          headers: {
-                            "Content-Type": "application/json"
-                          },
-                          method: "get"
-                        }).then(resp => {
-                          dispatch(userUpdate({ 'image': resp }))
-                        }).catch((errors) => {})
-                      }
                       <img
                         id='user_photo'
                         width='230'
