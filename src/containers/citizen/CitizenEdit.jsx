@@ -23,6 +23,7 @@ class getCitizenEdit extends Component {
         fetch_params={`permission=${this.props.user.current_role}`}
         fetch_method={'put'}
         submit_url={`/citizens/schedules`}
+        photo={this.props.user.image}
       />
     )
   }
@@ -30,6 +31,7 @@ class getCitizenEdit extends Component {
 
 const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
+  console.log(user)
   return {
     user
   }

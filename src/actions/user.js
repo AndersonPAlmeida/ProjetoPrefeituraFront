@@ -22,16 +22,13 @@ export function userUpdatePicture(user) {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `citizens/${user.citizen.id}/picture`;
     const params = `size=large&permission=citizen`;
-    console.log(`${apiUrl}/${collection}?${params}`)
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
-        "Accept": "application/json",
         "Content-Type": "application/json"
       },
       method: "get"
     }).then(resp => {
       dispatch(userUpdate({ 'image': resp }))
-      console.log({ 'image': resp })
     }).catch((errors) => {})
   };
 }

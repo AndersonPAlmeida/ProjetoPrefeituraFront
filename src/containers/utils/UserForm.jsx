@@ -59,7 +59,7 @@ class getUserForm extends Component {
       if(!this.props.photo)
         img = UserImg
       else
-        img = this.props.photo
+        img = this.props.photo.url
       var year = parseInt(this.props.user_data.birth_date.substring(0,4))
       self.setState({
         user: this.props.user_data,
@@ -286,8 +286,6 @@ class getUserForm extends Component {
         }
       }
 
-      console.log(fetch_body)
-
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
@@ -323,41 +321,56 @@ class getUserForm extends Component {
   }
 
   render() {
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `citizens/${this.props.user_data.id}/picture`;
+    const params = `size=large&permission=citizen`;
     return (
       <main>
       	<Row>
 	        <Col s={12}>
             <div className='card'>
               <div className='card-content'>
-              {this.props.is_edit ?
-                this.props.user_class == `citizen` ?
-                  <h2 className="card-title">Alterar cadastro: {this.props.user_data.name}</h2>
-                  :
-                  <h2 className="card-title">Alterar dependente: {this.props.user_data.name}</h2> 
-                  :
+              <img>
+                {this.props.is_edit ?
                   this.props.user_class == `citizen` ?
-                    <h2 className="card-title">Cadastrar cidadão</h2>
+                    <h2 className="card-title">Alterar cadastro: {this.props.user_data.name}</h2>
                     :
-                    <h2 className="card-title">Cadastrar dependente</h2> 
-              }
+                    <h2 className="card-title">Alterar dependente: {this.props.user_data.name}</h2> 
+                    :
+                    this.props.user_class == `citizen` ?
+                      <h2 className="card-title">Cadastrar cidadão</h2>
+                      :
+                      <h2 className="card-title">Cadastrar dependente</h2> 
+                }
+              </img>
 
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
                     <div>
-                        <img
-                          id='user_photo'
-                          width='230'
-                          height='230'
-                          src={this.state.aux.photo_obj}
+                      {
+                        fetch(`${apiUrl}/${collection}?${params}`, {
+                          headers: {
+                            "Content-Type": "application/json"
+                          },
+                          method: "get"
+                        }).then(resp => {
+                          dispatch(userUpdate({ 'image': resp }))
+                        }).catch((errors) => {})
+                      }
+                      <img
+                        id='user_photo'
+                        width='230'
+                        height='230'
+                        src={this.state.aux.photo_obj}
+                      />
+                      <div className='file-input'>
+                        <Input 
+                          type='file'
+                          name='photo'
+                          accept='image/*'
+                          onChange={this.handleFile.bind(this)} 
                         />
-                        <div className='file-input'>
-                          <Input 
-                            type='file'
-                            name='photo'
-                            accept='image/*'
-                            onChange={this.handleFile.bind(this)} 
-                          />
-                        </div>
+                      </div>
                     </div>
                     <div className="field-input" >
                       <h6>Nome*:</h6>
