@@ -31,7 +31,6 @@ class getCitizenEdit extends Component {
 
 const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
-  console.log(user)
   return {
     user
   }

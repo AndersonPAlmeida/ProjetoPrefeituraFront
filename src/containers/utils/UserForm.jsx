@@ -60,7 +60,6 @@ class getUserForm extends Component {
         img = UserImg
       else
         img = this.props.photo
-      console.log(this.props.photo)
       var year = parseInt(this.props.user_data.birth_date.substring(0,4))
       self.setState({
         user: this.props.user_data,
