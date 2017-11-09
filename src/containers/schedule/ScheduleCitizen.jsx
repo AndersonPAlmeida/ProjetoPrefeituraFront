@@ -49,7 +49,7 @@ class getScheduleCitizen extends Component {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'sectors';
-    const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.params.citizen_id}`
+    const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.params.citizen_id}&schedule=true`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -64,7 +64,7 @@ class getScheduleCitizen extends Component {
     if(this.state.update_service_types != 0) { 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'service_types';
-      const params = `permission=${this.props.user.current_role}&schedule=true&citizen_id=${this.props.params.citizen_id}&sector_id=${this.state.selected_sector}`
+      const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.params.citizen_id}&sector_id=${this.state.selected_sector}&schedule=true`
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -79,7 +79,7 @@ class getScheduleCitizen extends Component {
     if(this.state.update_service_places != 0) { 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'service_places';
-      const params = `permission=${this.props.user.current_role}&schedule=true&citizen_id=${this.props.params.citizen_id}&service_type_id=${this.state.selected_service_type}`
+      const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.params.citizen_id}&service_type_id=${this.state.selected_service_type}&schedule=true`
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
