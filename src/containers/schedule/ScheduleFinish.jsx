@@ -14,6 +14,7 @@ class getScheduleFinish extends Component {
       super(props)
       this.state = {
         schedule: [],
+        note: '',
         confirm: 0
       }
   }
@@ -51,6 +52,7 @@ class getScheduleFinish extends Component {
           "Accept": "application/json",
           "Content-Type": "application/json" },
           method: "put",
+          body: JSON.stringify( { schedule: { note: this.state.note } } )
       }).then(parseResponse).then(resp => {
         browserHistory.push(`citizens/schedules`)
         Materialize.toast("Agendamento criado com sucesso", 10000, "green",function(){$("#toast-container").remove()});
@@ -66,12 +68,22 @@ class getScheduleFinish extends Component {
     }
   }
 
+  handleChange(event){
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    this.setState({
+      [name]: value 
+    })
+  }
+
   addZeroBefore(n) {
     return (n < 10 ? '0' : '') + n;
   }
 
   mainComponent() {
     var date = strftime.timezone('+0000')('%d/%m/%Y', new Date(this.state.schedule.service_start_time))
+    var d = new Date(this.state.schedule.service_start_time)
     var time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes())
     return (
       <div className='card'>
@@ -105,7 +117,7 @@ class getScheduleFinish extends Component {
               <p>
                 <b> Observações*: </b>
               </p>
-              <textarea id='obs_agendamento' className='materialize-textarea' maxlength='140'></textarea>
+              <textarea id='note' value={this.state.note} onChange={this.handleChange.bind(this)} className='materialize-textarea' maxlength='140'></textarea>
               
             </div>
             {this.confirmButton()}
