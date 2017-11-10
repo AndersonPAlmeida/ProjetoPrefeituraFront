@@ -7,6 +7,14 @@ import { connect } from 'react-redux'
 import SectorForm from './SectorForm'
 import { browserHistory } from 'react-router';
 
+function findRole(roles, current_role_idx) { 
+  var i;
+  for(var i = 0; i < roles.length; i++) {
+    if(roles[i].id = current_role_idx)
+      return i;
+  }
+}
+
 class getSectorCreate extends Component {
   constructor(props) {
     super(props)
@@ -32,7 +40,7 @@ class getSectorCreate extends Component {
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
               submit_url={`/sectors/`}
-              city_hall_id={this.props.user.roles}
+              city_hall_id={this.props.user.roles[findRole(this.props.user.roles, this.props.user.current_role)].city_hall_id}
             />
         }
       </div>
@@ -42,6 +50,8 @@ class getSectorCreate extends Component {
 
 const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
+  const current_role_idx = user.roles.find( (role) => { role.id == user.current_role } )
+  console.log(current_role_idx)
   return {
     user
   }
