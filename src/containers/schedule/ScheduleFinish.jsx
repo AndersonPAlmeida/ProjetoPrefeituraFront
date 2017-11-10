@@ -17,6 +17,8 @@ class getScheduleFinish extends Component {
         note: '',
         confirm: 0
       }
+      this.handleChange = this.handleChange.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -68,15 +70,6 @@ class getScheduleFinish extends Component {
     }
   }
 
-  handleChange(event){
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-    this.setState({
-      [name]: value 
-    })
-  }
-
   addZeroBefore(n) {
     return (n < 10 ? '0' : '') + n;
   }
@@ -117,12 +110,15 @@ class getScheduleFinish extends Component {
               <p>
                 <b> Observações*: </b>
               </p>
-              <textarea id='note' value={this.state.note} onChange={this.handleChange.bind(this)} className='materialize-textarea' maxlength='140'></textarea>
-              
+              <textarea name='note' value={this.state.note} onChange={this.handleChange} className='materialize-textarea' maxlength='140' /> 
             </div>
             {this.confirmButton()}
         </div>
     )
+  }
+
+  handleChange(event) {
+    this.setState({[event.target.name]: event.target.value});
   }
 
   handleSubmit() {
@@ -137,7 +133,7 @@ class getScheduleFinish extends Component {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
-				<button className="waves-effect btn right" name="commit" onClick={this.handleSubmit.bind(this)} type="submit">Continuar</button>
+				<button className="waves-effect btn right" name="commit" onClick={this.handleSubmit} type="submit">Continuar</button>
       </div>
 		)
 	}
