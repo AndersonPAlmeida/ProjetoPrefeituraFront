@@ -26,7 +26,8 @@ const initialUser = {
                                            name: '' 
                                          } 
                                  }, 
-                        current_role: 'citizen', 
+                        current_role: 'citizen',
+                        current_role_idx: -1, 
                         roles: [] 
                       } 
                     }
@@ -35,6 +36,7 @@ const initialState = Immutable.Map(initialUser)
 const userReducer = (state = initialState, action) => {
   if (action.type === USER_SIGN_IN) {
     action.user.current_role = "citizen";
+    action.user.current_role_idx = -1;
     return state.set('userInfo', action.user);
   }
 

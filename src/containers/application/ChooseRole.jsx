@@ -26,8 +26,13 @@ class getChooseRole extends Component {
 		)
 	}
   
-  handleClick(selected_role) {
-    this.props.dispatch(userUpdate({ 'current_role': selected_role.id }))
+  handleClick(selected_role, idx) {
+    var index;
+    if(selected_role.id == 'citizen')
+      index = -1;
+    else
+      index = idx;
+    this.props.dispatch(userUpdate({ 'current_role': selected_role.id, 'current_role_idx': index }))
     browserHistory.push('/citizens/schedules')
   }
 
@@ -42,7 +47,7 @@ class getChooseRole extends Component {
 			}
 			rolesOptions.push(
         <Col className="col-role-place" s={12} m={6}>
-				  <li className="role-place concrete-flat-button card hoverable waves-effect" onClick={this.handleClick.bind(this, this.props.options[i])}>
+				  <li className="role-place concrete-flat-button card hoverable waves-effect" onClick={this.handleClick.bind(this, this.props.options[i],i)}>
 					  <div className="card-content">
 						  <div className='img-roles'>
 							  <img src={LocalIcon} />
@@ -97,7 +102,7 @@ const mapStateToProps = (state) => {
   const citizen_role = [{ 'id': "citizen", 'role': "citizen", 'city_id': user.citizen.city.id, 'city_name': user.citizen.city.name }] 
   var options
   if(user.roles)
-    options = citizen_role.concat(user.roles)
+    options = user.roles.concat(citizen_role)
   else
     options = citizen_role
   return {
