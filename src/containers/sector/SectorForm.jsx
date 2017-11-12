@@ -25,8 +25,10 @@ class getSectorForm extends Component {
         description: '',
         name: '',
         previous_notice: '',
-        schedules_by_sector: '' 
+        schedules_by_sector: '',
+        city_hall_id: 0 
       },
+      city_halls: []
     };
   }
 
@@ -34,6 +36,25 @@ class getSectorForm extends Component {
     var self = this;
     if(this.props.is_edit) {
       self.setState({ sector: this.props.data })
+    }
+    if(this.props.current_role.role != 'adm_c3sl') {
+      this.setState({
+        sector: update(this.state.sector, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
+      })
+    }
+    else {
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = 'forms/service_type_index';
+      const params = this.props.fetch_params; 
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        console.log(resp)
+        self.setState({ city_halls: resp.city_halls })
+      });
     }
   }
 
@@ -67,7 +88,6 @@ class getSectorForm extends Component {
         fetch_body['sector'] = formData
       }
       else {
-        formData['city_hall_id'] = this.props.city_hall_id
         fetch_body = formData
       }
       fetch(`${apiUrl}/${collection}?${params}`, {
@@ -102,6 +122,45 @@ class getSectorForm extends Component {
     )
   }
 
+  pickCityHall() {
+    if(this.props.current_role.role != 'adm_c3sl') {
+      return (
+        <Input disabled 
+               name="selected_city_hall" 
+               type='select' 
+               value={this.props.current_role.city_hall_id} 
+        >
+          <option value={this.props.current_role.city_hall_id}>{this.props.current_role.city_hall_name}</option>
+        </Input>
+      )
+    }
+
+    const cityHallsList = (
+      this.state.city_halls.map((city_hall) => {
+        return (
+          <option value={city_hall.id}>{city_hall.name}</option>
+        )
+      })
+    )
+    return (
+      <Input 
+        name="selected_city_hall" 
+        type='select' 
+        value={this.state.selected_sector}
+        onChange={
+          (event) => {
+            if(event.target.value != this.state.selected_city_hall) {
+                this.handleInputSectorChange(event);
+            }
+          }
+        }
+      >
+        <option value='0' disabled selected>Escolha a prefeitura</option>
+        {cityHallsList}
+      </Input>
+    )
+  }
+
   render() {
     return (
       <main>
@@ -116,6 +175,12 @@ class getSectorForm extends Component {
                 }
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
+                    <div className="field-input" >
+                      <h6>Prefeitura:</h6>
+                      <div>
+                        {this.pickCityHall()}
+                      </div>
+                    </div>
                     <div className="field-input" >
                       <h6>Situação:</h6>
                       <div>
