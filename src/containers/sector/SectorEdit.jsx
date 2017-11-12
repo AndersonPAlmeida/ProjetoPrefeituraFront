@@ -42,7 +42,6 @@ class getSectorEdit extends Component {
           this.state.fetching ? <div /> : 
             <SectorForm 
               data={this.state.sector} 
-              user_class={`edit`}
               is_edit={true} 
               prev={this.prev}
               fetch_collection={`sectors/${this.props.params.sector_id}`}

@@ -1,9 +1,9 @@
-.sector-select {
+.service_place-select {
   width: 100% !important;
   margin-bottom: 0 !important;
 }
 
-.sector-select .input-field {
+.service_place-select .input-field {
   margin-top: 0 !important;
 }
 
@@ -19,6 +19,7 @@
 
 .field-input {
   width: 300px !important;
+  height: 115px !important;
 }
 
 input {

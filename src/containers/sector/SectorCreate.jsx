@@ -25,7 +25,6 @@ class getSectorCreate extends Component {
         {
           this.state.fetching ? <div /> : 
             <SectorForm 
-              user_class={`sector`}
               is_edit={false} 
               prev={this.prev}
               fetch_collection={`sectors`}

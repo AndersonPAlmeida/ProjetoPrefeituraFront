@@ -19,7 +19,7 @@ class getServicePlaceEdit extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/service_places/${this.props.params.service_place_id}`;
+    const collection = `service_places/${this.props.params.service_place_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -40,15 +40,14 @@ class getServicePlaceEdit extends Component {
       <div>
         {
           this.state.fetching ? <div /> : 
-            <UserForm 
-              user_data={this.state.service_place} 
-              user_class={`edit`}
+            <ServicePlaceForm 
+              data={this.state.service_place} 
               is_edit={true} 
               prev={this.prev}
-              fetch_collection={`citizens/${this.props.user.citizen.id}/service_places/${this.props.params.edit_id}`}
+              fetch_collection={`service_places/${this.props.params.service_place_id}`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'put'}
-              submit_url={`/edits/`}
+              submit_url={`/service_places/`}
             />
         }
       </div>

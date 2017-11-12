@@ -10,6 +10,7 @@ import { browserHistory } from 'react-router';
 const role_name = {
   'citizen': "Cidadão",
   'responsavel_atendimento': "Responsável Atendimento",
+  'atendente_local': "Atendente Local",
   'adm_local': "Administrador Local",
   'adm_prefeitura': "Administrador Prefeitura",
   'adm_c3sl': "Administrador C3SL"
