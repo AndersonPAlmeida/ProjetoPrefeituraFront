@@ -143,9 +143,9 @@ class getSectorForm extends Component {
     )
     return (
       <Input 
-        name="selected_city_hall" 
+        name="city_hall_id" 
         type='select' 
-        value={this.state.selected_sector}
+        value={this.state.sector.city_hall_id}
         onChange={
           (event) => {
             if(event.target.value != this.state.selected_city_hall) {

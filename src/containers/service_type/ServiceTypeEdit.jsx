@@ -47,6 +47,7 @@ class getServiceTypeEdit extends Component {
               fetch_collection={`service_types/${this.props.params.service_type_id}`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'put'}
+              current_role={this.props.user.roles[this.props.user.current_role_idx]}
               submit_url={`/service_types/`}
             />
         }

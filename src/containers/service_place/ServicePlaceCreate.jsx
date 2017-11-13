@@ -31,6 +31,7 @@ class getServicePlaceCreate extends Component {
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
               submit_url={`/service_places/`}
+              current_role={this.props.user.roles[this.props.user.current_role_idx]}
               city_hall_id={this.props.user.roles[this.props.user.current_role_idx].city_hall_id}
             />
         }

@@ -26,7 +26,8 @@ class getServicePlaceForm extends Component {
         email: '',
         url: '',
         phone1: '',
-        phone2: ''
+        phone2: '',
+        city_hall_id: 0
       },
       aux: {
         address: '',
@@ -35,7 +36,8 @@ class getServicePlaceForm extends Component {
         password_confirmation: "",
         state_abbreviation: ''
       },
-      phonemask: "(11) 1111-11111"
+      phonemask: "(11) 1111-11111",
+      city_halls: []
     };
   }
 
@@ -45,6 +47,24 @@ class getServicePlaceForm extends Component {
       self.setState({ service_place: this.props.data })
       if(this.props.data.cep)
         this.updateAddress.bind(this)(this.props.data.cep.replace(/(\.|-|_)/g,''))
+    }
+    if(this.props.current_role.role != 'adm_c3sl') {
+      this.setState({
+        service_place: update(this.state.service_place, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
+      })
+    }
+    else {
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = 'forms/service_type_index';
+      const params = this.props.fetch_params;
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        self.setState({ city_halls: resp.city_halls })
+      });
     }
   }
 
@@ -89,7 +109,6 @@ class getServicePlaceForm extends Component {
     let errors = [];
     let formData = {};
     formData = this.state.service_place;
-
     if(!formData['name'])
       errors.push("Campo Nome é obrigatório.");
     if(errors.length > 0) {
@@ -97,9 +116,9 @@ class getServicePlaceForm extends Component {
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-      const collection = this.props.fetch_collection;
-      const params = this.props.fetch_params; 
+      formData['phone1'] = formData['phone1'].replace(/_/g,'');
+      formData['phone2'] = formData['phone2'].replace(/_/g,'');
+      formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
       let fetch_body = {}
       if(this.props.is_edit) {
         fetch_body['service_place'] = formData
@@ -108,6 +127,9 @@ class getServicePlaceForm extends Component {
         formData['city_hall_id'] = this.props.city_hall_id
         fetch_body = formData
       }
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = this.props.fetch_collection;
+      const params = this.props.fetch_params; 
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -140,6 +162,45 @@ class getServicePlaceForm extends Component {
     )
   }
 
+  pickCityHall() {
+    if(this.props.current_role.role != 'adm_c3sl') {
+      return (
+        <Input disabled
+               name="selected_city_hall"
+               type='select'
+               value={this.props.current_role.city_hall_id}
+        >
+          <option value={this.props.current_role.city_hall_id}>{this.props.current_role.city_hall_name}</option>
+        </Input>
+      )
+    }
+
+    const cityHallsList = (
+      this.state.city_halls.map((city_hall) => {
+        return (
+          <option value={city_hall.id}>{city_hall.name}</option>
+        )
+      })
+    )
+    return (
+      <Input
+        name="city_hall_id"
+        type='select'
+        value={this.state.service_place.city_hall_id}
+        onChange={
+          (event) => {
+            if(event.target.value != this.state.selected_city_hall) {
+                this.handleInputServicePlaceChange(event);
+            }
+          }
+        }
+      >
+        <option value='0' disabled>Escolha a prefeitura</option>
+        {cityHallsList}
+      </Input>
+    )
+  }
+
   render() {
     return (
       <main>
@@ -154,6 +215,12 @@ class getServicePlaceForm extends Component {
                 }
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
+                    <div className="field-input" >
+                      <h6>Prefeitura:</h6>
+                      <div>                        
+                        {this.pickCityHall()}
+                      </div>
+                    </div>
                     <div className="field-input" >
                       <h6>Situação:</h6>
                       <div>
@@ -319,7 +386,7 @@ class getServicePlaceForm extends Component {
                           type="text"
                           className='input-field'
                           name="url"
-                          value={this.state.service_place.email}
+                          value={this.state.service_place.url}
                           onChange={this.handleInputServicePlaceChange.bind(this)}
                         />
                       </label>

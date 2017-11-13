@@ -20,7 +20,8 @@ class getServiceTypeForm extends Component {
       service_type: { 
         active: '',
         description: '',
-        sector_id: 0
+        sector_id: 0,
+        city_hall_id: 0
       },
       update_service_types: 0,
       sectors: [],
@@ -34,7 +35,7 @@ class getServiceTypeForm extends Component {
       self.setState({ service_type: this.props.data })
     }
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = 'forms/create_service_type';
+    var collection = 'forms/create_service_type';
     const params = this.props.fetch_params;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -44,6 +45,22 @@ class getServiceTypeForm extends Component {
     }).then(parseResponse).then(resp => {
       self.setState({ sectors: resp.sectors })
     });
+    if(this.props.current_role.role != 'adm_c3sl') {
+      this.setState({
+        service_type: update(this.state.service_type, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
+      })
+    }
+    else {
+      collection = 'forms/service_type_index';
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        self.setState({ city_halls: resp.city_halls })
+      });
+    }
   }
 
   componentDidUpdate() {
@@ -93,7 +110,6 @@ class getServiceTypeForm extends Component {
         fetch_body['service_type'] = formData
       }
       else {
-        formData['city_hall_id'] = this.props.city_hall_id
         fetch_body = formData
       }
       fetch(`${apiUrl}/${collection}?${params}`, {
@@ -154,6 +170,44 @@ class getServiceTypeForm extends Component {
     )
   }
 
+  pickCityHall() {
+    if(this.props.current_role.role != 'adm_c3sl') {
+      return (
+        <Input disabled
+               name="selected_city_hall"
+               type='select'
+               value={this.props.current_role.city_hall_id}
+        >
+          <option value={this.props.current_role.city_hall_id}>{this.props.current_role.city_hall_name}</option>
+        </Input>
+      )
+    }
+
+    const cityHallsList = (
+      this.state.city_halls.map((city_hall) => {
+        return (
+          <option value={city_hall.id}>{city_hall.name}</option>
+        )
+      })
+    )
+    return (
+      <Input
+        name="city_hall_id"
+        type='select'
+        value={this.state.service_type.city_hall_id}
+        onChange={
+          (event) => {
+            if(event.target.value != this.state.selected_city_hall) {
+                this.handleInputServiceTypeChange(event);
+            }
+          }
+        }
+      >
+        <option value='0' disabled>Escolha a prefeitura</option>
+        {cityHallsList}
+      </Input>
+    )
+  }
 
   render() {
     return (
@@ -169,6 +223,12 @@ class getServiceTypeForm extends Component {
                 }
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
+                    <div className="field-input" >
+                      <h6>Prefeitura:</h6>
+                      <div>
+                        {this.pickCityHall()}
+                      </div>
+                    </div>
                     <div className="field-input" >
                       <h6>Situação*:</h6>
                       <div>
