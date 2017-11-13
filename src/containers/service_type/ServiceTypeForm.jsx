@@ -18,7 +18,7 @@ class getServiceTypeForm extends Component {
     super(props)
     this.state = {
       service_type: { 
-        active: '',
+        active: true,
         description: '',
         sector_id: 0,
         city_hall_id: 0

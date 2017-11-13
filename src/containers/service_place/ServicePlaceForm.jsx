@@ -20,13 +20,14 @@ class getServicePlaceForm extends Component {
       service_place: { 
         address_complement: '',
         address_number: '',
-        active: '',
+        active: true,
         name: '',
         cep: '',
         email: '',
         url: '',
         phone1: '',
         phone2: '',
+        service_types: [],
         city_hall_id: 0
       },
       aux: {
@@ -116,16 +117,15 @@ class getServicePlaceForm extends Component {
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
-      formData['phone1'] = formData['phone1'].replace(/_/g,'');
-      formData['phone2'] = formData['phone2'].replace(/_/g,'');
+      formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
+      formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
       formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
       let fetch_body = {}
       if(this.props.is_edit) {
         fetch_body['service_place'] = formData
       }
       else {
-        formData['city_hall_id'] = this.props.city_hall_id
-        fetch_body = formData
+        fetch_body['service_place'] = formData
       }
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;

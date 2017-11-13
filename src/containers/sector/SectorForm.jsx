@@ -18,7 +18,7 @@ class getSectorForm extends Component {
     super(props)
     this.state = {
       sector: { 
-        active: '',
+        active: true,
         absence_max: '',
         blocking_days: '',
         cancel_limt: '',
