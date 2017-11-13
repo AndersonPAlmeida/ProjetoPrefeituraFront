@@ -52,7 +52,6 @@ class getSectorForm extends Component {
           "Content-Type": "application/json" },
           method: "get",
       }).then(parseResponse).then(resp => {
-        console.log(resp)
         self.setState({ city_halls: resp.city_halls })
       });
     }
@@ -155,7 +154,7 @@ class getSectorForm extends Component {
           }
         }
       >
-        <option value='0' disabled selected>Escolha a prefeitura</option>
+        <option value='0' disabled>Escolha a prefeitura</option>
         {cityHallsList}
       </Input>
     )
