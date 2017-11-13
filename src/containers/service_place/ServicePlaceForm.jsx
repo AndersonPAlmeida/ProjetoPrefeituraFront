@@ -54,19 +54,6 @@ class getServicePlaceForm extends Component {
         service_place: update(this.state.service_place, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
       })
     }
-    else {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-      const collection = 'forms/service_type_index';
-      const params = this.props.fetch_params;
-      fetch(`${apiUrl}/${collection}?${params}`, {
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json" },
-          method: "get",
-      }).then(parseResponse).then(resp => {
-        self.setState({ city_halls: resp.city_halls })
-      });
-    }
   }
 
   handleInputServicePlaceChange(event) {
@@ -81,16 +68,13 @@ class getServicePlaceForm extends Component {
 
   updateAddress(cep) {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = 'validate_cep';
-    var formData = {};
-    formData["cep"] = {};
-    formData["cep"]["number"] = cep;
+    const collection = 'forms/create_service_place';
+    const params = `${this.props.fetch_params}&cep=${cep}`
     fetch(`${apiUrl}/${collection}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
-      method: "post",
-      body: JSON.stringify(formData)
+      method: "get"
     }).then(parseResponse).then(resp => {
       this.setState(
       { aux: update(this.state.aux,
@@ -98,7 +82,8 @@ class getServicePlaceForm extends Component {
           address: {$set: resp.address},
           neighborhood: {$set: resp.neighborhood},
           city_name: {$set: resp.city_name},
-          state_abbreviation: {$set: resp.state_name}
+          state_abbreviation: {$set: resp.state_name},
+          city_halls: {$set: resp.city_halls}
         })
       });
     }).catch(() => {
@@ -176,7 +161,7 @@ class getServicePlaceForm extends Component {
     }
 
     const cityHallsList = (
-      this.state.city_halls.map((city_hall) => {
+      this.state.aux.city_halls.map((city_hall) => {
         return (
           <option value={city_hall.id}>{city_hall.name}</option>
         )
