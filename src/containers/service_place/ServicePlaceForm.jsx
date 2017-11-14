@@ -27,18 +27,19 @@ class getServicePlaceForm extends Component {
         url: '',
         phone1: '',
         phone2: '',
-        service_types: [],
-        city_hall_id: 0
+        service_types: []
       },
       aux: {
         address: '',
         city_name: '',
         neighborhood: '',
         password_confirmation: "",
-        state_abbreviation: ''
+        state_abbreviation: '',
+        city_hall: {
+          name: ''
+        }
       },
       phonemask: "(11) 1111-11111",
-      city_halls: []
     };
   }
 
@@ -48,11 +49,6 @@ class getServicePlaceForm extends Component {
       self.setState({ service_place: this.props.data })
       if(this.props.data.cep)
         this.updateAddress.bind(this)(this.props.data.cep.replace(/(\.|-|_)/g,''))
-    }
-    if(this.props.current_role.role != 'adm_c3sl') {
-      this.setState({
-        service_place: update(this.state.service_place, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
-      })
     }
   }
 
@@ -70,22 +66,32 @@ class getServicePlaceForm extends Component {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'forms/create_service_place';
     const params = `${this.props.fetch_params}&cep=${cep}`
-    fetch(`${apiUrl}/${collection}`, {
+    fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
       method: "get"
     }).then(parseResponse).then(resp => {
-      this.setState(
-      { aux: update(this.state.aux,
-        {
-          address: {$set: resp.address},
-          neighborhood: {$set: resp.neighborhood},
-          city_name: {$set: resp.city_name},
-          state_abbreviation: {$set: resp.state_name},
-          city_halls: {$set: resp.city_halls}
-        })
-      });
+      if(resp.city_halls.length > 0) {
+        this.setState(
+        { aux: update(this.state.aux,
+          {
+            address: {$set: resp.address},
+            neighborhood: {$set: resp.neighborhood},
+            city_name: {$set: resp.city_name},
+            state_abbreviation: {$set: resp.state_name},
+            city_hall: {$set: resp.city_halls[0]}
+          })
+        });
+        this.setState(
+        { service_place: update(this.state.service_place,
+          {
+            city_hall_id: {$set: resp.city_halls[0].id}
+          })
+        });
+      }
+      else
+        Materialize.toast('Você não tem permissão para criar local de atendimento nesta prefeitura.', 10000, "red",function(){$("#toast-container").remove()});
     }).catch(() => {
       Materialize.toast('CEP inválido.', 10000, "red",function(){$("#toast-container").remove()});
     })
@@ -147,45 +153,6 @@ class getServicePlaceForm extends Component {
     )
   }
 
-  pickCityHall() {
-    if(this.props.current_role.role != 'adm_c3sl') {
-      return (
-        <Input disabled
-               name="selected_city_hall"
-               type='select'
-               value={this.props.current_role.city_hall_id}
-        >
-          <option value={this.props.current_role.city_hall_id}>{this.props.current_role.city_hall_name}</option>
-        </Input>
-      )
-    }
-
-    const cityHallsList = (
-      this.state.aux.city_halls.map((city_hall) => {
-        return (
-          <option value={city_hall.id}>{city_hall.name}</option>
-        )
-      })
-    )
-    return (
-      <Input
-        name="city_hall_id"
-        type='select'
-        value={this.state.service_place.city_hall_id}
-        onChange={
-          (event) => {
-            if(event.target.value != this.state.selected_city_hall) {
-                this.handleInputServicePlaceChange(event);
-            }
-          }
-        }
-      >
-        <option value='0' disabled>Escolha a prefeitura</option>
-        {cityHallsList}
-      </Input>
-    )
-  }
-
   render() {
     return (
       <main>
@@ -194,18 +161,12 @@ class getServicePlaceForm extends Component {
             <div className='card'>
               <div className='card-content'>
                 {this.props.is_edit ?
-                  <h2 className="card-title">Alterar setor: {this.props.data.name}</h2> 
+                  <h2 className="card-title">Alterar local de atendimento {this.props.data.name}</h2> 
                   :
-                  <h2 className="card-title">Cadastrar setor</h2> 
+                  <h2 className="card-title">Cadastrar local de atendimento</h2> 
                 }
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
-                    <div className="field-input" >
-                      <h6>Prefeitura:</h6>
-                      <div>                        
-                        {this.pickCityHall()}
-                      </div>
-                    </div>
                     <div className="field-input" >
                       <h6>Situação:</h6>
                       <div>
@@ -250,6 +211,18 @@ class getServicePlaceForm extends Component {
                             }
                           }
                         />
+                      </label>
+                    </div>
+
+                    <div className="field-input" >
+                      <h6>Prefeitura:</h6>
+                      <label>
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="city_hall_name"
+                          value={this.state.aux.city_hall.name}
+                          disabled />
                       </label>
                     </div>
 
