@@ -86,7 +86,7 @@ class getUserForm extends Component {
 
   handleInputUserChange(event) {
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const value = target.value;
     const name = target.name;
     this.setState({
       user: update(this.state.user, { [name]: {$set: value} })
@@ -95,7 +95,7 @@ class getUserForm extends Component {
 
   handleChange(event){
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const value = target.value;
     const name = target.name;
 
     this.setState({

@@ -35,6 +35,7 @@ class getServicePlaceForm extends Component {
         neighborhood: '',
         password_confirmation: "",
         state_abbreviation: '',
+        update_checkbox: 0,
         city_hall: {
           name: ''
         }
@@ -47,18 +48,46 @@ class getServicePlaceForm extends Component {
     var self = this;
     if(this.props.is_edit) {
       self.setState({ service_place: this.props.data })
-      if(this.props.data.cep)
+      if(this.props.data.cep) {
         this.updateAddress.bind(this)(this.props.data.cep.replace(/(\.|-|_)/g,''))
+        this.setState({ aux: update(this.state.aux, {update_checkbox: {$set: 1} })})
+      }
+    }
+  }
+
+  componentDidUpdate() {
+    if(this.state.aux.update_checkbox) {
+      this.state.aux.city_hall.service_types.map((service_type, idx) => {
+        for(var i = 0; i < this.state.service_place.service_types.length; i++) {
+          if (this.state.service_place.service_types[i].id == service_type.id) {
+            service_type['checked'] = true
+            this.setState({
+              aux: update(this.state.aux, {city_hall: {service_types: {$splice: [[idx,1,service_type]] } } })
+            })
+            break;
+          }
+        }
+      })
+      this.setState({ aux: update(this.state.aux, {update_checkbox: {$set: 0} })})
     }
   }
 
   handleInputServicePlaceChange(event) {
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const value = target.value;
 
     this.setState({
       service_place: update(this.state.service_place, { [name]: {$set: value} })
+    })
+  }
+
+  handleCheckboxChange(event) {
+    const target = event.target;
+    const value = target.id;
+    const check = this.state.aux.city_hall.service_types[value].checked ? false : true
+
+    this.setState({
+      aux: update(this.state.aux, {city_hall: {service_types: {[value]: {checked: {$set: check} } } } })
     })
   }
 
@@ -73,6 +102,10 @@ class getServicePlaceForm extends Component {
       method: "get"
     }).then(parseResponse).then(resp => {
       if(resp.city_halls.length > 0) {
+
+        resp.city_halls[0].service_types.map((service_type) => {
+          service_type['checked'] = false
+        })
         this.setState(
         { aux: update(this.state.aux,
           {
@@ -103,14 +136,24 @@ class getServicePlaceForm extends Component {
     formData = this.state.service_place;
     if(!formData['name'])
       errors.push("Campo Nome é obrigatório.");
+    if(!formData['cep'])
+      errors.push("Campo CEP é obrigatório.");
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
-      formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
-      formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
+      if(formData['phone1'])
+        formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
+      if(formData['phone2'])
+        formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
       formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
+      let service_types = [];
+      this.state.aux.city_hall.service_types.map((service_type) => {
+        if(service_type.checked)
+          service_types.push(service_type.id)
+      })
+      formData['service_types'] = service_types
       let fetch_body = {}
       if(this.props.is_edit) {
         fetch_body['service_place'] = formData
@@ -149,6 +192,30 @@ class getServicePlaceForm extends Component {
       <div className="card-action">
         <a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
         <button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">{this.props.is_edit ? "Atualizar" : "Criar"}</button>
+      </div>
+    )
+  }
+
+  pickServiceTypes() {
+    if(!this.state.aux.city_hall.service_types)
+      return ( <div /> )
+
+    const serviceTypeList = (
+      this.state.aux.city_hall.service_types.map((service_type, idx) => {
+        return(
+          <div>
+            <input type="checkbox" checked={service_type.checked} id={idx} /><label id={idx} for={idx} onClick={this.handleCheckboxChange.bind(this)}>{service_type.description}</label>
+          </div>
+        )
+      })
+    )
+    return (
+      <div>
+        <h6>Escolha os tipos de atendimento:</h6>
+        <div>
+          {serviceTypeList}
+          <br />
+        </div>
       </div>
     )
   }
@@ -286,6 +353,10 @@ class getServicePlaceForm extends Component {
                           value={this.state.service_place.address_complement}
                           onChange={this.handleInputServicePlaceChange.bind(this)} />
                       </label>
+                    </div>
+
+                    <div className="field-input" >
+                        {this.pickServiceTypes()}
                     </div>
 
                     <div className="field-input">
