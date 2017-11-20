@@ -8,5 +8,5 @@ npm-debug.log
 bundle.js
 webpack-assets.json
 public/assets
-config/env.js
 package-lock.json
+config/env.js
