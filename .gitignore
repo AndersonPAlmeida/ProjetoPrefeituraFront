@@ -9,4 +9,3 @@ bundle.js
 webpack-assets.json
 public/assets
 package-lock.json
-config/env.js
