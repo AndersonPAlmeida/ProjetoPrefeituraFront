@@ -6,7 +6,8 @@ import {
 import {storeCurrentEndpointKey} from "./configure";
 import {parseResponse} from "../utils/handle-fetch-response";
 import fetch from "../utils/fetch";
-import {userSignIn} from "../../actions/user"
+import { port, apiHost, apiPort, apiVer } from '../../../config/env';
+import {userSignIn, userUpdate, userUpdatePicture} from "../../actions/user"
 
 export const EMAIL_SIGN_IN_START       = "EMAIL_SIGN_IN_START";
 export const EMAIL_SIGN_IN_COMPLETE    = "EMAIL_SIGN_IN_COMPLETE";
@@ -48,6 +49,7 @@ export function emailSignIn(body, endpointKey) {
       .then(parseResponse)
       .then((user) => {
         dispatch(userSignIn(user.data))
+        dispatch(userUpdatePicture(user.data))
         dispatch(emailSignInComplete(currentEndpointKey, user))
        })
       .catch((errors) => {

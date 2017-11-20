@@ -40,13 +40,15 @@ class getUserForm extends Component {
         birth_year_id: '',
         city_name: '',
         neighborhood: '',
-        password: '',
-        current_password: '',
+        photo: '',
+        photo_obj: '',
+        photo_has_changed: 0,
+        password: "",
+        current_password: "",
         password_confirmation: "",
         state_abbreviation: '',
-        pcd_value: '',
+        phonemask: "(11) 1111-11111"
       },
-      phonemask: "(11) 1111-11111"
     };
   }
 
@@ -54,9 +56,11 @@ class getUserForm extends Component {
     var self = this;
     var is_pcd = false;
     if(this.props.is_edit) {
-      if(this.props.user_data.pcd) {
-        is_pcd = true;
-      }
+      var img;
+      if(!this.props.photo)
+        img = UserImg
+      else
+        img = this.props.photo
       var year = parseInt(this.props.user_data.birth_date.substring(0,4))
       self.setState({
         user: this.props.user_data,
@@ -66,11 +70,11 @@ class getUserForm extends Component {
           birth_month: {$set: parseInt(this.props.user_data.birth_date.substring(5,7))},
           birth_year: {$set: year},
           birth_year_id: {$set: year-1899},
-          pcd_value: {$set: is_pcd}
+          photo_obj: {$set: img}
         })
       })
-      if(this.props.user_data.cep)
-        this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
+      this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
+        
     }
     else {
       if(typeof location !== 'undefined' && location.search) {
@@ -101,7 +105,28 @@ class getUserForm extends Component {
     this.setState({
       aux: update(this.state.aux, { [name]: {$set: value} })
     })
+  }
 
+  handleFile(event) {
+    const target = event.target;
+    const name = target.name;
+    var value = target.files[0];
+    var reader = new FileReader();
+
+    const onLoad = function(e) {
+      var dataURL = reader.result;
+      this.setState({
+        aux: update(
+          this.state.aux, { 
+                            [name]: {$set: value.name}, 
+                            photo_obj: {$set: dataURL},
+                            photo_has_changed: {$set: 1}
+                          }
+        )
+      })
+    };
+    reader.onload = onLoad.bind(this)
+    reader.readAsDataURL(value)
   }
 
   selectDate(){ 
@@ -205,6 +230,7 @@ class getUserForm extends Component {
     let errors = [];
     let formData = {};
     let auxData = {};
+    var image = {};
     var send_password = false;
     formData = this.state.user;
     auxData = this.state.aux;
@@ -240,6 +266,14 @@ class getUserForm extends Component {
       formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
       formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`
       let fetch_body = {};
+
+      if(this.state.aux.photo_has_changed) {
+        image['content'] = this.state.aux.photo_obj.split(',')[1];
+        image['content_type'] = this.state.aux.photo_obj.slice(5,14);
+        image['filename'] = this.state.aux.photo;
+        formData['image'] = image;
+      }
+
       if(this.props.user_class == `dependant`) {
         fetch_body['dependant'] = formData;
       } else {
@@ -258,7 +292,7 @@ class getUserForm extends Component {
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
-      this.props.fetch_function(`${apiUrl}/${collection}?${params}`, {
+      fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json" },
@@ -290,33 +324,43 @@ class getUserForm extends Component {
   }
 
   render() {
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `citizens/${this.props.user_data.id}/picture`;
+    const params = `size=large&permission=citizen`;
     return (
       <main>
       	<Row>
 	        <Col s={12}>
             <div className='card'>
               <div className='card-content'>
-              {this.props.is_edit ?
-                this.props.user_class == `citizen` ?
-                  <h2 className="card-title">Alterar cadastro: {this.props.user_data.name}</h2>
-                  :
-                  <h2 className="card-title">Alterar dependente: {this.props.user_data.name}</h2> 
-                  :
+                {this.props.is_edit ?
                   this.props.user_class == `citizen` ?
-                    <h2 className="card-title">Cadastrar cidadão</h2>
+                    <h2 className="card-title">Alterar cadastro: {this.props.user_data.name}</h2>
                     :
-                    <h2 className="card-title">Cadastrar dependente</h2> 
-              }
-
+                    <h2 className="card-title">Alterar dependente: {this.props.user_data.name}</h2> 
+                    :
+                    this.props.user_class == `citizen` ?
+                      <h2 className="card-title">Cadastrar cidadão</h2>
+                      :
+                      <h2 className="card-title">Cadastrar dependente</h2> 
+                }
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
                     <div>
-                        <img
-                          src={UserImg} />
-                        <div className='file-input'>
-                          <Input type='file'
-                          />
-                        </div>
+                      <img
+                        id='user_photo'
+                        width='230'
+                        height='230'
+                        src={this.state.aux.photo_obj}
+                      />
+                      <div className='file-input'>
+                        <Input 
+                          type='file'
+                          name='photo'
+                          accept='image/*'
+                          onChange={this.handleFile.bind(this)} 
+                        />
+                      </div>
                     </div>
                     <div className="field-input" >
                       <h6>Nome*:</h6>
@@ -509,7 +553,7 @@ class getUserForm extends Component {
                       <h6>Telefone 1:</h6>
                       <label>
                         <MaskedInput
-                          mask={this.state.phonemask}
+                          mask={this.state.aux.phonemask}
                           type="text" 
                           className='input-field' 
                           name="phone1" 
@@ -517,10 +561,20 @@ class getUserForm extends Component {
                           onChange={
                             (event) => {
                               this.handleInputUserChange.bind(this)(event)
-                              if(event.target.value.replace(/(_|-|(|))/g,'').length == 13)
-                                this.setState({phonemask: "(11) 11111-1111"})
-                              else
-                                this.setState({phonemask: "(11) 1111-11111"})
+                              if(event.target.value.replace(/(_|-|(|))/g,'').length == 14) {
+                                this.setState({aux: update(this.state.aux, 
+                                  {
+                                    phonemask: {$set: "(11) 11111-1111"},
+                                  })
+                                })
+                              }
+                              else {
+                                this.setState({aux: update(this.state.aux, 
+                                  {
+                                    phonemask: {$set: "(11) 1111-11111"},
+                                  })
+                                })
+                              }
                             }
                           }
                         />
@@ -531,7 +585,7 @@ class getUserForm extends Component {
                       <h6>Telefone 2:</h6>
                       <label>
                         <MaskedInput
-                          mask={this.state.phonemask} 
+                          mask={this.state.aux.phonemask} 
                           type="text" 
                           className='input-field' 
                           name="phone2" 
