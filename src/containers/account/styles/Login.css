@@ -1,5 +1,5 @@
 .info-text {
-  font-size: 13px; 
+  font-size: 13px;
 }
 
 .info-text p {
@@ -10,7 +10,7 @@
 
 .main {
   width: 100%;
-  margin-top: 70px;
+  /*margin-top: 70px;*/
 }
 
 .step-body {
@@ -47,4 +47,3 @@
 .steps {
   text-align: center;
 }
-

@@ -14,8 +14,11 @@ class getScheduleFinish extends Component {
       super(props)
       this.state = {
         schedule: [],
+        note: '',
         confirm: 0
       }
+      this.handleChange = this.handleChange.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -51,6 +54,7 @@ class getScheduleFinish extends Component {
           "Accept": "application/json",
           "Content-Type": "application/json" },
           method: "put",
+          body: JSON.stringify( { schedule: { note: this.state.note } } )
       }).then(parseResponse).then(resp => {
         browserHistory.push(`citizens/schedules`)
         Materialize.toast("Agendamento criado com sucesso", 10000, "green",function(){$("#toast-container").remove()});
@@ -72,6 +76,7 @@ class getScheduleFinish extends Component {
 
   mainComponent() {
     var date = strftime.timezone('+0000')('%d/%m/%Y', new Date(this.state.schedule.service_start_time))
+    var d = new Date(this.state.schedule.service_start_time)
     var time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes())
     return (
       <div className='card'>
@@ -105,12 +110,15 @@ class getScheduleFinish extends Component {
               <p>
                 <b> Observações*: </b>
               </p>
-              <textarea id='obs_agendamento' className='materialize-textarea' maxlength='140'></textarea>
-              
+              <textarea name='note' value={this.state.note} onChange={this.handleChange} className='materialize-textarea' maxlength='140' /> 
             </div>
             {this.confirmButton()}
         </div>
     )
+  }
+
+  handleChange(event) {
+    this.setState({[event.target.name]: event.target.value});
   }
 
   handleSubmit() {
@@ -125,7 +133,7 @@ class getScheduleFinish extends Component {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
-				<button className="waves-effect btn right" name="commit" onClick={this.handleSubmit.bind(this)} type="submit">Continuar</button>
+				<button className="waves-effect btn right" name="commit" onClick={this.handleSubmit} type="submit">Continuar</button>
       </div>
 		)
 	}

@@ -9,10 +9,18 @@ const initialUser = {
                       userInfo: { 
                         citizen: { 
                                    id: 0,
-                                   name: '', 
-                                   cpf: '',
-                                   rg: '',
+                                   address_complement: '',
+                                   address_number: '',
                                    birth_date: '',
+                                   cep: '',
+                                   cpf: '',
+                                   email: '',
+                                   name: '',
+                                   note: '',
+                                   pcd: '',
+                                   phone1: '',
+                                   phone2: '',
+                                   rg: '',
                                    city: { 
                                            id: 0, 
                                            name: '' 
