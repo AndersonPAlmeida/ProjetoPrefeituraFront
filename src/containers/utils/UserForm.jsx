@@ -47,6 +47,7 @@ class getUserForm extends Component {
         current_password: "",
         password_confirmation: "",
         state_abbreviation: '',
+        pcd_value: '',
         phonemask: "(11) 1111-11111"
       },
     };
@@ -56,6 +57,9 @@ class getUserForm extends Component {
     var self = this;
     var is_pcd = false;
     if(this.props.is_edit) {
+      if(this.props.user_data.pcd) {
+        is_pcd = true;
+      }
       var img;
       if(!this.props.photo)
         img = UserImg
@@ -70,6 +74,7 @@ class getUserForm extends Component {
           birth_month: {$set: parseInt(this.props.user_data.birth_date.substring(5,7))},
           birth_year: {$set: year},
           birth_year_id: {$set: year-1899},
+          pcd_value: {$set: is_pcd},
           photo_obj: {$set: img}
         })
       })
@@ -262,8 +267,10 @@ class getUserForm extends Component {
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
-      formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
-      formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
+      if(formData['phone1'])
+        formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
+      if(formData['phone2'])
+        formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
       formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
       formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
       formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`

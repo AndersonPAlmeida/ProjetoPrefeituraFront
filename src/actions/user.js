@@ -28,9 +28,10 @@ export function userUpdatePicture(user) {
       },
       method: "get"
     }).then(resp => {
-      return resp.blob();
-    }).then(photo => {
-      dispatch(userUpdate({ 'image': URL.createObjectURL(photo)}));
+      if(resp.status != 404)
+        resp.blob().then(photo => {
+          dispatch(userUpdate({ 'image': URL.createObjectURL(photo)}));
+        })
     })
   };
 }
