@@ -19,7 +19,7 @@ class getSectorList extends Component {
           filter_description: '',
           last_fetch_name: '',
           last_fetch_description: '',
-          filter_s
+          filter_s: ''
       };
   }
 
@@ -96,20 +96,19 @@ class getSectorList extends Component {
     const fields = (
       <tr>
         <th>
-          <a className='back-bt waves-effect btn-flat' 
+          <a 
             href='#' 
             onClick={ 
               () => { 
                 this.setState({
-                  ['filter_s']: this.state.filter_s == "asc+name" ? 'desc+name' : "asc+name"
-                })
-                this.handleFilterSubmit.bind(this,true)
+                  ['filter_s']: this.state.filter_s == "name+asc" ? 'name+desc' : "name+asc"
+                }, this.handleFilterSubmit.bind(this,true))
               }
             }
           >
             Nome
             { 
-              this.state.filter_s == "asc+name" ?
+              this.state.filter_s == "name+asc" ?
                 <i className="waves-effect material-icons tiny tooltipped">
                   arrow_drop_down
                 </i>
@@ -117,7 +116,7 @@ class getSectorList extends Component {
                 <div />
             }
             { 
-              this.state.filter_s == "desc+name" ?
+              this.state.filter_s == "name+desc" ?
                 <i className="waves-effect material-icons tiny tooltipped">
                   arrow_drop_up
                 </i>
@@ -145,6 +144,16 @@ class getSectorList extends Component {
     )
 	}
 
+  handleInputFilterChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    })
+  }
+
   filterSector() {
     return (
       <div>
@@ -156,7 +165,7 @@ class getSectorList extends Component {
               className='input-field'
               name="filter_name"
               value={this.state.filter_name}
-              onChange={this.handleInputSectorChange.bind(this)}
+              onChange={this.handleInputFilterChange.bind(this)}
             />
           </label>
         </div>
@@ -168,11 +177,11 @@ class getSectorList extends Component {
               className='input-field'
               name="filter_description"
               value={this.state.filter_description}
-              onChange={this.handleInputSectorChange.bind(this)}
+              onChange={this.handleInputFilterChange.bind(this)}
             />
           </label>
         </div>
-        <button className="waves-effect btn right button-color" onClick={this.handleFilterSubmit.bind(this)} name="commit" type="submit">FILTRAR</button>
+        <button className="waves-effect btn right button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
       </div>
     )
   }
@@ -191,14 +200,15 @@ class getSectorList extends Component {
     description = description.replace(/\s/g,'+')
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `sectors`;
-    const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}`
+    const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}&q[s]=${this.state.filter_s}`
+    console.log(`${apiUrl}/${collection}?${params}`)
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({
+      this.setState({
         sectors: resp,
         last_fetch_name: name,
         last_fetch_description: description
