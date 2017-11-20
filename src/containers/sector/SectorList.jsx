@@ -157,33 +157,53 @@ class getSectorList extends Component {
   filterSector() {
     return (
       <div>
-        <div className="field-input" >
-          <h6>Nome:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_name"
-              value={this.state.filter_name}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
-        </div>
-        <div className="field-input" >
-          <h6>Descrição:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_description"
-              value={this.state.filter_description}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
-        </div>
-        <button className="waves-effect btn right button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+        <Row className='filter-container'>
+          <Col>
+            <div className="field-input" >
+              <h6>Nome:</h6>
+              <label>
+                <input
+                  type="text"
+                  className='input-field'
+                  name="filter_name"
+                  value={this.state.filter_name}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
+          <Col>
+            <div className="field-input" >
+              <h6>Descrição:</h6>
+              <label>
+                <input
+                  type="text"
+                  className='input-field'
+                  name="filter_description"
+                  value={this.state.filter_description}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
+          <Row>
+            <Col>
+              <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+            </Col>
+            <Col>
+              <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+            </Col>
+          </Row>
+        </Row>
       </div>
     )
+  }
+
+  cleanFilter() {
+    this.setState({
+      'filter_description': '',
+      'filter_name': '',
+    })
   }
 
   handleFilterSubmit(sort_only) {
