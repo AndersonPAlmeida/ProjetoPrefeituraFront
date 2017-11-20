@@ -234,7 +234,7 @@ class getServiceTypeForm extends Component {
                       <div>
                         <Input s={6} m={32} l={6} 
                                type='select'
-                               name='situation'
+                               name='active'
                                value={this.state.service_type.active}
                                onChange={this.handleInputServiceTypeChange.bind(this)} 
                         >

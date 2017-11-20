@@ -221,7 +221,6 @@ class getSectorList extends Component {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `sectors`;
     const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}&q[s]=${this.state.filter_s}`
-    console.log(`${apiUrl}/${collection}?${params}`)
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",

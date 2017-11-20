@@ -185,7 +185,7 @@ class getSectorForm extends Component {
                       <div>
                         <Input s={6} m={32} l={6} 
                                type='select'
-                               name='situation'
+                               name='active'
                                value={this.state.sector.active}
                                onChange={this.handleInputSectorChange.bind(this)} 
                         >
