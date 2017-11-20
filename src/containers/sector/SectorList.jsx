@@ -14,7 +14,12 @@ class getSectorList extends Component {
   constructor(props) {
       super(props)
       this.state = {
-          sectors: []
+          sectors: [],
+          filter_name: '',
+          filter_description: '',
+          last_fetch_name: '',
+          last_fetch_description: '',
+          filter_s
       };
   }
 
@@ -38,6 +43,7 @@ class getSectorList extends Component {
       <div className='card'>
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Setor </h2>
+          {this.filterSector()}
           {this.tableList()}
         </div>
         <div className="card-action">
@@ -65,7 +71,7 @@ class getSectorList extends Component {
               {sector.description}
             </td>
             <td>
-              {sector.situation}
+              {sector.active ? 'Ativo' : 'Inativo'}
             </td>
             <td>
               {sector.schedules_by_sector}
@@ -89,7 +95,37 @@ class getSectorList extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>Nome</th>
+        <th>
+          <a className='back-bt waves-effect btn-flat' 
+            href='#' 
+            onClick={ 
+              () => { 
+                this.setState({
+                  ['filter_s']: this.state.filter_s == "asc+name" ? 'desc+name' : "asc+name"
+                })
+                this.handleFilterSubmit.bind(this,true)
+              }
+            }
+          >
+            Nome
+            { 
+              this.state.filter_s == "asc+name" ?
+                <i className="waves-effect material-icons tiny tooltipped">
+                  arrow_drop_down
+                </i>
+                :
+                <div />
+            }
+            { 
+              this.state.filter_s == "desc+name" ?
+                <i className="waves-effect material-icons tiny tooltipped">
+                  arrow_drop_up
+                </i>
+                :
+                <div />
+            }
+          </a>
+        </th>
         <th>Descrição</th>
         <th>Situação</th>
         <th>Agendamentos por setor</th>
@@ -109,8 +145,65 @@ class getSectorList extends Component {
     )
 	}
 
-  prev() {
-    browserHistory.push("citizens/schedules/agreement")
+  filterSector() {
+    return (
+      <div>
+        <div className="field-input" >
+          <h6>Nome:</h6>
+          <label>
+            <input
+              type="text"
+              className='input-field'
+              name="filter_name"
+              value={this.state.filter_name}
+              onChange={this.handleInputSectorChange.bind(this)}
+            />
+          </label>
+        </div>
+        <div className="field-input" >
+          <h6>Descrição:</h6>
+          <label>
+            <input
+              type="text"
+              className='input-field'
+              name="filter_description"
+              value={this.state.filter_description}
+              onChange={this.handleInputSectorChange.bind(this)}
+            />
+          </label>
+        </div>
+        <button className="waves-effect btn right button-color" onClick={this.handleFilterSubmit.bind(this)} name="commit" type="submit">FILTRAR</button>
+      </div>
+    )
+  }
+
+  handleFilterSubmit(sort_only) {
+    var name
+    var description
+    if(sort_only) {
+      name = this.state.last_fetch_name
+      description = this.state.last_fetch_description
+    } else {
+      name = this.state.filter_name
+      description = this.state.filter_description
+    }
+    name = name.replace(/\s/g,'+')
+    description = description.replace(/\s/g,'+')
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `sectors`;
+    const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}`
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get",
+    }).then(parseResponse).then(resp => {
+      self.setState({
+        sectors: resp,
+        last_fetch_name: name,
+        last_fetch_description: description
+      })
+    });
   }
 
 	newSectorButton() {
