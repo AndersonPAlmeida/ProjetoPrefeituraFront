@@ -2,11 +2,13 @@ import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
 import styles from './styles/ServiceTypeList.css'
+import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
+import strftime from 'strftime';
 
 class getServiceTypeList extends Component {
   constructor(props) {
@@ -19,7 +21,7 @@ class getServiceTypeList extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/service_types`;
+    const collection = `service_types`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -35,55 +37,12 @@ class getServiceTypeList extends Component {
     return (
       <div className='card'>
         <div className='card-content'>
-          <h2 className='card-title h2-title-home'> Tipos de Atendimento </h2>
-          {this.filterForm()}
+          <h2 className='card-title h2-title-home'> Tipo de Atendimento </h2>
           {this.tableList()}
         </div>
         <div className="card-action">
           {this.newServiceTypeButton()}
         </div>
-      </div>
-      )
-  }
-
-  filterForm() {
-    return (
-      <div>
-        <Row className='left filter-box'>
-          <Col s={12} m={4} l={4}>
-              <h6>Descrição:</h6>
-              <label>
-                <input 
-                  type="text" 
-                  className='input-field' 
-                  name="description-search" 
-                  value="" 
-                  />
-              </label>
-          </Col>
-          <Col s={12} m={4} l={4}>
-              <h6>Prefeitura:</h6>
-              <label>
-                <input 
-                  type="text" 
-                  className='input-field' 
-                  name="cityhall-search" 
-                  value="" 
-                  />
-              </label>
-          </Col>
-          <Col s={12} m={4} l={4}>
-              <h6>Situação:</h6>
-              <label>
-                <input 
-                  type="text" 
-                  className='input-field' 
-                  name="situation-search" 
-                  value="" 
-                  />
-              </label>
-          </Col>
-        </Row>
       </div>
       )
   }
@@ -103,13 +62,10 @@ class getServiceTypeList extends Component {
               </a>
             </td>
             <td>
-              {service_type.situation}
+              {service_type.active ? 'Ativo' : 'Inativo'}
             </td>
             <td>
-              {service_type.name}
-            </td>
-            <td>
-              {service_type.city_hall}
+              {service_type.sector_name}
             </td>
             <td>
               <a className='back-bt waves-effect btn-flat' 
@@ -123,7 +79,7 @@ class getServiceTypeList extends Component {
               </a> 
             </td>
           </tr>
-       )
+        )
       })
     )
 
@@ -133,7 +89,6 @@ class getServiceTypeList extends Component {
         <th>Descrição</th>
         <th>Situação</th>
         <th>Setor</th>
-        <th>Prefeitura</th>
         <th></th>
       </tr>
     )
@@ -163,7 +118,7 @@ class getServiceTypeList extends Component {
         className="btn waves-effect btn button-color" 
         name="anterior" 
         type="submit">
-          NOVO TIPO DE ATENDIMENTO
+          CADASTRAR NOVO TIPO DE ATENDIMENTO
       </button>
 		)
 	}

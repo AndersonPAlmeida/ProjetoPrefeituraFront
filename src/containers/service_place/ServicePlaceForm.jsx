@@ -8,244 +8,159 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
-import { UserImg } from '../images';
+import { ServicePlaceImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
-import {userSignIn} from '../../actions/user';
 
-class getUserForm extends Component {
+class getServicePlaceForm extends Component {
 
  constructor(props) {
     super(props)
     this.state = {
-      user: { 
+      service_place: { 
         address_complement: '',
         address_number: '',
-        birth_date: '',
-        cep: '',
-        cpf: '',
-        email: '',
+        active: true,
         name: '',
-        note: '',
-        pcd: '',
+        cep: '',
+        email: '',
+        url: '',
         phone1: '',
         phone2: '',
-        rg: ''
+        service_types: []
       },
       aux: {
         address: '',
-        birth_day: '',
-        birth_month: '',
-        birth_year: '',
-        birth_year_id: '',
         city_name: '',
         neighborhood: '',
-        password: "",
-        current_password: "",
         password_confirmation: "",
         state_abbreviation: '',
+        update_checkbox: 0,
+        city_hall: {
+          name: ''
+        }
       },
-      phonemask: "(11) 1111-11111"
+      phonemask: "(11) 1111-11111",
     };
   }
 
   componentWillMount() {
     var self = this;
     if(this.props.is_edit) {
-      var year = parseInt(this.props.data.birth_date.substring(0,4))
-      self.setState({
-        user: this.props.data,
-        aux: update(this.state.aux, 
-        {
-          birth_day: {$set: parseInt(this.props.data.birth_date.substring(8,10))},
-          birth_month: {$set: parseInt(this.props.data.birth_date.substring(5,7))},
-          birth_year: {$set: year},
-          birth_year_id: {$set: year-1899}
-        })
+      self.setState({ service_place: this.props.data })
+      if(this.props.data.cep) {
+        this.updateAddress.bind(this)(this.props.data.cep.replace(/(\.|-|_)/g,''))
+        this.setState({ aux: update(this.state.aux, {update_checkbox: {$set: 1} })})
+      }
+    }
+  }
+
+  componentDidUpdate() {
+    if(this.state.aux.update_checkbox) {
+      this.state.aux.city_hall.service_types.map((service_type, idx) => {
+        for(var i = 0; i < this.state.service_place.service_types.length; i++) {
+          if (this.state.service_place.service_types[i].id == service_type.id) {
+            service_type['checked'] = true
+            this.setState({
+              aux: update(this.state.aux, {city_hall: {service_types: {$splice: [[idx,1,service_type]] } } })
+            })
+            break;
+          }
+        }
       })
-      this.updateAddress.bind(this)(this.props.data.cep.replace(/(\.|-|_)/g,'')) 
-    }
-    else {
-      if(location.search) {
-        var search = location.search.substring(1);
-        var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
-        self.setState({
-          user: update(this.state.user, { cep: {$set: query['cep']} })
-        })
-        this.updateAddress.bind(this)(query['cep'].replace(/(\.|-|_)/g,'')) 
-      }
+      this.setState({ aux: update(this.state.aux, {update_checkbox: {$set: 0} })})
     }
   }
 
-  handleInputUserChange(event) {
+  handleInputServicePlaceChange(event) {
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const value = target.value;
 
     this.setState({
-      user: update(this.state.user, { [name]: {$set: value} })
+      service_place: update(this.state.service_place, { [name]: {$set: value} })
     })
   }
 
-  handleChange(event){
+  handleCheckboxChange(event) {
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const value = target.id;
+    const check = this.state.aux.city_hall.service_types[value].checked ? false : true
 
     this.setState({
-      aux: update(this.state.aux, { [name]: {$set: value} })
+      aux: update(this.state.aux, {city_hall: {service_types: {[value]: {checked: {$set: check} } } } })
     })
-
-  }
-
-  selectDate(){ 
-      var optionsDays = []; 
-      optionsDays.push(<option key={0} value="" disabled>Dia</option>);
-      for(var i = 1; i <= 31; i++){
-        optionsDays.push(
-          <option key={i} value={i}>{i}</option>
-        );
-      }
-      var optionsMonths = []
-      optionsMonths.push(<option key={0} value="" disabled>Mês</option>);
-      var months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-      for(var i = 0; i < 12; i++){
-        optionsMonths.push(
-          <option key={i+1} value={i+1}>{months[i]}</option>
-        );
-      }
-      var optionsYears = []
-      optionsYears.push(<option key={0} value="" disabled>Ano</option>);
-      var year = new Date().getFullYear()
-      for(var i = 1900; i < year; i++){
-        optionsYears.push(
-          <option key={i-1899} value={i-1899}>{i}</option>
-        );
-      }
-      return (
-        <div>
-          <Input s={12} l={3} 
-            type='select'
-            name='birth_day'
-            value={this.state.aux.birth_day}
-            onChange={this.handleChange.bind(this)}
-          >
-            {optionsDays}
-          </Input>
-
-          <Input s={12} l={4} 
-            type='select'
-            name='birth_month'
-            value={this.state.aux.birth_month}
-            onChange={this.handleChange.bind(this)}
-          >
-            {optionsMonths}
-          </Input>
-
-          <Input s={12} l={4} 
-            type='select'
-            name='birth_year_id'
-            value={this.state.aux.birth_year_id}
-            onChange={ (event) => {
-                this.handleChange.bind(this)(event) 
-                this.setState({aux: update(this.state.aux, 
-                  {
-                    birth_year: {$set: parseInt(this.state.aux.birth_year_id)+parseInt(1899)},
-                  })
-                })
-              }
-            }
-          >
-            {optionsYears}
-          </Input>
-        </div>
-      )
   }
 
   updateAddress(cep) {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = 'validate_cep';
-    var formData = {};
-    formData["cep"] = {};
-    formData["cep"]["number"] = cep;
-    fetch(`${apiUrl}/${collection}`, {
+    const collection = 'forms/create_service_place';
+    const params = `${this.props.fetch_params}&cep=${cep}`
+    fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
-      method: "post",
-      body: JSON.stringify(formData)
+      method: "get"
     }).then(parseResponse).then(resp => {
-      this.setState(
-      { aux: update(this.state.aux, 
-        {
-          address: {$set: resp.address},
-          neighborhood: {$set: resp.neighborhood},
-          city_name: {$set: resp.city_name}, 
-          state_abbreviation: {$set: resp.state_name}
+      if(resp.city_halls.length > 0) {
+
+        resp.city_halls[0].service_types.map((service_type) => {
+          service_type['checked'] = false
         })
-      });
+        this.setState(
+        { aux: update(this.state.aux,
+          {
+            address: {$set: resp.address},
+            neighborhood: {$set: resp.neighborhood},
+            city_name: {$set: resp.city_name},
+            state_abbreviation: {$set: resp.state_name},
+            city_hall: {$set: resp.city_halls[0]}
+          })
+        });
+        this.setState(
+        { service_place: update(this.state.service_place,
+          {
+            city_hall_id: {$set: resp.city_halls[0].id}
+          })
+        });
+      }
+      else
+        Materialize.toast('Você não tem permissão para criar local de atendimento nesta prefeitura.', 10000, "red",function(){$("#toast-container").remove()});
     }).catch(() => {
       Materialize.toast('CEP inválido.', 10000, "red",function(){$("#toast-container").remove()});
     })
   }
 
   handleSubmit() {
-    const monthNames = [
-      "Jan", "Feb", "Mar",
-      "Apr", "May", "Jun", 
-      "Jul", "Aug", "Sep", 
-      "Oct", "Nov", "Dec"
-    ];
     let errors = [];
     let formData = {};
-    let auxData = {};
-    var send_password = false;
-    formData = this.state.user;
-    auxData = this.state.aux;
-
-    if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
-      errors.push("Campo Data de Nascimento é obrigatório.");
+    formData = this.state.service_place;
+    if(!formData['name'])
+      errors.push("Campo Nome é obrigatório.");
     if(!formData['cep'])
       errors.push("Campo CEP é obrigatório.");
-    if(this.props.user_class == `citizen`) {
-      if(!formData['cpf'])
-        errors.push("Campo CPF é obrigatório.");
-      else
-        formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
-      if(!this.props.is_edit || auxData['password']) {
-        send_password = true;
-        if(!auxData['password'])
-          errors.push("Campo Senha é obrigatório.");
-        if(!auxData['password'])
-          errors.push("Campo Confirmação de Senha é obrigatório..");
-        if(auxData['password_confirmation'] != auxData['password'])
-          errors.push("A senha de confirmação não corresponde a senha atual.");
-      }
-    }
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
+      if(formData['phone1'])
+        formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
+      if(formData['phone2'])
+        formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
       formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
-      formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
-      formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`
-      let fetch_body = {};
-      if(this.props.user_class == `service_place`) {
-        fetch_body['service_place'] = formData;
-      } else {
-        if(this.props.is_edit)
-          fetch_body['citizen'] = formData;
-        else
-          fetch_body = formData;
-        if(send_password) {
-          fetch_body['password'] = auxData['password'] 
-          fetch_body['password_confirmation'] = auxData['password_confirmation'] 
-          if(auxData['current_password'])
-            fetch_body['current_password'] = auxData['current_password'] 
-        }
+      let service_types = [];
+      this.state.aux.city_hall.service_types.map((service_type) => {
+        if(service_type.checked)
+          service_types.push(service_type.id)
+      })
+      formData['service_types'] = service_types
+      let fetch_body = {}
+      if(this.props.is_edit) {
+        fetch_body['service_place'] = formData
       }
-
+      else {
+        fetch_body['service_place'] = formData
+      }
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
@@ -256,9 +171,10 @@ class getUserForm extends Component {
         method: this.props.fetch_method,
         body: JSON.stringify(fetch_body)
       }).then(parseResponse).then(resp => {
-        if(this.props.is_edit && this.props.user_class == `citizen`)
-          this.props.dispatch(userSignIn(resp.data))
-        Materialize.toast('Cadastro efetuado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+        if(this.props.is_edit)
+          Materialize.toast('Setor editado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+        else
+          Materialize.toast('Setor criado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
       }).catch(({errors}) => {
         if(errors) {
@@ -280,6 +196,30 @@ class getUserForm extends Component {
     )
   }
 
+  pickServiceTypes() {
+    if(!this.state.aux.city_hall.service_types)
+      return ( <div /> )
+
+    const serviceTypeList = (
+      this.state.aux.city_hall.service_types.map((service_type, idx) => {
+        return(
+          <div>
+            <input type="checkbox" checked={service_type.checked} id={idx} /><label id={idx} for={idx} onClick={this.handleCheckboxChange.bind(this)}>{service_type.description}</label>
+          </div>
+        )
+      })
+    )
+    return (
+      <div>
+        <h6>Escolha os tipos de atendimento:</h6>
+        <div>
+          {serviceTypeList}
+          <br />
+        </div>
+      </div>
+    )
+  }
+
   render() {
     return (
       <main>
@@ -287,141 +227,80 @@ class getUserForm extends Component {
 	        <Col s={12}>
             <div className='card'>
               <div className='card-content'>
-              {this.props.is_edit ?
-                this.props.user_class == `citizen` ?
-                  <h2 className="card-title">Alterar cadastro: {this.props.data.name}</h2>
+                {this.props.is_edit ?
+                  <h2 className="card-title">Alterar local de atendimento {this.props.data.name}</h2> 
                   :
-                  <h2 className="card-title">Alterar dependente: {this.props.data.name}</h2> 
-                  :
-                  this.props.user_class == `citizen` ?
-                    <h2 className="card-title">Cadastrar cidadão</h2>
-                    :
-                    <h2 className="card-title">Cadastrar dependente</h2> 
-              }
-
+                  <h2 className="card-title">Cadastrar local de atendimento</h2> 
+                }
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
-                    <div>
-                        <img
-                          src={UserImg} />
-                        <div className='file-input'>
-                          <Input type='file'
-                          />
-                        </div>
-                    </div>
                     <div className="field-input" >
-                      <h6>Nome*:</h6>
-                      <label>
-                        <input type="text" name="name" className='input-field' value={this.state.user.name} onChange={this.handleInputUserChange.bind(this)} />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Data de nascimento*:</h6>
-                      {this.selectDate()}
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>Possui algum tipo de deficiência:</h6>
-                      <div className="check-input">
-                        <Input 
-                          onChange={this.handleUserInputChange} 
-                          checked={this.state.user.pcd} 
-                          s={12} l={12} 
-                          name='pcd' 
-                          type='radio' 
-                          value='true' 
-                          label='Sim' 
-                        />
-                        <Input 
-                          onChange={this.handleUserInputChange} 
-                          checked={!this.state.user.pcd} 
-                          s={12} l={12} 
-                          name='pcd' 
-                          type='radio' 
-                          value='' 
-                          label='Não' 
-                        />
-
-                        { this.state.user.pcd ? 
-                          <div>
-                            <h6>Qual tipo de deficiência:</h6>
-                            <label>
-                              <input 
-                                type="text" 
-                                className='input-field' 
-                                name="pcd_description" value="" 
-                                onChange={this.handleInputUserChange.bind(this)}
-                                />
-                            </label>
-                          </div> 
-                          : null 
-                        }
+                      <h6>Situação:</h6>
+                      <div>
+                        <Input s={6} m={32} l={6} 
+                               type='select'
+                               name='situation'
+                               value={this.state.service_place.active}
+                               onChange={this.handleInputServicePlaceChange.bind(this)} 
+                        >
+                          <option key={0} value={true}>Ativo</option>
+                          <option key={1} value={false}>Inativo</option>
+                        </Input>
                       </div>
                     </div>
-
-                    <div className="field-input">
-                      <h6>CPF:</h6>
+                    <div className="field-input" >
+                      <h6>Nome:</h6>
                       <label>
-                        <MaskedInput 
+                        <input 
                           type="text" 
                           className='input-field' 
-                          mask="111.111.111-11" 
-                          name="cpf" 
-                          value={this.state.user.cpf} 
-                          onChange={this.handleInputUserChange.bind(this)} 
+                          name="name" 
+                          value={this.state.service_place.name} 
+                          onChange={this.handleInputServicePlaceChange.bind(this)} 
                         />
                       </label>
                     </div>
-                    
-                    <div className="field-input">
-                      <h6>RG:</h6>
-                      <label>
-                        <MaskedInput 
-                          type="text" 
-                          className='input-field' 
-                          mask="11.111.111-1" 
-                          name="rg" 
-                          value={this.state.user.rg} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                  </Col>
-
-                  <Col s={12} m={12} l={6}>
-                    <div className='category-title'>
-                      <p>Endereço</p>
-                    </div>
-
                     <div className="field-input" >
                       <h6>CEP:</h6>
                       <label>
-                        <MaskedInput 
-                          type="text" 
-                          className='input-field' 
-                          mask="11111-111" name="cep" 
-                          value={this.state.user.cep} 
+                        <MaskedInput
+                          type="text"
+                          className='input-field'
+                          mask="11111-111" name="cep"
+                          value={this.state.service_place.cep}
                           onChange=
                           {
                             (event) => {
-                              this.handleInputUserChange.bind(this)(event)
+                              this.handleInputServicePlaceChange.bind(this)(event)
                               var cep = event.target.value.replace(/(\.|-|_)/g,'')
                               if(cep.length == 8)
-                                this.updateAddress.bind(this)(cep) 
+                                this.updateAddress.bind(this)(cep)
                             }
-                          } 
+                          }
                         />
+                      </label>
+                    </div>
+
+                    <div className="field-input" >
+                      <h6>Prefeitura:</h6>
+                      <label>
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="city_hall_name"
+                          value={this.state.aux.city_hall.name}
+                          disabled />
                       </label>
                     </div>
 
                     <div className="field-input" >
                       <h6>Estado do endereço:</h6>
                       <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="state_abbreviation" 
-                          value={this.state.aux.state_abbreviation}  
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="state_abbreviation"
+                          value={this.state.aux.state_abbreviation}
                           disabled />
                       </label>
                     </div>
@@ -429,48 +308,37 @@ class getUserForm extends Component {
                     <div className="field-input" >
                       <h6>Munícipio:</h6>
                       <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="city" 
-                          value={this.state.aux.city_name}  
-                          disabled 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Bairro:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="neighborhood" 
-                          value={this.state.aux.neighborhood} 
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="city"
+                          value={this.state.aux.city_name}
+                          disabled
                         />
                       </label>
                     </div>
 
                     <div className="field-input" >
-                      <h6>Endereço:</h6>
+                      <h6>Bairro:</h6>
                       <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="address" 
-                          value={this.state.aux.address} 
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="neighborhood"
+                          value={this.state.aux.neighborhood}
                         />
                       </label>
                     </div>
-                    
+
                     <div className="field-input" >
                       <h6>Número:</h6>
                       <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="address_number" 
-                          value={this.state.user.address_number} 
-                          onChange={this.handleInputUserChange.bind(this)} 
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="address_number"
+                          value={this.state.service_place.address_number}
+                          onChange={this.handleInputServicePlaceChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -478,21 +346,17 @@ class getUserForm extends Component {
                     <div className="field-input" >
                       <h6>Complemento:</h6>
                       <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="address_complement" 
-                          value={this.state.user.address_complement} 
-                          onChange={this.handleInputUserChange.bind(this)} />
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="address_complement"
+                          value={this.state.service_place.address_complement}
+                          onChange={this.handleInputServicePlaceChange.bind(this)} />
                       </label>
                     </div>
-                    </Col>
-                </Row>
-                <Row className='first-line'>
-                  <Col s={12} m={12} l={6}>
 
-                    <div className='category-title'>
-                      <p>Informações de Contato</p>
+                    <div className="field-input" >
+                        {this.pickServiceTypes()}
                     </div>
 
                     <div className="field-input">
@@ -500,13 +364,13 @@ class getUserForm extends Component {
                       <label>
                         <MaskedInput
                           mask={this.state.phonemask}
-                          type="text" 
-                          className='input-field' 
-                          name="phone1" 
-                          value={this.state.user.phone1} 
+                          type="text"
+                          className='input-field'
+                          name="phone1"
+                          value={this.state.service_place.phone1}
                           onChange={
                             (event) => {
-                              this.handleInputUserChange.bind(this)(event)
+                              this.handleInputServicePlaceChange.bind(this)(event)
                               if(event.target.value.replace(/(_|-|(|))/g,'').length == 13)
                                 this.setState({phonemask: "(11) 11111-1111"})
                               else
@@ -521,12 +385,12 @@ class getUserForm extends Component {
                       <h6>Telefone 2:</h6>
                       <label>
                         <MaskedInput
-                          mask={this.state.phonemask} 
-                          type="text" 
-                          className='input-field' 
-                          name="phone2" 
-                          value={this.state.user.phone2} 
-                          onChange={this.handleInputUserChange.bind(this)} 
+                          mask={this.state.phonemask}
+                          type="text"
+                          className='input-field'
+                          name="phone2"
+                          value={this.state.service_place.phone2}
+                          onChange={this.handleInputServicePlaceChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -534,81 +398,31 @@ class getUserForm extends Component {
                     <div className="field-input">
                       <h6>E-mail:</h6>
                       <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="email" 
-                          value={this.state.user.email} 
-                          onChange={this.handleInputUserChange.bind(this)} 
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="email"
+                          value={this.state.service_place.email}
+                          onChange={this.handleInputServicePlaceChange.bind(this)}
                         />
                       </label>
                     </div>
 
-                    <div>
-                      <h6>Observações:</h6>
+                    <div className="field-input">
+                      <h6>Site:</h6>
                       <label>
-                        <textarea  
-                          className='input-field materialize-textarea'
-                          placeholder="Deixe este campo em branco caso não exista observações a serem feitas" 
-                          name="note" 
-                          value={this.state.user.note} 
-                          onChange={this.handleInputUserChange.bind(this)} 
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="url"
+                          value={this.state.service_place.url}
+                          onChange={this.handleInputServicePlaceChange.bind(this)}
                         />
                       </label>
                     </div>
-                    </Col>
 
-                    {this.props.user_class == `citizen` ?
-                      <Col s={12} m={12} l={6}>
-
-                        <div className='category-title'>
-                          <p>Senha</p>
-                        </div>
-
-                        <div className="field-input">
-                          <h6>Senha atual:</h6>
-                          <label>
-                            <input 
-                              type="password" 
-                              className='input-field' 
-                              name="password" 
-                              value={this.state.aux.password}
-                              onChange={this.handleChange.bind(this)} 
-                            />
-                          </label>
-                        </div>
-                        
-                        <div className="field-input">
-                          <h6>Confirmação de senha:</h6>
-                          <label>
-                            <input 
-                              type="password" 
-                              className='input-field' 
-                              name="password_confirmation" 
-                              value={this.state.aux.password_confirmation} 
-                              onChange={this.handleChange.bind(this)} 
-                            />
-                          </label>
-                        </div>
-
-                        {this.props.is_edit ?
-                          <div className="field-input">
-                            <h6>Nova senha: <i>(mínimo 6 caracteres)</i></h6>
-                            <label>
-                              <input 
-                                type="password" 
-                                className='input-field' 
-                                name="current_password" 
-                                value={this.state.aux.current_password}
-                                onChange={this.handleChange.bind(this)} 
-                              />
-                            </label>
-                          </div>
-                        : null}
-
-                        <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
-                      </Col> : null
-                    } 
+                   <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
+                  </Col>
                 </Row>
                 {this.confirmButton()}
               </div>
@@ -620,5 +434,5 @@ class getUserForm extends Component {
   }
 }
 
-const UserForm = connect()(getUserForm)
-export default UserForm
+const ServicePlaceForm = connect()(getServicePlaceForm)
+export default ServicePlaceForm

@@ -48,7 +48,6 @@ class getDependantEdit extends Component {
               fetch_collection={`citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'put'}
-              fetch_function={fetch}
               submit_url={`/dependants/`}
             />
         }

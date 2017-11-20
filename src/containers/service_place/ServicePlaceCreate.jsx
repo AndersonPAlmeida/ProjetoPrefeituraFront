@@ -24,14 +24,15 @@ class getServicePlaceCreate extends Component {
       <div>
         {
           this.state.fetching ? <div /> : 
-            <UserForm 
-              user_class={`service_place`}
+            <ServicePlaceForm 
               is_edit={false} 
               prev={this.prev}
-              fetch_collection={`citizens/${this.props.user.citizen.id}/service_places`}
+              fetch_collection={`service_places`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
               submit_url={`/service_places/`}
+              current_role={this.props.user.roles[this.props.user.current_role_idx]}
+              city_hall_id={this.props.user.roles[this.props.user.current_role_idx].city_hall_id}
             />
         }
       </div>

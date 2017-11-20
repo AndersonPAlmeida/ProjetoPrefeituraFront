@@ -32,6 +32,10 @@
 	text-align: center;
 }
 
+.description-column {
+  width: 30%
+}
+
 .button-color {
 	background-color: #92bf23;
 	color: black;
@@ -49,7 +53,6 @@
 	float: left;
 }
 
-
-.filter-box {
-	text-decoration: bold;
+.clear-filter {
+	display: none;
 }
