@@ -90,7 +90,7 @@ class getUserForm extends Component {
 
   handleInputUserChange(event) {
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const value = target.value;
     const name = target.name;
     this.setState({
       user: update(this.state.user, { [name]: {$set: value} })
@@ -99,7 +99,7 @@ class getUserForm extends Component {
 
   handleChange(event){
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const value = target.value;
     const name = target.name;
 
     this.setState({
@@ -262,6 +262,8 @@ class getUserForm extends Component {
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
+      formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
+      formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
       formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
       formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
       formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`

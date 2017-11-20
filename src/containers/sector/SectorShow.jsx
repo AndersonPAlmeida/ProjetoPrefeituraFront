@@ -44,7 +44,7 @@ class getSectorShow extends Component {
     return (
       <div className='card'>
             <div className='card-content'>
-              <h2 className='card-title h2-title-home'> Informações do Dependente: </h2>
+              <h2 className='card-title h2-title-home'> Informações do Setor: </h2>
               <p> 
                 <b>Situação: </b>
                 {this.state.sector.active ? 'Ativo' : 'Inativo'}

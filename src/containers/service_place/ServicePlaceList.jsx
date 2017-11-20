@@ -21,7 +21,7 @@ class getServicePlaceList extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/service_places`;
+    const collection = `service_places`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -37,7 +37,7 @@ class getServicePlaceList extends Component {
     return (
       <div className='card'>
         <div className='card-content'>
-          <h2 className='card-title h2-title-home'> Dependente </h2>
+          <h2 className='card-title h2-title-home'> Local de Atendimento </h2>
           {this.tableList()}
         </div>
         <div className="card-action">
@@ -47,12 +47,6 @@ class getServicePlaceList extends Component {
       )
   }
   
-  formatCPF(n) {
-    n = n.replace(/\D/g,"");
-    n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
-    return (n);
-  }
-
 	tableList() {
     const data = (
       this.state.service_places.map((service_place) => {
@@ -68,10 +62,22 @@ class getServicePlaceList extends Component {
               </a>
             </td>
             <td>
-              {strftime.timezone('+0000')('%d/%m/%Y', new Date(service_place.birth_date))}
+              {service_place.cep}
             </td>
             <td>
-              {this.formatCPF(service_place.cpf)}
+              {service_place.neighborhood}
+            </td>
+            <td>
+              {service_place.state_name}
+            </td>
+            <td>
+              {service_place.city_name}
+            </td>
+            <td>
+              {service_place.phone}
+            </td>
+            <td>
+              {service_place.active ? 'Ativo' : 'Inativo'}
             </td>
             <td>
               <a className='back-bt waves-effect btn-flat' 
@@ -93,8 +99,12 @@ class getServicePlaceList extends Component {
     const fields = (
       <tr>
         <th>Nome</th>
-        <th>Data de Nascimento</th>
-        <th>CPF</th>
+        <th>CEP</th>
+        <th>Bairro</th>
+        <th>Estado</th>
+        <th>Munícipo</th>
+        <th>Telefone</th>
+        <th>Situação</th>
         <th></th>
       </tr>
     )

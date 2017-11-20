@@ -24,13 +24,13 @@ class getServiceTypeCreate extends Component {
       <div>
         {
           this.state.fetching ? <div /> : 
-            <UserForm 
-              user_class={`service_type`}
+            <ServiceTypeForm 
               is_edit={false} 
               prev={this.prev}
-              fetch_collection={`citizens/${this.props.user.citizen.id}/service_types`}
+              fetch_collection={`service_types`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
+              current_role={this.props.user.roles[this.props.user.current_role_idx]}
               submit_url={`/service_types/`}
             />
         }

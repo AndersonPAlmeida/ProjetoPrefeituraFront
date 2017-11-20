@@ -80,7 +80,8 @@ class getMenu extends Component {
 const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
   const user_name = user.citizen.name
-  const user_role = user.current_role == "citizen" ? "citizen" : user.roles.find(role => role.id == user.current_role).role
+  var user_role;
+  user_role = user.current_role == 'citizen' ? 'citizen' : user.roles[user.current_role_idx].role
   return {
     user_name,
     user_role 

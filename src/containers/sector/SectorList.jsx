@@ -65,7 +65,7 @@ class getSectorList extends Component {
               {sector.description}
             </td>
             <td>
-              {sector.situation}
+              {sector.active ? 'Ativo' : 'Inativo'}
             </td>
             <td>
               {sector.schedules_by_sector}
