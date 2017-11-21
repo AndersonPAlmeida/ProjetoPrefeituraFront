@@ -79,7 +79,6 @@ class getServiceTypeForm extends Component {
     }
   }
 
-
   handleInputServiceTypeChange(event) {
     const target = event.target;
     const value = target.value;
