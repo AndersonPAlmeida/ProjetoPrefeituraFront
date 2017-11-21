@@ -2,13 +2,18 @@ import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, NavItem, Navbar } from 'react-materialize'
 import styles from './styles/CitizenSchedule.css'
+import { port, apiHost, apiPort, apiVer } from '../../../config/env';
+import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
+import {fetch} from "../../redux-auth";
+import { connect } from 'react-redux';
 
-class CitizenSchedule extends Component {
+class getCitizenSchedule extends Component {
   constructor(props) {
       super(props)
       this.state = {
           collections: [],
           schedules: [],
+          dependants: [],
           sectors: [],
           situation: [],
           service_type: [],
@@ -48,7 +53,8 @@ class CitizenSchedule extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       self.setState({ 
-        schedules: resp
+        schedules: resp.schedules,
+        dependants: resp.dependants
       })
     });
   }
@@ -102,108 +108,6 @@ class CitizenSchedule extends Component {
 		)
 	}
 
-  tableList() {
-    const data = (
-      this.state.service_places.map((service_place) => {
-        return (
-          <tr>
-            <td>
-              <a className='back-bt waves-effect btn-flat'
-                href='#'
-                onClick={ () =>
-                  browserHistory.push(`/service_places/${service_place.id}`)
-                }>
-                {service_place.name}
-              </a>
-            </td>
-            <td>
-              {service_place.cep}
-            </td>
-            <td>
-              {service_place.neighborhood}
-            </td>
-            <td>
-              {service_place.state_name}
-            </td>
-            <td>
-              {service_place.city_name}
-            </td>
-            <td>
-              {service_place.phone}
-            </td>
-            <td>
-              {service_place.active ? 'Ativo' : 'Inativo'}
-            </td>
-            <td>
-              <a className='back-bt waves-effect btn-flat'
-                 href='#'
-                 onClick={ () =>
-                 browserHistory.push(`/service_places/${service_place.id}/edit`)
-                }>
-                  <i className="waves-effect material-icons tooltipped">
-                    edit
-                  </i>
-              </a>
-            </td>
-          </tr>
-        )
-      })
-    )
-    // Fields to show in the table, and what object properties in the data they bind to
-    const fields = (
-      <tr>
-        <th>
-          <a
-            href='#'
-            onClick={
-              () => {
-                this.setState({
-                  ['filter_s']: this.state.filter_s == "name+asc" ? 'name+desc' : "name+asc"
-                }, this.handleFilterSubmit.bind(this,true))
-              }
-            }
-          >
-            Nome
-            {
-              this.state.filter_s == "name+asc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_down
-                </i>
-                :
-                <div />
-            }
-            {
-              this.state.filter_s == "name+desc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_up
-                </i>
-                :
-                <div />
-            }
-          </a>
-        </th>
-        <th>CEP</th>
-        <th>Bairro</th>
-        <th>Estado</th>
-        <th>Munícipo</th>
-        <th>Telefone</th>
-        <th>Situação</th>
-        <th></th>
-      </tr>
-    )
-
-    return (
-      <table className={styles['table-list']}>
-        <thead>
-          {fields}
-        </thead>
-        <tbody>
-          {data}
-        </tbody>
-      </table>
-    )
-  }
-
   handleInputFilterChange(event) {
     const target = event.target;
     const value = target.value;
@@ -224,15 +128,27 @@ class CitizenSchedule extends Component {
     )
     return (
       <div className='select-field'>
-        <Input s={12} l={4} m={12} name="selected_sector" type='select' value={this.state.selected_sector}
+        <Input s={12} l={4} m={12} name="filter_sector" type='select' value={this.state.filter_sector}
           onChange={
             (event) => {
-              if(event.target.value != this.state.selected_sector) {
-                this.handleInputChange(event);
+              var selected_sector = event.target.value
+              if(this.state.filter_sector != selected_sector) {
+                var service_types
+                if(selected_sector != 0) {
+                  service_types = this.state.collection.service_type.filter(
+                    function(type) {
+                      return type.sector_id == selected_sector
+                    }
+                  ) 
+                }
+                else {
+                  service_types = this.state.collection.service_type
+                }
                 this.setState({
-                  service_type: this.state.service_type.find((type) => type.sector_id == event.target.value),
-                  filter_service_type: '0',
-                  filter_service_place: '0'
+                  service_type: service_types,
+                  filter_sector: selected_sector,
+                  filter_service_type: 0,
+                  filter_service_place: 0
                 });
               }
             }
@@ -244,16 +160,13 @@ class CitizenSchedule extends Component {
     )
   }
 
-  filterServicePlace() {
+  filterSchedule() {
     return (
       <div>
         <Row className='filter-container'>
           <Col>
             <div>
               {this.pickSector()}
-              {this.pickServiceType()}
-              {this.pickServicePlace()}
-              {this.pickSituation()}
             </div>
           </Col>
           <Row>
@@ -324,11 +237,7 @@ class CitizenSchedule extends Component {
 				<div className='card'>
           <div className='card-content'>
             <h2 className='card-title h2-title-home'>Buscar agendamentos </h2>
-            <div className='card-content'>
-              <h2 className='card-title h2-title-home'> Local de Atendimento </h2>
-              {this.filterSchedule()}
-              {this.tableList()}
-            </div>
+            {this.filterSchedule()}
           </div>
 		    </div>
 			</div>
@@ -355,4 +264,15 @@ class CitizenSchedule extends Component {
   }
 }
 
-export default CitizenSchedule 
+const mapStateToProps = (state) => {
+  const user = state.get('user').getIn(['userInfo'])
+  return {
+    user
+  }
+}
+
+const CitizenSchedule = connect(
+  mapStateToProps
+)(getCitizenSchedule)
+export default CitizenSchedule
+
