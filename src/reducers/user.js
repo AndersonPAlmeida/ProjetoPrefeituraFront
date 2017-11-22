@@ -41,7 +41,7 @@ const userReducer = (state = initialState, action) => {
   }
 
   if (action.type === USER_SIGN_OUT) {
-    return state.set('userInfo', null);
+    return state.set('userInfo', initialUser);
   }
 
   if (action.type === USER_UPDATE) {
