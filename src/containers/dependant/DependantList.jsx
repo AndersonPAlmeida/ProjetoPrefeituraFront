@@ -14,7 +14,10 @@ class getDependantList extends Component {
   constructor(props) {
       super(props)
       this.state = {
-          dependants: []
+          dependants: [],
+          filter_name: '',
+          last_fetch_name: '',
+          filter_s: ''
       };
   }
 
@@ -38,6 +41,7 @@ class getDependantList extends Component {
       <div className='card'>
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Dependente </h2>
+          {this.filterDependant()}
           {this.tableList()}
         </div>
         <div className="card-action">
@@ -92,7 +96,36 @@ class getDependantList extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>Nome</th>
+        <th>
+          <a
+            href='#'
+            onClick={
+              () => {
+                this.setState({
+                  ['filter_s']: this.state.filter_s == "name+asc" ? 'name+desc' : "name+asc"
+                }, this.handleFilterSubmit.bind(this,true))
+              }
+            }
+          >
+            Nome
+            {
+              this.state.filter_s == "name+asc" ?
+                <i className="waves-effect material-icons tiny tooltipped">
+                  arrow_drop_down
+                </i>
+                :
+                <div />
+            }
+            {
+              this.state.filter_s == "name+desc" ?
+                <i className="waves-effect material-icons tiny tooltipped">
+                  arrow_drop_up
+                </i>
+                :
+                <div />
+            }
+          </a>
+        </th>
         <th>Data de Nascimento</th>
         <th>CPF</th>
         <th></th>
@@ -111,8 +144,75 @@ class getDependantList extends Component {
     )
 	}
 
-  prev() {
-    browserHistory.push("citizens/schedules/agreement")
+  handleInputFilterChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    })
+  }
+
+  filterDependant() {
+    return (
+      <div>
+        <Row className='filter-container'>
+          <Col>
+            <div className="field-input" >
+              <h6>Nome:</h6>
+              <label>
+                <input
+                  type="text"
+                  className='input-field'
+                  name="filter_name"
+                  value={this.state.filter_name}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
+          <Row>
+            <Col>
+              <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+            </Col>
+            <Col>
+              <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+            </Col>
+          </Row>
+        </Row>
+      </div>
+    )
+  }
+
+  cleanFilter() {
+    this.setState({
+      'filter_name': ''
+    })
+  }
+
+  handleFilterSubmit(sort_only) {
+    var name
+    if(sort_only) {
+      name = this.state.last_fetch_name
+    } else {
+      name = this.state.filter_name
+    }
+    name = name.replace(/\s/g,'+')
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `citizens/${this.props.user.citizen.id}/dependants`;
+    const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[s]=${this.state.filter_s}`
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get",
+    }).then(parseResponse).then(resp => {
+      this.setState({
+        dependants: resp,
+        last_fetch_name: name
+      })
+    });
   }
 
 	newDependantButton() {
