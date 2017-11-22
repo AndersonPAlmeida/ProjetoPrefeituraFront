@@ -357,12 +357,12 @@ class getCitizenSchedule extends Component {
     return (n < 10 ? '0' : '') + n;
   }
 
-  tableList() {
+  tableList(schedules) {
     var date
     var d
     var time
     const data = (
-      this.state.schedules.map((schedule) => {
+      schedules.map((schedule) => {
       date = strftime.timezone('+0000')('%d/%m/%Y', new Date(schedule.service_start_time))
       d = new Date(schedule.service_start_time)
       time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes())
@@ -448,6 +448,27 @@ class getCitizenSchedule extends Component {
     )
   }
 
+  dependantSchedules() {
+    const dependantList = (
+      this.state.dependants.map((dependant) => {
+        return (
+          <div>
+              <h6>{dependant.name}</h6>
+              {dependant.schedules.length > 0 ? this.tableList(dependant.schedules) : '- Nenhum agendamento encontrado'}
+              <br />
+          </div>
+        )
+      })
+    )
+    return (
+      <div>
+        <br /><br />
+        <h3 className='card-title h2-title-home'>Dependentes </h3>
+        {dependantList}
+      </div>
+    )
+  }
+
 	fourthComponent() {
 		return (
 			<div>
@@ -455,7 +476,8 @@ class getCitizenSchedule extends Component {
           <div className='card-content'>
             <h2 className='card-title h2-title-home'>Buscar agendamentos </h2>
             {this.filterSchedule()}
-            {this.tableList()}
+            {this.tableList(this.state.schedules)}
+            {this.dependantSchedules()}
           </div>
 		    </div>
 			</div>
