@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
-import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
+import { Button, Card, Row, Col, Dropdown, Input, Collapsible, CollapsibleItem } from 'react-materialize'
 import styles from './styles/CitizenSchedule.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
@@ -130,38 +130,40 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <div className='select-field'>
-        <h6>Setor:</h6>
-        <Input s={12} l={4} m={12} name="filter_sector" type='select' value={this.state.filter_sector}
-          onChange={
-            (event) => {
-              var selected_sector = event.target.value
-              if(this.state.filter_sector != selected_sector) {
-                var service_types
-                if(selected_sector != 0) {
-                  service_types = this.state.collections.service_type.filter(
-                    function(type) {
-                      return type.sector_id == selected_sector
-                    }
-                  ) 
+      <Col> 
+        <div className='select-field'>
+          <h6>Setor:</h6>
+          <Input s={12} m={12} name="filter_sector" type='select' value={this.state.filter_sector}
+            onChange={
+              (event) => {
+                var selected_sector = event.target.value
+                if(this.state.filter_sector != selected_sector) {
+                  var service_types
+                  if(selected_sector != 0) {
+                    service_types = this.state.collections.service_type.filter(
+                      function(type) {
+                        return type.sector_id == selected_sector
+                      }
+                    ) 
+                  }
+                  else {
+                    service_types = this.state.collections.service_type
+                  }
+                  this.setState({
+                    service_type: service_types,
+                    filter_sector: selected_sector,
+                    filter_service_type: 0,
+                    filter_service_place: 0
+                  });
                 }
-                else {
-                  service_types = this.state.collections.service_type
-                }
-                this.setState({
-                  service_type: service_types,
-                  filter_sector: selected_sector,
-                  filter_service_type: 0,
-                  filter_service_place: 0
-                });
               }
             }
-          }
-        >
-          <option value={0}>Todos</option>
-          {sectorsList}
-        </Input>
-      </div>
+          >
+            <option value={0}>Todos</option>
+            {sectorsList}
+          </Input>
+        </div>
+      </Col> 
     )
   }
 
@@ -175,42 +177,44 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <div className='select-field'>
-        <h6>Tipo de Atendimento:</h6>
-        <Input s={12} l={4} m={12} name="filter_service_type" type='select' value={this.state.filter_service_type}
-          onChange={
-            (event) => {
-              var selected_service_type = event.target.value
-              if(this.state.filter_service_type != selected_service_type) {
-                var service_places
-                if(selected_service_type != 0) {
-                  service_places = this.state.collections.service_place.filter(
-                    function(service_place) {
-                      for (let type of service_place.service_types) {
-                        if(type == selected_service_type) {
-                          return true
+      <Col> 
+        <div className='select-field'>
+          <h6>Tipo de Atendimento:</h6>
+          <Input s={12} m={12} name="filter_service_type" type='select' value={this.state.filter_service_type}
+            onChange={
+              (event) => {
+                var selected_service_type = event.target.value
+                if(this.state.filter_service_type != selected_service_type) {
+                  var service_places
+                  if(selected_service_type != 0) {
+                    service_places = this.state.collections.service_place.filter(
+                      function(service_place) {
+                        for (let type of service_place.service_types) {
+                          if(type == selected_service_type) {
+                            return true
+                          }
                         }
+                        return false
                       }
-                      return false
-                    }
-                  ) 
+                    ) 
+                  }
+                  else {
+                    service_places = this.state.collections.service_place
+                  }
+                  this.setState({
+                    service_place: service_places,
+                    filter_service_type: selected_service_type,
+                    filter_service_place: 0
+                  });
                 }
-                else {
-                  service_places = this.state.collections.service_place
-                }
-                this.setState({
-                  service_place: service_places,
-                  filter_service_type: selected_service_type,
-                  filter_service_place: 0
-                });
               }
             }
-          }
-        >
-          <option value={0}>Todos</option>
-          {serviceTypeList}
-        </Input>
-      </div>
+          >
+            <option value={0}>Todos</option>
+            {serviceTypeList}
+          </Input>
+        </div>
+      </Col> 
     )
   }
 
@@ -223,24 +227,26 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <div className='select-field'>
-        <h6>Local de Atendimento:</h6>
-        <Input s={12} l={4} m={12} name="filter_service_place" type='select' value={this.state.filter_service_place}
-          onChange={
-            (event) => {
-              var selected_service_place = event.target.value
-              if(this.state.filter_sector != selected_service_place) {
-                this.setState({
-                  filter_service_place: selected_service_place,
-                });
+      <Col> 
+        <div className='select-field'>
+          <h6>Local de Atendimento:</h6>
+          <Input s={12} m={12} name="filter_service_place" type='select' value={this.state.filter_service_place}
+            onChange={
+              (event) => {
+                var selected_service_place = event.target.value
+                if(this.state.filter_sector != selected_service_place) {
+                  this.setState({
+                    filter_service_place: selected_service_place,
+                  });
+                }
               }
             }
-          }
-        >
-          <option value={0}>Todos</option>
-          {servicePlaceList}
-        </Input>
-      </div>
+          >
+            <option value={0}>Todos</option>
+            {servicePlaceList}
+          </Input>
+        </div>
+      </Col> 
     )
   }
 
@@ -253,24 +259,26 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <div className='select-field'>
-        <h6>Situação:</h6>
-        <Input s={12} l={4} m={12} name="filter_situation" type='select' value={this.state.filter_situation}
-          onChange={
-            (event) => {
-              var selected_situation = event.target.value
-              if(this.state.filter_situation != selected_situation) {
-                this.setState({
-                  filter_situation: selected_situation,
-                });
+      <Col> 
+        <div className='select-field'>
+          <h6>Situação:</h6>
+          <Input s={12} m={12} name="filter_situation" type='select' value={this.state.filter_situation}
+            onChange={
+              (event) => {
+                var selected_situation = event.target.value
+                if(this.state.filter_situation != selected_situation) {
+                  this.setState({
+                    filter_situation: selected_situation,
+                  });
+                }
               }
             }
-          }
-        >
-          <option value={0}>Todas</option>
-          {situationList}
-        </Input>
-      </div>
+          >
+            <option value={0}>Todas</option>
+            {situationList}
+          </Input>
+        </div>
+      </Col> 
     )
   }
 
@@ -278,12 +286,10 @@ class getCitizenSchedule extends Component {
   filterSchedule() {
     return (
       <div>
-        <Row>
-          {this.pickSector()}
-          {this.pickServiceType()}
-          {this.pickServicePlace()}
-          {this.pickSituation()}
-        </Row>
+        {this.pickSector()}
+        {this.pickServiceType()}
+        {this.pickServicePlace()}
+        {this.pickSituation()}
         <Row>
           <Col> 
             <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
@@ -453,9 +459,9 @@ class getCitizenSchedule extends Component {
       this.state.dependants.map((dependant) => {
         return (
           <div>
-              <h6>{dependant.name}</h6>
-              {dependant.schedules.length > 0 ? this.tableList(dependant.schedules) : '- Nenhum agendamento encontrado'}
-              <br />
+              <CollapsibleItem header={dependant.name}>
+                {dependant.schedules.length > 0 ? this.tableList(dependant.schedules) : '- Nenhum agendamento encontrado'}
+              </CollapsibleItem>
           </div>
         )
       })
@@ -464,7 +470,9 @@ class getCitizenSchedule extends Component {
       <div>
         <br /><br />
         <h3 className='card-title h2-title-home'>Dependentes </h3>
-        {dependantList}
+        <Collapsible>
+          {dependantList}
+        </Collapsible>
       </div>
     )
   }
