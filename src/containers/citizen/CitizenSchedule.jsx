@@ -367,6 +367,7 @@ class getCitizenSchedule extends Component {
     var date
     var d
     var time
+
     const data = (
       schedules.map((schedule) => {
       date = strftime.timezone('+0000')('%d/%m/%Y', new Date(schedule.service_start_time))
@@ -484,7 +485,7 @@ class getCitizenSchedule extends Component {
           <div className='card-content'>
             <h2 className='card-title h2-title-home'>Buscar agendamentos </h2>
             {this.filterSchedule()}
-            {this.tableList(this.state.schedules)}
+            {this.state.schedules.length > 0 ? this.tableList(this.state.schedules) : '- Nenhum agendamento encontrado'}
             {this.dependantSchedules()}
           </div>
 		    </div>
