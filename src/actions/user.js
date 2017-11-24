@@ -25,6 +25,7 @@ export function userDestroySession(endpoint) {
     dispatch(signOut(endpoint)).then(() => { 
       browserHistory.push('/')
       dispatch(userSignOut())
+      localStorage.clear()
     })
   }
 }

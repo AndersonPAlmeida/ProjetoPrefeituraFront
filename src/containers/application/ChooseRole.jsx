@@ -34,6 +34,8 @@ class getChooseRole extends Component {
     else
       index = idx;
     this.props.dispatch(userUpdate({ 'current_role': selected_role.id, 'current_role_idx': index }))
+    localStorage.setItem("current_role", selected_role.id)
+    localStorage.setItem("current_role_idx", index)
     browserHistory.push('/citizens/schedules')
   }
 
