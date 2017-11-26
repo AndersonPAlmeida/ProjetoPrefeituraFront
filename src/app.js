@@ -78,7 +78,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="citizens/schedules/history" component={UserIsAuthenticated(CitizenSchedule)} />
         <Route path="citizens/edit" component={UserIsAuthenticated(CitizenEdit)} />
         <Route path="citizens/schedules/agreement" component={UserIsAuthenticated(ScheduleAgreement)} />
-        <Route path="citizens/:citizen_id/schedules/choose" component={UserIsAuthenticated(ScheduleChoose)} />
+        <Route path="citizens/schedules/choose" component={UserIsAuthenticated(ScheduleChoose)} />
         <Route path="citizens/:citizen_id/schedules/schedule" component={UserIsAuthenticated(ScheduleCitizen)} />
         <Route path="citizens/:citizen_id/schedules/:schedule_id/finish" component={UserIsAuthenticated(ScheduleFinish)} />
         <Route path="dependants" component={UserIsAuthenticated(DependantList)} />

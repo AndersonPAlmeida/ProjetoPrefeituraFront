@@ -343,7 +343,6 @@ class getCitizenSchedule extends Component {
                     +`&q[service_place_id]=${service_place}`
                     +`&q[situation_id]=${situation}`
                     +`&page=${this.state.current_page}`
-    console.log(`${apiUrl}/${collection}?${params}`)
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -431,10 +430,12 @@ class getCitizenSchedule extends Component {
           value={this.state.current_page}
           onSelect={ (val) => 
             { 
-              this.setState({
-                current_page: val
-              })
-              this.handleFilterSubmit.bind(this)(true) 
+              this.setState(
+                {
+                  current_page: val
+                }, 
+                () => {this.handleFilterSubmit.bind(this)(true)}
+              )
             }
           }
           className={styles['pagination']} 

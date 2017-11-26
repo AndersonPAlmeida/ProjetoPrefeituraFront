@@ -21,8 +21,8 @@ class getScheduleChoose extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.params.citizen_id}/schedule_options`;
-    const params = `permission=${this.props.user.current_role}`
+    const collection = `citizens/schedule_options`;
+    const params = `permission=${this.props.user.current_role}&cpf=${this.props.user.citizen.cpf}`
     
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
