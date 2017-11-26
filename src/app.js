@@ -9,7 +9,7 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
          DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit,
          SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
          ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
-         ServiceTypeCreate, ServiceTypeShow, ServiceTypeList
+         ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, ProfessionalIndex
        } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -64,7 +64,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   const UserIsNotAuthenticated = UserAuthWrapper({
     authSelector: (state)  => { return (!(state.get('auth').getIn(['user','isSignedIn'])) ? { 'authentication' : true } : null ) },
     redirectAction: routerActions.replace, 
-    failureRedirectPath: '/citizens/schedules',
+    failureRedirectPath: '/citizens/schedules/history?home=true',
     wrapperDisplayName: 'UserIsNotAuthenticated' 
   })
   const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState);
@@ -75,7 +75,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="signup" component={UserIsNotAuthenticated(RegisterCep)} />
         <Route path="signup2" component={UserIsNotAuthenticated(Register)} />
         <Route path="choose_role" component={UserIsAuthenticated(ChooseRole)} />
-        <Route path="citizens/schedules" component={UserIsAuthenticated(CitizenSchedule)} />
+        <Route path="citizens/schedules/history" component={UserIsAuthenticated(CitizenSchedule)} />
         <Route path="citizens/edit" component={UserIsAuthenticated(CitizenEdit)} />
         <Route path="citizens/schedules/agreement" component={UserIsAuthenticated(ScheduleAgreement)} />
         <Route path="citizens/:citizen_id/schedules/choose" component={UserIsAuthenticated(ScheduleChoose)} />
@@ -97,6 +97,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="service_types/:service_type_id/edit" component={UserIsAuthenticated(ServiceTypeEdit)} />
         <Route path="service_types/new" component={UserIsAuthenticated(ServiceTypeCreate)} />
         <Route path="service_types/:service_type_id" component={UserIsAuthenticated(ServiceTypeShow)} />
+        <Route path="professionals/shifts" component={UserIsAuthenticated(ProfessionalIndex)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

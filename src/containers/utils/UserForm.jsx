@@ -85,10 +85,12 @@ class getUserForm extends Component {
       if(typeof location !== 'undefined' && location.search) {
         var search = location.search.substring(1);
         var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
-        self.setState({
-          user: update(this.state.user, { cep: {$set: query['cep']} })
-        })
-        this.updateAddress.bind(this)(query['cep'].replace(/(\.|-|_)/g,'')) 
+        if(query['cep']) {
+          self.setState({
+            user: update(this.state.user, { cep: {$set: query['cep']} })
+          })
+          this.updateAddress.bind(this)(query['cep'].replace(/(\.|-|_)/g,'')) 
+        }
       }
     }
   }
@@ -333,9 +335,6 @@ class getUserForm extends Component {
   }
 
   render() {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user_data.id}/picture`;
-    const params = `size=large&permission=citizen`;
     return (
       <main>
       	<Row>

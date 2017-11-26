@@ -2,7 +2,7 @@ const breadcrumbs_hash =
 { 
   "example_path": [ 
                 { "name": "example", "link": "/" }, 
-                { "name": "example2", "link": "/citizens/schedules" } 
+                { "name": "example2", "link": "/citizens/schedules/history" } 
              ]
 }
 

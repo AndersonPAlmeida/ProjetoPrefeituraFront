@@ -29,14 +29,19 @@ class getChooseRole extends Component {
   
   handleClick(selected_role, idx) {
     var index;
-    if(selected_role.id == 'citizen')
+    var path;
+    if(selected_role.id == 'citizen') {
       index = -1;
-    else
+      path = 'citizens/schedules/history?home=true'
+    }
+    else {
       index = idx;
+      path = '/professionals/shifts?home=true'
+    }
     this.props.dispatch(userUpdate({ 'current_role': selected_role.id, 'current_role_idx': index }))
     localStorage.setItem("current_role", selected_role.id)
     localStorage.setItem("current_role_idx", index)
-    browserHistory.push('/citizens/schedules')
+    browserHistory.push(path)
   }
 
 	rolesPlaces() {

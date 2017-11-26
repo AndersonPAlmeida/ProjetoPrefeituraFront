@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
-import { Button, Card, Row, Col, Dropdown, Input, Collapsible, CollapsibleItem } from 'react-materialize'
+import { Button, Card, Row, Col, Dropdown, Input, Collapsible, CollapsibleItem, Pagination } from 'react-materialize'
 import styles from './styles/CitizenSchedule.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
@@ -27,12 +27,14 @@ class getCitizenSchedule extends Component {
           last_fetch_service_type: 0,
           last_fetch_service_place: 0,
           last_fetch_situation: 0,
-          fetch_q: ''
+          current_page: 1,
+          num_pages: 5
       };
   }
 
   componentDidMount() {
     var self = this;
+    // GET /forms/schedule_history
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     var collection = `forms/schedule_history`;
     const params = `permission=${this.props.user.current_role}`
@@ -48,6 +50,7 @@ class getCitizenSchedule extends Component {
         situation: resp.situation
       })
     });
+    // GET /schedules
     collection = `schedules`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -67,7 +70,7 @@ class getCitizenSchedule extends Component {
 			<div>
 				<div className='card'>
           <div className='card-content'>
-            <h2 className='card-title h2-title-home'>Bem vindo Administrador MPOG! </h2>
+            <h2 className='card-title h2-title-home'>Bem vindo {this.props.user.citizen.name}! </h2>
             <div className={styles['div-component-home']}>
             	<p>Abaixo, você poderá visualizar o histórico, com seus agendamentos marcados, 
             			efetuados e cancelados, podendo verificar também a possibilidade de realizar novos agendamentos.</p>
@@ -81,14 +84,21 @@ class getCitizenSchedule extends Component {
 	}	
 
 	secondComponent() {
+    const sectorsLimit = (
+      this.state.sectors.map((sector) => {
+        return (
+          <p>{sector.name}: X/Y</p> /* <p>{sector.name}: {dependant.num_schedules_sector[sector.id]}/{sector.schedules_by_sector}</p> */
+        )
+      })
+    )
 		return (
 			<div>
 				<div className='card'>
           <div className='card-content'>
             <h2 className='card-title h2-title-home'>Situação de agendamentos </h2>
             <div className={styles['div-component-home']}>
-            	<p>Agendamentos por setor: utilizados/máximo</p>
-            	<p>Setor de Agendamento MPOG: 0/10  </p>
+            	<p><b>Agendamentos por setor: utilizados/máximo</b></p>
+              {sectorsLimit}
             </div>
           </div>
 		    </div>
@@ -110,16 +120,6 @@ class getCitizenSchedule extends Component {
 			</div>
 		)
 	}
-
-  handleInputFilterChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-
-    this.setState({
-      [name]: value
-    })
-  }
 
   pickSector() {
     const sectorsList = (
@@ -282,7 +282,6 @@ class getCitizenSchedule extends Component {
     )
   }
 
-
   filterSchedule() {
     return (
       <div>
@@ -326,23 +325,25 @@ class getCitizenSchedule extends Component {
       service_type = this.state.filter_service_type
       service_place = this.state.filter_service_place
       situation = this.state.filter_situation
-      if(sector == 0)
-        sector = ''
-      if(service_type == 0)
-        service_type = ''
-      if(service_place == 0)
-        service_place = ''
-      if(situation == 0)
-        situation = ''
-    }
+   }
+    if(sector == 0)
+      sector = ''
+    if(service_type == 0)
+      service_type = ''
+    if(service_place == 0)
+      service_place = ''
+    if(situation == 0)
+      situation = ''
+    // GET /schedules with filter params
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `schedules`;
     const params = `permission=${this.props.user.current_role}`
                     +`&q[sector_id]=${sector}`
                     +`&q[service_type_id]=${service_type}`
-                    +`&q[s]=${this.state.filter_s}`
                     +`&q[service_place_id]=${service_place}`
                     +`&q[situation_id]=${situation}`
+                    +`&page=${this.state.current_page}`
+    console.log(`${apiUrl}/${collection}?${params}`)
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -404,37 +405,8 @@ class getCitizenSchedule extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>
-          <a
-            href='#'
-            onClick={
-              () => {
-                this.setState({
-                  ['filter_s']: this.state.filter_s == "id+asc" ? 'id+desc' : "id+asc"
-                }, this.handleFilterSubmit.bind(this,true))
-              }
-            }
-          >
-            No
-            {
-              this.state.filter_s == "id+asc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_down
-                </i>
-                :
-                <div />
-            }
-            {
-              this.state.filter_s == "id+desc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_up
-                </i>
-                :
-                <div />
-            }
-          </a>
-        </th>
-        <th>Nome</th>
+        <th>No.</th>
+        <th>Setor</th>
         <th>Local de Atendimento</th>
         <th>Tipo de Atendimento</th>
         <th>Data</th>
@@ -444,23 +416,53 @@ class getCitizenSchedule extends Component {
     )
 
     return (
-      <table className={styles['table-list']}>
-        <thead>
-          {fields}
-        </thead>
-        <tbody>
-          {data}
-        </tbody>
-      </table>
+      <div>
+        <p>Mostrando <b>{schedules.length}</b> {schedules.length > 1 ? 'registros' : 'registro'}</p>
+        <table className={styles['table-list']}>
+          <thead>
+            {fields}
+          </thead>
+          <tbody>
+            {data}
+          </tbody>
+        </table>
+        <br />
+        <Pagination 
+          value={this.state.current_page}
+          onSelect={ (val) => 
+            { 
+              this.setState({
+                current_page: val
+              })
+              this.handleFilterSubmit.bind(this)(true) 
+            }
+          }
+          className={styles['pagination']} 
+          items={this.state.num_pages} 
+          activePage={this.state.current_page} 
+          maxButtons={8} 
+        />
+      </div>
     )
   }
 
   dependantSchedules() {
+    var sectorsLimit;
     const dependantList = (
       this.state.dependants.map((dependant) => {
+        sectorsLimit = (
+          this.state.sectors.map((sector) => {
+            let num_schedules = this.state.dependants
+            return (
+              <p>{sector.name}: X/Y</p> /* <p>{sector.name}: {dependant.num_schedules_sector[sector.id]}/{sector.schedules_by_sector}</p> */
+            )
+          })
+        )
         return (
           <div>
               <CollapsibleItem header={dependant.name}>
+                {sectorsLimit}
+                <br />
                 {dependant.schedules.length > 0 ? this.tableList(dependant.schedules) : '- Nenhum agendamento encontrado'}
               </CollapsibleItem>
           </div>
@@ -470,7 +472,7 @@ class getCitizenSchedule extends Component {
     return (
       <div>
         <br /><br />
-        <h3 className='card-title h2-title-home'>Dependentes </h3>
+        <b>Dependentes:</b>
         <Collapsible>
           {dependantList}
         </Collapsible>
@@ -494,13 +496,20 @@ class getCitizenSchedule extends Component {
 	}
 
   render() {
+    var home = false
+    if(typeof location !== 'undefined' && location.search) {
+        var search = location.search.substring(1);
+        var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+        home = query
+    }
+
     return (
       <div> 
 	      <main>
 	      	<Row>
 		        <Col s={12}>
 			      	<div>
-			      		{this.firstComponent()}
+			      		{home ? this.firstComponent() : <div />}
 			      		{this.secondComponent()}
 			      		{this.thirdComponent()}
 			      		{this.fourthComponent()}

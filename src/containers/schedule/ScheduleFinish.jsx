@@ -56,7 +56,7 @@ class getScheduleFinish extends Component {
           method: "put",
           body: JSON.stringify( { schedule: { note: this.state.note } } )
       }).then(parseResponse).then(resp => {
-        browserHistory.push(`citizens/schedules`)
+        browserHistory.push(`citizens/schedules/history?home=true`)
         Materialize.toast("Agendamento criado com sucesso", 10000, "green",function(){$("#toast-container").remove()});
       }).catch(({errors}) => {
         if(errors) {

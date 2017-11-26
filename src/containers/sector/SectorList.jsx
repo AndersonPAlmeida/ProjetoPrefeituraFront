@@ -53,6 +53,39 @@ class getSectorList extends Component {
       )
   }
   
+  sortableColumn(title, name) {
+    return (
+      <a
+        href='#'
+        onClick={
+          () => {
+            this.setState({ 
+              ['filter_s']: this.state.filter_s == `${name}+asc` ? `${name}+desc` : `${name}+asc`
+            }, this.handleFilterSubmit.bind(this,true))
+          }
+        }
+      >
+        {title}
+        {
+          this.state.filter_s == `${name}+asc` ?
+            <i className="waves-effect material-icons tiny tooltipped">
+              arrow_drop_down
+            </i>
+            :
+            <div />
+        }
+        {
+          this.state.filter_s == `${name}+desc` ?
+            <i className="waves-effect material-icons tiny tooltipped">
+              arrow_drop_up
+            </i>
+            :
+            <div />
+        }
+      </a>
+    )
+  }
+
 	tableList() {
     const data = (
       this.state.sectors.map((sector) => {
@@ -95,39 +128,10 @@ class getSectorList extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>
-          <a 
-            href='#' 
-            onClick={ 
-              () => { 
-                this.setState({
-                  ['filter_s']: this.state.filter_s == "name+asc" ? 'name+desc' : "name+asc"
-                }, this.handleFilterSubmit.bind(this,true))
-              }
-            }
-          >
-            Nome
-            { 
-              this.state.filter_s == "name+asc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_down
-                </i>
-                :
-                <div />
-            }
-            { 
-              this.state.filter_s == "name+desc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_up
-                </i>
-                :
-                <div />
-            }
-          </a>
-        </th>
-        <th>Descrição</th>
-        <th>Situação</th>
-        <th>Agendamentos por setor</th>
+        <th>{this.sortableColumn.bind(this)('Nome','name')}</th>
+        <th>{this.sortableColumn.bind(this)('Descrição','description')}</th>
+        <th>{this.sortableColumn.bind(this)('Situação','situation')}</th>
+        <th>{this.sortableColumn.bind(this)('Agendamentos por setor','schedules_by_sector')}</th>
         <th></th>
       </tr>
     )

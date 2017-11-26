@@ -20,7 +20,6 @@ class getApp extends Component {
     return (
       <div>
         <AuthGlobals />
-        <div />
         <Home 
           footerItems={ this.props.is_authenticated ? footerItems : [ footerItems[3] ] }
           navHistory={ this.props.is_authenticated ? navHist : <div /> }
