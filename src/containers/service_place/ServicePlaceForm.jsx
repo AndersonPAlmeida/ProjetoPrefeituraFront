@@ -27,6 +27,7 @@ class getServicePlaceForm extends Component {
         url: '',
         phone1: '',
         phone2: '',
+        city_hall_id: '',
         service_types: []
       },
       aux: {
@@ -44,7 +45,7 @@ class getServicePlaceForm extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     var self = this;
     if(this.props.is_edit) {
       self.setState({ service_place: this.props.data })

@@ -53,7 +53,7 @@ class getUserForm extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     var self = this;
     var is_pcd = false;
     if(this.props.is_edit) {

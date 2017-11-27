@@ -32,12 +32,12 @@ class getSectorForm extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     var self = this;
     if(this.props.is_edit) {
       self.setState({ sector: this.props.data })
     }
-    if(this.props.current_role.role != 'adm_c3sl') {
+    if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
       this.setState({
         sector: update(this.state.sector, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
       })
@@ -122,7 +122,7 @@ class getSectorForm extends Component {
   }
 
   pickCityHall() {
-    if(this.props.current_role.role != 'adm_c3sl') {
+    if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
       return (
         <Input disabled 
                name="selected_city_hall" 
