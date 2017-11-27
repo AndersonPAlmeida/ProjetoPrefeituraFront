@@ -168,9 +168,9 @@ class getSectorForm extends Component {
             <div className='card'>
               <div className='card-content'>
                 {this.props.is_edit ?
-                  <h2 className="card-title">Alterar setor: {this.props.data.name}</h2> 
+                  <h2 className="card-title">Alterar tipo de recurso: {this.props.data.name}</h2> 
                   :
-                  <h2 className="card-title">Cadastrar setor</h2> 
+                  <h2 className="card-title">Cadastrar tipo de recurso</h2> 
                 }
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
@@ -180,6 +180,22 @@ class getSectorForm extends Component {
                         {this.pickCityHall()}
                       </div>
                     </div>
+
+                    <div className="field-input" >
+                      <h6>Recurso Móvel:</h6>
+                      <div>
+                        <Input s={6} m={32} l={6} 
+                               type='select'
+                               name='situation'
+                               value={this.state.sector.active}
+                               onChange={this.handleInputSectorChange.bind(this)} 
+                        >
+                          <option key={0} value={true}>Sim</option>
+                          <option key={1} value={false}>Não</option>
+                        </Input>
+                      </div>
+                    </div>
+
                     <div className="field-input" >
                       <h6>Situação:</h6>
                       <div>
@@ -194,6 +210,7 @@ class getSectorForm extends Component {
                         </Input>
                       </div>
                     </div>
+
                     <div className="field-input" >
                       <h6>Nome:</h6>
                       <label>
@@ -206,66 +223,7 @@ class getSectorForm extends Component {
                         />
                       </label>
                     </div>
-                    <div className="field-input" >
-                      <h6>Número de agendamentos por setor:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="schedules_by_sector" 
-                          value={this.state.sector.schedules_by_sector} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Número de dias de impedimento de novos agendamentos:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="blocking_days" 
-                          value={this.state.sector.blocking_days} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Limite de cancelamentos:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="cancel_limit" 
-                          value={this.state.sector.cancel_limit} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Horas de antecedências para poder cancelar um atendimento:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="previous_notice" 
-                          value={this.state.sector.previous_notice} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Número de faltas que gera impedimento de novos agendamentos:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="absence_max" 
-                          value={this.state.sector.absence_max} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
+                   
                     <div>
                       <h6>Descrição:</h6>
                       <label>
@@ -277,6 +235,7 @@ class getSectorForm extends Component {
                         />
                       </label>
                     </div>
+                    
                     <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
                   </Col>
                 </Row>

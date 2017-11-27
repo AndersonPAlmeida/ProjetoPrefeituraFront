@@ -35,3 +35,4 @@ export ServiceTypeCreate from './service_type/ServiceTypeCreate';
 
 export ResourceTypeList from './resource_type/ResourceTypeList';
 export ResourceTypeShow from './resource_type/ResourceTypeShow';
+export ResourceTypeCreate from './resource_type/ResourceTypeCreate'

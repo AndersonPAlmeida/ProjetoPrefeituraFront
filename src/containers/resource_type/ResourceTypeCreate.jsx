@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import SectorForm from './SectorForm'
 import { browserHistory } from 'react-router';
 
-class getSectorCreate extends Component {
+class getResourceTypeCreate extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -46,7 +46,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const SectorCreate = connect(
+const ResourceTypeCreate = connect(
   mapStateToProps
-)(getSectorCreate)
-export default SectorCreate
+)(getResourceTypeCreate)
+export default ResourceTypeCreate
