@@ -285,13 +285,22 @@ class getUserForm extends Component {
         formData['image'] = image;
       }
 
+      let success_msg
       if(this.props.user_class == `dependant`) {
+        if(this.props.is_edit)
+          success_msg = 'Dependente editado com sucesso'
+        else
+          success_msg = 'Dependente criado com sucesso'
         fetch_body['dependant'] = formData;
       } else {
-        if(this.props.is_edit)
+        if(this.props.is_edit) {
           fetch_body['citizen'] = formData;
-        else
+          success_msg = 'Dados editados com sucesso'
+        }
+        else {
           fetch_body = formData;
+          success_msg = 'Cadastro efetuado com sucesso'
+        }
         if(send_password) {
           fetch_body['password'] = auxData['password'] 
           fetch_body['password_confirmation'] = auxData['password_confirmation'] 
@@ -312,7 +321,7 @@ class getUserForm extends Component {
       }).then(parseResponse).then(resp => {
         if(this.props.is_edit && this.props.user_class == `citizen`)
           this.props.dispatch(userSignIn(resp.data))
-        Materialize.toast('Cadastro efetuado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+        Materialize.toast(success_msg, 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
       }).catch(({errors}) => {
         if(errors) {
