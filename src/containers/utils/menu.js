@@ -70,6 +70,16 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Relatórios", 'link': "/reports", 'separator': false }
                 ]
         },
+        { 'name': "Recursos", 
+          'rolldown': true, 
+          'fields': 
+                [ 
+                  { 'name': "Tipo de recurso", 'link': "/resource_types", 'separator': true },
+                  { 'name': "Recurso", 'link': "/resources", 'separator': false },
+                  { 'name': "Escala de recurso", 'link': "/resource_shifts", 'separator': false },
+                  { 'name': "Agendamento", 'link': "/resource_bookings", 'separator': false }
+                ]
+        },
         { 'name': "Escalas", 'rolldown': false, 'link': "/shifts" },
         { 'name': "Atendimentos", 'rolldown': false, 'link': "/schedules/service" },
         { 'name': "Agendamentos", 

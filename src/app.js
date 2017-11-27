@@ -9,7 +9,7 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
          DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit,
          SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
          ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
-         ServiceTypeCreate, ServiceTypeShow, ServiceTypeList
+         ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, ResourceTypeList
        } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -97,6 +97,12 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="service_types/:service_type_id/edit" component={UserIsAuthenticated(ServiceTypeEdit)} />
         <Route path="service_types/new" component={UserIsAuthenticated(ServiceTypeCreate)} />
         <Route path="service_types/:service_type_id" component={UserIsAuthenticated(ServiceTypeShow)} />
+
+        <Route path="resource_types" component={UserIsAuthenticated(ResourceTypeList)} />
+        <Route path="resource_types/:resource_type_id/edit" component={UserIsAuthenticated(SectorEdit)} />
+        <Route path="resource_types/new" component={UserIsAuthenticated(SectorCreate)} />
+        <Route path="resource_types/:resource_type_id" component={UserIsAuthenticated(SectorShow)} />
+
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>
