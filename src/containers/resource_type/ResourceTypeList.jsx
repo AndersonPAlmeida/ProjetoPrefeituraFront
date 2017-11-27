@@ -62,7 +62,7 @@ class getResourceTypeList extends Component {
               <a className='back-bt waves-effect btn-flat' 
                 href='#' 
                 onClick={ () => 
-                  browserHistory.push(`/resourceTypes/${resourceType.id}`) 
+                  browserHistory.push(`/resource_types/${resourceType.id}`) 
                 }>
                 {resourceType.name}
               </a>
@@ -77,7 +77,7 @@ class getResourceTypeList extends Component {
               <a className='back-bt waves-effect btn-flat' 
                  href='#' 
                  onClick={ () => 
-                 browserHistory.push(`/resourceTypes/${resourceType.id}/edit`) 
+                 browserHistory.push(`/resource_types/${resourceType.id}/edit`) 
                 }>
                   <i className="waves-effect material-icons tooltipped">
                     edit
@@ -223,7 +223,7 @@ class getResourceTypeList extends Component {
 		return (
 			<button 
         onClick={() =>
-          browserHistory.push({ pathname: `/resourceTypes/new`}) 
+          browserHistory.push({ pathname: `/resource_types/new`}) 
         }
         className="btn waves-effect btn button-color" 
         name="anterior" 

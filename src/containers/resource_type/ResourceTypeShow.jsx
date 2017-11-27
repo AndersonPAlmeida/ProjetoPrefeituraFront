@@ -8,7 +8,7 @@ import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 
-class getSectorShow extends Component {
+class getResourceTypeShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -28,7 +28,7 @@ class getSectorShow extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `sectors/${this.props.params.sector_id}`;
+    const collection = `resource_types/${this.props.params.resource_type_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -44,7 +44,7 @@ class getSectorShow extends Component {
     return (
       <div className='card'>
             <div className='card-content'>
-              <h2 className='card-title h2-title-home'> Informações do Setor: </h2>
+              <h2 className='card-title h2-title-home'> Informações do Tipo de Recurso: </h2>
               <p> 
                 <b>Situação: </b>
                 {this.state.sector.active ? 'Ativo' : 'Inativo'}
@@ -58,24 +58,8 @@ class getSectorShow extends Component {
                 {this.state.sector.description}
               </p>
               <p> 
-                <b>Número de Agendamentos por Setor: </b>
-                {this.state.sector.schedules_by_sector}
-              </p>
-              <p> 
-                <b>Número de dias de impedimento de novos agendamentos: </b>
-                {this.state.sector.blocking_days}
-              </p>
-              <p> 
-                <b>Limite de cancelamentos: </b>
-                {this.state.sector.cancel_limit}
-              </p>
-              <p> 
-                <b>Horas de antecedência para poder cancelar um atendimento: </b>
-                {this.state.sector.previous_notice}
-              </p>
-              <p> 
-                <b>Número de faltas que gera impedimento de novos agendamentos: </b>
-                {this.state.sector.absence_max}
+                <b>Recurso móvel: </b>
+                {this.state.sector.active ? 'Sim' : 'Não'}
               </p>
             </div>
             {this.editButton()}
@@ -121,7 +105,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const SectorShow = connect(
+const ResourceTypeShow = connect(
   mapStateToProps
-)(getSectorShow)
-export default SectorShow
+)(getResourceTypeShow)
+export default ResourceTypeShow
