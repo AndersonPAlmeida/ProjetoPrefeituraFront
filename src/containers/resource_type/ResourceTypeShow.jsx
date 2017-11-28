@@ -14,15 +14,14 @@ class getResourceTypeShow extends Component {
     this.state = {
       resource_type: {
         active: '',
-        absence_max: '',
-        blocking_days: '',
-        cancel_limt: '',
+        mobile: '',
         description: '',
         name: '',
-        previous_notice: '',
-        schedules_by_resource_type: ''
+        
       },
+      city_hall:{}
     }
+    this.getCityHallName = this.getCityHallName.bind(this);
   }
 
   componentDidMount() {
@@ -37,6 +36,23 @@ class getResourceTypeShow extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       self.setState({ resource_type: resp })
+      this.getCityHallName(resp)
+    });
+  }
+
+
+  getCityHallName(info) {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `city_halls/${info.city_hall_id}`;
+    const params = `permission=${this.props.user.current_role}`
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get",
+    }).then(parseResponse).then(resp => {
+      self.setState({ city_hall: resp })
     });
   }
 
@@ -60,6 +76,10 @@ class getResourceTypeShow extends Component {
               <p> 
                 <b>Recurso móvel: </b>
                 {this.state.resource_type.active ? 'Sim' : 'Não'}
+              </p>
+              <p> 
+                <b>Prefeitura: </b>
+                {this.state.city_hall.name}
               </p>
             </div>
             {this.editButton()}
