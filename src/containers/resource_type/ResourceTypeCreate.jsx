@@ -4,7 +4,7 @@ import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
-import SectorForm from './SectorForm'
+import ResourceType from './ResourceTypeForm'
 import { browserHistory } from 'react-router';
 
 class getResourceTypeCreate extends Component {
@@ -16,7 +16,7 @@ class getResourceTypeCreate extends Component {
   }
 
   prev() {
-    browserHistory.push(`/sectors`)
+    browserHistory.push(`/resource_types`)
   }
 
   render() {
@@ -24,13 +24,13 @@ class getResourceTypeCreate extends Component {
       <div>
         {
           this.state.fetching ? <div /> : 
-            <SectorForm 
+            <ResourceType 
               is_edit={false} 
               prev={this.prev}
-              fetch_collection={`sectors`}
+              fetch_collection={`resource_types`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
-              submit_url={`/sectors/`}
+              submit_url={`/resource_types/`}
               current_role={this.props.user.roles[this.props.user.current_role_idx]}
               city_hall_id={this.props.user.roles[this.props.user.current_role_idx].city_hall_id}
             />

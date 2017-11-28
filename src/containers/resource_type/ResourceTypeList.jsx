@@ -58,7 +58,7 @@ class getResourceTypeList extends Component {
       this.state.resourceTypes.map((resourceType) => {
         return (
           <tr>
-            <td>
+            <td key={Math.random()} >
               <a className='back-bt waves-effect btn-flat' 
                 href='#' 
                 onClick={ () => 
@@ -67,13 +67,16 @@ class getResourceTypeList extends Component {
                 {resourceType.name}
               </a>
             </td>
-            <td className='description-column' >
+            <td key={Math.random()} className='description-column' >
               {resourceType.description}
             </td>
-            <td>
-              {resourceType.active ? 'Ativo' : 'Inativo'}
+            <td key={Math.random()} >
+              {resourceType.mobile === "false" ? 'Não' : 'Sim'}
             </td>
-            <td>
+            <td key={Math.random()} >
+              {Boolean(resourceType.active) ? 'Ativo' : 'Inativo'}
+            </td>
+            <td key={Math.random()} >
               <a className='back-bt waves-effect btn-flat' 
                  href='#' 
                  onClick={ () => 
@@ -95,8 +98,18 @@ class getResourceTypeList extends Component {
         <th>
           <a 
             href='#' 
+            className="grey-text text-darken-3 "
             onClick={ 
               () => { 
+                if (this.state.filter_s == "name+asc"){
+                  document.getElementById("ascNameIcon").style.display = "none"
+                  document.getElementById("descNameIcon").style.display = "inline-block"                    
+                } 
+                else{
+                  document.getElementById("descNameIcon").style.display = "none"               
+                  document.getElementById("ascNameIcon").style.display = "inline-block"
+                }
+                  
                 this.setState({
                   ['filter_s']: this.state.filter_s == "name+asc" ? 'name+desc' : "name+asc"
                 }, this.handleFilterSubmit.bind(this,true))
@@ -104,25 +117,48 @@ class getResourceTypeList extends Component {
             }
           >
             Nome
-            { 
-              this.state.filter_s == "name+asc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_down
-                </i>
-                :
-                <div />
-            }
-            { 
-              this.state.filter_s == "name+desc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_up
-                </i>
-                :
-                <div />
-            }
+            <i className="waves-effect material-icons tiny tooltipped" id="ascNameIcon" style={{display:'none'}}>
+              arrow_drop_down
+            </i>
+            <i className="waves-effect material-icons tiny tooltipped" id="descNameIcon" style={{display:'none'}}>
+              arrow_drop_up
+            </i>
           </a>
         </th>
         <th>Descrição</th>
+
+        <th>
+          <a 
+            href='#' 
+            className="grey-text text-darken-3 "
+            onClick={ 
+              () => { 
+                if (this.state.filter_s == "mobile+asc"){
+                  document.getElementById("ascMobileIcon").style.display = "none"
+                  document.getElementById("descMobileIcon").style.display = "inline-block"                    
+                } 
+                else{
+                  document.getElementById("descMobileIcon").style.display = "none"               
+                  document.getElementById("ascMobileIcon").style.display = "inline-block"
+                }
+                  
+                this.setState({
+                  ['filter_s']: this.state.filter_s == "mobile+asc" ? 'mobile+desc' : "mobile+asc"
+                }, this.handleFilterSubmit.bind(this,true))
+              }
+            }
+          >
+            Móvel
+            <i className="waves-effect material-icons tiny tooltipped" id="ascMobileIcon" style={{display:'none'}}>
+              arrow_drop_down
+            </i>
+            <i className="waves-effect material-icons tiny tooltipped" id="descMobileIcon" style={{display:'none'}}>
+              arrow_drop_up
+            </i>
+          </a>
+        </th>
+
+
         <th>Situação</th>
         <th></th>
       </tr>

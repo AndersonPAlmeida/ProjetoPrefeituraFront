@@ -1,45 +1,63 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/SectorForm.css'
+import styles from './styles/ResourceTypeForm.css'
 import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
-import { SectorImg } from '../images';
+import { ResourceTypeImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
 
-class getSectorForm extends Component {
+class getResourceTypeForm extends Component {
 
  constructor(props) {
     super(props)
     this.state = {
-      sector: { 
-        active: true,
-        absence_max: '',
-        blocking_days: '',
-        cancel_limt: '',
+      resource_type: { 
+        situation: true,
+        mobile: true,
         description: '',
         name: '',
-        previous_notice: '',
-        schedules_by_sector: '',
         city_hall_id: 0 
       },
+      previous_data: undefined,
       city_halls: []
     };
   }
 
   componentWillMount() {
     var self = this;
-    if(this.props.is_edit) {
-      self.setState({ sector: this.props.data })
-    }
+    if (this.props.is_edit)    
+      var previous_data = {
+        situation: Boolean(this.props.data.active),
+        mobile: this.props.data.mobile === "false" ? false : true,
+        description: this.props.data.description,
+        name: this.props.data.name,
+        city_hall_id: this.props.data.city_hall_id
+      }
     if(this.props.current_role.role != 'adm_c3sl') {
+
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = `/city_halls/${this.props.current_role.city_hall_id}`;
+      const params = this.props.fetch_params; 
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        self.setState({ city_halls: resp })
+        if (this.props.is_edit)
+          this.setState({ resource_type: previous_data })
+      
+      });
+
       this.setState({
-        sector: update(this.state.sector, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
+        resource_type: update(this.state.resource_type, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
       })
     }
     else {
@@ -55,22 +73,25 @@ class getSectorForm extends Component {
         self.setState({ city_halls: resp.city_halls })
       });
     }
+
   }
 
-  handleInputSectorChange(event) {
+  handleInputResourceTypeChange(event) {
     const target = event.target;
     const value = target.value;
     const name = target.name;
 
+    
+
     this.setState({
-      sector: update(this.state.sector, { [name]: {$set: value} })
+      resource_type: update(this.state.resource_type, { [name]: {$set: value} })
     })
   }
 
   handleSubmit() {
     let errors = [];
     let formData = {};
-    formData = this.state.sector;
+    formData = this.state.resource_type;
 
     if(!formData['name'])
       errors.push("Campo Nome é obrigatório.");
@@ -84,7 +105,7 @@ class getSectorForm extends Component {
       const params = this.props.fetch_params; 
       let fetch_body = {}
       if(this.props.is_edit) {
-        fetch_body['sector'] = formData
+        fetch_body['resource_type'] = formData
       }
       else {
         fetch_body = formData
@@ -97,9 +118,9 @@ class getSectorForm extends Component {
         body: JSON.stringify(fetch_body)
       }).then(parseResponse).then(resp => {
         if(this.props.is_edit)
-          Materialize.toast('Setor editado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+          Materialize.toast('Tipo de recurso editado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
         else
-          Materialize.toast('Setor criado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+          Materialize.toast('Tipo de recurso criado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
       }).catch(({errors}) => {
         if(errors) {
@@ -122,6 +143,7 @@ class getSectorForm extends Component {
   }
 
   pickCityHall() {
+    
     if(this.props.current_role.role != 'adm_c3sl') {
       return (
         <Input disabled 
@@ -129,7 +151,7 @@ class getSectorForm extends Component {
                type='select' 
                value={this.props.current_role.city_hall_id} 
         >
-          <option value={this.props.current_role.city_hall_id}>{this.props.current_role.city_hall_name}</option>
+          <option value={this.props.current_role.city_hall_id}>{this.state.city_halls.name}</option>
         </Input>
       )
     }
@@ -145,11 +167,11 @@ class getSectorForm extends Component {
       <Input 
         name="city_hall_id" 
         type='select' 
-        value={this.state.sector.city_hall_id}
+        value={this.state.resource_type.city_hall_id}
         onChange={
           (event) => {
             if(event.target.value != this.state.selected_city_hall) {
-                this.handleInputSectorChange(event);
+                this.handleInputResourceTypeChange(event);
             }
           }
         }
@@ -160,7 +182,7 @@ class getSectorForm extends Component {
     )
   }
 
-  render() {
+  render() {    
     return (
       <main>
       	<Row>
@@ -173,7 +195,7 @@ class getSectorForm extends Component {
                   <h2 className="card-title">Cadastrar tipo de recurso</h2> 
                 }
                 <Row className='first-line'>
-                  <Col s={12} m={12} l={6}>
+                  <Col s={12} m={12} l={12}>
                     <div className="field-input" >
                       <h6>Prefeitura:</h6>
                       <div>
@@ -182,13 +204,13 @@ class getSectorForm extends Component {
                     </div>
 
                     <div className="field-input" >
-                      <h6>Recurso Móvel:</h6>
+                      <h6>Recurso Móvel*:</h6>
                       <div>
-                        <Input s={6} m={32} l={6} 
+                        <Input s={6} m={32} l={12} 
                                type='select'
-                               name='situation'
-                               value={this.state.sector.active}
-                               onChange={this.handleInputSectorChange.bind(this)} 
+                               name='mobile'
+                               value={this.state.resource_type.mobile}
+                               onChange={this.handleInputResourceTypeChange.bind(this)} 
                         >
                           <option key={0} value={true}>Sim</option>
                           <option key={1} value={false}>Não</option>
@@ -199,11 +221,11 @@ class getSectorForm extends Component {
                     <div className="field-input" >
                       <h6>Situação:</h6>
                       <div>
-                        <Input s={6} m={32} l={6} 
+                        <Input s={6} m={32} l={12} 
                                type='select'
                                name='situation'
-                               value={this.state.sector.active}
-                               onChange={this.handleInputSectorChange.bind(this)} 
+                               value={this.state.resource_type.situation}
+                               onChange={this.handleInputResourceTypeChange.bind(this)} 
                         >
                           <option key={0} value={true}>Ativo</option>
                           <option key={1} value={false}>Inativo</option>
@@ -212,26 +234,27 @@ class getSectorForm extends Component {
                     </div>
 
                     <div className="field-input" >
-                      <h6>Nome:</h6>
+                      <h6>Nome*:</h6>
                       <label>
                         <input 
                           type="text" 
                           className='input-field' 
                           name="name" 
-                          value={this.state.sector.name} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
+                          value={this.state.resource_type.name} 
+                          onChange={this.handleInputResourceTypeChange.bind(this)} 
                         />
                       </label>
                     </div>
                    
                     <div>
-                      <h6>Descrição:</h6>
+                      <h6>Descrição*:</h6>
                       <label>
                         <textarea  
-                          className='input-field materialize-textarea'
+                          className='input-field materialize-textarea black-text'
                           name="description" 
-                          value={this.state.sector.description} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
+                          placeholder="Adicione uma descrição"
+                          value={this.state.resource_type.description} 
+                          onChange={this.handleInputResourceTypeChange.bind(this)} 
                         />
                       </label>
                     </div>
@@ -249,5 +272,5 @@ class getSectorForm extends Component {
   }
 }
 
-const SectorForm = connect()(getSectorForm)
-export default SectorForm
+const ResourceTypeForm = connect()(getResourceTypeForm )
+export default ResourceTypeForm

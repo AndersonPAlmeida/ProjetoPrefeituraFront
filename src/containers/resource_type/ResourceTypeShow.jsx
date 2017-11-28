@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/SectorShow.css'
+import styles from './styles/ResourceTypeShow.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
@@ -12,7 +12,7 @@ class getResourceTypeShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      sector: {
+      resource_type: {
         active: '',
         absence_max: '',
         blocking_days: '',
@@ -20,7 +20,7 @@ class getResourceTypeShow extends Component {
         description: '',
         name: '',
         previous_notice: '',
-        schedules_by_sector: ''
+        schedules_by_resource_type: ''
       },
     }
   }
@@ -36,7 +36,7 @@ class getResourceTypeShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ sector: resp })
+      self.setState({ resource_type: resp })
     });
   }
 
@@ -47,19 +47,19 @@ class getResourceTypeShow extends Component {
               <h2 className='card-title h2-title-home'> Informações do Tipo de Recurso: </h2>
               <p> 
                 <b>Situação: </b>
-                {this.state.sector.active ? 'Ativo' : 'Inativo'}
+                {this.state.resource_type.active ? 'Ativo' : 'Inativo'}
               </p>
               <p> 
                 <b>Nome: </b>
-                {this.state.sector.name}
+                {this.state.resource_type.name}
               </p>
               <p> 
                 <b>Descrição: </b>
-                {this.state.sector.description}
+                {this.state.resource_type.description}
               </p>
               <p> 
                 <b>Recurso móvel: </b>
-                {this.state.sector.active ? 'Sim' : 'Não'}
+                {this.state.resource_type.active ? 'Sim' : 'Não'}
               </p>
             </div>
             {this.editButton()}
@@ -67,19 +67,19 @@ class getResourceTypeShow extends Component {
     )
   }
 
-  editSector () {
-    browserHistory.push(`sectors/${this.props.params.sector_id}/edit`)
+  editResourceType () {
+    browserHistory.push(`resource_types/${this.props.params.resource_type_id}/edit`)
   }
 
   prev() {
-    browserHistory.push(`sectors`)
+    browserHistory.push(`resource_types`)
   }  
 
 	editButton() {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
-				<button className="waves-effect btn right" name="commit" onClick={this.editSector.bind(this)} type="submit">Editar</button>
+				<button className="waves-effect btn right" name="commit" onClick={this.editResourceType.bind(this)} type="submit">Editar</button>
       </div>
 		)
 	}
