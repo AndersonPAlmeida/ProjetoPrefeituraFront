@@ -70,6 +70,8 @@ class getResourceTypeForm extends Component {
           "Content-Type": "application/json" },
           method: "get",
       }).then(parseResponse).then(resp => {
+        if (this.props.is_edit)
+          this.setState({ resource_type: previous_data })
         self.setState({ city_halls: resp.city_halls })
       });
     }
