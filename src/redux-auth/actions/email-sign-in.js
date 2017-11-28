@@ -49,7 +49,7 @@ export function emailSignIn(body, endpointKey) {
       .then(parseResponse)
       .then((user) => {
         dispatch(userSignIn(user.data))
-        dispatch(userUpdatePicture(user.data))
+        dispatch(userUpdatePicture(user.data.citizen.id))
         dispatch(emailSignInComplete(currentEndpointKey, user))
        })
       .catch((errors) => {

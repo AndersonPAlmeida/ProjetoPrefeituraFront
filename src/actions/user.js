@@ -30,21 +30,25 @@ export function userDestroySession(endpoint) {
   }
 }
 
-export function userUpdatePicture(user) {
+export function userUpdatePicture(user_id) {
   return dispatch => {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${user.citizen.id}/picture`;
+    const collection = `citizens/${user_id}/picture`;
     const params = `size=large&permission=citizen`;
-    fetch(`${apiUrl}/${collection}?${params}`, {
+    return fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
+        "Accept": "application/json",
         "Content-Type": "application/json"
       },
       method: "get"
-    }).then(resp => {
-      if(resp.status != 404)
-        resp.blob().then(photo => {
-          dispatch(userUpdate({ 'image': URL.createObjectURL(photo)}));
-        })
     })
+      .then(resp => {
+        var contentType = resp.headers.get("content-type");
+        if(contentType && contentType.indexOf("image") !== -1) {
+          resp.blob().then(photo => {
+            dispatch(userUpdate({ 'image': URL.createObjectURL(photo)}));
+          })
+        }
+      })
   };
 }

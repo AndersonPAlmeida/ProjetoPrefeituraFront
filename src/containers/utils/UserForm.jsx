@@ -11,7 +11,7 @@ import { browserHistory } from 'react-router';
 import { UserImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
-import {userSignIn} from '../../actions/user';
+import {userSignIn, userUpdatePicture} from '../../actions/user';
 
 class getUserForm extends Component {
 
@@ -241,7 +241,6 @@ class getUserForm extends Component {
     var send_password = false;
     formData = this.state.user;
     auxData = this.state.aux;
-
     if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
       errors.push("Campo Data de Nascimento é obrigatório.");
     if(!formData['cep'])
@@ -284,7 +283,6 @@ class getUserForm extends Component {
         image['filename'] = this.state.aux.photo;
         formData['image'] = image;
       }
-
       let success_msg
       if(this.props.user_class == `dependant`) {
         if(this.props.is_edit)
@@ -308,7 +306,6 @@ class getUserForm extends Component {
             fetch_body['current_password'] = auxData['current_password'] 
         }
       }
-
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
@@ -319,12 +316,15 @@ class getUserForm extends Component {
         method: this.props.fetch_method,
         body: JSON.stringify(fetch_body)
       }).then(parseResponse).then(resp => {
-        if(this.props.is_edit && this.props.user_class == `citizen`)
+        if(this.props.is_edit && this.props.user_class == `citizen`) {
           this.props.dispatch(userSignIn(resp.data))
+          if(this.state.aux.photo_has_changed)
+            this.props.dispatch(userUpdatePicture(resp.data.citizen.id))
+        }
         Materialize.toast(success_msg, 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
       }).catch(({errors}) => {
-        if(errors) {
+        if(errors && errors['full_messages']) {
           let full_error_msg = "";
           errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n' });
           Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
