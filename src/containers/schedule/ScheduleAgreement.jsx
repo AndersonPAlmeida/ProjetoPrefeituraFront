@@ -49,10 +49,20 @@ class getScheduleAgreement extends Component {
   agreeButton() {
     return (
       <div className="card-action">
-        <button className="btn waves-effect btn" name="anterior" type="submit">Não concordo</button>
-        <button onClick={() =>browserHistory.push(`/citizens/schedules/choose`)} className="waves-effect btn right" name="commit" type="submit">Concordar e continuar</button>
+        <button onClick={this.prev} className="btn waves-effect btn" name="anterior" type="submit">Não concordo</button>
+        <button onClick={this.next} className="waves-effect btn right" name="commit" type="submit">Concordar e continuar</button>
       </div>
     )
+  }
+
+  prev(e) {
+    e.preventDefault()
+    browserHistory.push(`/citizens/schedules/history`)
+  }
+
+  next(e) {
+    e.preventDefault()
+    browserHistory.push(`/citizens/schedules/choose`)
   }
 
   sectorList() {

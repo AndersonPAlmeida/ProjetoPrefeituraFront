@@ -8,8 +8,9 @@ import UserForm from '../utils/UserForm'
 import { browserHistory } from 'react-router';
 
 class getCitizenEdit extends Component {
-  prev() {
-    browserHistory.push(`/citizens/schedules/home=true`)
+  prev(e) {
+    e.preventDefault()
+    browserHistory.push(`/citizens/schedules/history?home=true`)
   }
 
   render() {

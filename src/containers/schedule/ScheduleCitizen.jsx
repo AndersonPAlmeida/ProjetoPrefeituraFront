@@ -326,8 +326,9 @@ class getScheduleCitizen extends Component {
       browserHistory.push(`/citizens/${this.props.params.citizen_id}/schedules/${this.state.schedule_id}/finish`)
   }
 
-  prev() {
-    browserHistory.push("citizens/schedules/agreement")
+  prev(e) {
+    e.preventDefault()
+    browserHistory.push("citizens/schedules/choose")
   }
 
 	confirmButton() {

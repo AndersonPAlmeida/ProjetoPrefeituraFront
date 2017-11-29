@@ -18,7 +18,7 @@ class getMenu extends Component {
     browserHistory.push(path)
   }
 
-  NavComponents(props) {
+  NavComponents(props, img) {
     var navOptions = []
     for (var i in props) {
       var navDropDown = []
@@ -31,6 +31,11 @@ class getMenu extends Component {
             navDropDown.push(<NavItem key={"sep"+i+j}divider />)
           }
         }
+        if(props[i].sign_out) {
+          navDropDown.push(
+            <NavItem key={'sign_out'} className={styles['nav-item-li']} href="#" onClick={this.signOut.bind(this)} >Sair</NavItem>
+          )
+        }
         navOptions.push(
           <li key={(props[i].name)+i} className={styles['nav-item']}>
             <Dropdown trigger={
@@ -40,7 +45,7 @@ class getMenu extends Component {
                 <img 
                   alt="Administrador MPOG" 
                   className="material-icons circle profile-pic right" 
-                  src={UserImg} /> : "" 
+                  src={img} /> : "" 
                 }
                 <i className="hide1 material-icons right">arrow_drop_down</i>
                 </a>
@@ -66,22 +71,40 @@ class getMenu extends Component {
       this.props.auth.getIn(["configure", "defaultEndpointKey"])
     );
   }
+
+  goToIndex(e) {
+    e.preventDefault();
+    let path = ''
+    if(this.props.user_role == `citizen`) 
+      path = `/citizens/schedules/history?home=true`
+    else
+      path = `/professionals/shifts?home=true`
+    browserHistory.push(path)
+  }
+
+  signOut(e) {
+    e.preventDefault();
+    this.props.dispatch(userDestroySession(this.getEndpoint()))
+  }
   
   render() {
+    var img
+    if(!this.props.photo)
+      img = UserImg
+    else
+      img = this.props.photo
     return (
       <div className='body-div'> 
         <Navbar className= 'nav-bar container nav-component' right 
-          brand={ <img className='nav-logo' src={LogoImage} /> } href="#">
+          brand={ <img className='nav-logo' src={LogoImage} onClick={this.goToIndex.bind(this)} /> } href="#">
           <a className="right black-text logout-icon modal-trigger" 
             title="Sair" 
             data-target=""
             href="#"
-            onClick={() => {
-              this.props.dispatch(userDestroySession(this.getEndpoint()))
-            }}>
+            onClick={this.signOut.bind(this)}>
             <i className="material-icons">exit_to_app</i>
           </a>
-          {this.NavComponents(getOptions(this.props.user_role,this.props.user_name))}
+          {this.NavComponents(getOptions(this.props.user_role,this.props.user_name),img)}
         </Navbar>
         <div className="progress">
           <div></div>
@@ -96,12 +119,14 @@ const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
   const user_name = user.citizen.name
   const auth = state.get('auth')
+  const photo = user.image
   var user_role;
   user_role = user.current_role == 'citizen' ? 'citizen' : user.roles[user.current_role_idx].role
   return {
     user_name,
     user_role,
-    auth 
+    auth,
+    photo 
   }
 }
 
