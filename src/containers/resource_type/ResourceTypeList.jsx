@@ -37,10 +37,6 @@ class getResourceTypeList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      // resp.map((resourceType) => {
-      //   this.getCityHallName(resourceType.city_hall_id)
-      // })
-      
       self.setState({ resourceTypes: resp })
     });
   }
@@ -74,6 +70,7 @@ class getResourceTypeList extends Component {
           "Content-Type": "application/json" },
           method: "get",
       }).then(parseResponse).then(resp => {
+        resp.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );
         self.setState({ city_hall: resp })
       });
   }

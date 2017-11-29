@@ -37,3 +37,5 @@ export ResourceTypeList from './resource_type/ResourceTypeList';
 export ResourceTypeShow from './resource_type/ResourceTypeShow';
 export ResourceTypeCreate from './resource_type/ResourceTypeCreate'
 export ResourceTypeEdit from './resource_type/ResourceTypeEdit'
+
+export ResourceList from './resource/ResourceList';
