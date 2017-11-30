@@ -75,7 +75,7 @@ class getResourceTypeShow extends Component {
               </p>
               <p> 
                 <b>Recurso móvel: </b>
-                {this.state.resource_type.active ? 'Sim' : 'Não'}
+                {this.state.resource_type.mobile != "false" ? 'Sim' : 'Não'}
               </p>
               <p> 
                 <b>Prefeitura: </b>
