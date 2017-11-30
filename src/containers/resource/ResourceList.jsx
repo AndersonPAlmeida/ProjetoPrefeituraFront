@@ -41,7 +41,8 @@ class getResourceList extends Component {
           filter_s: '',
           city_hall:[],
           resource_types:[],
-          service_places:[]
+          service_places:[],
+          current_permission: ""
       };
     this.getCityHallName = this.getCityHallName.bind(this);      
     this.getResourceType = this.getResourceType.bind(this);      
@@ -49,13 +50,27 @@ class getResourceList extends Component {
   }
 
   componentWillMount() {
+    var current_role = this.props.user.current_role
+    var user_roles = this.props.user.roles
+    var current_permission = undefined
+    for (let i = 0; i < user_roles.length; i++){
+      if (user_roles[i].id === current_role){
+        current_permission = user_roles[i].role 
+        break;
+      }
+    }
+    this.setState({current_permission: current_permission})
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `resources`;
     const params = `permission=${this.props.user.current_role}`
     this.getResourceType()
-    this.getServicePlace()
-    this.getCityHallName()   
+    if (current_permission == "adm_c3sl" || current_permission == "adm_prefeitura"){
+      this.getServicePlace()
+      if(current_permission == "adm_c3sl"){
+        this.getCityHallName()   
+      }
+    }
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -63,7 +78,7 @@ class getResourceList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       self.setState({ resources: resp })
-    });
+    })
   }
 
   mainComponent() {
@@ -126,15 +141,6 @@ class getResourceList extends Component {
     });
   }
 	tableList() {
-    var current_role = this.props.user.current_role
-    var user_roles = this.props.user.roles
-    var current_permission = undefined
-    for (let i = 0; i < user_roles.length; i++){
-      if (user_roles[i].id === current_role){
-        current_permission = user_roles[i].role 
-        break;
-      }
-    }
     const data = (
       this.state.resources.map((resource) => {
         return (
@@ -146,7 +152,7 @@ class getResourceList extends Component {
                   browserHistory.push(`/resources/${resource.id}`) 
                 }>
                 {
-                  this.state.resource_types[resource.resource_types_id-1].name 
+                  this.state.resource_types.find(o => o.id === resource.resource_types_id).name
                 }
               </a>
             </td>
@@ -165,7 +171,9 @@ class getResourceList extends Component {
             
             <td key={Math.random()} >
                 {
-                  this.state.service_places[resource.service_place_id-1].name 
+                  this.state.current_permission == "adm_c3sl" || this.state.current_permission == "adm_prefeitura" ? 
+                  this.state.service_places.find(o => o.id === resource.service_place_id).name :
+                  undefined
                 }
             </td>
 
@@ -313,7 +321,11 @@ class getResourceList extends Component {
           </a>
         </th>
         <th>Situação</th>
-        <th>Local de Atendimento</th>
+        {
+          this.state.current_permission == "adm_c3sl" || this.state.current_permission == "adm_prefeitura" ? 
+            <th>Local de Atendimento</th> :
+            <th></th>
+        }
         <th></th>
       </tr>
     )
