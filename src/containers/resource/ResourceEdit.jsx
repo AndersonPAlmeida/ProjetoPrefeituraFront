@@ -4,14 +4,14 @@ import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
-import ResourceTypeForm from './ResourceTypeForm'
+import ResourceForm from './ResourceForm'
 import { browserHistory } from 'react-router';
 
-class getResourceTypeEdit extends Component {
+class getResourceEdit extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      resource_type: [],
+      resource: [],
       fetching: true
     };
   }
@@ -19,7 +19,7 @@ class getResourceTypeEdit extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `resource_types/${this.props.params.resource_type_id}`;
+    const collection = `resources/${this.props.params.resource_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -27,12 +27,12 @@ class getResourceTypeEdit extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ resource_type: resp, fetching: false })
+      self.setState({ resource: resp, fetching: false })
     });
   }
 
   prev() {
-    browserHistory.push(`/resource_types`)
+    browserHistory.push(`/resources`)
   }
 
   render() {
@@ -40,15 +40,15 @@ class getResourceTypeEdit extends Component {
       <div>
         {
           this.state.fetching ? <div /> : 
-            <ResourceTypeForm 
-              data={this.state.resource_type} 
+            <ResourceForm 
+              data={this.state.resource} 
               is_edit={true} 
               prev={this.prev}
-              fetch_collection={`resource_types/${this.props.params.resource_type_id}`}
+              fetch_collection={`resources/${this.props.params.resource_id}`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'put'}
               current_role={this.props.user.roles[this.props.user.current_role_idx]}
-              submit_url={`/resource_types/`}
+              submit_url={`/resources/`}
             />
         }
       </div>
@@ -62,7 +62,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const ResourceTypeEdit = connect(
+const ResourceEdit = connect(
   mapStateToProps
-)(getResourceTypeEdit)
-export default ResourceTypeEdit
+)(getResourceEdit)
+export default ResourceEdit

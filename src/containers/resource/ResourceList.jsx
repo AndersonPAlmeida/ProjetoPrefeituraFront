@@ -189,7 +189,7 @@ class getResourceList extends Component {
                  onClick={ () => 
                  browserHistory.push(`/resources/${resource.id}`) 
                 }>
-                  <i className="waves-effect material-icons tooltipped" data-tooltip="I am a tooltip">
+                  <i className="waves-effect material-icons tooltipped">
                     visibility
                   </i>
               </a>

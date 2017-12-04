@@ -152,7 +152,7 @@ class getResourceTypeShow extends Component {
     )
   }
 
-  editResourceType () {
+  editResource () {
     browserHistory.push(`resources/${this.props.params.resource_id}/edit`)
   }
 
@@ -164,7 +164,7 @@ class getResourceTypeShow extends Component {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
-				<button id={'editResource'} className="waves-effect btn right" name="commit" onClick={this.editResourceType.bind(this)} type="submit">Editar</button>
+				<button id={'editResource'} className="waves-effect btn right" name="commit" onClick={this.editResource.bind(this)} type="submit">Editar</button>
       </div>
 		)
 	}

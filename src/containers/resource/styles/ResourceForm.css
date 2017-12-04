@@ -30,3 +30,14 @@ input {
   margin-bottom: 5px;
   overflow: auto;
 }
+
+
+#number-input{
+  width: 65px;
+  text-align: center;
+}
+
+#unitTime{
+  color: black;
+  margin-left: 15px;
+}
