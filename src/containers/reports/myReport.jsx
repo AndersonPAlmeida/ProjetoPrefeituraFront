@@ -8,28 +8,80 @@ import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
-import PdfConverter from 'jspdf';
-import 'jspdf-autotable'
+
+var jsPDF
+
 
 class getMyReport extends Component {
   constructor(props) {
       super(props)
       this.state = {
       };
+      this.pdfToHTML=this.pdfToHTML.bind(this);
+      this.getCitizenData=this.getCitizenData.bind(this);
+      this.getCitizenAddress=this.getCitizenAddress.bind(this);
+
   }
   componentDidMount(){
     console.log(this.props.user)
+    jsPDF = require('jspdf')
   }
 
+  pdfToHTML(){
+    var pdf = new jsPDF('p', 'pt', 'letter');
+    var source = $('#HTMLtoPDF')[0];
+    var specialElementHandlers = {
+      '#bypassme': function(element, renderer) {
+        return true
+      }
+    };
 
-  render() {
-    return (
-      <div>
+    var margins = {
+      top: 50,
+      left: 60,
+      width: 545
+    };
 
-
-      </div>
+    pdf.fromHTML (
+      source // HTML string or DOM elem ref.
+      , margins.left // x coord
+      , margins.top // y coord
+      , {
+          'width': margins.width // max width of content on PDF
+          , 'elementHandlers': specialElementHandlers
+        },
+      function (dispose) {
+        pdf.save('relatorio_de_cadastro.pdf');
+      }
     )
   }
+
+getCitizenData(){
+  return(<div>
+    <p>Nome: {this.props.user.citizen.name}</p>
+    <p>Data de nascimento: {this.props.user.citizen.birth_date}</p>
+    </div>)
+}
+
+getCitizenAddress(){
+
+}
+
+    render() {
+      return (
+        <div>
+         <div id="HTMLtoPDF">
+           <center>
+              <h3>Cadastro Agendador</h3>
+              {this.getCitizenData()}
+              {this.getCitizenAddress()}
+              </center>
+         </div>
+
+         <button onClick={this.pdfToHTML}>Download PDF</button>
+       </div>
+      )
+    }
 }
 
 
