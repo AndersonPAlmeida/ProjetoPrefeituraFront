@@ -145,18 +145,12 @@ class getResourceList extends Component {
       this.state.resources.map((resource) => {
         return (
           <tr>
-            <td key={Math.random()} >
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/resources/${resource.id}`) 
-                }>
+            <td key={Math.random()}  >
                 {
                   this.state.resource_types.find(o => o.id === resource.resource_types_id).name
                 }
-              </a>
             </td>
-            <td key={Math.random()} className='description-column' >
+            <td key={Math.random()}  >
               {resource.brand}
             </td>
             <td key={Math.random()} >
@@ -179,6 +173,7 @@ class getResourceList extends Component {
 
             <td key={Math.random()} >
               <a className='back-bt waves-effect btn-flat' 
+                 id="iconTable"
                  href='#' 
                  onClick={ () => 
                  browserHistory.push(`/resources/${resource.id}/edit`) 
@@ -186,7 +181,18 @@ class getResourceList extends Component {
                   <i className="waves-effect material-icons tooltipped">
                     edit
                   </i>
-              </a> 
+              </a>
+
+              <a className='back-bt waves-effect btn-flat' 
+                 id="iconTable"
+                 href='#' 
+                 onClick={ () => 
+                 browserHistory.push(`/resources/${resource.id}`) 
+                }>
+                  <i className="waves-effect material-icons tooltipped" data-tooltip="I am a tooltip">
+                    visibility
+                  </i>
+              </a>
             </td>
           </tr>
         )
