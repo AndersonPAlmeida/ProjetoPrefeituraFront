@@ -21,8 +21,8 @@ class getScheduleChoose extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.params.citizen_id}/schedule_options`;
-    const params = `permission=${this.props.user.current_role}`
+    const collection = `citizens/schedule_options`;
+    const params = `permission=${this.props.user.current_role}&cpf=${this.props.user.citizen.cpf}`
     
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -48,17 +48,22 @@ class getScheduleChoose extends Component {
               {this.scheduleDependants()}
             
           </div>
-          {this.agreeButton()}
+          {this.goBackButton()}
       </div>
     )
   }
 
-  agreeButton() {
+  goBackButton() {
     return (
       <div className="card-action">
         <a className='back-bt waves-effect btn-flat' href='#' onClick={this.prev} > Voltar </a>
       </div>
     )
+  }
+
+  prev(e) {
+    e.preventDefault()
+    browserHistory.push(`/citizens/schedules/agreement`)
   }
 
   formatCPF(n) {
@@ -77,7 +82,7 @@ class getScheduleChoose extends Component {
         <img 
           className="material-icons circle right" 
           src={UserImg} />
-        <span className="title"><a href='#' onClick={() =>browserHistory.push(`/citizens/${current_citizen.id}/schedules/schedule`)} > {current_citizen.name} </a></span>
+        <span className="title"><a href='#' onClick={() => browserHistory.push(`/citizens/${current_citizen.id}/schedules/schedule`)} > {current_citizen.name} </a></span>
         <p>Data de nascimento: {date}
         </p>
         <p>
@@ -85,10 +90,6 @@ class getScheduleChoose extends Component {
         </p>
       </li>
     )
-  }
-
-  prev() {
-    browserHistory.push("citizens/schedules/agreement")
   }
 
   addZeroBefore(n) {

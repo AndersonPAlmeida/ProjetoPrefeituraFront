@@ -14,7 +14,12 @@ class getServiceTypeList extends Component {
   constructor(props) {
       super(props)
       this.state = {
-          service_types: []
+          service_types: [],
+          filter_description: '',
+          filter_situation: '',
+          last_fetch_description: '',
+          last_fetch_situation: '',
+          filter_q: ''   
       };
   }
 
@@ -38,6 +43,7 @@ class getServiceTypeList extends Component {
       <div className='card'>
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Tipo de Atendimento </h2>
+          {this.filterServiceType()}
           {this.tableList()}
         </div>
         <div className="card-action">
@@ -86,7 +92,36 @@ class getServiceTypeList extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>Descrição</th>
+        <th>
+          <a
+            href='#'
+            onClick={
+              () => {
+                this.setState({
+                  ['filter_s']: this.state.filter_s == "description+asc" ? 'description+desc' : "description+asc"
+                }, this.handleFilterSubmit.bind(this,true))
+              }
+            }
+          >
+            Descrição 
+            {
+              this.state.filter_s == "description+asc" ?
+                <i className="waves-effect material-icons tiny tooltipped">
+                  arrow_drop_down
+                </i>
+                :
+                <div />
+            }
+            {
+              this.state.filter_s == "description+desc" ?
+                <i className="waves-effect material-icons tiny tooltipped">
+                  arrow_drop_up
+                </i>
+                :
+                <div />
+            }
+          </a>
+        </th>
         <th>Situação</th>
         <th>Setor</th>
         <th></th>
@@ -105,8 +140,97 @@ class getServiceTypeList extends Component {
     )
 	}
 
-  prev() {
-    browserHistory.push("citizens/schedules/agreement")
+  handleInputFilterChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    })
+  }
+
+  filterServiceType() {
+    return (
+      <div>
+        <Row className='filter-container'>
+          <Col>
+            <div className="field-input" >
+              <h6>Descrição:</h6>
+              <label>
+                <input
+                  type="text"
+                  className='input-field'
+                  name="filter_description"
+                  value={this.state.filter_description}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
+          <Col>
+            <div className="field-input" >
+              <h6>Situação:</h6>
+              <div>
+                <Input s={6} m={32} l={6}
+                       type='select'
+                       name='filter_situation'
+                       value={this.state.filter_situation}
+                       onChange={this.handleInputFilterChange.bind(this)}
+                >
+                  <option key={0} value={''}>Todos</option>
+                  <option key={1} value={true}>Ativo</option>
+                  <option key={2} value={false}>Inativo</option>
+                </Input>
+              </div>
+            </div>
+          </Col>
+          <Row>
+            <Col>
+              <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+            </Col>
+            <Col>
+              <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+            </Col>
+          </Row>
+        </Row>
+      </div>
+    )
+  }
+
+  cleanFilter() {
+    this.setState({
+      'filter_description': '',
+      'filter_situation': ''
+    })
+  }
+
+  handleFilterSubmit(sort_only) {
+    var description
+    var situation
+    if(sort_only) {
+      description = this.state.last_fetch_description
+      situation = this.state.last_fetch_situation
+    } else {
+      description = this.state.filter_description
+      situation = this.state.filter_situation
+    }
+    description = description.replace(/\s/g,'+')
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `service_types`;
+    const params = `permission=${this.props.user.current_role}&q[description]=${description}&q[s]=${this.state.filter_s}&q[active]=${situation}`
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get",
+    }).then(parseResponse).then(resp => {
+      this.setState({
+        service_types: resp,
+        last_fetch_description: description,
+        last_fetch_situation: situation
+      })
+    });
   }
 
 	newServiceTypeButton() {

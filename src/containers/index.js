@@ -32,3 +32,5 @@ export ServiceTypeList from './service_type/ServiceTypeList';
 export ServiceTypeEdit from './service_type/ServiceTypeEdit';
 export ServiceTypeShow from './service_type/ServiceTypeShow';
 export ServiceTypeCreate from './service_type/ServiceTypeCreate';
+
+export ProfessionalIndex from './professional/ProfessionalIndex'

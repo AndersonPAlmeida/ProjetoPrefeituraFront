@@ -53,6 +53,39 @@ class getSectorList extends Component {
       )
   }
   
+  sortableColumn(title, name) {
+    return (
+      <a
+        href='#'
+        onClick={
+          () => {
+            this.setState({ 
+              ['filter_s']: this.state.filter_s == `${name}+asc` ? `${name}+desc` : `${name}+asc`
+            }, this.handleFilterSubmit.bind(this,true))
+          }
+        }
+      >
+        {title}
+        {
+          this.state.filter_s == `${name}+asc` ?
+            <i className="waves-effect material-icons tiny tooltipped">
+              arrow_drop_down
+            </i>
+            :
+            <div />
+        }
+        {
+          this.state.filter_s == `${name}+desc` ?
+            <i className="waves-effect material-icons tiny tooltipped">
+              arrow_drop_up
+            </i>
+            :
+            <div />
+        }
+      </a>
+    )
+  }
+
 	tableList() {
     const data = (
       this.state.sectors.map((sector) => {
@@ -95,39 +128,10 @@ class getSectorList extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>
-          <a 
-            href='#' 
-            onClick={ 
-              () => { 
-                this.setState({
-                  ['filter_s']: this.state.filter_s == "name+asc" ? 'name+desc' : "name+asc"
-                }, this.handleFilterSubmit.bind(this,true))
-              }
-            }
-          >
-            Nome
-            { 
-              this.state.filter_s == "name+asc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_down
-                </i>
-                :
-                <div />
-            }
-            { 
-              this.state.filter_s == "name+desc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_up
-                </i>
-                :
-                <div />
-            }
-          </a>
-        </th>
-        <th>Descrição</th>
-        <th>Situação</th>
-        <th>Agendamentos por setor</th>
+        <th>{this.sortableColumn.bind(this)('Nome','name')}</th>
+        <th>{this.sortableColumn.bind(this)('Descrição','description')}</th>
+        <th>{this.sortableColumn.bind(this)('Situação','situation')}</th>
+        <th>{this.sortableColumn.bind(this)('Agendamentos por setor','schedules_by_sector')}</th>
         <th></th>
       </tr>
     )
@@ -157,33 +161,53 @@ class getSectorList extends Component {
   filterSector() {
     return (
       <div>
-        <div className="field-input" >
-          <h6>Nome:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_name"
-              value={this.state.filter_name}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
-        </div>
-        <div className="field-input" >
-          <h6>Descrição:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_description"
-              value={this.state.filter_description}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
-        </div>
-        <button className="waves-effect btn right button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+        <Row className='filter-container'>
+          <Col>
+            <div className="field-input" >
+              <h6>Nome:</h6>
+              <label>
+                <input
+                  type="text"
+                  className='input-field'
+                  name="filter_name"
+                  value={this.state.filter_name}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
+          <Col>
+            <div className="field-input" >
+              <h6>Descrição:</h6>
+              <label>
+                <input
+                  type="text"
+                  className='input-field'
+                  name="filter_description"
+                  value={this.state.filter_description}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
+          <Row>
+            <Col>
+              <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+            </Col>
+            <Col>
+              <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+            </Col>
+          </Row>
+        </Row>
       </div>
     )
+  }
+
+  cleanFilter() {
+    this.setState({
+      'filter_description': '',
+      'filter_name': '',
+    })
   }
 
   handleFilterSubmit(sort_only) {
@@ -201,7 +225,6 @@ class getSectorList extends Component {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `sectors`;
     const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}&q[s]=${this.state.filter_s}`
-    console.log(`${apiUrl}/${collection}?${params}`)
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",

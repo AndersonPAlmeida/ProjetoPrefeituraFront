@@ -8,8 +8,9 @@ import UserForm from '../utils/UserForm'
 import { browserHistory } from 'react-router';
 
 class getCitizenEdit extends Component {
-  prev() {
-    browserHistory.push(`/citizens/schedules`)
+  prev(e) {
+    e.preventDefault()
+    browserHistory.push(`/citizens/schedules/history?home=true`)
   }
 
   render() {
@@ -22,7 +23,7 @@ class getCitizenEdit extends Component {
         fetch_collection={`auth`}
         fetch_params={`permission=${this.props.user.current_role}`}
         fetch_method={'put'}
-        submit_url={`/citizens/schedules`}
+        submit_url={`/citizens/schedules?home=true`}
         photo={this.props.user.image}
       />
     )

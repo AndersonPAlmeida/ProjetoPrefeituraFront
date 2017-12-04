@@ -29,7 +29,7 @@ class getServiceTypeForm extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     var self = this;
     if(this.props.is_edit) {
       self.setState({ service_type: this.props.data })
@@ -45,7 +45,7 @@ class getServiceTypeForm extends Component {
     }).then(parseResponse).then(resp => {
       self.setState({ sectors: resp.sectors })
     });
-    if(this.props.current_role.role != 'adm_c3sl') {
+    if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
       this.setState({
         service_type: update(this.state.service_type, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
       })
@@ -78,7 +78,6 @@ class getServiceTypeForm extends Component {
       });
     }
   }
-
 
   handleInputServiceTypeChange(event) {
     const target = event.target;
@@ -171,7 +170,7 @@ class getServiceTypeForm extends Component {
   }
 
   pickCityHall() {
-    if(this.props.current_role.role != 'adm_c3sl') {
+    if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
       return (
         <Input disabled
                name="selected_city_hall"
@@ -234,7 +233,7 @@ class getServiceTypeForm extends Component {
                       <div>
                         <Input s={6} m={32} l={6} 
                                type='select'
-                               name='situation'
+                               name='active'
                                value={this.state.service_type.active}
                                onChange={this.handleInputServiceTypeChange.bind(this)} 
                         >
