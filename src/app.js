@@ -4,12 +4,12 @@ import { Provider } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
-import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule, 
+import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
          ChooseRole, ScheduleAgreement, ScheduleChoose, ScheduleCitizen, ScheduleFinish,
          DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit,
          SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
          ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
-         ServiceTypeCreate, ServiceTypeShow, ServiceTypeList
+         ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, MyReport
        } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -32,7 +32,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   if (process.env.NODE_ENV === 'development' && __CLIENT__ && __DEVTOOLS__) {
     const { persistState } = require('redux-devtools');
     const DevTools = require('./containers/application/DevTools');
-    store = createStore(reducer, 
+    store = createStore(reducer,
                         fromJS(stateData),
                         compose(
                                applyMiddleware(...middleware),
@@ -57,15 +57,15 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
   });
   const UserIsAuthenticated = UserAuthWrapper({
     authSelector: (state)  => { return (state.get('auth').getIn(['user','isSignedIn']) ? { 'authentication' : true } : null ) },
-    redirectAction: routerActions.replace, 
+    redirectAction: routerActions.replace,
     failureRedirectPath: '/',
-    wrapperDisplayName: 'UserIsAuthenticated' 
+    wrapperDisplayName: 'UserIsAuthenticated'
   })
   const UserIsNotAuthenticated = UserAuthWrapper({
     authSelector: (state)  => { return (!(state.get('auth').getIn(['user','isSignedIn'])) ? { 'authentication' : true } : null ) },
-    redirectAction: routerActions.replace, 
+    redirectAction: routerActions.replace,
     failureRedirectPath: '/citizens/schedules',
-    wrapperDisplayName: 'UserIsNotAuthenticated' 
+    wrapperDisplayName: 'UserIsNotAuthenticated'
   })
   const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState);
   const routes = (
@@ -77,6 +77,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="choose_role" component={UserIsAuthenticated(ChooseRole)} />
         <Route path="citizens/schedules" component={UserIsAuthenticated(CitizenSchedule)} />
         <Route path="citizens/edit" component={UserIsAuthenticated(CitizenEdit)} />
+        <Route path="citizens/my_report" component={UserIsAuthenticated(MyReport)} />
         <Route path="citizens/schedules/agreement" component={UserIsAuthenticated(ScheduleAgreement)} />
         <Route path="citizens/:citizen_id/schedules/choose" component={UserIsAuthenticated(ScheduleChoose)} />
         <Route path="citizens/:citizen_id/schedules/schedule" component={UserIsAuthenticated(ScheduleCitizen)} />
@@ -101,7 +102,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
       </Route>
     </Router>
   );
-  return store.dispatch(configure([ { default: { apiUrl } } ], 
+  return store.dispatch(configure([ { default: { apiUrl } } ],
     { cookies, isServer, currentLocation})).then(({ redirectPath, blank } = {}) => {
     if (userAgent) {
       global.navigator = { userAgent };
