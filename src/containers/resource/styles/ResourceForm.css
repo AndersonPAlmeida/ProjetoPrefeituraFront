@@ -41,3 +41,12 @@ input {
   color: black;
   margin-left: 15px;
 }
+.dropdown-content li>a, .dropdown-content li>span{
+  color: black;
+}
+
+
+#no-padding > div{
+  padding: 0;
+  width: 295px;
+}

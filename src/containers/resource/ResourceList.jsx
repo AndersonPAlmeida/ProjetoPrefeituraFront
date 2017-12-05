@@ -1,11 +1,11 @@
-import React, {Component} from 'react'
-import { Link } from 'react-router'
-import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/ResourceList.css'
-import 'react-day-picker/lib/style.css'
+import React, {Component} from 'react';
+import { Link } from 'react-router';
+import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize';
+import styles from './styles/ResourceList.css';
+import 'react-day-picker/lib/style.css';
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
-import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
-import {fetch} from "../../redux-auth";
+import {parseResponse} from '../../redux-auth/utils/handle-fetch-response';
+import {fetch} from '../../redux-auth';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import strftime from 'strftime';
@@ -29,56 +29,56 @@ import strftime from 'strftime';
 
 class getResourceList extends Component {
   constructor(props) {
-      super(props)
-      this.state = {
-          resources: [],
-          filter_label: '',
-          filter_model: '',
-          filter_brand: '',
-          last_fetch_label: '',
-          last_fetch_model: '',
-          last_fetch_brand: '',
-          filter_s: '',
-          city_hall:[],
-          resource_types:[],
-          service_places:[],
-          current_permission: ""
-      };
+    super(props);
+    this.state = {
+      resources: [],
+      filter_label: '',
+      filter_model: '',
+      filter_brand: '',
+      last_fetch_label: '',
+      last_fetch_model: '',
+      last_fetch_brand: '',
+      filter_s: '',
+      city_hall:[],
+      resource_types:[],
+      service_places:[],
+      current_permission: ''
+    };
     this.getCityHallName = this.getCityHallName.bind(this);      
     this.getResourceType = this.getResourceType.bind(this);      
     this.getServicePlace = this.getServicePlace.bind(this);      
   }
 
   componentWillMount() {
-    var current_role = this.props.user.current_role
-    var user_roles = this.props.user.roles
-    var current_permission = undefined
+    var current_role = this.props.user.current_role;
+    var user_roles = this.props.user.roles;
+    var current_permission = undefined;
     for (let i = 0; i < user_roles.length; i++){
       if (user_roles[i].id === current_role){
-        current_permission = user_roles[i].role 
+        current_permission = user_roles[i].role; 
         break;
       }
     }
-    this.setState({current_permission: current_permission})
+    this.setState({current_permission: current_permission});
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `resources`;
-    const params = `permission=${this.props.user.current_role}`
-    this.getResourceType()
-    if (current_permission == "adm_c3sl" || current_permission == "adm_prefeitura"){
-      this.getServicePlace()
-      if(current_permission == "adm_c3sl"){
-        this.getCityHallName()   
+    const collection = 'resources';
+    const params = `permission=${this.props.user.current_role}`;
+    this.getResourceType();
+    if (current_permission == 'adm_c3sl' || current_permission == 'adm_prefeitura'){
+      this.getServicePlace();
+      if(current_permission == 'adm_c3sl'){
+        this.getCityHallName();   
       }
     }
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get",
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ resources: resp })
-    })
+      self.setState({ resources: resp });
+    });
   }
 
   mainComponent() {
@@ -93,62 +93,62 @@ class getResourceList extends Component {
           {this.newResourceTypeButton()}
         </div>
       </div>
-      )
+    );
   }
 
   getCityHallName() {
-      var self = this;
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-      const collection = `city_halls/`;
-      const params = `permission=${this.props.user.current_role}`
-      fetch(`${apiUrl}/${collection}?${params}`, {
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json" },
-          method: "get",
-      }).then(parseResponse).then(resp => {
-        self.setState({ city_hall: resp })
-      });
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'city_halls/';
+    const params = `permission=${this.props.user.current_role}`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      self.setState({ city_hall: resp });
+    });
   }
   getResourceType() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `resource_types/`;
-    const params = `permission=${this.props.user.current_role}`
+    const collection = 'resource_types/';
+    const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get",
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
     }).then(parseResponse).then(resp => {
       resp.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );      
-      self.setState({ resource_types: resp })
+      self.setState({ resource_types: resp });
     });
   }
   getServicePlace() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `service_places/`;
-    const params = `permission=${this.props.user.current_role}`
+    const collection = 'service_places/';
+    const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get",
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
     }).then(parseResponse).then(resp => {
       resp.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );      
-      self.setState({ service_places: resp })
+      self.setState({ service_places: resp });
     });
   }
-	tableList() {
+  tableList() {
     const data = (
       this.state.resources.map((resource) => {
         return (
           <tr>
             <td key={Math.random()}  >
-                {
-                  this.state.resource_types.find(o => o.id === resource.resource_types_id).name
-                }
+              {
+                this.state.resource_types.find(o => o.id === resource.resource_types_id).name
+              }
             </td>
             <td key={Math.random()}  >
               {resource.brand}
@@ -160,44 +160,44 @@ class getResourceList extends Component {
               {resource.label}
             </td>
             <td key={Math.random()} >
-              {Boolean(resource.active) ? 'Ativo' : 'Inativo'}
+              {resource.active ? 'Ativo' : 'Inativo'}
             </td>
             
             <td key={Math.random()} >
-                {
-                  this.state.current_permission == "adm_c3sl" || this.state.current_permission == "adm_prefeitura" ? 
+              {
+                this.state.current_permission == 'adm_c3sl' || this.state.current_permission == 'adm_prefeitura' ? 
                   this.state.service_places.find(o => o.id === resource.service_place_id).name :
                   undefined
-                }
+              }
             </td>
 
             <td key={Math.random()} >
               <a className='back-bt waves-effect btn-flat' 
-                 id="iconTable"
-                 href='#' 
-                 onClick={ () => 
-                 browserHistory.push(`/resources/${resource.id}/edit`) 
+                id="iconTable"
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/resources/${resource.id}/edit`) 
                 }>
-                  <i className="waves-effect material-icons tooltipped">
+                <i className="waves-effect material-icons tooltipped">
                     edit
-                  </i>
+                </i>
               </a>
 
               <a className='back-bt waves-effect btn-flat' 
-                 id="iconTable"
-                 href='#' 
-                 onClick={ () => 
-                 browserHistory.push(`/resources/${resource.id}`) 
+                id="iconTable"
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/resources/${resource.id}`) 
                 }>
-                  <i className="waves-effect material-icons tooltipped">
+                <i className="waves-effect material-icons tooltipped">
                     visibility
-                  </i>
+                </i>
               </a>
             </td>
           </tr>
-        )
+        );
       })
-    )
+    );
 
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
@@ -208,18 +208,18 @@ class getResourceList extends Component {
             className="grey-text text-darken-3 "
             onClick={ 
               () => { 
-                if (this.state.filter_s == "resource_types_id+asc"){
-                  document.getElementById("ascTypeIcon").style.display = "none"
-                  document.getElementById("descTypeIcon").style.display = "inline-block"                    
+                if (this.state.filter_s == 'resource_types_id+asc'){
+                  document.getElementById('ascTypeIcon').style.display = 'none';
+                  document.getElementById('descTypeIcon').style.display = 'inline-block';                    
                 } 
                 else{
-                  document.getElementById("descTypeIcon").style.display = "none"               
-                  document.getElementById("ascTypeIcon").style.display = "inline-block"
+                  document.getElementById('descTypeIcon').style.display = 'none';               
+                  document.getElementById('ascTypeIcon').style.display = 'inline-block';
                 }
                   
                 this.setState({
-                  ['filter_s']: this.state.filter_s == "resource_types_id+asc" ? 'resource_types_id+desc' : "resource_types_id+asc"
-                }, this.handleFilterSubmit.bind(this,true))
+                  ['filter_s']: this.state.filter_s == 'resource_types_id+asc' ? 'resource_types_id+desc' : 'resource_types_id+asc'
+                }, this.handleFilterSubmit.bind(this,true));
               }
             }
           >
@@ -240,18 +240,18 @@ class getResourceList extends Component {
             className="grey-text text-darken-3 "
             onClick={ 
               () => { 
-                if (this.state.filter_s == "brand+asc"){
-                  document.getElementById("ascBrandIcon").style.display = "none"
-                  document.getElementById("descBrandIcon").style.display = "inline-block"                    
+                if (this.state.filter_s == 'brand+asc'){
+                  document.getElementById('ascBrandIcon').style.display = 'none';
+                  document.getElementById('descBrandIcon').style.display = 'inline-block';                    
                 } 
                 else{
-                  document.getElementById("descBrandIcon").style.display = "none"               
-                  document.getElementById("ascBrandIcon").style.display = "inline-block"
+                  document.getElementById('descBrandIcon').style.display = 'none';               
+                  document.getElementById('ascBrandIcon').style.display = 'inline-block';
                 }
                   
                 this.setState({
-                  ['filter_s']: this.state.filter_s == "brand+asc" ? 'brand+desc' : "brand+asc"
-                }, this.handleFilterSubmit.bind(this,true))
+                  ['filter_s']: this.state.filter_s == 'brand+asc' ? 'brand+desc' : 'brand+asc'
+                }, this.handleFilterSubmit.bind(this,true));
               }
             }
           >
@@ -271,18 +271,18 @@ class getResourceList extends Component {
             className="grey-text text-darken-3 "
             onClick={ 
               () => { 
-                if (this.state.filter_s == "model+asc"){
-                  document.getElementById("ascModelIcon").style.display = "none"
-                  document.getElementById("descModelIcon").style.display = "inline-block"                    
+                if (this.state.filter_s == 'model+asc'){
+                  document.getElementById('ascModelIcon').style.display = 'none';
+                  document.getElementById('descModelIcon').style.display = 'inline-block';                    
                 } 
                 else{
-                  document.getElementById("descModelIcon").style.display = "none"               
-                  document.getElementById("ascModelIcon").style.display = "inline-block"
+                  document.getElementById('descModelIcon').style.display = 'none';               
+                  document.getElementById('ascModelIcon').style.display = 'inline-block';
                 }
                   
                 this.setState({
-                  ['filter_s']: this.state.filter_s == "model+asc" ? 'model+desc' : "model+asc"
-                }, this.handleFilterSubmit.bind(this,true))
+                  ['filter_s']: this.state.filter_s == 'model+asc' ? 'model+desc' : 'model+asc'
+                }, this.handleFilterSubmit.bind(this,true));
               }
             }
           >
@@ -302,18 +302,18 @@ class getResourceList extends Component {
             className="grey-text text-darken-3 "
             onClick={ 
               () => { 
-                if (this.state.filter_s == "label+asc"){
-                  document.getElementById("ascLabelIcon").style.display = "none"
-                  document.getElementById("descLabelIcon").style.display = "inline-block"                    
+                if (this.state.filter_s == 'label+asc'){
+                  document.getElementById('ascLabelIcon').style.display = 'none';
+                  document.getElementById('descLabelIcon').style.display = 'inline-block';                    
                 } 
                 else{
-                  document.getElementById("descLabelIcon").style.display = "none"               
-                  document.getElementById("ascLabelIcon").style.display = "inline-block"
+                  document.getElementById('descLabelIcon').style.display = 'none';               
+                  document.getElementById('ascLabelIcon').style.display = 'inline-block';
                 }
                   
                 this.setState({
-                  ['filter_s']: this.state.filter_s == "label+asc" ? 'label+desc' : "label+asc"
-                }, this.handleFilterSubmit.bind(this,true))
+                  ['filter_s']: this.state.filter_s == 'label+asc' ? 'label+desc' : 'label+asc'
+                }, this.handleFilterSubmit.bind(this,true));
               }
             }
           >
@@ -328,13 +328,13 @@ class getResourceList extends Component {
         </th>
         <th>Situação</th>
         {
-          this.state.current_permission == "adm_c3sl" || this.state.current_permission == "adm_prefeitura" ? 
-            <th>Local de Atendimento</th> :
+          this.state.current_permission == 'adm_c3sl' || this.state.current_permission == 'adm_prefeitura' ? 
+            <th>Local do recurso</th> :
             <th></th>
         }
         <th></th>
       </tr>
-    )
+    );
 
     return (
       <table className={styles['table-list']}>
@@ -345,8 +345,8 @@ class getResourceList extends Component {
           {data}
         </tbody>
       </table>
-    )
-	}
+    );
+  }
 
   handleInputFilterChange(event) {
     const target = event.target;
@@ -355,7 +355,7 @@ class getResourceList extends Component {
 
     this.setState({
       [name]: value
-    })
+    });
   }
 
   filterResourceType() {
@@ -408,80 +408,80 @@ class getResourceList extends Component {
             FILTRAR
         </button>
       </div>
-    )
+    );
   }
 
   handleFilterSubmit(sort_only) {
-    var label
-    var model
-    var brand
+    var label;
+    var model;
+    var brand;
     if(sort_only) {
-      label = this.state.last_fetch_label
-      model = this.state.last_fetch_model
-      brand = this.state.last_fetch_brand 
+      label = this.state.last_fetch_label;
+      model = this.state.last_fetch_model;
+      brand = this.state.last_fetch_brand; 
     } else {
-      label = this.state.filter_label
-      model = this.state.filter_model
-      brand = this.state.filter_brand
+      label = this.state.filter_label;
+      model = this.state.filter_model;
+      brand = this.state.filter_brand;
     }
-    label = label.replace(/\s/g,'+')
-    model = model.replace(/\s/g,'+')
+    label = label.replace(/\s/g,'+');
+    model = model.replace(/\s/g,'+');
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `resources`;
-    const params = `permission=${this.props.user.current_role}&q[brand]=${brand}&q[label]=${label}&q[model]=${model}&q[s]=${this.state.filter_s}`
+    const collection = 'resources';
+    const params = `permission=${this.props.user.current_role}&q[brand]=${brand}&q[label]=${label}&q[model]=${model}&q[s]=${this.state.filter_s}`;
 
-    console.log(`${apiUrl}/${collection}?${params}`)
+    console.log(`${apiUrl}/${collection}?${params}`);
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get",
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
     }).then(parseResponse).then(resp => {
       this.setState({
         resources: resp,
         last_fetch_label: label,
         last_fetch_model: model
-      })
+      });
     });
   }
 
-	newResourceTypeButton() {
-		return (
-			<button 
+  newResourceTypeButton() {
+    return (
+      <button 
         onClick={() =>
-          browserHistory.push({ pathname: `/resources/new`}) 
+          browserHistory.push({ pathname: '/resources/new'}) 
         }
         className="btn waves-effect btn button-color" 
         name="anterior" 
         type="submit">
           CADASTRAR RECURSO
       </button>
-		)
-	}
+    );
+  }
 
   render() {
     return (
       <main>
-      	<Row>
-	        <Col s={12}>
-		      	<div>
-		      		{this.mainComponent()}
-		      	</div>
-	      	</Col>
-	    </Row>
-	  </main>
-    )
+        <Row>
+          <Col s={12}>
+            <div>
+              {this.mainComponent()}
+            </div>
+          </Col>
+        </Row>
+      </main>
+    );
   }
 }
 
 const mapStateToProps = (state) => {
-  const user = state.get('user').getIn(['userInfo'])
+  const user = state.get('user').getIn(['userInfo']);
   return {
     user
-  }
-}
+  };
+};
 
 const ResourceList = connect(
   mapStateToProps
-)(getResourceList)
-export default ResourceList
+)(getResourceList);
+export default ResourceList;
