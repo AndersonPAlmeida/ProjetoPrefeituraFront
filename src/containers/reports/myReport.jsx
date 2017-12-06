@@ -23,6 +23,7 @@ class getMyReport extends Component {
   componentDidMount(){
     console.log(this.props.user)
     jsPDF = require('jspdf')
+
   }
 
   pdfToHTML(){
@@ -107,8 +108,15 @@ class getMyReport extends Component {
                 </tr>
                 <tr>
                   <td>Endereço</td>
-                  <td>{this.props.user.citizen.address.address}</td>
+                  <td>{this.props.user.citizen.address.address +', '+this.props.user.citizen.address.neighborhood}</td>
                 </tr>
+                <tr>
+                  <td>Telefone</td>
+                  <td>{this.props.user.citizen.phone1}</td>
+                </tr>
+                {this.props.user.citizen.phone2 &&
+                  (<tr><td>Telefone 2</td><td>{this.props.user.citizen.phone2}</td></tr>)
+                }
               </tbody>
             </Table>
           </div>
