@@ -135,7 +135,8 @@ class getResourceList extends Component {
         'Accept': 'application/json',
         'Content-Type': 'application/json' },
       method: 'get',
-    }).then(parseResponse).then(resp => {
+    }).then(parseResponse).then(completeResp => {
+      let resp = completeResp.entries;
       resp.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );      
       self.setState({ service_places: resp });
     });
@@ -150,15 +151,15 @@ class getResourceList extends Component {
                 this.state.resource_types.find(o => o.id === resource.resource_types_id).name
               }
             </td>
+            <td key={Math.random()} >
+              {resource.label}
+            </td>
             <td key={Math.random()}  >
               {resource.brand}
             </td>
             <td key={Math.random()} >
               {resource.model}
-            </td>
-            <td key={Math.random()} >
-              {resource.label}
-            </td>
+            </td>            
             <td key={Math.random()} >
               {resource.active ? 'Ativo' : 'Inativo'}
             </td>
@@ -232,7 +233,36 @@ class getResourceList extends Component {
             </i>
           </a>
         </th>
-
+        <th>
+          <a 
+            href='#' 
+            className="grey-text text-darken-3 "
+            onClick={ 
+              () => { 
+                if (this.state.filter_s == 'label+asc'){
+                  document.getElementById('ascLabelIcon').style.display = 'none';
+                  document.getElementById('descLabelIcon').style.display = 'inline-block';                    
+                } 
+                else{
+                  document.getElementById('descLabelIcon').style.display = 'none';               
+                  document.getElementById('ascLabelIcon').style.display = 'inline-block';
+                }
+                  
+                this.setState({
+                  ['filter_s']: this.state.filter_s == 'label+asc' ? 'label+desc' : 'label+asc'
+                }, this.handleFilterSubmit.bind(this,true));
+              }
+            }
+          >
+            Etiqueta
+            <i className="waves-effect material-icons tiny tooltipped" id="ascLabelIcon" style={{display:'none'}}>
+              arrow_drop_down
+            </i>
+            <i className="waves-effect material-icons tiny tooltipped" id="descLabelIcon" style={{display:'none'}}>
+              arrow_drop_up
+            </i>
+          </a>
+        </th>
 
         <th>
           <a 
@@ -296,36 +326,7 @@ class getResourceList extends Component {
           </a>
         </th>
 
-        <th>
-          <a 
-            href='#' 
-            className="grey-text text-darken-3 "
-            onClick={ 
-              () => { 
-                if (this.state.filter_s == 'label+asc'){
-                  document.getElementById('ascLabelIcon').style.display = 'none';
-                  document.getElementById('descLabelIcon').style.display = 'inline-block';                    
-                } 
-                else{
-                  document.getElementById('descLabelIcon').style.display = 'none';               
-                  document.getElementById('ascLabelIcon').style.display = 'inline-block';
-                }
-                  
-                this.setState({
-                  ['filter_s']: this.state.filter_s == 'label+asc' ? 'label+desc' : 'label+asc'
-                }, this.handleFilterSubmit.bind(this,true));
-              }
-            }
-          >
-            Etiqueta
-            <i className="waves-effect material-icons tiny tooltipped" id="ascLabelIcon" style={{display:'none'}}>
-              arrow_drop_down
-            </i>
-            <i className="waves-effect material-icons tiny tooltipped" id="descLabelIcon" style={{display:'none'}}>
-              arrow_drop_up
-            </i>
-          </a>
-        </th>
+        
         <th>Situação</th>
         {
           this.state.current_permission == 'adm_c3sl' || this.state.current_permission == 'adm_prefeitura' ? 

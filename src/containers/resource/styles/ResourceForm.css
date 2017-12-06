@@ -50,3 +50,8 @@ input {
   padding: 0;
   width: 295px;
 }
+
+#field-textarea {
+  width: 300px ;
+
+}

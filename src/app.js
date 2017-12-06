@@ -5,13 +5,13 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule, 
-         ChooseRole, ScheduleAgreement, ScheduleChoose, ScheduleCitizen, ScheduleFinish,
-         DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit,
-         SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
-         ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
-         ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, ResourceTypeList, ResourceTypeShow,
-         ResourceTypeCreate, ResourceTypeEdit, ResourceList, ResourceShow, ResourceEdit
-       } from './containers';
+  ChooseRole, ScheduleAgreement, ScheduleChoose, ScheduleCitizen, ScheduleFinish,
+  DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit,
+  SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
+  ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
+  ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, ResourceTypeList, ResourceTypeShow,
+  ResourceTypeCreate, ResourceTypeEdit, ResourceList, ResourceShow, ResourceEdit, ResourceCreate
+} from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware, routerActions } from 'react-router-redux';
@@ -34,13 +34,13 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
     const { persistState } = require('redux-devtools');
     const DevTools = require('./containers/application/DevTools');
     store = createStore(reducer, 
-                        fromJS(stateData),
-                        compose(
-                               applyMiddleware(...middleware),
-                               global.devToolsExtension ? global.devToolsExtension() : DevTools.instrument(),
-                               persistState(global.location.href.match(/[?&]debug_session=([^&]+)\b/))
-                              )
-                       );
+      fromJS(stateData),
+      compose(
+        applyMiddleware(...middleware),
+        global.devToolsExtension ? global.devToolsExtension() : DevTools.instrument(),
+        persistState(global.location.href.match(/[?&]debug_session=([^&]+)\b/))
+      )
+    );
   }
   else {
     finalCreateStore = applyMiddleware(...middleware)(createStore);
@@ -105,9 +105,9 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="resource_types/:resource_type_id" component={UserIsAuthenticated(ResourceTypeShow)} />
 
         <Route path="resources" component={UserIsAuthenticated(ResourceList)} />
-        <Route path="resources/:resource_id" component={UserIsAuthenticated(ResourceShow)} />
         <Route path="resources/:resource_id/edit" component={UserIsAuthenticated(ResourceEdit)} />
-        <Route path="resources/new" component={UserIsAuthenticated(ResourceTypeCreate)} />
+        <Route path="resources/new" component={UserIsAuthenticated(ResourceCreate)} />
+        <Route path="resources/:resource_id" component={UserIsAuthenticated(ResourceShow)} />
 
         <Route path="*" component={NotFound} status={404} />
       </Route>

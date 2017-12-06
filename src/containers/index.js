@@ -41,3 +41,4 @@ export ResourceTypeEdit from './resource_type/ResourceTypeEdit'
 export ResourceList from './resource/ResourceList';
 export ResourceShow from './resource/ResourceShow';
 export ResourceEdit from './resource/ResourceEdit';
+export ResourceCreate from './resource/ResourceCreate';

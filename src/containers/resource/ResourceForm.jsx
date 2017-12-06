@@ -28,13 +28,18 @@ class getResourceForm extends Component {
         service_place_id: 0
       },
       previous_data: undefined,
+      city_halls:[],
       resource_types: [],
       service_place:[],
       professionals:[],
+      service_place_professional:[],
+      service_place_of_professional:[],
+      current_service_place_adm_local:[]
     };
     this.getResourceType = this.getResourceType.bind(this); 
     this.getServicePlace = this.getServicePlace.bind(this); 
     this.getProfessional = this.getProfessional.bind(this); 
+    this.getServicePlaceProfessional = this.getServicePlaceProfessional.bind(this);
   }
 
   componentWillMount() {
@@ -42,16 +47,21 @@ class getResourceForm extends Component {
     var role = this.props.current_role.id;
     this.getResourceType(role);
 
-    if(this.props.current_role.role != 'adm_local')
+    if(this.props.current_role.role != 'adm_local'){
       this.getServicePlace(role);
+      this.getCityHall(role);
+    }
     
     this.getProfessional(role);
+    this.getServicePlaceProfessional(role);
+
     if (this.props.is_edit)    
       var previous_data = {
         situation: Boolean(this.props.data.active),
         brand: this.props.data.brand,
         model: this.props.data.model,        
         label: this.props.data.label,
+        note: this.props.data.note,
         maximum_schedule_time: this.props.data.maximum_schedule_time,
         minimum_schedule_time: this.props.data.minimum_schedule_time,
         professional_responsible_id: this.props.data.professional_responsible_id,
@@ -93,6 +103,39 @@ class getResourceForm extends Component {
       self.setState({ resource_types: resp });
     });
   }
+
+  getCityHall(role) {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'city_halls/';
+    const params = `permission=${role}`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      self.setState({ city_halls: resp });
+    });
+  }
+
+  getServicePlaceProfessional(role) {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'forms/create_shift/';
+    const params = `permission=${role}`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      self.setState({ service_place_professional: resp, 
+        current_service_place_adm_local: resp.service_places[0]});
+
+      
+    });
+  }
   getServicePlace(role) {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
@@ -103,7 +146,8 @@ class getResourceForm extends Component {
         'Accept': 'application/json',
         'Content-Type': 'application/json' },
       method: 'get',
-    }).then(parseResponse).then(resp => {
+    }).then(parseResponse).then(completeResp => {
+      let resp = completeResp.entries;
       self.setState({ service_place: resp });
     });
   }
@@ -117,7 +161,8 @@ class getResourceForm extends Component {
         'Accept': 'application/json',
         'Content-Type': 'application/json' },
       method: 'get',
-    }).then(parseResponse).then(resp => {
+    }).then(parseResponse).then(completeResp => {
+      let resp = completeResp.entries;      
       self.setState({ professionals: resp });
     });
   }
@@ -126,21 +171,22 @@ class getResourceForm extends Component {
     const target = event.target;
     const value = target.value;
     const name = target.name;
+
     this.setState({
       resource: update(this.state.resource, { [name]: {$set: value} })
     });
+
+    if(name=='professional_responsible_id'){
+      this.changeResourceProfessional(value);
+    }
   }
 
   handleSubmit() {
     let errors = [];
     let formData = {};
     formData = this.state.resource;
-    if (!formData['brand'])
-      errors.push('Campo marca é obrigatório');    
-
-    if (!formData['model'])
-      errors.push('Campo modelo é obrigatório');
-
+    if(this.props.current_role.role == 'adm_local')
+      formData.service_place_id = this.state.current_service_place_adm_local.id;
     if(errors.length > 0) {
       let full_error_msg = '';
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
@@ -185,19 +231,35 @@ class getResourceForm extends Component {
         <a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
         <button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">{this.props.is_edit ? 'Atualizar' : 'Criar'}</button>
       </div>
-    )
+    );
   }
 
   pickResourceType() {
-    const resourceTypesList = (
-      this.state.resource_types.map((resource_type) => {
-        return (
-          <option key={Math.random()} value={resource_type.id}>
-            {resource_type.name}
-          </option>
-        );
-      })
-    );
+    var resourceTypesList;
+
+    if(this.props.current_role.role == 'adm_c3sl'){
+      resourceTypesList = (
+        this.state.resource_types.map((resource_type) => {
+          return (
+            <option key={Math.random()} value={resource_type.id}>
+              {resource_type.name + ` - ${this.state.city_halls.find(c => resource_type.city_hall_id === c.id ).name}`}
+            </option>
+          );
+        })
+      );
+    }
+    else{
+      resourceTypesList = (
+        this.state.resource_types.map((resource_type) => {
+          return (
+            <option key={Math.random()} value={resource_type.id}>
+              {resource_type.name}
+            </option>
+          );
+        })
+      );
+    }
+      
     return (
       <Input 
         name="resource_types_id" 
@@ -218,8 +280,14 @@ class getResourceForm extends Component {
   }
 
   pickServicePlace() {
+
+    var sp = this.state.service_place_of_professional.length > 0 ? 
+      this.state.service_place_of_professional 
+      :
+      this.state.service_place;
+
     const resourceTypesList = (
-      this.state.service_place.map((service_place) => {
+      sp.map((service_place) => {
         return (
           <option key={Math.random()} value={service_place.id}>
             {service_place.name}
@@ -275,7 +343,24 @@ class getResourceForm extends Component {
     );
   }
 
-  render() {    
+  changeResourceProfessional(id){
+    if(this.state.resource.professional_responsible_id != 0){
+      let professionals = this.state.service_place_professional.professionals;
+      let professional = (professionals.find(p => Number(id) === p.id ));
+      let service_places = [];
+      for(let i = 0, j = 0; i < this.state.service_place.length; i++){
+        if(this.state.service_place[i].id == professional.service_place_ids[j]){
+          j++;
+          service_places.push(this.state.service_place[i]);
+          if(j-1 > professional.service_place_ids.length)
+            break;
+        }
+      } 
+      this.setState({ service_place_of_professional: service_places });
+    }
+  }
+
+  render() {  
     return (
       <main>
         <Row>
@@ -290,9 +375,13 @@ class getResourceForm extends Component {
                 <Row className='first-line'>
                   <Col s={12} m={12} l={12}>
                     
-                
+                    <div className="field-input" id="no-padding">
+                      <h6>Tipo de recurso*:</h6>
+                      {this.pickResourceType()}
+                    </div>
+
                     <div className="field-input" >
-                      <h6>Marca*:</h6>
+                      <h6>Marca:</h6>
                       <label>
                         <input 
                           type="text" 
@@ -306,7 +395,7 @@ class getResourceForm extends Component {
 
 
                     <div className="field-input" >
-                      <h6>Modelo*:</h6>
+                      <h6>Modelo:</h6>
                       <label>
                         <input 
                           type="text" 
@@ -318,7 +407,6 @@ class getResourceForm extends Component {
                       </label>
                     </div>
 
-
                     <div className="field-input" >
                       <h6>Etiqueta:</h6>
                       <label>
@@ -327,6 +415,19 @@ class getResourceForm extends Component {
                           className='input-field' 
                           name="label" 
                           value={this.state.resource.label} 
+                          onChange={this.handleInputResourceChange.bind(this)} 
+                        />
+                      </label>
+                    </div>
+
+                    <div id="field-textarea">
+                      <h6>Nota:</h6>
+                      <label>
+                        <textarea  
+                          className='input-field materialize-textarea black-text'
+                          name="note" 
+                          placeholder="Adicione uma anotação"
+                          value={this.state.resource.note} 
                           onChange={this.handleInputResourceChange.bind(this)} 
                         />
                       </label>
@@ -372,11 +473,6 @@ class getResourceForm extends Component {
                     </div>
 
 
-                    <div className="field-input" id="no-padding">
-                      <h6>Tipo de recurso*:</h6>
-                      {this.pickResourceType()}
-                    </div>
-
                     {
                       this.props.current_role.role != 'adm_local' ? 
                         <div className="field-input" id="no-padding" >
@@ -384,7 +480,15 @@ class getResourceForm extends Component {
                           {this.pickServicePlace()}
                         </div>
                         :
-                        <div/>
+                        <div className="field-input" id="no-padding" >
+                          <h6>Local de atendimento*:</h6>
+                          <Input s={6} m={32} l={12}
+                            type='select'
+                            name='service_place_id'
+                          >
+                            <option value={this.state.current_service_place_adm_local.id}>{this.state.current_service_place_adm_local.name}</option>
+                          </Input>
+                        </div>
                     }
 
                     <div className="field-input">
