@@ -27,8 +27,8 @@ class getCitizenSchedule extends Component {
           last_fetch_service_type: 0,
           last_fetch_service_place: 0,
           last_fetch_situation: 0,
-          current_page: 1,
-          num_pages: 5
+          num_entries: 0,
+          current_page: 1
       };
   }
 
@@ -439,7 +439,7 @@ class getCitizenSchedule extends Component {
             }
           }
           className={styles['pagination']} 
-          items={this.state.num_pages} 
+          items={Math.ceil(this.state.num_entries/25)} 
           activePage={this.state.current_page} 
           maxButtons={8} 
         />

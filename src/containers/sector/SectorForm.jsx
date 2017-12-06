@@ -37,12 +37,7 @@ class getSectorForm extends Component {
     if(this.props.is_edit) {
       self.setState({ sector: this.props.data })
     }
-    if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
-      this.setState({
-        sector: update(this.state.sector, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
-      })
-    }
-    else {
+    if(this.props.current_role && this.props.current_role.role == 'adm_c3sl') {
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'forms/service_type_index';
       const params = this.props.fetch_params; 
@@ -175,13 +170,13 @@ class getSectorForm extends Component {
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
                     <div className="field-input" >
-                      <h6>Prefeitura:</h6>
+                      <h6>Prefeitura*:</h6>
                       <div>
                         {this.pickCityHall()}
                       </div>
                     </div>
                     <div className="field-input" >
-                      <h6>Situação:</h6>
+                      <h6>Situação*:</h6>
                       <div>
                         <Input s={6} m={32} l={6} 
                                type='select'
@@ -195,7 +190,7 @@ class getSectorForm extends Component {
                       </div>
                     </div>
                     <div className="field-input" >
-                      <h6>Nome:</h6>
+                      <h6>Nome*:</h6>
                       <label>
                         <input 
                           type="text" 
@@ -207,7 +202,7 @@ class getSectorForm extends Component {
                       </label>
                     </div>
                     <div className="field-input" >
-                      <h6>Número de agendamentos por setor:</h6>
+                      <h6>Número de agendamentos por setor*:</h6>
                       <label>
                         <input 
                           type="text" 
@@ -219,7 +214,7 @@ class getSectorForm extends Component {
                       </label>
                     </div>
                     <div className="field-input" >
-                      <h6>Número de dias de impedimento de novos agendamentos:</h6>
+                      <h6>Número de dias de impedimento de novos agendamentos*:</h6>
                       <label>
                         <input 
                           type="text" 
@@ -231,7 +226,7 @@ class getSectorForm extends Component {
                       </label>
                     </div>
                     <div className="field-input" >
-                      <h6>Limite de cancelamentos:</h6>
+                      <h6>Limite de cancelamentos*:</h6>
                       <label>
                         <input 
                           type="text" 
@@ -243,7 +238,7 @@ class getSectorForm extends Component {
                       </label>
                     </div>
                     <div className="field-input" >
-                      <h6>Horas de antecedências para poder cancelar um atendimento:</h6>
+                      <h6>Horas de antecedências para poder cancelar um atendimento*:</h6>
                       <label>
                         <input 
                           type="text" 
@@ -255,7 +250,7 @@ class getSectorForm extends Component {
                       </label>
                     </div>
                     <div className="field-input" >
-                      <h6>Número de faltas que gera impedimento de novos agendamentos:</h6>
+                      <h6>Número de faltas que gera impedimento de novos agendamentos*:</h6>
                       <label>
                         <input 
                           type="text" 
@@ -267,7 +262,7 @@ class getSectorForm extends Component {
                       </label>
                     </div>
                     <div>
-                      <h6>Descrição:</h6>
+                      <h6>Descrição*:</h6>
                       <label>
                         <textarea  
                           className='input-field materialize-textarea'

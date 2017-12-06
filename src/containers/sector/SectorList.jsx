@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
-import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
+import { Button, Card, Row, Col, Dropdown, Input, Pagination } from 'react-materialize'
 import styles from './styles/SectorList.css'
 import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
@@ -19,7 +19,9 @@ class getSectorList extends Component {
           filter_description: '',
           last_fetch_name: '',
           last_fetch_description: '',
-          filter_s: ''
+          filter_s: '',
+          num_entries: 0,
+          current_page: 1
       };
   }
 
@@ -34,7 +36,11 @@ class getSectorList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ sectors: resp })
+      console.log(resp)
+      self.setState({ 
+                      sectors: resp.entries,
+                      num_entries: resp.num_entries
+                    })
     });
   }
 
@@ -109,6 +115,14 @@ class getSectorList extends Component {
             <td>
               {sector.schedules_by_sector}
             </td>
+            {
+              this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+                <td>
+                  {sector.city_hall_name}
+                </td>
+                :
+                null
+            }
             <td>
               <a className='back-bt waves-effect btn-flat' 
                  href='#' 
@@ -132,19 +146,57 @@ class getSectorList extends Component {
         <th>{this.sortableColumn.bind(this)('Descrição','description')}</th>
         <th>{this.sortableColumn.bind(this)('Situação','situation')}</th>
         <th>{this.sortableColumn.bind(this)('Agendamentos por setor','schedules_by_sector')}</th>
+        {
+          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+            <th>{this.sortableColumn.bind(this)('Prefeitura','city_hall_name')}</th> :
+            null
+        }
         <th></th>
       </tr>
     )
 
+    var num_pages = Math.ceil(this.state.num_entries/25)
     return (
-      <table className={styles['table-list']}>
-        <thead>
-          {fields}
-        </thead>
-        <tbody>
-          {data}
-        </tbody>
-      </table>
+      <div> 
+        <p className={styles['description-column']}>
+          Mostrando  
+          { 
+            this.state.current_page == num_pages 
+              ? 
+                this.state.num_entries % 25 == 0 ? ' 25 ' : ` ${this.state.num_entries % 25} `  
+              :
+                ' 25'
+          } 
+          de {this.state.num_entries} registros
+        </p>
+        <br />
+        <table className={styles['table-list']}>
+          <thead>
+            {fields}
+          </thead>
+          <tbody>
+            {data}
+          </tbody>
+        </table>
+        <br />
+        <Pagination
+          value={this.state.current_page}
+          onSelect={ (val) =>
+            { 
+              this.setState(
+                {
+                  current_page: val
+                },
+                () => {this.handleFilterSubmit.bind(this)(true)}
+              )
+            }
+          }
+          className={styles['pagination']}
+          items={Math.ceil(this.state.num_entries/25)} 
+          activePage={this.state.current_page}
+          maxButtons={8}
+        />
+      </div>
     )
 	}
 
@@ -224,7 +276,11 @@ class getSectorList extends Component {
     description = description.replace(/\s/g,'+')
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `sectors`;
-    const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}&q[s]=${this.state.filter_s}`
+    const params = `permission=${this.props.user.current_role}`
+                    +`&q[name]=${name}`
+                    +`&q[description]=${description}`
+                    +`&q[s]=${this.state.filter_s}`
+                    +`&page=${this.state.current_page}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -232,7 +288,8 @@ class getSectorList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       this.setState({
-        sectors: resp,
+        sectors: resp.entries,
+        num_entries: resp.num_entries,
         last_fetch_name: name,
         last_fetch_description: description
       })

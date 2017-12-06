@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
-import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
+import { Button, Card, Row, Col, Dropdown, Input, Pagination } from 'react-materialize'
 import styles from './styles/ServiceTypeList.css'
 import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
@@ -19,7 +19,9 @@ class getServiceTypeList extends Component {
           filter_situation: '',
           last_fetch_description: '',
           last_fetch_situation: '',
-          filter_q: ''   
+          filter_s: '',
+          num_entries: 0,
+          current_page: 1 
       };
   }
 
@@ -34,7 +36,10 @@ class getServiceTypeList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ service_types: resp })
+      self.setState({ 
+                      service_types: resp.entries,
+                      num_entries: resp.num_entries
+                    })
     });
   }
 
@@ -129,14 +134,33 @@ class getServiceTypeList extends Component {
     )
 
     return (
-      <table className={styles['table-list']}>
-        <thead>
-          {fields}
-        </thead>
-        <tbody>
-          {data}
-        </tbody>
-      </table>
+      <div>
+        <table className={styles['table-list']}>
+          <thead>
+            {fields}
+          </thead>
+          <tbody>
+            {data}
+          </tbody>
+        </table>
+        <Pagination
+          value={this.state.current_page}
+          onSelect={ (val) =>
+            {
+              this.setState(
+                {
+                  current_page: val
+                },
+                () => {this.handleFilterSubmit.bind(this)(true)}
+              )
+            }
+          }
+          className={styles['pagination']}
+          items={Math.ceil(this.state.num_entries/25)}
+          activePage={this.state.current_page}
+          maxButtons={8}
+        />
+      </div>
     )
 	}
 
@@ -218,7 +242,11 @@ class getServiceTypeList extends Component {
     description = description.replace(/\s/g,'+')
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `service_types`;
-    const params = `permission=${this.props.user.current_role}&q[description]=${description}&q[s]=${this.state.filter_s}&q[active]=${situation}`
+    const params = `permission=${this.props.user.current_role}`
+                    +`&q[description]=${description}`
+                    +`&q[active]=${situation}`
+                    +`&q[s]=${this.state.filter_s}`
+                    +`&page=${this.state.current_page}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -226,7 +254,8 @@ class getServiceTypeList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       this.setState({
-        service_types: resp,
+        service_types: resp.entries,
+        num_entries: resp.num_entries,
         last_fetch_description: description,
         last_fetch_situation: situation
       })
