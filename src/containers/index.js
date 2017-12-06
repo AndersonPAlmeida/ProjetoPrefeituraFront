@@ -33,4 +33,8 @@ export ServiceTypeEdit from './service_type/ServiceTypeEdit';
 export ServiceTypeShow from './service_type/ServiceTypeShow';
 export ServiceTypeCreate from './service_type/ServiceTypeCreate';
 
-export ProfessionalIndex from './professional/ProfessionalIndex'
+export ProfessionalIndex from './professional/ProfessionalIndex';
+export ProfessionalList from './professional/ProfessionalList';
+export ProfessionalEdit from './professional/ProfessionalEdit';
+export ProfessionalShow from './professional/ProfessionalShow';
+export ProfessionalCreate from './professional/ProfessionalCreate';
