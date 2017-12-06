@@ -1,9 +1,9 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import { Link } from 'react-router'
 import { browserHistory } from 'react-router'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env'
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response"
-import {Row, Col} from 'react-materialize'
+import {Row, Col, Table} from 'react-materialize'
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
@@ -17,8 +17,7 @@ var jsPDF
 class getMyReport extends Component {
   constructor(props) {
       super(props)
-      this.state = {
-      };
+      this.pdfToHTML=this.pdfToHTML.bind(this);
 
   }
   componentDidMount(){
@@ -26,17 +25,37 @@ class getMyReport extends Component {
     jsPDF = require('jspdf')
   }
 
-  printDocument() {
-    const input = document.getElementById('divToPrint');
-    html2canvas(input)
-      .then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF();
-        pdf.addImage(imgData, 'JPEG', 0, 0);
-        pdf.save("download.pdf");
-      })
-    ;
+  pdfToHTML(){
+    var pdf = new jsPDF('p', 'pt', 'letter');
+    var source = $('#HTMLtoPDF')[0];
+    var specialElementHandlers = {
+      '#bypassme': function(element, renderer) {
+        return true
+      }
+    };
+
+    var margins = {
+      top: 50,
+      left: 60,
+      width: 545
+    };
+
+    pdf.fromHTML (
+      source // HTML string or DOM elem ref.
+      , margins.left // x coord
+      , margins.top // y coord
+      , {
+          'width': margins.width // max width of content on PDF
+          , 'elementHandlers': specialElementHandlers
+        },
+      function (dispose) {
+        // dispose: object with X, Y of the last line add to the PDF
+        // this allow the insertion of new lines after html
+        pdf.save('html2pdf.pdf');
+      }
+    )
   }
+
 
   formatCpf(cpf){
   return(cpf[0] + cpf[1] + cpf[2] + '.' + cpf[3] + cpf[4] + cpf[5] + '.' + cpf[6] + cpf[7] + cpf[8] + '-' + cpf[9] + cpf[10])
@@ -48,31 +67,55 @@ class getMyReport extends Component {
     render() {
       return (
         <div>
-          <div id="divToPrint" className="mt4">
-          <Row>
-          <Col l={6}>
-             <ul className="collection with-header">
-                  <li className="collection-header"><h4>{this.props.user.citizen.name}</h4></li>
-                   <li className="collection-item"><b>CPF</b>: {this.formatCpf(this.props.user.citizen.cpf)}</li>
-                   <li className="collection-item"><b>RG</b>: {this.props.user.citizen.rg}</li>
-                   <li className="collection-item"><b>Data de nascimento</b>: {this.formatDate(this.props.user.citizen.birth_date)}</li>
-                   <li className="collection-item"><b>Email</b>: {this.props.user.citizen.email}</li>
-                </ul>
-          </Col>
-          <Col l={6}>
-            <ul className="collection with-header">
-                 <li className="collection-header"><h4>Dados cadastrais</h4></li>
-                  <li className="collection-item"><b>Estado</b>: {this.props.user.citizen.state.name}</li>
-                  <li className="collection-item"><b>Cidade</b>: {this.props.user.citizen.city.name}</li>
-                  <li className="collection-item"><b>Endereço</b>: {this.props.user.citizen.address.address}</li>
-                  <li className="collection-item"><b>CEP</b>: {this.props.user.citizen.address.zipcode}</li>
-             </ul>
-          </Col>
-          </Row>
-          </div>
+        <div className="card dataContainer">
+        <div className="card-content">
+          <div id="HTMLtoPDF" className="mt4" >
+          <h3>{this.props.user.citizen.name}</h3>
+            <Table className="bordered striped">
+              <thead>
+                <tr>
+                  <th>Dados cadastrais</th>
+                  <th> </th>
+                </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td><p>CPF</p> </td>
+                <td> {this.formatCpf(this.props.user.citizen.cpf)}</td>
+              </tr>
+              <tr>
+                <td>RG</td>
+                <td>{this.props.user.citizen.rg}</td>
+              </tr>
 
-         <button onClick={this.printDocument}>Download PDF</button>
-       </div>
+              <tr>
+                <td>Data de Nascimento</td>
+                <td>{this.formatDate(this.props.user.citizen.birth_date)}</td>
+              </tr>
+              <tr>
+                <td>Email</td>
+                <td>{this.props.user.citizen.email}</td>
+              </tr>
+
+                <tr>
+                  <td>Cidade</td>
+                  <td>{this.props.user.citizen.city.name}</td>
+                </tr>
+                <tr>
+                  <td>Estado</td>
+                  <td>{this.props.user.citizen.state.name}</td>
+                </tr>
+                <tr>
+                  <td>Endereço</td>
+                  <td>{this.props.user.citizen.address.address}</td>
+                </tr>
+              </tbody>
+            </Table>
+          </div>
+         <button onClick={this.pdfToHTML}>Download PDF</button>
+         </div>
+         </div>
+         </div>
       )
     }
 }
