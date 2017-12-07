@@ -34,3 +34,4 @@ export ServiceTypeShow from './service_type/ServiceTypeShow';
 export ServiceTypeCreate from './service_type/ServiceTypeCreate';
 
 export MyReport from './reports/myReport'
+export Reports from './reports/Reports'
