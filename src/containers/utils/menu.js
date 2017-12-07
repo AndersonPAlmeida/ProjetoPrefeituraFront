@@ -11,7 +11,7 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Administrador C3SL", 'link': "/choose_role", 'separator': true },
                   { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
                   { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
-                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
+                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report", 'separator': true },
                   { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false }
                 ]
         },
@@ -53,7 +53,7 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Administrador Prefeitura", 'link': "/choose_role", 'separator': true },
                   { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
                   { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
-                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
+                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report", 'separator': true },
                   { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false }
                 ]
         },
@@ -93,7 +93,7 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Administrador Local", 'link': "/choose_role", 'separator': true },
                   { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
                   { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
-                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
+                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report", 'separator': true },
                   { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false }
                 ]
         },
@@ -128,7 +128,7 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Atendente Local", 'link': "/choose_role", 'separator': true },
                   { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
                   { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
-                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
+                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report", 'separator': true },
                   { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false }
                 ]
         },
@@ -156,7 +156,7 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': "Responsável Atendimento", 'link': "/choose_role", 'separator': true },
                   { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
                   { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
-                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report/report.pdf", 'separator': true },
+                  { 'name': "Imprimir Cadastro", 'link': "/citizens/my_report", 'separator': true },
                   { 'name': "Sair", 'link': "/citizens/sign_out", 'separator': false }
                 ]
         },
