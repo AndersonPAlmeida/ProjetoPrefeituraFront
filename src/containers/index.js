@@ -42,3 +42,9 @@ export ResourceList from './resource/ResourceList';
 export ResourceShow from './resource/ResourceShow';
 export ResourceEdit from './resource/ResourceEdit';
 export ResourceCreate from './resource/ResourceCreate';
+
+
+export ResourceShiftList from './resource_shift/ResourceShiftList';
+// export ResourceShow from './resource/ResourceShow';
+// export ResourceEdit from './resource/ResourceEdit';
+// export ResourceCreate from './resource/ResourceCreate';
