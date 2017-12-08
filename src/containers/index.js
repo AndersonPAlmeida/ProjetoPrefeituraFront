@@ -35,3 +35,4 @@ export ServiceTypeCreate from './service_type/ServiceTypeCreate';
 
 export MyReport from './reports/myReport'
 export Reports from './reports/Reports'
+export citizenReport from './reports/reportTypes/citizenReport'
