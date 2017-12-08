@@ -161,11 +161,15 @@ class getSectorList extends Component {
         <p className={styles['description-column']}>
           Mostrando  
           { 
-            this.state.current_page == num_pages 
-              ? 
-                this.state.num_entries % 25 == 0 ? ' 25 ' : ` ${this.state.num_entries % 25} `  
+            num_pages != 0
+              ?
+                this.state.current_page == num_pages 
+                  ? 
+                    this.state.num_entries % 25 == 0 ? ' 25 ' : ` ${this.state.num_entries % 25} `  
+                  :
+                    ' 25 '
               :
-                ' 25'
+                ' 0 '
           } 
           de {this.state.num_entries} registros
         </p>
@@ -291,7 +295,8 @@ class getSectorList extends Component {
         sectors: resp.entries,
         num_entries: resp.num_entries,
         last_fetch_name: name,
-        last_fetch_description: description
+        last_fetch_description: description,
+        current_page: 1
       })
     });
   }

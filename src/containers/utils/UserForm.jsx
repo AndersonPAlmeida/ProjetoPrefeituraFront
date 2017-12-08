@@ -11,6 +11,11 @@ import { browserHistory } from 'react-router';
 import { UserImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
+import personal_info from './personal_info';
+import address_info from './address_info';
+import contact_info from './contact_info';
+import password_info from './password_info';
+import professional_info from './professional_info';
 import {userSignIn, userUpdatePicture} from '../../actions/user';
 
 class getUserForm extends Component {
@@ -48,8 +53,18 @@ class getUserForm extends Component {
         password_confirmation: "",
         state_abbreviation: '',
         pcd_value: '',
-        phonemask: "(11) 1111-11111"
+        phonemask: "(11) 1111-11111",
+        permission_id: 0,
+        service_place: {},
+        service_places: [],
+        occupations: [],
+        permissions: []
       },
+      professional: {
+        registration: '',
+        occupation_id: 0,
+        roles: []
+      }
     };
   }
 
@@ -79,7 +94,6 @@ class getUserForm extends Component {
         })
       })
       this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
-        
     }
     else {
       if(typeof location !== 'undefined' && location.search) {
@@ -92,6 +106,25 @@ class getUserForm extends Component {
           this.updateAddress.bind(this)(query['cep'].replace(/(\.|-|_)/g,'')) 
         }
       }
+    }
+    if(this.props.user_class == `professional`) {
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = `forms/create_professional`
+      fetch(`${apiUrl}/${collection}?${this.props.fetch_params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        self.setState({
+                        aux: update(this.state.aux,
+                        {
+                          occupations: {$set: resp.occupations},
+                          permissions: {$set: resp.permissions},
+                          service_places: {$set: resp.service_places}
+                        })
+                      })
+      });
     }
   }
 
@@ -344,353 +377,46 @@ class getUserForm extends Component {
   }
 
   render() {
+    var title = this.props.is_edit ? 'Editar ' : 'Cadastrar ';
+    switch (this.props.user_class) {
+      case `citizen`:
+        title += 'Cidadão'
+        break
+      case `dependant`:
+        title += 'Dependente'
+        break
+      default:
+        title += 'Profissional'
+    }
+    if(this.props.is_edit)
+      title += `: ${this.props.user_data.name}`
     return (
       <main>
       	<Row>
 	        <Col s={12}>
             <div className='card'>
               <div className='card-content'>
-                {this.props.is_edit ?
-                  this.props.user_class == `citizen` ?
-                    <h2 className="card-title">Alterar cadastro: {this.props.user_data.name}</h2>
-                    :
-                    <h2 className="card-title">Alterar dependente: {this.props.user_data.name}</h2> 
-                    :
-                    this.props.user_class == `citizen` ?
-                      <h2 className="card-title">Cadastrar cidadão</h2>
-                      :
-                      <h2 className="card-title">Cadastrar dependente</h2> 
-                }
+                <h2 className="card-title">{title}</h2>
                 <Row className='first-line'>
-                  <Col s={12} m={12} l={6}>
-                    <div>
-                      <img
-                        id='user_photo'
-                        width='230'
-                        height='230'
-                        src={this.state.aux.photo_obj}
-                      />
-                      <div className='file-input'>
-                        <Input 
-                          type='file'
-                          name='photo'
-                          accept='image/*'
-                          onChange={this.handleFile.bind(this)} 
-                        />
-                      </div>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Nome*:</h6>
-                      <label>
-                        <input type="text" name="name" className='input-field' value={this.state.user.name} onChange={this.handleInputUserChange.bind(this)} />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Data de nascimento*:</h6>
-                      {this.selectDate()}
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>Possui algum tipo de deficiência:</h6>
-                      <div className="check-input">
-                        <Input 
-                          onChange={this.handleChange.bind(this)} 
-                          checked={this.state.aux.pcd_value} 
-                          s={12} l={12} 
-                          name='pcd_value' 
-                          type='radio' 
-                          value='true' 
-                          label='Sim' 
-                        />
-                        <Input 
-                          onChange={this.handleChange.bind(this)} 
-                          checked={!this.state.aux.pcd_value} 
-                          s={12} l={12} 
-                          name='pcd_value' 
-                          type='radio' 
-                          value='' 
-                          label='Não' 
-                        />
-
-                        { this.state.aux.pcd_value ? 
-                          <div>
-                            <h6>Qual tipo de deficiência:</h6>
-                            <label>
-                              <input 
-                                type="text" 
-                                className='input-field' 
-                                name="pcd" 
-                                value={this.state.user.pcd} 
-                                onChange={this.handleInputUserChange.bind(this)}
-                                />
-                            </label>
-                          </div> 
-                          : null 
-                        }
-                      </div>
-                    </div>
-
-                    <div className="field-input">
-                      <h6>CPF:</h6>
-                      <label>
-                        <MaskedInput 
-                          type="text" 
-                          className='input-field' 
-                          mask="111.111.111-11" 
-                          name="cpf" 
-                          value={this.state.user.cpf} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    
-                    <div className="field-input">
-                      <h6>RG:</h6>
-                      <label>
-                        <MaskedInput 
-                          type="text" 
-                          className='input-field' 
-                          mask="11.111.111-1" 
-                          name="rg" 
-                          value={this.state.user.rg} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                  </Col>
-
-                  <Col s={12} m={12} l={6}>
-                    <div className='category-title'>
-                      <p>Endereço</p>
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>CEP:</h6>
-                      <label>
-                        <MaskedInput 
-                          type="text" 
-                          className='input-field' 
-                          mask="11111-111" name="cep" 
-                          value={this.state.user.cep} 
-                          onChange=
-                          {
-                            (event) => {
-                              this.handleInputUserChange.bind(this)(event)
-                              var cep = event.target.value.replace(/(\.|-|_)/g,'')
-                              if(cep.length == 8)
-                                this.updateAddress.bind(this)(cep) 
-                            }
-                          } 
-                        />
-                      </label>
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>Estado do endereço:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="state_abbreviation" 
-                          value={this.state.aux.state_abbreviation}  
-                          disabled />
-                      </label>
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>Munícipio:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="city" 
-                          value={this.state.aux.city_name}  
-                          disabled 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Bairro:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="neighborhood" 
-                          value={this.state.aux.neighborhood} 
-                        />
-                      </label>
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>Endereço:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="address" 
-                          value={this.state.aux.address} 
-                        />
-                      </label>
-                    </div>
-                    
-                    <div className="field-input" >
-                      <h6>Número:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="address_number" 
-                          value={this.state.user.address_number} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>Complemento:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="address_complement" 
-                          value={this.state.user.address_complement} 
-                          onChange={this.handleInputUserChange.bind(this)} />
-                      </label>
-                    </div>
-                    </Col>
+                  {personal_info.bind(this)()}
+                  {address_info.bind(this)()}
                 </Row>
-                <Row className='first-line'>
-                  <Col s={12} m={12} l={6}>
-
-                    <div className='category-title'>
-                      <p>Informações de Contato</p>
-                    </div>
-
-                    <div className="field-input">
-                      <h6>Telefone 1:</h6>
-                      <label>
-                        <MaskedInput
-                          mask={this.state.aux.phonemask}
-                          type="text" 
-                          className='input-field' 
-                          name="phone1" 
-                          value={this.state.user.phone1} 
-                          onChange={
-                            (event) => {
-                              this.handleInputUserChange.bind(this)(event)
-                              if(event.target.value.replace(/(_|-|(|))/g,'').length == 14) {
-                                this.setState({aux: update(this.state.aux, 
-                                  {
-                                    phonemask: {$set: "(11) 11111-1111"},
-                                  })
-                                })
-                              }
-                              else {
-                                this.setState({aux: update(this.state.aux, 
-                                  {
-                                    phonemask: {$set: "(11) 1111-11111"},
-                                  })
-                                })
-                              }
-                            }
-                          }
-                        />
-                      </label>
-                    </div>
-
-                    <div className="field-input">
-                      <h6>Telefone 2:</h6>
-                      <label>
-                        <MaskedInput
-                          mask={this.state.aux.phonemask} 
-                          type="text" 
-                          className='input-field' 
-                          name="phone2" 
-                          value={this.state.user.phone2} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-
-                    <div className="field-input">
-                      <h6>E-mail:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="email" 
-                          value={this.state.user.email} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-
-                    <div>
-                      <h6>Observações:</h6>
-                      <label>
-                        <textarea  
-                          className='input-field materialize-textarea'
-                          placeholder="Deixe este campo em branco caso não exista observações a serem feitas" 
-                          name="note" 
-                          value={this.state.user.note} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    </Col>
-
-                    {this.props.user_class == `citizen` ?
-                      <Col s={12} m={12} l={6}>
-
-                        <div className='category-title'>
-                          <p>Senha</p>
-                        </div>
-
-                        <div className="field-input">
-                          <h6>Senha atual:</h6>
-                          <label>
-                            <input 
-                              type="password" 
-                              className='input-field' 
-                              name="password" 
-                              value={this.state.aux.password}
-                              onChange={this.handleChange.bind(this)} 
-                            />
-                          </label>
-                        </div>
-                        
-                        <div className="field-input">
-                          <h6>Confirmação de senha:</h6>
-                          <label>
-                            <input 
-                              type="password" 
-                              className='input-field' 
-                              name="password_confirmation" 
-                              value={this.state.aux.password_confirmation} 
-                              onChange={this.handleChange.bind(this)} 
-                            />
-                          </label>
-                        </div>
-
-                        {this.props.is_edit ?
-                          <div className="field-input">
-                            <h6>Nova senha: <i>(mínimo 6 caracteres)</i></h6>
-                            <label>
-                              <input 
-                                type="password" 
-                                className='input-field' 
-                                name="current_password" 
-                                value={this.state.aux.current_password}
-                                onChange={this.handleChange.bind(this)} 
-                              />
-                            </label>
-                          </div>
-                        : null}
-
-                        <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
-                      </Col> : null
-                    } 
+                <Row>
+                  {contact_info.bind(this)()}
+                  {
+                    this.props.user_class != `dependant` ?
+                      password_info.bind(this)() :
+                      null
+                  } 
                 </Row>
+                <Row>
+                  { 
+                    this.props.user_class == `professional` ?
+                      professional_info.bind(this)() :
+                      null
+                  }
+                </Row>
+                <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
                 {this.confirmButton()}
               </div>
             </div>

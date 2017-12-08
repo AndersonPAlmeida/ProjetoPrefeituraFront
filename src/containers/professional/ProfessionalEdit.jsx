@@ -19,7 +19,7 @@ class getProfessionalEdit extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/professionals/${this.props.params.professional_id}`;
+    const collection = `professionals/${this.props.params.professional_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
