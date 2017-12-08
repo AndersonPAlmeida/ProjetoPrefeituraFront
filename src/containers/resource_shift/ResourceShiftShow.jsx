@@ -7,23 +7,35 @@ import {parseResponse} from '../../redux-auth/utils/handle-fetch-response';
 import {fetch} from '../../redux-auth';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
+import strftime from 'strftime';
 
-class getResourceTypeShow extends Component {
+class getResourceShiftShow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      resource: {
-        active: '',
-        mobile: '',
-        description: '',
-        name: '',
+      resource_shift: {
+        active:undefined,
+        borrowed:undefined,
+        created_at:undefined,
+        execution_end_time:undefined,
+        execution_start_time:undefined,
+        id:undefined,
+        next_shift_id:undefined,
+        notes:undefined,
+        professional_responsible_id:undefined,
+        resource_id:undefined,
+        updated_at:undefined
       },
       current_permission: undefined,
       details:{},
       resource_type:{},
-      service_place:{}
+      service_place:{},
+      resource:{},
+      time_solved:{},
+      professional_name:''
     };
     this.getDetails = this.getDetails.bind(this);
+    this.resolveTime = this.resolveTime.bind(this);
 
   }
 
@@ -41,7 +53,7 @@ class getResourceTypeShow extends Component {
 
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `resources/${this.props.params.resource_id}`;
+    const collection = `resource_shifts/${this.props.params.resource_shift_id}`;
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -49,11 +61,12 @@ class getResourceTypeShow extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ resource: resp });
-      this.getDetails(resp.id);
+      self.setState({ resource_shift: resp });
+      this.getDetails(resp.resource_id);
+      this.getProfessionalName(this.props.params.resource_shift_id);
+      this.resolveTime(resp);
     });
   }
-
   getDetails(id) {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
@@ -66,18 +79,32 @@ class getResourceTypeShow extends Component {
       method: 'get',
     }).then(parseResponse).then(resp => {
       self.setState({ details: resp });
+      self.setState({ resource: resp.resource });
       self.setState({ resource_type: resp.resource_type });
       self.setState({ service_place: resp.service_place });
     });
   }
-
+  getProfessionalName(id) {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `resource_shift_professional_responsible/${id}`;
+    const params = `permission=${this.props.user.current_role}`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      self.setState({ professional_name: resp.professional_name });
+    });
+  }
   mainComponent() {
     return (
       <div className='card'>
         <div className='card-content'>
-          <h2 className='card-title h2-title-home'> Informações do Recurso: </h2>
-          <Row>
-            <Col s={12} m={6}>
+          <h2 className='card-title h2-title-home'> Informações da Escala do Recurso: </h2>
+          <Row>   
+            <Col s={12} m={6} >
               <Card className='' title={'Recurso'} >
                 <p> 
                   <b>Tipo do recurso: </b>
@@ -126,6 +153,40 @@ class getResourceTypeShow extends Component {
                   {this.state.resource.active ? 'Ativo' : 'Inativo'}
                 </p>
               </Card>  
+            </Col>         
+            <Col s={12} m={6}>
+              <Card className='' title={'Escala do Recurso'}>
+                <p> 
+                  <b>Data e dia inicial: </b>
+                  {this.state.time_solved.day_start}
+                  <span style={{marginLeft:4, marginRight:4}}>-</span>
+                  {this.state.time_solved.time_start}
+                  <span style={{marginLeft:4}}>h</span>                                    
+                </p>  
+                <p> 
+                  <b>Data e dia final: </b>
+                  {this.state.time_solved.day_end}
+                  <span style={{marginLeft:4, marginRight:4}}>-</span>
+                  {this.state.time_solved.time_end}
+                  <span style={{marginLeft:4}}>h</span>                                    
+                </p> 
+                <p>
+                  <b>Emprestado: </b>
+                  {this.state.resource_shift.borrowed==0 ? 'Não' : 'Sim' }
+                </p> 
+                <p>
+                  <b>Profissional responsável pela escala: </b>
+                  {this.state.professional_name}
+                </p> 
+                <p>
+                  <b>Situação: </b>
+                  {this.state.resource_shift.active==0 ? 'Inativo' : 'Ativo' }
+                </p> 
+                <p>
+                  <b>Anotação: </b>
+                  {this.state.resource_shift.notes}
+                </p> 
+              </Card>  
             </Col>
             <Col s={12} m={6}>
               <Card className='' title={'Local do Recurso'}>
@@ -143,8 +204,8 @@ class getResourceTypeShow extends Component {
                   <b>Bairro: </b>
                   {this.state.service_place.neighborhood}                 
                 </p> 
-              </Card>  
-            </Col>
+              </Card>              
+            </Col>           
           </Row>    
         </div>
         {this.editButton()}
@@ -152,12 +213,45 @@ class getResourceTypeShow extends Component {
     );
   }
 
+  timeSizeFixer(time){
+    if(time.length == 0){
+      return '00';
+    }
+    else{
+      if(time.length == 1){
+        return '0' + time;
+      }
+      else{
+        if(time.length == 2){
+          return time;          
+        }
+        else{
+          return time[0]+time[1];
+        }
+      }
+    }
+  }
+  resolveTime(shift){
+    // Start time
+    let day_start = strftime.timezone('+0000')('%d/%m/%Y', new Date(shift.execution_start_time));
+    let hour_start = new Date(shift.execution_start_time).getHours().toString();
+    let minute_start = new Date(shift.execution_start_time).getMinutes().toString();
+    let time_start = this.timeSizeFixer(hour_start) + ':' + this.timeSizeFixer(minute_start);
+    
+    // End time
+    let day_end = strftime.timezone('+0000')('%d/%m/%Y', new Date(shift.execution_end_time));      
+    let hour_end = new Date(shift.execution_end_time).getHours().toString();
+    let minute_end = new Date(shift.execution_end_time).getMinutes().toString();
+    let time_end = this.timeSizeFixer(hour_end) + ':' + this.timeSizeFixer(minute_end);
+    
+    this.setState({time_solved:{day_start: day_start, time_start: time_start, day_end: day_end, time_end: time_end}});
+  }
   editResource () {
-    browserHistory.push(`resources/${this.props.params.resource_id}/edit`);
+    browserHistory.push(`resource_shifts/${this.props.params.resource_shift_id}/edit`);
   }
 
   prev() {
-    browserHistory.push('resources');
+    browserHistory.push('resource_shifts');
   }  
 
   editButton() {
@@ -190,7 +284,7 @@ const mapStateToProps = (state) => {
     user
   };
 };
-const ResourceTypeShow = connect(
+const ResourceShiftShow = connect(
   mapStateToProps
-)(getResourceTypeShow);
-export default ResourceTypeShow;
+)(getResourceShiftShow);
+export default ResourceShiftShow;
