@@ -273,7 +273,7 @@ class getProfessionalList extends Component {
     return (
       <Row className='filter-container'>
         <Col>
-          <div className="field-input" >
+          <div>
             <h6>Nome:</h6>
             <label>
               <input
@@ -294,7 +294,7 @@ class getProfessionalList extends Component {
     return (
       <Row className='filter-container'>
         <Col>
-          <div className="field-input" >
+          <div>
             <h6>Matrícula:</h6>
             <label>
               <input
@@ -316,7 +316,7 @@ class getProfessionalList extends Component {
     return (
       <Row className='filter-container'>
         <Col>
-          <div className="field-input" >
+          <div className="" >
             <h6>CPF:</h6>
             <label>
               <input

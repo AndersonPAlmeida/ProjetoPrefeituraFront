@@ -54,6 +54,7 @@ class getUserForm extends Component {
         state_abbreviation: '',
         pcd_value: '',
         phonemask: "(11) 1111-11111",
+        service_place_id: 0,
         permission_id: 0,
         service_place: {},
         service_places: [],

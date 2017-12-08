@@ -70,7 +70,7 @@ function pickServicePlace() {
   const servicePlacesList = (
     this.state.aux.service_places.map((service_place) => {
       return (
-        <option value={service_place}>{service_place.name}</option>
+        <option value={service_place.id}>{service_place.name}</option>
       )
     })
   )
@@ -100,15 +100,16 @@ const role_name = {
 }
 
 function tableList() {
+  console.log(this.state.professional.roles)
   const data = (
     this.state.professional.roles.map((service_place,index) => {
       return (
         <tr>
           <td>
-            service_place.name
+            {service_place.service_place_id}
           </td>
           <td>
-            role_name[service_place.role] 
+            {role_name[service_place.role]} 
           </td>
           <td>
             <a className='back-bt waves-effect btn-flat'
@@ -151,11 +152,12 @@ function tableList() {
 function insertServicePlace() {
   var element = { 
               'role': this.state.aux.permission_id,
-              'name': this.state.aux.service_place.name,
-              'id': this.state.aux.service_place.id
+              'service_place_id': this.state.aux.service_place_id
             }
+  var array_roles = this.state.professional.roles
+  array_roles.push(element)
   this.setState({
-    professional: update(this.state.professional, {roles: {$set: this.state.professional.roles.push(element) } })
+    professional: update(this.state.professional, {roles: {$set: array_roles } })
   })
 }
 
