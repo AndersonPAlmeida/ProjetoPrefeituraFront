@@ -10,34 +10,17 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import strftime from 'strftime';
 
-
-// {
-//   active  :  1
-//   brand  :  "Lenovo"
-//   created_at  :  "2017-11-23T10:45:51.909-02:00"
-//   id  :  1
-//   label  :  "NB-1"
-//   maximum_schedule_time  :  2
-//   minimum_schedule_time  :  0.5
-//   model  :  "Thinkpad Carbon X1"
-//   note  :  "SN:1407124942335"
-//   professional_responsible_id  :  1
-//   resource_types_id  :  1
-//   service_place_id  :  1
-//   updated_at  :  "2017-11-23T10:45:51.909-02:00"
-// }
-
 class getResourceList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       resource_shifts:[],
       filter_label: '',
-      filter_model: '',
-      filter_brand: '',
+      filter_end_date: '',
+      filter_start_date: '',
       last_fetch_label: '',
-      last_fetch_model: '',
-      last_fetch_brand: '',
+      last_fetch_end_date: '',
+      last_fetch_start_date: '',
       filter_s: '',
       city_hall:[],
       resources_with_details:[],
@@ -77,7 +60,6 @@ class getResourceList extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      console.log(resp);
       self.setState({ resource_shifts: resp });    
     });
   }
@@ -86,7 +68,7 @@ class getResourceList extends Component {
     return (
       <div className='card'>
         <div className='card-content'>
-          <h2 className='card-title h2-title-home'> Recurso </h2>
+          <h2 className='card-title h2-title-home'> Escala de Recurso </h2>
           {this.filterResourceType()}
           {this.tableList()}
         </div>
@@ -108,7 +90,6 @@ class getResourceList extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      console.log(resp);
       self.setState({ 
         resources_with_details: resp, 
         service_places:resp.service_place, 
@@ -259,6 +240,7 @@ class getResourceList extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
+        
         <th>Escala #</th>
 
         <th>Tipo do recurso</th>
@@ -285,14 +267,16 @@ class getResourceList extends Component {
     );
 
     return (
-      <table className={ styles['table-list']}>
-        <thead>
-          {fields}
-        </thead>
-        <tbody>
-          {data}
-        </tbody>
-      </table>
+      <div className={'table-size'}>
+        <table className={ styles['table-list']}>
+          <thead>
+            {fields}
+          </thead>
+          <tbody>
+            {data}
+          </tbody>
+        </table>
+      </div>
     );
   }
 
@@ -308,75 +292,62 @@ class getResourceList extends Component {
 
   filterResourceType() {
     return (
-      <div>
-
-        <div className="field-input" >
-          <h6>Marca:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_brand"
-              value={this.state.filter_brand}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
-        </div>
-
-        <div className="field-input" >
-          <h6>Modelo:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_model"
-              value={this.state.filter_model}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
-        </div>
-        <div className="field-input" >
-          <h6>Etiqueta:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_label"
-              value={this.state.filter_label}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
-        </div>
-        <button 
-          id="filterBtn"
-          className="waves-effect btn right button-color" 
-          onClick={this.handleFilterSubmit.bind(this,false)} 
-          name="commit" 
-          type="submit">
-            FILTRAR
-        </button>
-      </div>
+      <Row>
+        <Col s={12} m={6}>
+          <div >
+            <h6>Dia Inicial:</h6>
+            <label>
+              <input
+                type="date"
+                name="filter_start_date"
+                value={this.state.filter_start_date}
+                onChange={this.handleInputFilterChange.bind(this)}
+              />
+            </label>
+          </div>
+        </Col>
+        <Col s={12} m={6}>
+          <div>
+            <h6>Data Final:</h6>
+            <label>
+              <input
+                type="date"
+                name="filter_end_date"
+                value={this.state.filter_end_date}
+                onChange={this.handleInputFilterChange.bind(this)}
+              />
+            </label>
+          </div>
+        </Col>      
+        <div>
+          <button 
+            id="filterBtn"
+            className="waves-effect btn right button-color" 
+            onClick={this.handleFilterSubmit.bind(this,false)} 
+            name="commit" 
+            type="submit">
+              FILTRAR
+          </button>
+        </div>        
+      </Row>
     );
   }
 
   handleFilterSubmit(sort_only) {
-    var label;
-    var model;
-    var brand;
+    var end_date;
+    var start_date;
     if(sort_only) {
-      label = this.state.last_fetch_label;
-      model = this.state.last_fetch_model;
-      brand = this.state.last_fetch_brand; 
+      end_date = this.state.last_fetch_end_date;
+      start_date = this.state.last_fetch_start_date; 
     } else {
-      label = this.state.filter_label;
-      model = this.state.filter_model;
-      brand = this.state.filter_brand;
+      end_date = this.state.filter_end_date;
+      start_date = this.state.filter_start_date;
     }
-    label = label.replace(/\s/g,'+');
-    model = model.replace(/\s/g,'+');
+    start_date = start_date.replace(/\s/g,'+');
+    end_date = end_date.replace(/\s/g,'+');
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = 'resources';
-    const params = `permission=${this.props.user.current_role}&q[brand]=${brand}&q[label]=${label}&q[model]=${model}&q[s]=${this.state.filter_s}`;
+    const collection = 'resource_shifts';
+    const params = `permission=${this.props.user.current_role}&q[execution_start_time]=${start_date}&q[execution_end_time]=${end_date}&q[s]=${this.state.filter_s}`;
 
     console.log(`${apiUrl}/${collection}?${params}`);
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -387,8 +358,8 @@ class getResourceList extends Component {
     }).then(parseResponse).then(resp => {
       this.setState({
         resources: resp,
-        last_fetch_label: label,
-        last_fetch_model: model
+        last_fetch_start_date: start_date,
+        last_fetch_end_date: end_date
       });
     });
   }

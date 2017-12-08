@@ -12,6 +12,11 @@
 	font-family: 'Roboto', 'Arial';
 }
 
+.table-size{
+	overflow-x: scroll;
+	margin-top: 60px;
+}
+
 .table-list th {
 	text-align: center;
 }
