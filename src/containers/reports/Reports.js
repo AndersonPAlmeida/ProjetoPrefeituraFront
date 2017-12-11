@@ -20,7 +20,7 @@ class getReports extends Component {
   constructor(props) {
     super(props)
     this.state = {
-    reportType: [],
+    reportType: 0,
     reportStatus: 0
       }
       this.handleDecisionChange = this.handleDecisionChange.bind(this)
@@ -66,6 +66,7 @@ render() {
   confirmReportType(){
     switch(this.state.reportType){
       case "0":
+      browserHistory.push(`/reports/schedules_report`)
         break
       case "1":
         break
