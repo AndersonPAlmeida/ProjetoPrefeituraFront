@@ -9,8 +9,6 @@ import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
-import html2canvas from 'html2canvas';
-import { LogoImage } from '../../images'
 import styles from './styles/citizenReport.css'
 var jsPDF
 
@@ -25,6 +23,9 @@ class getCitizenReport extends Component {
     this.returnCitizenList = this.returnCitizenList.bind(this)
   }
 
+  componentDidMount(){
+    jsPDF = require('jspdf')
+  }
 returnCitizenList(){
   if(this.state.citizensList.length == 0){
     this.getCitizensList()
@@ -35,7 +36,7 @@ returnCitizenList(){
 getCitizensList(){
   const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `citizens`;
-    const params = `permission=2`
+    const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -54,15 +55,45 @@ getCitizensList(){
     )
 }
 
-formatDate(date){
-  return(date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3])
-}
+  formatDate(date){
+    return(date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3])
+  }
+  printPDF(){
+        var pdf = new jsPDF('p', 'pt', 'letter');
+      var source = $('#divtoPDF')[0];
+      var specialElementHandlers = {
+        '#bypassme': function(element, renderer) {
+          return true
+        }
+      };
+
+      var margins = {
+        top: 50,
+        left: 60,
+        width: 545
+      };
+
+      pdf.fromHTML (
+        source // HTML string or DOM elem ref.
+        , margins.left // x coord
+        , margins.top // y coord
+        , {
+          'width': margins.width // max width of content on PDF
+          , 'elementHandlers': specialElementHandlers
+        },
+        function (dispose) {
+          // dispose: object with X, Y of the last line add to the PDF
+          // this allow the insertion of new lines after html
+          pdf.save('relatorio_cidadaos.pdf');
+        }
+      )
+  }
 
 render() {
     return (
       <div className="contentWrapper">
         <div id="divtoPDF">
-          <Table>
+          <Table className="bordered striped">
             <thead>
               <tr>
                 <th>Nome</th>
@@ -88,8 +119,9 @@ render() {
                 },this)}
             </tbody>
           </Table>
+          <Button onClick={this.printPDF}>Relatório em PDF</Button>
         </div>
-        <Button offset="s2" onClick={this.confirmReportType}>Relatório em PDF</Button>
+
       </div>
     )
   }
