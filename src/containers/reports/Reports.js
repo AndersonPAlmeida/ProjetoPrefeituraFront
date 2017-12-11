@@ -66,17 +66,20 @@ render() {
   confirmReportType(){
     switch(this.state.reportType){
       case "0":
-
+        break
       case "1":
-      
+        break
       case "2":
-      
+        browserHistory.push(`/reports/citizen_report`)
+        break
       case "3":
-      
+        break
       case "4":
-      
+        break
       case "5":
-      
+        break
+      default:
+        break
     }
 
   }
