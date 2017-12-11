@@ -103,9 +103,8 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="professionals" component={UserIsAuthenticated(ProfessionalList)} />
         <Route path="professionals/:professional_id/edit" component={UserIsAuthenticated(ProfessionalEdit)} />
         <Route path="professionals/new" component={UserIsAuthenticated(ProfessionalCreate)} />
-        <Route path="professionals/:professional_id" component={UserIsAuthenticated(ProfessionalShow)} />
-        <Route path="professionals/:professional_id" component={UserIsAuthenticated(ProfessionalShow)} />
         <Route path="professional/search" component={UserIsAuthenticated(ProfessionalSearch)} />
+        <Route path="professionals/:professional_id" component={UserIsAuthenticated(ProfessionalShow)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

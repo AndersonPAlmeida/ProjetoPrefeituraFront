@@ -32,16 +32,20 @@ class getProfessionalCheck extends Component {
     let errors = []
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `check_create_professional`;
-    const params = `permission=${this.props.user.current_role}&cpf={cpf}; 
+    const params = `permission=${this.props.user.current_role}&cpf=${cpf}`; 
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
-      method: this.props.fetch_method,
-      body: JSON.stringify(fetch_body)
+      method: 'get',
     }).then(parseResponse).then(resp => {
-      browserHistory.push(`professionals/new?professional_only=true`)
+      browserHistory.push(`professionals/new?professional_only=true&cpf=${cpf}`)
     }).catch(({errors}) => {
+      if(errors && errors.length > 0) {
+        let full_error_msg = "";
+        errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+        Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+      }
       browserHistory.push(`professionals/new?professional_only=false`)
     });
   }
@@ -65,20 +69,24 @@ class getProfessionalCheck extends Component {
 
   render() {
     return (
-      <div>
-        <h6>CPF:</h6>
-        <label>
-          <MaskedInput
-            type="text"
-            className='input-field'
-            mask="111.111.111-11"
-            name="cpf"
-            value={this.state.cpf}
-            onChange={this.handleInputUserChange.bind(this)}
-          />
-        </label>
-        {this.confirmButton()}
-      </div>
+      <main>
+        <Row>
+          <Col>
+            <h6>CPF:</h6>
+            <label>
+              <MaskedInput
+                type="text"
+                className='input-field'
+                mask="111.111.111-11"
+                name="cpf"
+                value={this.state.cpf}
+                onChange={this.handleInputUserChange.bind(this)}
+              />
+            </label>
+            {this.confirmButton()}
+          </Col>
+        </Row>
+      </main>
     )
   }
 }

@@ -119,11 +119,14 @@ class getUserForm extends Component {
           "Content-Type": "application/json" },
           method: "get",
       }).then(parseResponse).then(resp => {
-        var professional_roles = this.props.roles_data
-        for(var i = 0; i < professional_roles.length; i++) {
-          if(!(this.belongsToCollection(professional_roles[i].service_place_id,resp.service_places,'id')) ||
-             !(this.belongsToCollection(professional_roles[i].role,resp.permissions),'role')) {
-            professional_roles.splice(i,1)
+        var professional_roles = []
+        if(this.props.is_edit) {
+          professional_roles = this.props.roles_data
+          for(var i = 0; i < professional_roles.length; i++) {
+            if(!(this.belongsToCollection(professional_roles[i].service_place_id,resp.service_places,'id')) ||
+               !(this.belongsToCollection(professional_roles[i].role,resp.permissions),'role')) {
+              professional_roles.splice(i,1)
+            }
           }
         }
         self.setState({
@@ -351,8 +354,10 @@ class getUserForm extends Component {
     let fetch_body = {}
     if(this.props.user_class == `professional`) {
       var { cpf, ...other } = formData
-      if(this.props.professional_only)
+      if(this.props.professional_only) {
+        fetch_body['cpf'] = this.props.cpf_citizen
         fetch_body['professional'] = this.state.professional
+      }
       else
         fetch_body['professional'] = Object.assign({},this.state.professional,other)
       fetch_body['cpf'] = cpf

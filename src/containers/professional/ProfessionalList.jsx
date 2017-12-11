@@ -557,7 +557,7 @@ class getProfessionalList extends Component {
 		return (
 			<button 
         onClick={() =>
-          browserHistory.push({ pathname: `/professionals/new`, query: {professional_only: false}}) 
+          browserHistory.push({pathname: `/professional/search`}) 
         }
         className="btn waves-effect btn button-color" 
         name="anterior" 
