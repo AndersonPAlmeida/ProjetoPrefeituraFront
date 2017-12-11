@@ -12,6 +12,8 @@ class getProfessionalEdit extends Component {
     super(props)
     this.state = {
       professional: [],
+      citizen: [],
+      roles: [],
       fetching: true
     };
   }
@@ -27,7 +29,25 @@ class getProfessionalEdit extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ professional: resp.citizen, fetching: false })
+      var professional_data = {}
+      professional_data['registration'] = resp.registration
+      professional_data['active'] = resp.active
+      professional_data['occupation_id'] = resp.occupation_id
+      var roles_data = []
+      for(var i = 0; i < resp.service_places.length; i++) {
+        roles_data.push(
+                        {
+                          service_place_id: resp.service_places[i].id,
+                          role: resp.service_places[i].role
+                        }
+                       )  
+      }
+      self.setState({ 
+                      citizen: resp.citizen, 
+                      professional: professional_data,
+                      roles: roles_data,
+                      fetching: false 
+                   })
     });
   }
 
@@ -41,9 +61,12 @@ class getProfessionalEdit extends Component {
         {
           this.state.fetching ? <div /> : 
             <UserForm 
-              user_data={this.state.professional} 
+              user_data={this.state.citizen} 
+              roles_data={this.state.roles}
+              professional_data={this.state.professional} 
               user_class={`professional`}
               is_edit={true} 
+              professional_only={false}
               prev={this.prev}
               fetch_collection={`professionals/${this.props.params.professional_id}`}
               fetch_params={`permission=${this.props.user.current_role}`}

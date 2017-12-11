@@ -179,12 +179,17 @@ class getProfessionalList extends Component {
             <td>
               <a className='back-bt waves-effect btn-flat' 
                  href='#' 
-                 onClick={ () => 
-                 browserHistory.push(`/professionals/${professional.id}/edit`) 
-                }>
-                  <i className="waves-effect material-icons tooltipped">
-                    edit
-                  </i>
+                 onClick={(e) => 
+                   {
+                     e.preventDefault()
+                     browserHistory.push({
+                       pathname: `/professionals/${professional.id}/edit`
+                     }) 
+                   }
+                 }>
+                <i className="waves-effect material-icons tooltipped">
+                  edit
+                </i>
               </a> 
             </td>
           </tr>
@@ -527,7 +532,6 @@ class getProfessionalList extends Component {
                     +`&q[active]=${situation}`
                     +`&q[s]=${this.state.filter_s}`
                     +`&page=${this.state.current_page}`
-    console.log(`${apiUrl}/${collection}?${params}`)
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -553,7 +557,7 @@ class getProfessionalList extends Component {
 		return (
 			<button 
         onClick={() =>
-          browserHistory.push({ pathname: `/professionals/new`, query: {cep: this.props.user.citizen.cep}}) 
+          browserHistory.push({ pathname: `/professionals/new`, query: {professional_only: false}}) 
         }
         className="btn waves-effect btn button-color" 
         name="anterior" 

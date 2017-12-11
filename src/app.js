@@ -10,7 +10,8 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
          SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
          ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
          ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, ProfessionalIndex,
-         ProfessionalList, ProfessionalEdit, ProfessionalShow, ProfessionalCreate
+         ProfessionalList, ProfessionalEdit, ProfessionalShow, ProfessionalCreate,
+         ProfessionalSearch
        } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -103,6 +104,8 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="professionals/:professional_id/edit" component={UserIsAuthenticated(ProfessionalEdit)} />
         <Route path="professionals/new" component={UserIsAuthenticated(ProfessionalCreate)} />
         <Route path="professionals/:professional_id" component={UserIsAuthenticated(ProfessionalShow)} />
+        <Route path="professionals/:professional_id" component={UserIsAuthenticated(ProfessionalShow)} />
+        <Route path="professional/search" component={UserIsAuthenticated(ProfessionalSearch)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

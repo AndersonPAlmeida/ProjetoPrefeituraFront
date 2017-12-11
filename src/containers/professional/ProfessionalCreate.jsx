@@ -11,8 +11,20 @@ class getProfessionalCreate extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      professional: []
+      professional_only: false,
     };
+  }
+
+  componentDidMount() {
+    self = this
+    if(typeof location !== 'undefined' && location.search) {
+      var search = location.search.substring(1);
+      var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+      let q_value = (query['professional_only'] == 'true') ? true : false
+      self.setState({
+        professional_only: q_value,
+      })
+    }
   }
 
   prev() {
@@ -23,16 +35,16 @@ class getProfessionalCreate extends Component {
     return (
       <div>
         {
-          this.state.fetching ? <div /> : 
-            <UserForm 
-              user_class={`professional`}
-              is_edit={false} 
-              prev={this.prev}
-              fetch_collection={`/professionals`}
-              fetch_params={`permission=${this.props.user.current_role}`}
-              fetch_method={'post'}
-              submit_url={`/professionals/`}
-            />
+          <UserForm 
+            user_class={`professional`}
+            is_edit={false} 
+            prev={this.prev}
+            professional_only={this.state.professional_only}
+            fetch_collection={`/professionals`}
+            fetch_params={`permission=${this.props.user.current_role}`}
+            fetch_method={'post'}
+            submit_url={`/professionals/`}
+          />
         }
       </div>
     )

@@ -62,6 +62,7 @@ class getUserForm extends Component {
         permissions: []
       },
       professional: {
+        active: '',
         registration: '',
         occupation_id: 0,
         roles: []
@@ -83,6 +84,7 @@ class getUserForm extends Component {
         img = this.props.photo
       var year = parseInt(this.props.user_data.birth_date.substring(0,4))
       self.setState({
+        professional: this.props.professional_data,
         user: this.props.user_data,
         aux: update(this.state.aux, 
         {
@@ -117,7 +119,18 @@ class getUserForm extends Component {
           "Content-Type": "application/json" },
           method: "get",
       }).then(parseResponse).then(resp => {
+        var professional_roles = this.props.roles_data
+        for(var i = 0; i < professional_roles.length; i++) {
+          if(!(this.belongsToCollection(professional_roles[i].service_place_id,resp.service_places,'id')) ||
+             !(this.belongsToCollection(professional_roles[i].role,resp.permissions),'role')) {
+            professional_roles.splice(i,1)
+          }
+        }
         self.setState({
+                        professional: update(this.state.professional,
+                        {
+                          roles: {$set: professional_roles}
+                        }),
                         aux: update(this.state.aux,
                         {
                           occupations: {$set: resp.occupations},
@@ -127,6 +140,14 @@ class getUserForm extends Component {
                       })
       });
     }
+  }
+
+  belongsToCollection(identifier, collection, collection_id) {
+    for(var i = 0; i < collection.length; i++) {
+      if(identifier == collection[i][collection_id])
+        return true
+    }
+    return false
   }
 
   handleInputUserChange(event) {
@@ -261,85 +282,131 @@ class getUserForm extends Component {
     })
   }
 
-  handleSubmit() {
+  checkEmptyFields(obj, fields) {
+    let errors = []
+    for (var i = 0; i < fields.length; i++) {
+      if(!obj[fields[i].id])
+        errors.push(`Campo ${fields.name} é obrigatório`)
+    }
+    return errors;
+  }
+
+  checkErrors(formData, auxData, send_password) {
+    let errors = []
+    let form_mandatory = 
+      [
+        { id: 'cep', name: 'CEP' },
+        { id: 'name', name: 'nome' }
+      ]
+    if(this.props.user_class == `citizen`) {
+      form_mandatory.push({ id: 'cpf', name: 'CPF' })
+    if(send_password) {
+      form_mandatory.push({ id: 'password', name: 'Senha' })
+      form_mandatory.push({ id: 'password_confirmation', name: 'Confirmação de Senha' })
+    }
+    errors = checkEmptyFields(formData, form_mandatory)
+    if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
+      errors.push("Campo Data de Nascimento é obrigatório.");
+    }
+    if(auxData['password_confirmation'] != auxData['password'])
+      errors.push("A senha de confirmação não corresponde a senha atual.");
+    return errors;
+  }
+
+  generateBody(formData, auxData, send_password) {
     const monthNames = [
       "Jan", "Feb", "Mar",
       "Apr", "May", "Jun", 
       "Jul", "Aug", "Sep", 
       "Oct", "Nov", "Dec"
     ];
-    let errors = [];
-    let formData = {};
-    let auxData = {};
-    var image = {};
-    var send_password = false;
-    formData = this.state.user;
-    auxData = this.state.aux;
-    if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
-      errors.push("Campo Data de Nascimento é obrigatório.");
-    if(!formData['cep'])
-      errors.push("Campo CEP é obrigatório.");
-    if(this.props.user_class == `citizen`) {
-      if(!formData['cpf'])
-        errors.push("Campo CPF é obrigatório.");
-      else
-        formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
-      if(!this.props.is_edit || auxData['password']) {
-        send_password = true;
-        if(!auxData['password'])
-          errors.push("Campo Senha é obrigatório.");
-        if(!auxData['password'])
-          errors.push("Campo Confirmação de Senha é obrigatório..");
-        if(auxData['password_confirmation'] != auxData['password'])
-          errors.push("A senha de confirmação não corresponde a senha atual.");
-      }
-    }
     if(!auxData['pcd_value']) {
       formData['pcd'] = ''
     }
+    formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
+    if(formData['phone1'])
+      formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
+    if(formData['phone2'])
+      formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
+    formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
+    formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
+    formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`
+
+    if(this.state.aux.photo_has_changed) {
+      var image = {};
+      image['content'] = this.state.aux.photo_obj.split(',')[1];
+      image['content_type'] = this.state.aux.photo_obj.slice(5,14);
+      image['filename'] = this.state.aux.photo;
+      formData['image'] = image;
+    }
+
+    if(send_password) {
+      formData['password'] = auxData['password'] 
+      formData['password_confirmation'] = auxData['password_confirmation'] 
+      if(auxData['current_password'])
+        formData['current_password'] = auxData['current_password'] 
+    }
+
+    /* adaptate fetch object info to api request */
+    let fetch_body = {}
+    if(this.props.user_class == `professional`) {
+      var { cpf, ...other } = formData
+      if(this.props.professional_only)
+        fetch_body['professional'] = this.state.professional
+      else
+        fetch_body['professional'] = Object.assign({},this.state.professional,other)
+      fetch_body['cpf'] = cpf
+    } else if(this.props.user_class == `dependant`) {
+      fetch_body['dependant'] = formData
+    } else {
+      if(this.props.is_edit) {
+        var { password, current_password, password_confirmation, ...other } = formData
+        fetch_body['password'] = password
+        fetch_body['current_password'] = current_password
+        fetch_body['password_confirmation'] = password_confirmation
+        fetch_body['citizen'] = other
+      }
+      else
+        fetch_body = formData
+    }
+    return fetch_body
+  }
+
+
+  successMessage() {
+    let success_msg = ''
+    switch(this.props.user_class) {
+      case `dependant`:
+        success_msg += 'Dependente'
+        break
+      case `professional`:
+        success_msg += 'Profissional'
+        break
+      default:
+        success_msg += 'Cidadão'
+    }
+
+    if(this.props.is_edit)
+      success_msg += ' editado com sucesso'
+    else
+      success_msg += ' criado com sucesso'
+    return success_msg
+  }
+
+  handleSubmit() {
+    let formData = this.state.user;
+    let auxData = this.state.aux;
+    var send_password = false;
+    if(!this.props.is_edit || auxData['password']) {
+      send_password = true
+    }
+    let errors = this.checkErrors.bind(this)(formData,auxData,send_password)
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
-      if(formData['phone1'])
-        formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
-      if(formData['phone2'])
-        formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
-      formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
-      formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
-      formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`
-      let fetch_body = {};
-
-      if(this.state.aux.photo_has_changed) {
-        image['content'] = this.state.aux.photo_obj.split(',')[1];
-        image['content_type'] = this.state.aux.photo_obj.slice(5,14);
-        image['filename'] = this.state.aux.photo;
-        formData['image'] = image;
-      }
-      let success_msg
-      if(this.props.user_class == `dependant`) {
-        if(this.props.is_edit)
-          success_msg = 'Dependente editado com sucesso'
-        else
-          success_msg = 'Dependente criado com sucesso'
-        fetch_body['dependant'] = formData;
-      } else {
-        if(this.props.is_edit) {
-          fetch_body['citizen'] = formData;
-          success_msg = 'Dados editados com sucesso'
-        }
-        else {
-          fetch_body = formData;
-          success_msg = 'Cadastro efetuado com sucesso'
-        }
-        if(send_password) {
-          fetch_body['password'] = auxData['password'] 
-          fetch_body['password_confirmation'] = auxData['password_confirmation'] 
-          if(auxData['current_password'])
-            fetch_body['current_password'] = auxData['current_password'] 
-        }
-      }
+      let fetch_body = this.generateBody.bind(this)(formData,auxData,send_password)
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
@@ -355,7 +422,7 @@ class getUserForm extends Component {
           if(this.state.aux.photo_has_changed)
             this.props.dispatch(userUpdatePicture(resp.data.citizen.id))
         }
-        Materialize.toast(success_msg, 10000, "green",function(){$("#toast-container").remove()});
+        Materialize.toast(this.successMessage.bind(this)(), 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
       }).catch(({errors}) => {
         if(errors && errors['full_messages']) {
@@ -398,18 +465,24 @@ class getUserForm extends Component {
             <div className='card'>
               <div className='card-content'>
                 <h2 className="card-title">{title}</h2>
-                <Row className='first-line'>
-                  {personal_info.bind(this)()}
-                  {address_info.bind(this)()}
-                </Row>
-                <Row>
-                  {contact_info.bind(this)()}
-                  {
-                    this.props.user_class != `dependant` ?
-                      password_info.bind(this)() :
-                      null
-                  } 
-                </Row>
+                {
+                  !this.props.professional_only ?
+                    <div>
+                      <Row className='first-line'>
+                        {personal_info.bind(this)()}
+                        {address_info.bind(this)()}
+                      </Row>
+                      <Row>
+                        {contact_info.bind(this)()}
+                        {
+                          this.props.user_class != `dependant` ?
+                            password_info.bind(this)() :
+                            null
+                        } 
+                      </Row>
+                    </div>
+                  : <div />
+                }
                 <Row>
                   { 
                     this.props.user_class == `professional` ?
