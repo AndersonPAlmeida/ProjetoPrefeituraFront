@@ -70,7 +70,6 @@ render() {
         break
       case "1":
         browserHistory.push(`/reports/shifts_report`)
-
         break
       case "2":
         browserHistory.push(`/reports/citizen_report`)
@@ -79,6 +78,7 @@ render() {
         browserHistory.push(`/reports/scales_report`)
         break
       case "4":
+        browserHistory.push(`/reports/shift_type_report`)
         break
       case "5":
         browserHistory.push(`/reports/professionals_report`)
