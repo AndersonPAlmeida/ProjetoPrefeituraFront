@@ -80,6 +80,7 @@ render() {
       case "4":
         break
       case "5":
+        browserHistory.push(`/reports/professionals_report`)
         break
       default:
         break
