@@ -34,7 +34,7 @@ returnCitizenList(){
 }
 
 getCitizensList(){
-  const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+  const apiUrl = `//${apiHost}:${apiPort}/${apiVer}`;
     const collection = `citizens`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
