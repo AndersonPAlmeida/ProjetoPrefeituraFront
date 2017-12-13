@@ -39,15 +39,20 @@ class getProfessionalCheck extends Component {
         "Content-Type": "application/json" },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      browserHistory.push(`professionals/new?professional_only=true&cpf=${cpf}`)
+      browserHistory.push({ pathname: '/professionals/new', query: {professional_only: true, cpf: cpf} })
     }).catch(({errors}) => {
       if(errors && errors.length > 0) {
         let full_error_msg = "";
         errors.forEach(function(elem){ full_error_msg += elem + '\n' });
         Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
       }
-      browserHistory.push(`professionals/new?professional_only=false`)
+      browserHistory.push({ pathname: '/professionals/new', query: {professional_only: false} })
     });
+  }
+
+  prev(e) {
+    e.preventDefault()
+    browserHistory.push("professionals")
   }
 
   confirmButton() {
@@ -55,14 +60,19 @@ class getProfessionalCheck extends Component {
       <div className="card-action">
         <a className='back-bt waves-effect btn-flat' 
            href='#' 
-           onClick={ (e) => { 
-             e.preventDefault()
-             browserHistory.push(`professionals`) 
-           } 
-        }> 
+           onClick={this.prev} 
+        > 
           Voltar 
         </a>
-        <button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">Verificar CPF</button>
+        <button className="waves-effect btn right button-color" 
+                href='#' 
+                onClick={ (e) => {
+                  this.handleSubmit.bind(this)(e)
+                }} 
+                name="commit" 
+                type="submit">
+                  Verificar CPF
+        </button>
       </div>
     )
   }

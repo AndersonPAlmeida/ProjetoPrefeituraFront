@@ -29,7 +29,7 @@ class getProfessionalCreate extends Component {
       }
       self.setState({
         professional_only: q_prof_only,
-        cpf: q_cpf
+        cpf: cpf
       })
     }
   }
@@ -39,6 +39,7 @@ class getProfessionalCreate extends Component {
   }
 
   render() {
+    console.log(this.state)
     return (
       <div>
         {

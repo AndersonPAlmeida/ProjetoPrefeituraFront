@@ -101,10 +101,10 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="service_types/:service_type_id" component={UserIsAuthenticated(ServiceTypeShow)} />
         <Route path="professionals/shifts" component={UserIsAuthenticated(ProfessionalIndex)} />
         <Route path="professionals" component={UserIsAuthenticated(ProfessionalList)} />
-        <Route path="professionals/:professional_id/edit" component={UserIsAuthenticated(ProfessionalEdit)} />
         <Route path="professionals/new" component={UserIsAuthenticated(ProfessionalCreate)} />
-        <Route path="professional/search" component={UserIsAuthenticated(ProfessionalSearch)} />
+        <Route path="professionals/search" component={UserIsAuthenticated(ProfessionalSearch)} />
         <Route path="professionals/:professional_id" component={UserIsAuthenticated(ProfessionalShow)} />
+        <Route path="professionals/:professional_id/edit" component={UserIsAuthenticated(ProfessionalEdit)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>
