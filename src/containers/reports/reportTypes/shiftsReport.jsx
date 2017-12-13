@@ -17,29 +17,29 @@ class getShiftsReport extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      schedulesList: []
+      shiftsList: []
     }
-    this.getSchedulesList = this.getSchedulesList.bind(this)
-    this.returnSchedulesList = this.returnSchedulesList.bind(this)
+    this.getShiftsList = this.getShiftsList.bind(this)
+    this.returnShiftsList = this.returnShiftsList.bind(this)
     this.formatDateTime = this.formatDateTime.bind(this)
   }
 
   componentDidMount(){
     jsPDF = require('jspdf')
-    this.returnSchedulesList()
+    this.getShiftsList()
   }
 
-returnSchedulesList(){
-    if(this.state.schedulesList.length == 0){
-      this.getSchedulesList()
+returnShiftsList(){
+    if(this.state.shiftsList.length == 0){
+      this.getShiftsList()
     }
-    console.log(this.state.schedulesList)
-    return(this.state.schedulesList)
+    console.log(this.state.shiftsList)
+    return(this.state.shiftsList)
 }
 
-getSchedulesList(){
+getShiftsList(){
   const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `schedules`;
+    const collection = `shifts`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -47,7 +47,7 @@ getSchedulesList(){
         "Content-Type": "application/json" },
         method: "get"
     }).then(parseResponse).then(resp => {
-      this.setState({"schedulesList":resp}, () => console.log(this.state))
+      this.setState({"shiftsList":resp}, () => console.log(this.state))
     }).catch(({errors}) => {
       if(errors) {
         let full_error_msg = "";
@@ -106,28 +106,26 @@ render() {
           <Table className="bordered striped" style={{fontSize:"70%"}}>
             <thead>
               <tr>
-                <th>CPF do cidadão</th>
-                <th>Nome do cidadão</th>
-                <th>Número do agendamento</th>
-                <th>Profissional</th>
-                <th>Tipo do agendamento</th>
+                <th>Número do Atendimento</th>
+                <th>Profissional 1</th>
+                <th>Profissional 2</th>
+                <th>Local do Atendimento</th>
+                <th>Tipo do Atendimento</th>
                 <th>Inicio</th>
                 <th>Fim</th>
-                <th>Situação</th>
               </tr>
             </thead>
             <tbody>
-              {this.returnSchedulesList().map(function(element,i){
+              {this.returnShiftsList().map(function(element,i){
                     return(
                       <tr key={i}>
-                        <td>-</td>
-                        <td>-</td>
                         <td>{element.id}</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>{this.formatDateTime(element.service_start_time)}</td>
-                        <td>{this.formatDateTime(element.service_end_time)}</td>
-                        <td>{element.situation.description}</td>
+                        <td>{element.professional.registration}</td>
+                        <td>{element.professional_2.registration}</td>
+                        <td>{element.service_place.name}</td>
+                        <td>{element.service_type.description}</td>
+                        <td>{this.formatDateTime(element.execution_start_time)}</td>
+                        <td>{this.formatDateTime(element.execution_end_time)}</td>
                       </tr>
                   );
                 },this)}
