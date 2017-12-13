@@ -10,7 +10,9 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
          SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
          ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
          ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, MyReport, Reports,
-         citizenReport, schedulesReport, shiftsReport, professionalsReport
+         citizenReport, schedulesReport, shiftsReport, professionalsReport,
+         scalesReport
+
        } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -104,6 +106,8 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="reports/schedules_report" component={UserIsAuthenticated(schedulesReport)} />
         <Route path="reports/shifts_report" component={UserIsAuthenticated(shiftsReport)} />
         <Route path="reports/professionals_report" component={UserIsAuthenticated(professionalsReport)} />
+        <Route path="reports/scales_report" component={UserIsAuthenticated(scalesReport)} />
+
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

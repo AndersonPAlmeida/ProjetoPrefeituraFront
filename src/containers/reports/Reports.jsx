@@ -76,6 +76,7 @@ render() {
         browserHistory.push(`/reports/citizen_report`)
         break
       case "3":
+        browserHistory.push(`/reports/scales_report`)
         break
       case "4":
         break
