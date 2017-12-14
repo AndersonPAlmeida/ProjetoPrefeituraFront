@@ -207,7 +207,6 @@ class getResourceForm extends Component {
     this.formatItems();
     let errors = [];
     let formData = {};
-    let num_req = 1;
 
     if (this.props.is_edit){
       formData = this.state.resource_shift;
@@ -245,9 +244,9 @@ class getResourceForm extends Component {
           body: JSON.stringify(fetch_body)
         }).then(parseResponse).then(resp => {
           if(this.props.is_edit)
-            Materialize.toast('Tipo de recurso editado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
+            Materialize.toast('Escala de recurso editado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
           else
-            Materialize.toast('Tipo de recurso criado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
+            Materialize.toast('Escala de recurso criado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
           browserHistory.push(this.props.submit_url);
         }).catch(({errors}) => {
           if(errors) {
@@ -285,7 +284,6 @@ class getResourceForm extends Component {
   }
 
   formatItems(){
-    console.log(this.state.resource_shift);
 
     var final_resource_shifts = [];
     let formData = this.state.resource_shift;
@@ -300,14 +298,15 @@ class getResourceForm extends Component {
     let number_of_shifts = dates.length;
     let aux = {};
 
+
     for(let i = 0; i < number_of_shifts; i++){
       aux['active'] = formData.active;
       aux['borrowed'] = formData.borrowed;
       aux['execution_start_time'] = new Date(dates[i].setHours(Number(hour_begin), Number(minute_begin)));
       aux['execution_end_time'] = new Date(dates[i].setHours(Number(hour_end), Number(minute_end)));
-      aux['notes'] = formData.notes;
-      aux['professional_responsible_id'] = formData.professional_responsible_id;
-      aux['resource_id'] = this.state.current_resource;
+      aux['notes'] = formData.note;
+      aux['professional_responsible_id'] = Number(formData.professional_responsible_id);
+      aux['resource_id'] = Number(this.state.current_resource);
       final_resource_shifts.push(aux);
       aux = {};    
     }
