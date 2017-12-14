@@ -298,7 +298,7 @@ class getResourceForm extends Component {
     let number_of_shifts = dates.length;
     let aux = {};
 
-
+    
     for(let i = 0; i < number_of_shifts; i++){
       aux['active'] = formData.active;
       aux['borrowed'] = formData.borrowed;
@@ -535,7 +535,7 @@ class getResourceForm extends Component {
 
                     <Collection>
                       <CollectionItem style={{textAlign:'center', fontSize:'large'}}>
-                        <b>ATENÇÃO:</b> Os horários serão aplicados para todas os dias selecionados
+                        <b>ATENÇÃO:</b> Os horários serão aplicados para todos os dias selecionados
                       </CollectionItem>
                     </Collection>
 
