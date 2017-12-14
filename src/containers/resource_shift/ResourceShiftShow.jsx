@@ -63,7 +63,7 @@ class getResourceShiftShow extends Component {
     }).then(parseResponse).then(resp => {
       self.setState({ resource_shift: resp });
       this.getDetails(resp.resource_id);
-      this.getProfessionalName(this.props.params.resource_shift_id);
+      this.getProfessionalName(resp.professional_responsible_id);
       this.resolveTime(resp);
     });
   }
