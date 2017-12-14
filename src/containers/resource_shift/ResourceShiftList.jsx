@@ -219,7 +219,7 @@ class getResourceList extends Component {
                 id="iconTable"
                 href='#' 
                 onClick={ () => 
-                  browserHistory.push(`/resources/${resource_shift.id}/edit`) 
+                  browserHistory.push(`/resource_shifts/${resource_shift.id}/edit`) 
                 }>
                 <i className="waves-effect material-icons tooltipped">
                     edit

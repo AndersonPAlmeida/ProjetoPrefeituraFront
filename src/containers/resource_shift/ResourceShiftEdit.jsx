@@ -4,10 +4,10 @@ import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from '../../redux-auth/utils/handle-fetch-response';
 import {fetch} from '../../redux-auth';
 import { connect } from 'react-redux';
-import ResourceForm from './ResourceForm';
+import ResourceShiftForm from './ResourceShiftForm';
 import { browserHistory } from 'react-router';
 
-class getResourceEdit extends Component {
+class getResourceShiftEdit extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -40,7 +40,7 @@ class getResourceEdit extends Component {
       <div>
         {
           this.state.fetching ? <div /> : 
-            <ResourceForm 
+            <ResourceShiftForm 
               data={this.state.resource} 
               is_edit={true} 
               prev={this.prev}
@@ -62,7 +62,7 @@ const mapStateToProps = (state) => {
     user
   };
 };
-const ResourceEdit = connect(
+const ResourceShiftEdit = connect(
   mapStateToProps
-)(getResourceEdit);
-export default ResourceEdit;
+)(getResourceShiftEdit);
+export default ResourceShiftEdit;
