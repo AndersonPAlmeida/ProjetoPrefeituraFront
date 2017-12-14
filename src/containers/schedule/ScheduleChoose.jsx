@@ -42,7 +42,12 @@ class getScheduleChoose extends Component {
           "Content-Type": "application/json" },
           method: "get",
       }).then(parseResponse).then(resp => {
-        let citizen = resp.shift()
+        let citizen
+        for(var i = 0; i < resp.length; i++)
+          if(resp[i].cpf == this.props.user.citizen.cpf) {
+            citizen = resp[i]
+            resp.splice(i, 1)
+          }
         self.setState({ 
           dependants: resp,
           citizen: citizen

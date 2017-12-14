@@ -488,7 +488,7 @@ class getCitizenSchedule extends Component {
           <div className='card-content'>
             <h2 className='card-title h2-title-home'>Buscar agendamentos </h2>
             {this.filterSchedule()}
-            {this.state.schedules.length > 0 ? this.tableList(this.state.schedules) : '- Nenhum agendamento encontrado'}
+            {(this.state.schedules && this.state.schedules.length) > 0 ? this.tableList(this.state.schedules) : '- Nenhum agendamento encontrado'}
             {this.dependantSchedules()}
           </div>
 		    </div>
