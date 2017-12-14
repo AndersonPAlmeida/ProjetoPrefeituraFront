@@ -55,3 +55,14 @@ input {
   width: 300px ;
 
 }
+#time-shift{
+  margin-top: 50px;
+}
+
+#time-select{
+  width: 80px;
+  text-align: end;
+}
+.collection{
+  border-color: #b7b7b7;
+}

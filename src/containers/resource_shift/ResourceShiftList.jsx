@@ -150,6 +150,8 @@ class getResourceList extends Component {
   }
   resource_solver(id){
     let resource_in_use = this.state.resources.find(r => id === r.id );
+    if (!resource_in_use)
+      return null;
     let resource_type_in_use = this.state.resource_types.find(r => resource_in_use.resource_types_id === r.id );
     let service_place_in_use = this.state.service_places.find(sp => resource_in_use.service_place_id === sp.id );
 
@@ -165,6 +167,9 @@ class getResourceList extends Component {
       this.state.resource_shifts.map((resource_shift) => {
         let timer = this.resolveTimeReminder(resource_shift);
         let resource_data = this.resource_solver(resource_shift.resource_id);
+        if (resource_data == null){
+          return;
+        }
         return (
           <tr>
             <td key={Math.random()} >
@@ -368,12 +373,12 @@ class getResourceList extends Component {
     return (
       <button 
         onClick={() =>
-          browserHistory.push({ pathname: '/resources/new'}) 
+          browserHistory.push({ pathname: '/resource_shifts/new'}) 
         }
         className="btn waves-effect btn button-color" 
         name="anterior" 
         type="submit">
-          CADASTRAR RECURSO
+          CADASTRAR ESCALA DE RECURSO
       </button>
     );
   }

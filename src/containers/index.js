@@ -47,4 +47,4 @@ export ResourceCreate from './resource/ResourceCreate';
 export ResourceShiftList from './resource_shift/ResourceShiftList';
 export ResourceShiftShow from './resource_shift/ResourceShiftShow';
 // export ResourceEdit from './resource/ResourceEdit';
-// export ResourceCreate from './resource/ResourceCreate';
+export ResourceShiftCreate from './resource_shift/ResourceShiftCreate';

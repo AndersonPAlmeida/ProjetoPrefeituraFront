@@ -11,7 +11,7 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
   ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
   ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, ResourceTypeList, ResourceTypeShow,
   ResourceTypeCreate, ResourceTypeEdit, ResourceList, ResourceShow, ResourceEdit, ResourceCreate,
-  ResourceShiftList, ResourceShiftShow
+  ResourceShiftList, ResourceShiftShow, ResourceShiftCreate
 } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -112,7 +112,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
 
         <Route path="resource_shifts" component={UserIsAuthenticated(ResourceShiftList)} />
         <Route path="resource_shifts/:resource_id/edit" component={UserIsAuthenticated(ResourceEdit)} />
-        <Route path="resource_shifts/new" component={UserIsAuthenticated(ResourceCreate)} />
+        <Route path="resource_shifts/new" component={UserIsAuthenticated(ResourceShiftCreate)} />
         <Route path="resource_shifts/:resource_shift_id" component={UserIsAuthenticated(ResourceShiftShow)} />
 
         <Route path="*" component={NotFound} status={404} />

@@ -165,7 +165,6 @@ export const getOptions = (user_permission,user_name) =>
           'rolldown': true, 
           'fields': 
               [ 
-                { 'name': 'Escala de recurso', 'link': '/resource_shifts', 'separator': false },
                 { 'name': 'Agendamento', 'link': '/resource_bookings', 'separator': false }
               ]
         },
@@ -201,7 +200,6 @@ export const getOptions = (user_permission,user_name) =>
           'rolldown': true, 
           'fields': 
               [ 
-                { 'name': 'Escala de recurso', 'link': '/resource_shifts', 'separator': false },
                 { 'name': 'Agendamento', 'link': '/resource_bookings', 'separator': false }
               ]
         },

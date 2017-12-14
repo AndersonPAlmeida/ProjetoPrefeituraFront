@@ -4,10 +4,10 @@ import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from '../../redux-auth/utils/handle-fetch-response';
 import {fetch} from '../../redux-auth';
 import { connect } from 'react-redux';
-import ResourceForm from './ResourceForm';
+import ResourceShiftForm from './ResourceShiftForm';
 import { browserHistory } from 'react-router';
 
-class getResourceCreate extends Component {
+class getResourceShiftCreate extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,7 +16,7 @@ class getResourceCreate extends Component {
   }
 
   prev() {
-    browserHistory.push('/resources');
+    browserHistory.push('/resource_shifts');
   }
 
   render() {
@@ -24,7 +24,7 @@ class getResourceCreate extends Component {
       <div>
         {
           this.state.fetching ? <div /> : 
-            <ResourceForm 
+            <ResourceShiftForm 
               is_edit={false} 
               prev={this.prev}
               fetch_collection={'resources'}
@@ -46,7 +46,7 @@ const mapStateToProps = (state) => {
     user
   };
 };
-const ResourceCreate = connect(
+const ResourceShiftCreate = connect(
   mapStateToProps
-)(getResourceCreate);
-export default ResourceCreate;
+)(getResourceShiftCreate);
+export default ResourceShiftCreate;
