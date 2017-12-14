@@ -48,6 +48,7 @@ class getResourceForm extends Component {
     this.getResource = this.getResource.bind(this); 
     this.getCityHall = this.getCityHall.bind(this);
     this.getServicePlaceWithProfessional = this.getServicePlaceWithProfessional.bind(this);
+    this.formatItems = this.formatItems.bind(this);
   }
 
   componentWillMount() {
@@ -203,9 +204,17 @@ class getResourceForm extends Component {
   }
 
   handleSubmit() {
+    this.formatItems();
     let errors = [];
     let formData = {};
-    formData = this.state.resource;
+    let num_req = 1;
+
+    if (this.props.is_edit){
+      formData = this.state.resource_shift;
+    }
+    else{
+      formData = this.formatItems();
+    }
     if(this.props.current_role.role == 'adm_local')
       formData.service_place_id = this.state.current_service_place_adm_local.id;
     if(errors.length > 0) {
@@ -218,32 +227,93 @@ class getResourceForm extends Component {
       const params = this.props.fetch_params; 
       let fetch_body = {};
       if(this.props.is_edit) {
-        fetch_body['resource'] = formData;
+        fetch_body['resource_shift'] = formData;
       }
       else {
-        fetch_body = formData;
+        var bodies = [];
+        for(let i = 0; i < formData.length; i++){
+          bodies.push({resource_shift:formData[i]});
+        }        
       }
-      fetch(`${apiUrl}/${collection}?${params}`, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json' },
-        method: this.props.fetch_method,
-        body: JSON.stringify(fetch_body)
-      }).then(parseResponse).then(resp => {
-        if(this.props.is_edit)
-          Materialize.toast('Tipo de recurso editado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
-        else
-          Materialize.toast('Tipo de recurso criado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
-        browserHistory.push(this.props.submit_url);
-      }).catch(({errors}) => {
-        if(errors) {
-          let full_error_msg = '';
-          errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n'; });
-          Materialize.toast(full_error_msg, 10000, 'red',function(){$('#toast-container').remove();});
-          throw errors;
+      console.log(bodies);
+      if(this.props.is_edit){
+        fetch(`${apiUrl}/${collection}?${params}`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json' },
+          method: this.props.fetch_method,
+          body: JSON.stringify(fetch_body)
+        }).then(parseResponse).then(resp => {
+          if(this.props.is_edit)
+            Materialize.toast('Tipo de recurso editado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
+          else
+            Materialize.toast('Tipo de recurso criado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
+          browserHistory.push(this.props.submit_url);
+        }).catch(({errors}) => {
+          if(errors) {
+            let full_error_msg = '';
+            errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n'; });
+            Materialize.toast(full_error_msg, 10000, 'red',function(){$('#toast-container').remove();});
+            throw errors;
+          }
+        });
+      }
+      else {
+        for(let i = 0; i < bodies.length; i++){
+
+          fetch(`${apiUrl}/${collection}?${params}`, {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json' },
+            method: this.props.fetch_method,
+            body: JSON.stringify(bodies[i])
+          }).then(parseResponse).then(resp => {
+            Materialize.toast('Tipo de recurso criado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
+            browserHistory.push(this.props.submit_url);
+          }).catch(({errors}) => {
+            if(errors) {
+              let full_error_msg = '';
+              errors.forEach(function(elem){ full_error_msg += elem + '\n'; });
+              Materialize.toast(full_error_msg, 10000, 'red',function(){$('#toast-container').remove();});
+              throw errors;
+            }
+          });
         }
-      });
+      }
+
     }
+  }
+
+  formatItems(){
+    console.log(this.state.resource_shift);
+
+    var final_resource_shifts = [];
+    let formData = this.state.resource_shift;
+    var dates = this.state.dates;
+
+    let hour_begin = formData.time_start.split(':')[0];
+    let hour_end = formData.time_end.split(':')[0];
+
+    let minute_begin = formData.time_start.split(':')[1];
+    let minute_end = formData.time_end.split(':')[1];
+
+    let number_of_shifts = dates.length;
+    let aux = {};
+
+    for(let i = 0; i < number_of_shifts; i++){
+      aux['active'] = formData.active;
+      aux['borrowed'] = formData.borrowed;
+      aux['execution_start_time'] = new Date(dates[i].setHours(Number(hour_begin), Number(minute_begin)));
+      aux['execution_end_time'] = new Date(dates[i].setHours(Number(hour_end), Number(minute_end)));
+      aux['notes'] = formData.notes;
+      aux['professional_responsible_id'] = formData.professional_responsible_id;
+      aux['resource_id'] = this.state.current_resource;
+      final_resource_shifts.push(aux);
+      aux = {};    
+    }
+    this.setState({resource_shift:final_resource_shifts});
+    return final_resource_shifts;
+
   }
 
   confirmButton() {
@@ -251,6 +321,7 @@ class getResourceForm extends Component {
       <div className="card-action">
         <a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
         <button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">{this.props.is_edit ? 'Atualizar' : 'Criar'}</button>
+        {/* <button className="waves-effect btn right button-color" onClick={this.formatItems.bind(this)} name="commit" type="submit">{this.props.is_edit ? 'Atualizar' : 'Criar'}</button> */}
       </div>
     );
   }
@@ -508,13 +579,23 @@ class getResourceForm extends Component {
 
                       </Col>
                     </Row>
+
+                    <div id="field-textarea">
+                      <h6>Nota:</h6>
+                      <label>
+                        <textarea  
+                          className='input-field materialize-textarea black-text'
+                          name="note" 
+                          placeholder="Adicione uma anotação"
+                          value={this.state.resource_shift.note} 
+                          onChange={this.handleInputResourceChange.bind(this)} 
+                        />
+                      </label>
+                    </div>
                     
                     <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
                   </Col>
                 </Row>
-
-                
-
                 {this.confirmButton()}
               </div>
             </div>

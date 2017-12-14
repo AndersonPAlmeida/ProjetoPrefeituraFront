@@ -27,10 +27,10 @@ class getResourceShiftCreate extends Component {
             <ResourceShiftForm 
               is_edit={false} 
               prev={this.prev}
-              fetch_collection={'resources'}
+              fetch_collection={'resource_shifts'}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
-              submit_url={'/resources/'}
+              submit_url={'/resource_shifts/'}
               current_role={this.props.user.roles[this.props.user.current_role_idx]}
               city_hall_id={this.props.user.roles[this.props.user.current_role_idx].city_hall_id}
             />
