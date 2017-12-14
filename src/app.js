@@ -11,7 +11,7 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
          ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
          ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, ProfessionalIndex,
          ProfessionalList, ProfessionalEdit, ProfessionalShow, ProfessionalCreate,
-         ProfessionalSearch
+         ProfessionalSearch, ProfessionalSchedule
        } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -99,6 +99,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="service_types/:service_type_id/edit" component={UserIsAuthenticated(ServiceTypeEdit)} />
         <Route path="service_types/new" component={UserIsAuthenticated(ServiceTypeCreate)} />
         <Route path="service_types/:service_type_id" component={UserIsAuthenticated(ServiceTypeShow)} />
+        <Route path="schedules" component={UserIsAuthenticated(ProfessionalSchedule)} />
         <Route path="professionals/shifts" component={UserIsAuthenticated(ProfessionalIndex)} />
         <Route path="professionals" component={UserIsAuthenticated(ProfessionalList)} />
         <Route path="professionals/new" component={UserIsAuthenticated(ProfessionalCreate)} />

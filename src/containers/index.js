@@ -40,3 +40,4 @@ export ProfessionalShow from './professional/ProfessionalShow';
 export ProfessionalCreate from './professional/ProfessionalCreate';
 
 export ProfessionalSearch from './professional/ProfessionalSearch';
+export ProfessionalSchedule from './professional/ProfessionalSchedule';
