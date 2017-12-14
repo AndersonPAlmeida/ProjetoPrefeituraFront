@@ -11,10 +11,9 @@ import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
 import html2canvas from 'html2canvas';
 import styles from './styles/MyReport.css';
-import { LogoImage } from '../images'
+import { LogoImage } from '../images';
 var jspdf
 var jspdfautotable
-
 
 class getMyReport extends Component {
   constructor(props) {
@@ -69,9 +68,9 @@ class getMyReport extends Component {
     var dateURL = "Criado em " + window.location.href + "  " + this.formatDateTime(nowTime)
 
     doc.autoTable(this.state.columns, this.state.rows, {
-      columnStyles: {id: {fillColor: 255}},
-        margin: {top: 60},
-    addPageContent: function(data) {
+      headerStyles: {fillColor: [146, 191, 35]},
+      margin: {top: 60},
+      addPageContent: function(data) {
       //header
       doc.setFontSize(20);
       doc.setTextColor(40);
@@ -85,11 +84,11 @@ class getMyReport extends Component {
       doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
       doc.text(dateURL, data.settings.margin.left + 100, doc.internal.pageSize.height - 10)
     }
-});
-
+    })
     doc.save("relatorio_cadastral.pdf");
-
   }
+
+
 
 
   formatCpf(cpf){
@@ -105,8 +104,7 @@ class getMyReport extends Component {
       <div className="card dataContainer">
         <div className="card-content">
           <div id="HTMLtoPDF" className="mt4" >
-                <h5 ><b>Cadastro: </b>{this.props.user.citizen.name}</h5>
-
+            <h5 ><b>Cadastro: </b>{this.props.user.citizen.name}</h5>
             <Table className="bordered striped" id="tabela">
               <thead>
                 <tr>
