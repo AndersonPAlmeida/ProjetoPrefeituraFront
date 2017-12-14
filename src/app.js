@@ -111,7 +111,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="resources/:resource_id" component={UserIsAuthenticated(ResourceShow)} />
 
         <Route path="resource_shifts" component={UserIsAuthenticated(ResourceShiftList)} />
-        <Route path="resource_shifts/:resource_id/edit" component={UserIsAuthenticated(ResourceShiftEdit)} />
+        <Route path="resource_shifts/:resource_shift_id/edit" component={UserIsAuthenticated(ResourceShiftEdit)} />
         <Route path="resource_shifts/new" component={UserIsAuthenticated(ResourceShiftCreate)} />
         <Route path="resource_shifts/:resource_shift_id" component={UserIsAuthenticated(ResourceShiftShow)} />
 

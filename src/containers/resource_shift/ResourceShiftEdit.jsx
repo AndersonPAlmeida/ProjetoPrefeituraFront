@@ -11,7 +11,7 @@ class getResourceShiftEdit extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      resource: [],
+      resource_shift: [],
       fetching: true
     };
   }
@@ -19,7 +19,7 @@ class getResourceShiftEdit extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `resources/${this.props.params.resource_id}`;
+    const collection = `resource_shifts/${this.props.params.resource_shift_id}`;
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -27,12 +27,12 @@ class getResourceShiftEdit extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ resource: resp, fetching: false });
+      self.setState({ resource_shift: resp, fetching: false });
     });
   }
 
   prev() {
-    browserHistory.push('/resources');
+    browserHistory.push('/resource_shifts');
   }
 
   render() {
@@ -41,14 +41,14 @@ class getResourceShiftEdit extends Component {
         {
           this.state.fetching ? <div /> : 
             <ResourceShiftForm 
-              data={this.state.resource} 
+              data={this.state.resource_shift} 
               is_edit={true} 
               prev={this.prev}
-              fetch_collection={`resources/${this.props.params.resource_id}`}
+              fetch_collection={`resource_shifts/${this.props.params.resource_shift_id}`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'put'}
               current_role={this.props.user.roles[this.props.user.current_role_idx]}
-              submit_url={'/resources/'}
+              submit_url={'/resource_shifts/'}
             />
         }
       </div>

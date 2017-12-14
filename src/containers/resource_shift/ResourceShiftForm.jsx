@@ -89,7 +89,7 @@ class getResourceForm extends Component {
         method: 'get',
       }).then(parseResponse).then(resp => {
         if (this.props.is_edit)
-          this.setState({ resource: previous_data });
+          this.setState({ resource_shift: previous_data });
         self.setState({ city_halls: resp.city_halls });
       });
     }
@@ -140,6 +140,8 @@ class getResourceForm extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
+      var resource = resp.find(r => Number(this.state.resource_shift.resource_id)=== r.id );
+      this.setState({ selected_resource: resource });
       self.setState({ resource: resp });
     });
   }
@@ -298,7 +300,7 @@ class getResourceForm extends Component {
     let number_of_shifts = dates.length;
     let aux = {};
 
-    
+
     for(let i = 0; i < number_of_shifts; i++){
       aux['active'] = formData.active;
       aux['borrowed'] = formData.borrowed;
@@ -350,24 +352,46 @@ class getResourceForm extends Component {
         })
       );
     }
-      
-    return (
-      <Input 
-        name="resource_types_id" 
-        type='select' 
-        value={this.state.resource_types_id}
-        onChange={
-          (event) => {
-            if(event.target.value != this.state.selected_resource_type) {
-              this.handleInputResourceChange(event);
+    if(!this.props.is_edit) {
+      return (
+        <Input 
+          name="resource_types_id" 
+          type='select' 
+          value={this.state.resource_types_id}
+          onChange={
+            (event) => {
+              if(event.target.value != this.state.selected_resource_type) {
+                this.handleInputResourceChange(event);
+              }
             }
           }
-        }
-      >
-        <option value='0' disabled>Escolha o tipo de recurso</option>
-        {resourceTypesList}
-      </Input>
-    );
+        >
+          <option value='0' disabled>Escolha o tipo de recurso</option>
+          {resourceTypesList}
+        </Input>
+      );
+    }
+    else{      
+      var resource = this.state.resource.find(r => Number(this.state.resource_shift.resource_id)=== r.id );
+
+      return (
+        <Input 
+          name="resource_types_id" 
+          type='select' 
+          value={!resource ? 0 : Number(resource.resource_types_id)}
+          onChange={
+            (event) => {
+              if(event.target.value != this.state.selected_resource_type) {
+                this.handleInputResourceChange(event);
+              }
+            }
+          }
+        >
+          <option value='0' disabled>Escolha o tipo de recurso</option>
+          {resourceTypesList}
+        </Input>
+      );
+    }
   }
 
   pickResource() {
@@ -487,7 +511,8 @@ class getResourceForm extends Component {
     this.setState({dates: dates});
   }
 
-  render() {  
+  render() {
+    console.log(this.state);  
     return (
       <main>
         <Row>
