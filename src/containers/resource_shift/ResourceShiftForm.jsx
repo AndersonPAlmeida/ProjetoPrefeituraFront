@@ -234,7 +234,7 @@ class getResourceForm extends Component {
       formData['professional_responsible_id'] = Number(formData.professional_responsible_id);
       formData['situation'] = Boolean(formData['active']);
     }
-    else{
+    else{     
       formData = this.formatItems();
     }
 
@@ -307,11 +307,11 @@ class getResourceForm extends Component {
     let formData = this.state.resource_shift;
     var dates = this.state.dates;
 
-    let hour_begin = formData.time_start.split(':')[0];
-    let hour_end = formData.time_end.split(':')[0];
+    let hour_begin = this.state.time_start.split(':')[0];
+    let hour_end = this.state.time_end.split(':')[0];
 
-    let minute_begin = formData.time_start.split(':')[1];
-    let minute_end = formData.time_end.split(':')[1];
+    let minute_begin = this.state.time_start.split(':')[1];
+    let minute_end = this.state.time_end.split(':')[1];
 
     let number_of_shifts = dates.length;
     let aux = {};
@@ -666,22 +666,6 @@ class getResourceForm extends Component {
             {this.pickProfessional()}
           </div>               
  
-
-          <div className="field-input" id="no-padding">
-            <h6>Situação:</h6>
-            <div>
-              <Input s={6} m={32} l={12} 
-                type='select'
-                name='situation'
-                value={this.state.resource.situation}
-                onChange={this.handleInputResourceChange.bind(this)} 
-              >
-                <option key={0} value={true}>Ativo</option>
-                <option key={1} value={false}>Inativo</option>
-              </Input>
-            </div>
-          </div>
-
           <Collection>
             <CollectionItem style={{textAlign:'center', fontSize:'large'}}>
               <b>ATENÇÃO:</b> Os horários serão aplicados para todos os dias selecionados
