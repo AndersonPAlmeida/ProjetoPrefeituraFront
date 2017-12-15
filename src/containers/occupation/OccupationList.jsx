@@ -25,10 +25,9 @@ class getOccupationList extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `//${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `occupations`;
     const params = `permission=${this.props.user.current_role}`
-    console.log(`${apiUrl}/${collection}?${params}`);
 
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -37,8 +36,6 @@ class getOccupationList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       self.setState({ occupations: resp.entries })
-      console.log(resp);
-
     });
   }
 
@@ -47,7 +44,7 @@ class getOccupationList extends Component {
       <div className='card card-occupation' >
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> I18N Occupation</h2>
-          {this.filterSector()}
+          {this.filterOccupation()}
           {this.tableList()}
         </div>
       </div>
@@ -96,7 +93,7 @@ class getOccupationList extends Component {
               <a className='back-bt waves-effect btn-flat'
                 href='#'
                 onClick={ () =>
-                  browserHistory.push(`/sectors/${occupation.id}`)
+                  browserHistory.push(`/occupations/${occupation.id}`)
                 }>
                 {occupation.name}
               </a>
@@ -111,7 +108,7 @@ class getOccupationList extends Component {
               <a className='back-bt waves-effect btn-flat'
                  href='#'
                  onClick={ () =>
-                 browserHistory.push(`/sectors/${sector.id}/edit`)
+                 browserHistory.push(`/occupations/${occupation.id}/edit`)
                 }>
                   <i className="waves-effect material-icons tooltipped">
                     edit
@@ -156,7 +153,7 @@ class getOccupationList extends Component {
     })
   }
 
-  filterSector() {
+  filterOccupation() {
     return (
       <div>
       <Row>
@@ -225,7 +222,7 @@ class getOccupationList extends Component {
     name = name.replace(/\s/g,'+')
     description = description.replace(/\s/g,'+')
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `sectors`;
+    const collection = `occupations`;
     const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}&q[s]=${this.state.filter_s}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -234,7 +231,7 @@ class getOccupationList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       this.setState({
-        sectors: resp,
+        occupations: resp,
         last_fetch_name: name,
         last_fetch_description: description
       })
