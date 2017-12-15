@@ -43,8 +43,12 @@ export ResourceShow from './resource/ResourceShow';
 export ResourceEdit from './resource/ResourceEdit';
 export ResourceCreate from './resource/ResourceCreate';
 
-
 export ResourceShiftList from './resource_shift/ResourceShiftList';
 export ResourceShiftShow from './resource_shift/ResourceShiftShow';
 export ResourceShiftEdit from './resource_shift/ResourceShiftEdit';
 export ResourceShiftCreate from './resource_shift/ResourceShiftCreate';
+
+export ResourceBookingList from './resource_booking/ResourceBookingList';
+export ResourceBookingShow from './resource_booking/ResourceBookingShow';
+export ResourceBookingEdit from './resource_booking/ResourceBookingEdit';
+export ResourceBookingCreate from './resource_booking/ResourceBookingCreate';
