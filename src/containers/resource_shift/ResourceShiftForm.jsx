@@ -207,7 +207,7 @@ class getResourceForm extends Component {
     }
     else{
       this.setState({
-        resource_shift: update(this.state.resource_shift, { [name]: {$set: value} })
+        resource_shift: update(this.state.resource_shift, { [name]: {$set: name =='active' ? Number(value):value} })
       });
     }
 
@@ -217,8 +217,6 @@ class getResourceForm extends Component {
   }
 
   handleSubmit() {
-    if(!this.props.is_edit)
-      this.formatItems();
     let errors = [];
     let formData = {};
     let dates = this.state.dates;
@@ -233,10 +231,8 @@ class getResourceForm extends Component {
       formData = this.state.resource_shift;
       formData['execution_start_time'] = new Date(dates[0].setHours(Number(hour_begin), Number(minute_begin)));
       formData['execution_end_time'] = new Date(dates[0].setHours(Number(hour_end), Number(minute_end)));
-      formData['active'] = formData.active == 'false' ? 0 : 1;
       formData['professional_responsible_id'] = Number(formData.professional_responsible_id);
-      console.log(formData);
-      return;
+      formData['situation'] = Boolean(formData['active']);
     }
     else{
       formData = this.formatItems();
@@ -260,7 +256,6 @@ class getResourceForm extends Component {
           bodies.push({resource_shift:formData[i]});
         }        
       }
-      console.log(bodies);
       if(this.props.is_edit){
         fetch(`${apiUrl}/${collection}?${params}`, {
           headers: {
@@ -269,10 +264,7 @@ class getResourceForm extends Component {
           method: this.props.fetch_method,
           body: JSON.stringify(fetch_body)
         }).then(parseResponse).then(resp => {
-          if(this.props.is_edit)
-            Materialize.toast('Escala de recurso editado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
-          else
-            Materialize.toast('Escala de recurso criado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
+          Materialize.toast('Escala de recurso editado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
           browserHistory.push(this.props.submit_url);
         }).catch(({errors}) => {
           if(errors) {
@@ -793,11 +785,11 @@ class getResourceForm extends Component {
               <Input s={6} m={32} l={12} 
                 type='select'
                 name='active'
-                value={Boolean(this.state.resource_shift.active == 'false' ? false : true)}
+                value={Number(this.state.resource_shift.active)}
                 onChange={this.handleInputResourceChange.bind(this)} 
               >
-                <option key={0} value={true}>Ativo</option>
-                <option key={1} value={false}>Inativo</option>
+                <option key={0} value={1}>Ativo</option>
+                <option key={1} value={0}>Inativo</option>
               </Input>
             </div>
           </div>
@@ -866,7 +858,6 @@ class getResourceForm extends Component {
       </Row>);
   }
   render() {
-    console.log(this.state);  
     return (
       <main>
         <Row>

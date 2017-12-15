@@ -170,6 +170,7 @@ class getResourceList extends Component {
         if (resource_data == null){
           return;
         }
+        console.log(resource_shift.active);
         return (
           <tr>
             <td key={Math.random()} >
@@ -209,7 +210,7 @@ class getResourceList extends Component {
             <td key={Math.random()} >
               {resource_data.service_place.name}
             </td> 
-
+            
             <td key={Math.random()} >
               {resource_shift.active == 0 ? 'Inativo' : 'Ativo'}
             </td> 
