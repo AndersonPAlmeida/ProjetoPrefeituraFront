@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
-import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
+import { Button, Card, Row, Col, Dropdown, Input, Pagination } from 'react-materialize'
 import styles from './styles/DependantList.css'
 import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
@@ -17,7 +17,9 @@ class getDependantList extends Component {
           dependants: [],
           filter_name: '',
           last_fetch_name: '',
-          filter_s: ''
+          filter_s: '',
+          num_entries: 0,
+          current_page: 1
       };
   }
 
@@ -32,7 +34,10 @@ class getDependantList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ dependants: resp })
+      self.setState({ 
+                      dependants: resp.entries,
+                      num_entries: resp.num_entries
+                    })
     });
   }
 
@@ -55,6 +60,39 @@ class getDependantList extends Component {
     n = n.replace(/\D/g,"");
     n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
     return (n);
+  }
+
+  sortableColumn(title, name) {
+    return (
+      <a
+        href='#'
+        onClick={
+          () => {
+            this.setState({
+              ['filter_s']: this.state.filter_s == `${name}+asc` ? `${name}+desc` : `${name}+asc`
+            }, this.handleFilterSubmit.bind(this,true))
+          }
+        }
+      >
+        {title}
+        {
+          this.state.filter_s == `${name}+asc` ?
+            <i className="waves-effect material-icons tiny tooltipped">
+              arrow_drop_down
+            </i>
+            :
+            <div />
+        }
+        {
+          this.state.filter_s == `${name}+desc` ?
+            <i className="waves-effect material-icons tiny tooltipped">
+              arrow_drop_up
+            </i>
+            :
+            <div />
+        }
+      </a>
+    )
   }
 
 	tableList() {
@@ -96,51 +134,59 @@ class getDependantList extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>
-          <a
-            href='#'
-            onClick={
-              () => {
-                this.setState({
-                  ['filter_s']: this.state.filter_s == "name+asc" ? 'name+desc' : "name+asc"
-                }, this.handleFilterSubmit.bind(this,true))
-              }
-            }
-          >
-            Nome
-            {
-              this.state.filter_s == "name+asc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_down
-                </i>
-                :
-                <div />
-            }
-            {
-              this.state.filter_s == "name+desc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_up
-                </i>
-                :
-                <div />
-            }
-          </a>
-        </th>
-        <th>Data de Nascimento</th>
-        <th>CPF</th>
+        <th>{this.sortableColumn.bind(this)('Nome','citizen_name')}</th>
+        <th>{this.sortableColumn.bind(this)('Data de Nascimento','citizen_birth_date')}</th>
+        <th>{this.sortableColumn.bind(this)('CPF','citizen_cpf')}</th>
         <th></th>
       </tr>
     )
-
+    var num_items_per_page = 25
+    var num_pages = Math.ceil(this.state.num_entries/num_items_per_page)
     return (
-      <table className={styles['table-list']}>
-        <thead>
-          {fields}
-        </thead>
-        <tbody>
-          {data}
-        </tbody>
-      </table>
+      <div>
+        <p className={styles['description-column']}>
+          Mostrando
+          {
+            num_pages != 0
+              ?
+                this.state.current_page == num_pages
+                  ?
+                    this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `
+                  :
+                    ` ${num_items_per_page} `
+              :
+                ' 0 '
+          }
+          de {this.state.num_entries} registros
+        </p>
+        <br />
+        <table className={styles['table-list']}>
+          <thead>
+            {fields}
+          </thead>
+          <tbody>
+            {data}
+          </tbody>
+        </table>
+        <br />
+        <Pagination
+          value={this.state.current_page}
+          onSelect={ (val) =>
+            { 
+              this.setState(
+                {
+                  current_page: val
+                },
+                () => {this.handleFilterSubmit.bind(this)(true)}
+              )
+            }
+          }
+          className={styles['pagination']}
+          items={Math.ceil(this.state.num_entries/num_items_per_page)}
+          activePage={this.state.current_page}
+          maxButtons={8}
+        />
+      </div>
     )
 	}
 
@@ -202,6 +248,7 @@ class getDependantList extends Component {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `citizens/${this.props.user.citizen.id}/dependants`;
     const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[s]=${this.state.filter_s}`
+    console.log(`${apiUrl}/${collection}?${params}`)
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -209,8 +256,10 @@ class getDependantList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       this.setState({
-        dependants: resp,
-        last_fetch_name: name
+        dependants: resp.entries,
+        num_entries: resp.num_entries,
+        last_fetch_name: name,
+        current_page: 1
       })
     });
   }

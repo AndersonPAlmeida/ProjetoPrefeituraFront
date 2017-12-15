@@ -5,7 +5,7 @@ import { UserImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import {fetch} from "../../redux-auth";
 import { browserHistory } from 'react-router';
-
+import update from 'react-addons-update';
 
 export default function () {
   return (
@@ -14,7 +14,7 @@ export default function () {
         <p>Informações de Contato</p>
       </div>
       <div className="field-input">
-        <h6>Telefone 1:</h6>
+        <h6>Telefone 1{this.props.user_class == `dependant` ? '' : '*'}:</h6>
         <label>
           <MaskedInput
             mask={this.state.aux.phonemask}

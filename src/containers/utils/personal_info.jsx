@@ -92,7 +92,7 @@ export default function () {
       </div>
 
       <div className="field-input">
-        <h6>RG:</h6>
+        <h6>RG{this.props.user_class == `dependant` ? '' : '*'}:</h6>
         <label>
           <MaskedInput
             type="text"

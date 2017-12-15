@@ -289,7 +289,7 @@ class getUserForm extends Component {
     let errors = []
     for (var i = 0; i < fields.length; i++) {
       if(!obj[fields[i].id])
-        errors.push(`Campo ${fields.name} é obrigatório`)
+        errors.push(`Campo ${fields[i].name} é obrigatório`)
     }
     return errors;
   }
@@ -298,19 +298,21 @@ class getUserForm extends Component {
     let errors = []
     let form_mandatory = 
       [
-        { id: 'cep', name: 'CEP' },
-        { id: 'name', name: 'nome' }
+        { id: 'name', name: 'nome' },
+        { id: 'name', name: 'birth_date' }
       ]
     if(this.props.user_class == `citizen`) {
       form_mandatory.push({ id: 'cpf', name: 'CPF' })
+      form_mandatory.push({ id: 'cep', name: 'CEP' })
+      form_mandatory.push({ id: 'phone1', name: 'Telefone 1' })
+    }
     if(send_password) {
       form_mandatory.push({ id: 'password', name: 'Senha' })
       form_mandatory.push({ id: 'password_confirmation', name: 'Confirmação de Senha' })
     }
-    errors = checkEmptyFields(formData, form_mandatory)
+    errors = this.checkEmptyFields(formData, form_mandatory)
     if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
       errors.push("Campo Data de Nascimento é obrigatório.");
-    }
     if(auxData['password_confirmation'] != auxData['password'])
       errors.push("A senha de confirmação não corresponde a senha atual.");
     return errors;
@@ -366,9 +368,15 @@ class getUserForm extends Component {
     } else {
       if(this.props.is_edit) {
         var { password, current_password, password_confirmation, ...other } = formData
-        fetch_body['password'] = password
-        fetch_body['current_password'] = current_password
-        fetch_body['password_confirmation'] = password_confirmation
+        if(password) {
+          fetch_body['password'] = password
+          fetch_body['current_password'] = current_password
+          fetch_body['password_confirmation'] = password_confirmation
+        }
+        if(this.props.current_professional) {
+          fetch_body['registration'] = this.state.professional.registration
+          fetch_body['occupation_id'] = this.state.professional.occupation_id
+        }
         fetch_body['citizen'] = other
       }
       else
@@ -429,7 +437,7 @@ class getUserForm extends Component {
         }
         Materialize.toast(this.successMessage.bind(this)(), 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
-      }).catch(({errors}) => {
+      }).catch((errors) => {
         if(errors && errors['full_messages']) {
           let full_error_msg = "";
           errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n' });
@@ -490,7 +498,7 @@ class getUserForm extends Component {
                 }
                 <Row>
                   { 
-                    this.props.user_class == `professional` ?
+                    (this.props.user_class == `professional` || this.props.current_professional) ?
                       professional_info.bind(this)() :
                       null
                   }

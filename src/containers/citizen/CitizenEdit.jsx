@@ -25,6 +25,8 @@ class getCitizenEdit extends Component {
         fetch_method={'put'}
         submit_url={`/citizens/schedules?home=true`}
         photo={this.props.user.image}
+        current_professional={this.props.is_professional}
+        professional_data={{'registration': this.props.user.registration, 'occupation_id': this.props.user.occupation_id}}
       />
     )
   }
@@ -32,8 +34,10 @@ class getCitizenEdit extends Component {
 
 const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
+  let is_professional = (user.roles && user.roles.length > 0)
   return {
-    user
+    user,
+    is_professional
   }
 }
 const CitizenEdit = connect(

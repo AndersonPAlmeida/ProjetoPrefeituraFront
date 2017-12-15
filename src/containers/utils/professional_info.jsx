@@ -210,16 +210,20 @@ export default function () {
         </label>
       </div>
 
-      <Row>
-        {pickServicePlace.bind(this)()}
-      </Row>
-      <Row>
-        {pickPermission.bind(this)()}
-        <Button floating large className='green' waves='light' icon='add' onClick={insertServicePlace.bind(this)} />
-      </Row>
-      <Row>
-        {tableList.bind(this)()}
-      </Row>
+      { (this.props.current_professional) ? null :
+        <div>
+          <Row>
+            {pickServicePlace.bind(this)()}
+          </Row>
+          <Row>
+            {pickPermission.bind(this)()}
+            <Button floating large className='green' waves='light' icon='add' onClick={insertServicePlace.bind(this)} />
+          </Row>
+          <Row>
+            {tableList.bind(this)()}
+          </Row>
+        </div>
+      }
     </Col>
   )
 }

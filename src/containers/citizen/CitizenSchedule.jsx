@@ -58,8 +58,10 @@ class getCitizenSchedule extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
+      for(var i = 0; i < resp.dependants.length; i++)
+        resp.dependants[i].schedules['current_page:'] = 1
       self.setState({ 
-        schedules: resp.schedules,
+        schedules: resp.schedules.entries,
         dependants: resp.dependants
       })
     });
@@ -350,7 +352,7 @@ class getCitizenSchedule extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       this.setState({
-        schedules: resp.schedules,
+        schedules: resp.schedules.entries,
         last_fetch_sector: sector,
         last_fetch_service_type: service_type,
         last_fetch_service_place: service_place,
@@ -363,7 +365,7 @@ class getCitizenSchedule extends Component {
     return (n < 10 ? '0' : '') + n;
   }
 
-  tableList(schedules) {
+  tableList(schedules, num_entries, current_page) {
     var date
     var d
     var time
@@ -396,6 +398,9 @@ class getCitizenSchedule extends Component {
             <td>
               {schedule.situation}
             </td>
+            <td>
+              {`Não disponível`}
+            </td>
           </tr>
         )
       })
@@ -411,12 +416,29 @@ class getCitizenSchedule extends Component {
         <th>Data</th>
         <th>Hora</th>
         <th>Situação</th>
+        <th>Comprovante</th>
       </tr>
     )
-
+    var num_items_per_page = 25
+    var num_pages = Math.ceil(num_entries/num_items_per_page)
     return (
       <div>
-        <p>Mostrando <b>{schedules.length}</b> {schedules.length > 1 ? 'registros' : 'registro'}</p>
+        <p className={styles['description-column']}>
+          Mostrando
+          {
+            num_pages != 0
+              ?
+                this.state.current_page == num_pages
+                  ?
+                    num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${num_entries % num_items_per_page} `
+                  :
+                    ` ${num_items_per_page} `
+              :
+                ' 0 '
+          }
+          de {num_entries} registros
+        </p>
+        <br />
         <table className={styles['table-list']}>
           <thead>
             {fields}
@@ -439,8 +461,8 @@ class getCitizenSchedule extends Component {
             }
           }
           className={styles['pagination']} 
-          items={Math.ceil(this.state.num_entries/25)} 
-          activePage={this.state.current_page} 
+          items={Math.ceil(num_entries/num_items_per_page)} 
+          activePage={current_page} 
           maxButtons={8} 
         />
       </div>
@@ -451,9 +473,9 @@ class getCitizenSchedule extends Component {
     var sectorsLimit;
     const dependantList = (
       this.state.dependants.map((dependant) => {
+        console.log(dependant)
         sectorsLimit = (
           this.state.sectors.map((sector) => {
-            let num_schedules = this.state.dependants
             return (
               <p>{sector.name}: X/Y</p> /* <p>{sector.name}: {dependant.num_schedules_sector[sector.id]}/{sector.schedules_by_sector}</p> */
             )
@@ -464,7 +486,7 @@ class getCitizenSchedule extends Component {
               <CollapsibleItem header={dependant.name}>
                 {sectorsLimit}
                 <br />
-                {dependant.schedules.length > 0 ? this.tableList(dependant.schedules) : '- Nenhum agendamento encontrado'}
+                {dependant.schedules.entries.length > 0 ? this.tableList(dependant.schedules.entries, dependant.schedules.num_entries, dependant.schedules.current_page) : '- Nenhum agendamento encontrado'}
               </CollapsibleItem>
           </div>
         )
@@ -488,7 +510,7 @@ class getCitizenSchedule extends Component {
           <div className='card-content'>
             <h2 className='card-title h2-title-home'>Buscar agendamentos </h2>
             {this.filterSchedule()}
-            {(this.state.schedules && this.state.schedules.length) > 0 ? this.tableList(this.state.schedules) : '- Nenhum agendamento encontrado'}
+            {(this.state.schedules && this.state.schedules.entries && this.state.schedules.entries.length) > 0 ? this.tableList(this.state.schedules.entries, this.state.num_entries, this.state.current_page) : '- Nenhum agendamento encontrado'}
             {this.dependantSchedules()}
           </div>
 		    </div>
