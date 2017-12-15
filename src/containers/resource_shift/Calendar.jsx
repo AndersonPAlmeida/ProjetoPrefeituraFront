@@ -15,6 +15,13 @@ export default class Calendar extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps){
+    if(this.props.markedDays)
+      this.setState({selectedDays:this.props.markedDays});
+    console.log(this.props);
+    console.log(nextProps);
+  }
+
   date_sort_asc(date1, date2) {
     if (date1 > date2) return 1;
     if (date1 < date2) return -1;

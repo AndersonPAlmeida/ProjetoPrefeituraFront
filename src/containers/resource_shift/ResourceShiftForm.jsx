@@ -89,7 +89,7 @@ class getResourceForm extends Component {
         method: 'get',
       }).then(parseResponse).then(resp => {
         if (this.props.is_edit)
-          this.setState({ resource_shift: previous_data });
+          this.setState({ resource_shift: previous_data, dates:[new Date(previous_data.execution_start_time)] });          
         self.setState({ city_halls: resp.city_halls });
       });
     }
@@ -216,8 +216,7 @@ class getResourceForm extends Component {
     else{
       formData = this.formatItems();
     }
-    if(this.props.current_role.role == 'adm_local')
-      formData.service_place_id = this.state.current_service_place_adm_local.id;
+
     if(errors.length > 0) {
       let full_error_msg = '';
       errors.forEach(function(elem){ full_error_msg += elem + '\n'; });
@@ -511,6 +510,337 @@ class getResourceForm extends Component {
     this.setState({dates: dates});
   }
 
+  formatResourceDisplay(r){
+    var final_name;
+    if(r.label.length > 0){
+      if (r.brand.length > 0){
+        if (r.model.length > 0){
+          final_name = `[${r.brand}] ${r.model} (${r.label})`;
+        }
+        else{
+          final_name = `${r.brand} - ${r.label}`;
+        }
+      }
+      else{
+        final_name = `${r.label}`;          
+      }
+    }
+    else{
+      final_name =`ID do recurso: ${r.id}`;
+    }
+    return final_name;
+  }
+  getProfessionalListForServicePlace(){
+    var service_place_professional = [];
+    var professionals = this.state.professionals;
+    var service_place = this.state.service_place;
+    
+    for(let i = 0; i < service_place.length; i++ ){
+      let item = {service_place_id: service_place[i].id, service_place_name: service_place[i].name};
+      var professional = [];
+      for(let j = 0; j < professionals.length; j++){
+        for (let k = 0; k < professionals[j].service_place_ids.length; k++){          
+          if (Number(professionals[j].service_place_ids[k]) == Number(service_place[i].id)){
+            professional.push({professional_id:professionals[j].id, professional_name:professionals[j].name});
+          }
+        }
+        item['professionals'] = professional;
+      }
+      service_place_professional.push(item);
+    }
+    return service_place_professional;
+  }
+  pickProfessionalEdit(service_place_and_professionals, current_service_place){
+    let professionals;
+    if (service_place_and_professionals.length < 1){
+      return (
+        <Input 
+          name="professional_responsible_id" 
+          type='select' 
+          value={this.state.resource_shift.professional_responsible_id}
+          onChange={
+            (event) => {
+              if(event.target.value != this.state.selected_professional) {
+                this.handleInputResourceChange(event);
+              }
+            }
+          }
+        >
+          <option value='0' disabled>Escolha o profissional responsável</option>
+        </Input>
+      );
+    }
+    else{
+      professionals = service_place_and_professionals.find(spnr => Number(current_service_place) === spnr.service_place_id).professionals;
+    }
+    const professionalList = (
+      professionals.map((professional) => {
+        return (
+          <option key={Math.random()} value={professional.professional_id}>
+            {professional.professional_name}
+          </option>
+        );       
+      })
+    );
+    return (
+      <Input 
+        name="professional_responsible_id" 
+        type='select' 
+        value={this.state.resource_shift.professional_responsible_id}
+        onChange={
+          (event) => {
+            if(event.target.value != this.state.selected_professional) {
+              this.handleInputResourceChange(event);
+            }
+          }
+        }
+      >
+        <option value='0' disabled>Escolha o profissional responsável</option>
+        {professionalList}
+      </Input>
+    );
+  }
+  timeSizeFixer(time){
+    if(time.length == 0){
+      return '00';
+    }
+    else{
+      if(time.length == 1){
+        return '0' + time;
+      }
+      else{
+        if(time.length == 2){
+          return time;          
+        }
+        else{
+          return time[0]+time[1];
+        }
+      }
+    }
+  }
+  transformTime(){
+    var begin_time = this.state.resource_shift.execution_start_time;
+    var end_time = this.state.resource_shift.execution_end_time;
+    var transfBegin_time = undefined;
+    var transfEnd_time = undefined;
+    if(end_time){
+      transfBegin_time = this.timeSizeFixer((new Date(begin_time).getHours()).toString()) + ':' + this.timeSizeFixer((new Date(begin_time).getMinutes()).toString());
+      transfEnd_time = this.timeSizeFixer((new Date(end_time).getHours()).toString()) + ':' + this.timeSizeFixer((new Date(end_time).getMinutes()).toString());    
+    }
+    return({day: this.state.resource_shift.execution_start_time,begin_time:transfBegin_time,end_time:transfEnd_time});
+  }
+  renderFormCreate(){
+    return(
+      <Row className='first-line'>
+        <Col s={12} m={12} l={12}>
+      
+          <div className="field-input" id="no-padding">
+            <h6>Tipo de recurso*:</h6>
+            {this.pickResourceType()}
+          </div>
+
+          <div className="field-input" id="no-padding">
+            <h6>Recurso*:</h6>
+            {this.pickResource()}
+          </div>
+
+          <div className="field-input" id="no-padding">
+            <h6>Profissional responsável:</h6>
+            {this.pickProfessional()}
+          </div>               
+ 
+
+          <div className="field-input" id="no-padding">
+            <h6>Situação:</h6>
+            <div>
+              <Input s={6} m={32} l={12} 
+                type='select'
+                name='situation'
+                value={this.state.resource.situation}
+                onChange={this.handleInputResourceChange.bind(this)} 
+              >
+                <option key={0} value={true}>Ativo</option>
+                <option key={1} value={false}>Inativo</option>
+              </Input>
+            </div>
+          </div>
+
+          <Collection>
+            <CollectionItem style={{textAlign:'center', fontSize:'large'}}>
+              <b>ATENÇÃO:</b> Os horários serão aplicados para todos os dias selecionados
+            </CollectionItem>
+          </Collection>
+
+          <Row>
+            <Col s={12} m={6}>
+              <div style={{marginBottom:20}}>
+                <h6 style={{marginBottom:30}}>Escolha as datas das escalas*:</h6>
+                <Calendar save_days={this.save_days} order='asc'/>
+              </div>
+            </Col>
+
+            <Col s={12} m={6} id='time-shift'>                        
+              <div className="" >
+                <h6 style={{marginBottom:30}}>Escolha o horário inicial da(s) escala(s)*:</h6>
+                <label>
+                  <input 
+                    type="time" 
+                    id='time-select' 
+                    name="time_start" 
+                    value={this.state.resource.label} 
+                    onChange={this.handleInputResourceChange.bind(this)} 
+                  />
+                </label>
+                <span>h</span>
+              </div>
+
+              <div className="" >
+                <h6 style={{marginBottom:30}}>Escolha o horário final da(s) escala(s)*:</h6>
+                <label>
+                  <input 
+                    type="time" 
+                    id='time-select' 
+                    name="time_end" 
+                    value={this.state.resource.label} 
+                    onChange={this.handleInputResourceChange.bind(this)} 
+                  />
+                </label>
+                <span>h</span>
+              </div>
+
+            </Col>
+          </Row>
+
+          <div id="field-textarea">
+            <h6>Nota:</h6>
+            <label>
+              <textarea  
+                className='input-field materialize-textarea black-text'
+                name="note" 
+                placeholder="Adicione uma anotação"
+                value={this.state.resource_shift.note} 
+                onChange={this.handleInputResourceChange.bind(this)} 
+              />
+            </label>
+          </div>
+      
+          <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
+        </Col>
+      </Row>);
+  }
+  renderFormEdit(){    
+    var resource_id = undefined;
+    var resource = undefined;
+    var resource_type = undefined;
+    var listSpProf = this.getProfessionalListForServicePlace();
+    var time = this.transformTime();
+    if(this.state.resource_shift.resource_id){
+      resource_id = this.state.resource_shift.resource_id;
+    }
+    if (resource_id)
+      resource = this.state.resource.find(r => resource_id == r.id);
+    if (resource){
+      resource_type = this.state.resource_types.find(rt => resource.resource_types_id == rt.id);      
+      console.log(time);
+    }
+    return(
+      <Row className='first-line'>
+        <Col s={12} m={12} l={12}>
+      
+          <div className="field-input" id="no-padding">
+            <h6>Tipo de recurso*:</h6>  
+            {resource_type ? resource_type.name : ''}
+          </div>
+
+          <div className="field-input" id="no-padding">
+            <h6>Recurso*:</h6>
+            {resource ? this.formatResourceDisplay(resource) : ''}
+          </div>
+
+          <div className="field-input" id="no-padding">
+            <h6>Profissional responsável:</h6>
+            {resource ? this.pickProfessionalEdit(listSpProf, resource.service_place_id) : ''}
+          </div>               
+ 
+
+          <div className="field-input" id="no-padding">
+            <h6>Situação:</h6>
+            <div>
+              <Input s={6} m={32} l={12} 
+                type='select'
+                name='situation'
+                value={this.state.resource.situation}
+                onChange={this.handleInputResourceChange.bind(this)} 
+              >
+                <option key={0} value={true}>Ativo</option>
+                <option key={1} value={false}>Inativo</option>
+              </Input>
+            </div>
+          </div>
+
+          <Collection>
+            <CollectionItem style={{textAlign:'center', fontSize:'large'}}>
+              <b>ATENÇÃO:</b> Os horários serão aplicados para todos os dias selecionados
+            </CollectionItem>
+          </Collection>
+
+          <Row>
+            <Col s={12} m={6}>
+              <div style={{marginBottom:20}}>
+                <h6 style={{marginBottom:30}}>Escolha as datas das escalas*:</h6>
+                <Calendar save_days={this.save_days} order='asc' markedDays={this.state.dates}/>
+              </div>
+            </Col>
+
+            <Col s={12} m={6} id='time-shift'>                        
+              <div className="" >
+                <h6 style={{marginBottom:30}}>Escolha o horário inicial da(s) escala(s)*:</h6>
+                <label>
+                  <input 
+                    type="time" 
+                    id='time-select' 
+                    name="time_start" 
+                    value={resource ? time.begin_time : undefined} 
+                    onChange={this.handleInputResourceChange.bind(this)} 
+                  />
+                </label>
+                <span>h</span>
+              </div>
+
+              <div className="" >
+                <h6 style={{marginBottom:30}}>Escolha o horário final da(s) escala(s)*:</h6>
+                <label>
+                  <input 
+                    type="time" 
+                    id='time-select' 
+                    name="time_end" 
+                    value={resource ? time.end_time : undefined}  
+                    onChange={this.handleInputResourceChange.bind(this)} 
+                  />
+                </label>
+                <span>h</span>
+              </div>
+
+            </Col>
+          </Row>
+
+          <div id="field-textarea">
+            <h6>Nota:</h6>
+            <label>
+              <textarea  
+                className='input-field materialize-textarea black-text'
+                name="note" 
+                placeholder="Adicione uma anotação"
+                value={this.state.resource_shift.note} 
+                onChange={this.handleInputResourceChange.bind(this)} 
+              />
+            </label>
+          </div>
+      
+          <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
+        </Col>
+      </Row>);
+  }
   render() {
     console.log(this.state);  
     return (
@@ -520,106 +850,14 @@ class getResourceForm extends Component {
             <div className='card'>
               <div className='card-content'>
                 {this.props.is_edit ?
-                  <h2 className="card-title">Alterar escala de recurso: {this.props.data.name}</h2> 
+                  <h2 className="card-title">Alterar escala de recurso: {this.props.data.id}</h2> 
                   :
                   <h2 className="card-title">Cadastrar escala de recurso</h2> 
                 }
-                <Row className='first-line'>
-                  <Col s={12} m={12} l={12}>
-                    
-                    <div className="field-input" id="no-padding">
-                      <h6>Tipo de recurso*:</h6>
-                      {this.pickResourceType()}
-                    </div>
-
-                    <div className="field-input" id="no-padding">
-                      <h6>Recurso*:</h6>
-                      {this.pickResource()}
-                    </div>
-
-                    <div className="field-input" id="no-padding">
-                      <h6>Profissional responsável:</h6>
-                      {this.pickProfessional()}
-                    </div>               
-               
-
-                    <div className="field-input" id="no-padding">
-                      <h6>Situação:</h6>
-                      <div>
-                        <Input s={6} m={32} l={12} 
-                          type='select'
-                          name='situation'
-                          value={this.state.resource.situation}
-                          onChange={this.handleInputResourceChange.bind(this)} 
-                        >
-                          <option key={0} value={true}>Ativo</option>
-                          <option key={1} value={false}>Inativo</option>
-                        </Input>
-                      </div>
-                    </div>
-
-                    <Collection>
-                      <CollectionItem style={{textAlign:'center', fontSize:'large'}}>
-                        <b>ATENÇÃO:</b> Os horários serão aplicados para todos os dias selecionados
-                      </CollectionItem>
-                    </Collection>
-
-                    <Row>
-                      <Col s={12} m={6}>
-                        <div style={{marginBottom:20}}>
-                          <h6 style={{marginBottom:30}}>Escolha as datas das escalas*:</h6>
-                          <Calendar save_days={this.save_days} order='asc'/>
-                        </div>
-                      </Col>
-
-                      <Col s={12} m={6} id='time-shift'>                        
-                        <div className="" >
-                          <h6 style={{marginBottom:30}}>Escolha o horário inicial da(s) escala(s)*:</h6>
-                          <label>
-                            <input 
-                              type="time" 
-                              id='time-select' 
-                              name="time_start" 
-                              value={this.state.resource.label} 
-                              onChange={this.handleInputResourceChange.bind(this)} 
-                            />
-                          </label>
-                          <span>h</span>
-                        </div>
-
-                        <div className="" >
-                          <h6 style={{marginBottom:30}}>Escolha o horário final da(s) escala(s)*:</h6>
-                          <label>
-                            <input 
-                              type="time" 
-                              id='time-select' 
-                              name="time_end" 
-                              value={this.state.resource.label} 
-                              onChange={this.handleInputResourceChange.bind(this)} 
-                            />
-                          </label>
-                          <span>h</span>
-                        </div>
-
-                      </Col>
-                    </Row>
-
-                    <div id="field-textarea">
-                      <h6>Nota:</h6>
-                      <label>
-                        <textarea  
-                          className='input-field materialize-textarea black-text'
-                          name="note" 
-                          placeholder="Adicione uma anotação"
-                          value={this.state.resource_shift.note} 
-                          onChange={this.handleInputResourceChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    
-                    <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
-                  </Col>
-                </Row>
+                {this.props.is_edit ?
+                  this.renderFormEdit() :
+                  this.renderFormCreate() 
+                }
                 {this.confirmButton()}
               </div>
             </div>
