@@ -18,8 +18,6 @@ export default class Calendar extends React.Component {
   componentWillReceiveProps(nextProps){
     if(this.props.markedDays)
       this.setState({selectedDays:this.props.markedDays});
-    console.log(this.props);
-    console.log(nextProps);
   }
 
   date_sort_asc(date1, date2) {
@@ -42,6 +40,8 @@ export default class Calendar extends React.Component {
       );
       selectedDays.splice(selectedIndex, 1);
     } else {
+      if(this.props.singleDay)
+        selectedDays.pop();
       selectedDays.push(day);
     }
     if(this.props.order){
