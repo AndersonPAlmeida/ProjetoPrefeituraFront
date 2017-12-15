@@ -9,7 +9,6 @@ import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
-import html2canvas from 'html2canvas';
 import styles from './styles/MyReport.css';
 import { LogoImage } from '../images';
 var jspdf
@@ -45,6 +44,23 @@ class getMyReport extends Component {
     jspdfautotable = require('jspdf-autotable')
   }
 
+   convertImgToDataURLviaCanvas(url, callback, outputFormat) {
+    var img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = function() {
+      var canvas = document.createElement('CANVAS');
+      var ctx = canvas.getContext('2d');
+      var dataURL;
+      canvas.height = this.height;
+      canvas.width = this.width;
+      ctx.drawImage(this, 0, 0);
+      dataURL = canvas.toDataURL(outputFormat);
+      canvas = null;
+      return(dataURL);
+    };
+    img.src = url;
+    return(img)
+  }
 
   formatDateTime(dateTime){
     var dateText = new Date(dateTime)
@@ -66,6 +82,8 @@ class getMyReport extends Component {
     var name = this.props.user.citizen.name
     var nowTime = new Date()
     var dateURL = "Criado em " + window.location.href + "  " + this.formatDateTime(nowTime)
+    var dataImage = this.convertImgToDataURLviaCanvas(LogoImage, function(image){return(image)}, 'png')
+    console.log(dataImage)
 
     doc.autoTable(this.state.columns, this.state.rows, {
       headerStyles: {fillColor: [146, 191, 35]},
@@ -75,9 +93,11 @@ class getMyReport extends Component {
       doc.setFontSize(20);
       doc.setTextColor(40);
       doc.setFontStyle('normal');
-      doc.text("Relatório Cadastral", data.settings.margin.left + 15, 22);
-      doc.text(name, data.settings.margin.left + 15, 50);
-
+      doc.text("Relatório Cadastral", data.settings.margin.left + 50, 22);
+      doc.text(name, data.settings.margin.left + 50, 50);
+      if (dataImage) {
+          doc.addImage(dataImage, 'png', data.settings.margin.left, 15, 35, 35);
+      }
       //footer
       var str = "Página " + data.pageCount;
       doc.setFontSize(10);
