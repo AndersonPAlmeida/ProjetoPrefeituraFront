@@ -170,7 +170,6 @@ class getResourceList extends Component {
         if (resource_data == null){
           return;
         }
-        console.log(resource_shift.active);
         return (
           <tr>
             <td key={Math.random()} >
