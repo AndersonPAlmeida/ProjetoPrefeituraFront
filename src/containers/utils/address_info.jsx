@@ -89,6 +89,7 @@ export default function () {
             type="text"
             className='input-field'
             name="address_number"
+            pattern="[0-9]*"
             value={this.state.user.address_number}
             onChange={this.handleInputUserChange.bind(this)}
           />

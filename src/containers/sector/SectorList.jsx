@@ -36,7 +36,6 @@ class getSectorList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      console.log(resp)
       self.setState({ 
                       sectors: resp.entries,
                       num_entries: resp.num_entries
@@ -155,7 +154,8 @@ class getSectorList extends Component {
       </tr>
     )
 
-    var num_pages = Math.ceil(this.state.num_entries/25)
+    var num_items_per_page = 25
+    var num_pages = Math.ceil(this.state.num_entries/num_items_per_page)
     return (
       <div> 
         <p className={styles['description-column']}>
@@ -165,9 +165,9 @@ class getSectorList extends Component {
               ?
                 this.state.current_page == num_pages 
                   ? 
-                    this.state.num_entries % 25 == 0 ? ' 25 ' : ` ${this.state.num_entries % 25} `  
+                    this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `  
                   :
-                    ' 25 '
+                    ` ${num_items_per_page} `
               :
                 ' 0 '
           } 
@@ -196,7 +196,7 @@ class getSectorList extends Component {
             }
           }
           className={styles['pagination']}
-          items={Math.ceil(this.state.num_entries/25)} 
+          items={Math.ceil(this.state.num_entries/num_items_per_page)} 
           activePage={this.state.current_page}
           maxButtons={8}
         />
@@ -269,6 +269,7 @@ class getSectorList extends Component {
   handleFilterSubmit(sort_only) {
     var name
     var description
+    var current_page
     if(sort_only) {
       name = this.state.last_fetch_name
       description = this.state.last_fetch_description
@@ -285,6 +286,7 @@ class getSectorList extends Component {
                     +`&q[description]=${description}`
                     +`&q[s]=${this.state.filter_s}`
                     +`&page=${this.state.current_page}`
+    current_page = sort_only ? this.state.current_page : 1
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -296,7 +298,7 @@ class getSectorList extends Component {
         num_entries: resp.num_entries,
         last_fetch_name: name,
         last_fetch_description: description,
-        current_page: 1
+        current_page: current_page
       })
     });
   }

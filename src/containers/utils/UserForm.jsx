@@ -155,11 +155,13 @@ class getUserForm extends Component {
 
   handleInputUserChange(event) {
     const target = event.target;
-    const value = target.value;
     const name = target.name;
-    this.setState({
-      user: update(this.state.user, { [name]: {$set: value} })
-    })
+    const value = target.value
+    if(target.validity.valid) {
+      this.setState({
+        user: update(this.state.user, { [name]: {$set: value} })
+      })
+    }
   }
 
   handleChange(event){

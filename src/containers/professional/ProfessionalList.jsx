@@ -213,7 +213,8 @@ class getProfessionalList extends Component {
       </tr>
     )
 
-    var num_pages = Math.ceil(this.state.num_entries/25)
+    var num_items_per_page = 25
+    var num_pages = Math.ceil(this.state.num_entries/num_items_per_page)
 
     return (
       <div>
@@ -224,9 +225,9 @@ class getProfessionalList extends Component {
               ? 
                 this.state.current_page == num_pages
                   ?
-                    this.state.num_entries % 25 == 0 ? ' 25 ' : ` ${this.state.num_entries % 25} `
+                    this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `
                   :
-                    ' 25 '
+                    ` ${num_items_per_page} `
               :
                 ' 0 '
               
@@ -256,7 +257,7 @@ class getProfessionalList extends Component {
             }
           }
           className={styles['pagination']}
-          items={Math.ceil(this.state.num_entries/25)}
+          items={Math.ceil(this.state.num_entries/num_items_per_page)}
           activePage={this.state.current_page}
           maxButtons={8}
         />
@@ -502,6 +503,7 @@ class getProfessionalList extends Component {
     var occupation
     var service_place
     var situation
+    var current_page
     if(sort_only) {
       name = this.state.last_fetch_name
       cpf = this.state.last_fetch_cpf
@@ -532,6 +534,7 @@ class getProfessionalList extends Component {
                     +`&q[active]=${situation}`
                     +`&q[s]=${this.state.filter_s}`
                     +`&page=${this.state.current_page}`
+    current_page = sort_only ? this.state.current_page : 1
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -548,7 +551,7 @@ class getProfessionalList extends Component {
         last_fetch_occupation: occupation,
         last_fetch_service_place: service_place,
         last_fetch_situation: situation,
-        current_page: 1
+        current_page: current_page
       })
     });
   }

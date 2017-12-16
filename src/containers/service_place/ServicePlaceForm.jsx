@@ -36,11 +36,12 @@ class getServicePlaceForm extends Component {
         neighborhood: '',
         password_confirmation: "",
         state_abbreviation: '',
-        update_checkbox: 0,
         city_hall: {
-          name: ''
+          name: '',
+          service_types: []
         }
       },
+      update_checkbox: 0,
       phonemask: "(11) 1111-11111",
     };
   }
@@ -51,13 +52,14 @@ class getServicePlaceForm extends Component {
       self.setState({ service_place: this.props.data })
       if(this.props.data.cep) {
         this.updateAddress.bind(this)(this.props.data.cep.replace(/(\.|-|_)/g,''))
-        this.setState({ aux: update(this.state.aux, {update_checkbox: {$set: 1} })})
       }
     }
   }
 
   componentDidUpdate() {
-    if(this.state.aux.update_checkbox) {
+    console.log(this.state)
+    /* check true for all service types that belongs to the service place */
+    if(this.state.update_checkbox) {
       this.state.aux.city_hall.service_types.map((service_type, idx) => {
         for(var i = 0; i < this.state.service_place.service_types.length; i++) {
           if (this.state.service_place.service_types[i].id == service_type.id) {
@@ -69,13 +71,14 @@ class getServicePlaceForm extends Component {
           }
         }
       })
-      this.setState({ aux: update(this.state.aux, {update_checkbox: {$set: 0} })})
+      this.setState({ update_checkbox: 0 })
     }
   }
 
   handleInputServicePlaceChange(event) {
     const target = event.target;
     const value = target.value;
+    const name = target.name
 
     this.setState({
       service_place: update(this.state.service_place, { [name]: {$set: value} })
@@ -108,19 +111,19 @@ class getServicePlaceForm extends Component {
           service_type['checked'] = false
         })
         this.setState(
-        { aux: update(this.state.aux,
+        { 
+          update_checkbox: 1,
+          service_place: update(this.state.service_place,
+          {
+            city_hall_id: {$set: resp.city_halls[0].id}
+          }),
+          aux: update(this.state.aux,
           {
             address: {$set: resp.address},
             neighborhood: {$set: resp.neighborhood},
             city_name: {$set: resp.city_name},
             state_abbreviation: {$set: resp.state_name},
             city_hall: {$set: resp.city_halls[0]}
-          })
-        });
-        this.setState(
-        { service_place: update(this.state.service_place,
-          {
-            city_hall_id: {$set: resp.city_halls[0].id}
           })
         });
       }

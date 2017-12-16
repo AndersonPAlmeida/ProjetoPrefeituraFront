@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
-import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
+import { Button, Card, Row, Col, Dropdown, Input, Pagination } from 'react-materialize'
 import styles from './styles/ServicePlaceList.css'
 import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
@@ -16,14 +16,14 @@ class getServicePlaceList extends Component {
       this.state = {
           service_places: [],
           filter_name: '',
-          filter_description: '',
           filter_situation: '',
           filter_neighborhood: '',
           last_fetch_name: '',
-          last_fetch_description: '',
           last_fetch_situation: '',
           last_fetch_neighborhood: '',
-          filter_s: ''
+          filter_s: '',
+          num_entries: 0,
+          current_page: 1
       };
   }
 
@@ -38,7 +38,10 @@ class getServicePlaceList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ service_places: resp })
+      self.setState({ 
+                      service_places: resp.entries,
+                      num_entries: resp.num_entries
+                    })
     });
   }
 
@@ -55,6 +58,39 @@ class getServicePlaceList extends Component {
         </div>
       </div>
       )
+  }
+
+  sortableColumn(title, name) {
+    return (
+      <a
+        href='#'
+        onClick={
+          () => {
+            this.setState({
+              ['filter_s']: this.state.filter_s == `${name}+asc` ? `${name}+desc` : `${name}+asc`
+            }, this.handleFilterSubmit.bind(this,true))
+          }
+        }
+      >
+        {title}
+        {
+          this.state.filter_s == `${name}+asc` ?
+            <i className="waves-effect material-icons tiny tooltipped">
+              arrow_drop_down
+            </i>
+            :
+            <div />
+        }
+        {
+          this.state.filter_s == `${name}+desc` ?
+            <i className="waves-effect material-icons tiny tooltipped">
+              arrow_drop_up
+            </i>
+            :
+            <div />
+        }
+      </a>
+    )
   }
   
 	tableList() {
@@ -89,6 +125,14 @@ class getServicePlaceList extends Component {
             <td>
               {service_place.active ? 'Ativo' : 'Inativo'}
             </td>
+            {
+              this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+                <td>
+                  {service_place.city_hall_name}
+                </td>
+                :
+                null
+            }
             <td>
               <a className='back-bt waves-effect btn-flat' 
                  href='#' 
@@ -108,55 +152,69 @@ class getServicePlaceList extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>
-          <a
-            href='#'
-            onClick={
-              () => {
-                this.setState({
-                  ['filter_s']: this.state.filter_s == "name+asc" ? 'name+desc' : "name+asc"
-                }, this.handleFilterSubmit.bind(this,true))
-              }
-            }
-          >
-            Nome
-            {
-              this.state.filter_s == "name+asc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_down
-                </i>
-                :
-                <div />
-            }
-            {
-              this.state.filter_s == "name+desc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_up
-                </i>
-                :
-                <div />
-            }
-          </a>
-        </th>
-        <th>CEP</th>
-        <th>Bairro</th>
+        <th>{this.sortableColumn.bind(this)('Nome','name')}</th>
+        <th>{this.sortableColumn.bind(this)('CEP','cep')}</th>
+        <th>{this.sortableColumn.bind(this)('Bairro','neighborhood')}</th>
         <th>Estado</th>
         <th>Munícipo</th>
         <th>Telefone</th>
-        <th>Situação</th>
+        <th>{this.sortableColumn.bind(this)('Situação','active')}</th>
+        {
+          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+            <th>{this.sortableColumn.bind(this)('Prefeitura','city_hall_name')}</th> :
+            null
+        }
         <th></th>
       </tr>
     )
 
+    var num_items_per_page = 25
+    var num_pages = Math.ceil(this.state.num_entries/num_items_per_page)
     return (
-      <table className={styles['table-list']}>
-        <thead>
-          {fields}
-        </thead>
-        <tbody>
-          {data}
-        </tbody>
-      </table>
+      <div>
+        <p>
+          Mostrando
+          {
+            num_pages != 0
+              ?
+                this.state.current_page == num_pages
+                  ?
+                    this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `
+                  :
+                    ` ${num_items_per_page} `
+              :
+                ' 0 '
+          }
+          de {this.state.num_entries} registros
+        </p>
+        <br />
+        <table className={styles['table-list']}>
+          <thead>
+            {fields}
+          </thead>
+          <tbody>
+            {data}
+          </tbody>
+        </table>
+        <br />
+        <Pagination
+          value={this.state.current_page}
+          onSelect={ (val) =>
+            {
+              this.setState(
+                {
+                  current_page: val
+                },
+                () => {this.handleFilterSubmit.bind(this)(true)}
+              )
+            }
+          }
+          className={styles['pagination']}
+          items={Math.ceil(this.state.num_entries/num_items_per_page)}
+          activePage={this.state.current_page}
+          maxButtons={8}
+        />
+      </div>
     )
 	}
 
@@ -183,20 +241,6 @@ class getServicePlaceList extends Component {
                   className='input-field'
                   name="filter_name"
                   value={this.state.filter_name}
-                  onChange={this.handleInputFilterChange.bind(this)}
-                />
-              </label>
-            </div>
-          </Col>
-          <Col>
-            <div className="field-input" >
-              <h6>Descrição:</h6>
-              <label>
-                <input
-                  type="text"
-                  className='input-field'
-                  name="filter_description"
-                  value={this.state.filter_description}
                   onChange={this.handleInputFilterChange.bind(this)}
                 />
               </label>
@@ -248,7 +292,6 @@ class getServicePlaceList extends Component {
 
   cleanFilter() {
     this.setState({
-      'filter_description': '',
       'filter_name': '',
       'filter_situation': '',
       'filter_neighborhood': ''
@@ -257,26 +300,28 @@ class getServicePlaceList extends Component {
 
   handleFilterSubmit(sort_only) {
     var name
-    var description
     var situation
     var neighborhood
+    var current_page
     if(sort_only) {
       name = this.state.last_fetch_name
-      description = this.state.last_fetch_description
       situation = this.state.last_fetch_situation
       neighborhood = this.state.last_fetch_neighborhood
     } else {
       name = this.state.filter_name
-      description = this.state.filter_description
       situation = this.state.filter_situation
       neighborhood = this.state.filter_neighborhood
     }
     name = name.replace(/\s/g,'+')
-    description = description.replace(/\s/g,'+')
     neighborhood = neighborhood.replace(/\s/g,'+')
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `service_places`;
-    const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}&q[s]=${this.state.filter_s}&q[active]=${situation}&q[neighborhood]=${neighborhood}`
+    const params = `permission=${this.props.user.current_role}`
+                  +`&q[name]=${name}`
+                  +`&q[active]=${situation}`
+                  +`&q[neighborhood]=${neighborhood}`
+                  +`&q[s]=${this.state.filter_s}`
+    current_page = sort_only ? this.state.current_page : 1
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -284,11 +329,12 @@ class getServicePlaceList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       this.setState({
-        service_places: resp,
+        service_places: resp.entries,
+        num_entries: resp.num_entries,
         last_fetch_name: name,
-        last_fetch_description: description,
         last_fetch_situation: situation,
-        last_fetch_neighborhood: neighborhood
+        last_fetch_neighborhood: neighborhood,
+        current_page: current_page
       })
     });
   }

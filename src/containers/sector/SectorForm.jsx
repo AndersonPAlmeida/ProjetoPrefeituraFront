@@ -34,9 +34,7 @@ class getSectorForm extends Component {
 
   componentDidMount() {
     var self = this;
-    if(this.props.is_edit) {
-      self.setState({ sector: this.props.data })
-    }
+    var data = this.props.is_edit ? this.props.data : this.state.sector
     if(this.props.current_role && this.props.current_role.role == 'adm_c3sl') {
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'forms/service_type_index';
@@ -50,16 +48,20 @@ class getSectorForm extends Component {
         self.setState({ city_halls: resp.city_halls })
       });
     }
+    else
+      data['city_hall_id'] = this.props.current_role.city_hall_id
+    self.setState({ sector: data })
   }
 
   handleInputSectorChange(event) {
     const target = event.target;
-    const value = target.value;
     const name = target.name;
-
-    this.setState({
-      sector: update(this.state.sector, { [name]: {$set: value} })
-    })
+    const value = target.value;
+    if(target.validity.valid) {
+      this.setState({
+        sector: update(this.state.sector, { [name]: {$set: value} })
+      })
+    }
   }
 
   handleSubmit() {
@@ -78,12 +80,7 @@ class getSectorForm extends Component {
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
       let fetch_body = {}
-      if(this.props.is_edit) {
-        fetch_body['sector'] = formData
-      }
-      else {
-        fetch_body = formData
-      }
+      fetch_body['sector'] = formData
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -119,13 +116,12 @@ class getSectorForm extends Component {
   pickCityHall() {
     if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
       return (
-        <Input disabled 
-               name="selected_city_hall" 
-               type='select' 
-               value={this.props.current_role.city_hall_id} 
-        >
-          <option value={this.props.current_role.city_hall_id}>{this.props.current_role.city_hall_name}</option>
-        </Input>
+        <input disabled
+           name="selected_city_hall" 
+           type='text' 
+           className='input-field' 
+           value={this.props.current_role.city_hall_name} 
+        />
       )
     }
 
@@ -208,6 +204,7 @@ class getSectorForm extends Component {
                           type="text" 
                           className='input-field' 
                           name="schedules_by_sector" 
+                          pattern="[0-9]*"
                           value={this.state.sector.schedules_by_sector} 
                           onChange={this.handleInputSectorChange.bind(this)} 
                         />
@@ -220,6 +217,7 @@ class getSectorForm extends Component {
                           type="text" 
                           className='input-field' 
                           name="blocking_days" 
+                          pattern="[0-9]*"
                           value={this.state.sector.blocking_days} 
                           onChange={this.handleInputSectorChange.bind(this)} 
                         />
@@ -232,6 +230,7 @@ class getSectorForm extends Component {
                           type="text" 
                           className='input-field' 
                           name="cancel_limit" 
+                          pattern="[0-9]*"
                           value={this.state.sector.cancel_limit} 
                           onChange={this.handleInputSectorChange.bind(this)} 
                         />
@@ -244,6 +243,7 @@ class getSectorForm extends Component {
                           type="text" 
                           className='input-field' 
                           name="previous_notice" 
+                          pattern="[0-9]*"
                           value={this.state.sector.previous_notice} 
                           onChange={this.handleInputSectorChange.bind(this)} 
                         />
@@ -256,6 +256,7 @@ class getSectorForm extends Component {
                           type="text" 
                           className='input-field' 
                           name="absence_max" 
+                          pattern="[0-9]*"
                           value={this.state.sector.absence_max} 
                           onChange={this.handleInputSectorChange.bind(this)} 
                         />

@@ -31,9 +31,8 @@ class getServiceTypeForm extends Component {
 
   componentDidMount() {
     var self = this;
-    if(this.props.is_edit) {
-      self.setState({ service_type: this.props.data })
-    }
+    var data = this.props.is_edit ? this.props.data : this.state.service_type
+
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     var collection = 'forms/create_service_type';
     const params = this.props.fetch_params;
@@ -45,12 +44,8 @@ class getServiceTypeForm extends Component {
     }).then(parseResponse).then(resp => {
       self.setState({ sectors: resp.sectors })
     });
-    if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
-      this.setState({
-        service_type: update(this.state.service_type, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
-      })
-    }
-    else {
+
+    if(this.props.current_role && this.props.current_role.role == 'adm_c3sl') {
       collection = 'forms/service_type_index';
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
@@ -61,6 +56,10 @@ class getServiceTypeForm extends Component {
         self.setState({ city_halls: resp.city_halls })
       });
     }
+    else
+      data['city_hall_id'] = this.props.current_role.city_hall_id
+
+    self.setState({ service_type: data })
   }
 
   componentDidUpdate() {
@@ -172,13 +171,12 @@ class getServiceTypeForm extends Component {
   pickCityHall() {
     if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
       return (
-        <Input disabled
-               name="selected_city_hall"
-               type='select'
-               value={this.props.current_role.city_hall_id}
-        >
-          <option value={this.props.current_role.city_hall_id}>{this.props.current_role.city_hall_name}</option>
-        </Input>
+        <input disabled
+           name="selected_city_hall"
+           type='text'
+           className='input-field'
+           value={this.props.current_role.city_hall_name}
+        />
       )
     }
 
@@ -248,7 +246,7 @@ class getServiceTypeForm extends Component {
                         <input 
                           type="text" 
                           className='input-field' 
-                          name="name" 
+                          name="description" 
                           value={this.state.service_type.description} 
                           onChange={this.handleInputServiceTypeChange.bind(this)} 
                         />

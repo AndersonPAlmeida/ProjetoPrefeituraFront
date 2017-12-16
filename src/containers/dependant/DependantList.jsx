@@ -239,6 +239,7 @@ class getDependantList extends Component {
 
   handleFilterSubmit(sort_only) {
     var name
+    var current_page
     if(sort_only) {
       name = this.state.last_fetch_name
     } else {
@@ -248,7 +249,7 @@ class getDependantList extends Component {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `citizens/${this.props.user.citizen.id}/dependants`;
     const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[s]=${this.state.filter_s}`
-    console.log(`${apiUrl}/${collection}?${params}`)
+    current_page = sort_only ? this.state.current_page : 1
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -259,7 +260,7 @@ class getDependantList extends Component {
         dependants: resp.entries,
         num_entries: resp.num_entries,
         last_fetch_name: name,
-        current_page: 1
+        current_page: current_page
       })
     });
   }

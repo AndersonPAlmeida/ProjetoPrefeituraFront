@@ -109,11 +109,11 @@ class getServicePlaceShow extends Component {
             </p>
             <p>
               <b>CEP: </b>
-              {this.state.service_place.city_hall_name}
+              {this.state.service_place.cep}
             </p>
             <p>
               <b>Bairro: </b>
-              {this.state.service_place.neighborhood}
+              {this.state.service_place.address.neighborhood}
             </p>
             <p>
               <b>Endereço: </b>
@@ -191,6 +191,7 @@ class getServicePlaceShow extends Component {
 	}
 
   render() {
+    console.log(this.state)
     return (
       <main>
       	<Row>

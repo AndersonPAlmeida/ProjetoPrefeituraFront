@@ -57,6 +57,39 @@ class getServiceTypeList extends Component {
       </div>
       )
   }
+
+  sortableColumn(title, name) {
+    return (
+      <a
+        href='#'
+        onClick={
+          () => {
+            this.setState({
+              ['filter_s']: this.state.filter_s == `${name}+asc` ? `${name}+desc` : `${name}+asc`
+            }, this.handleFilterSubmit.bind(this,true))
+          }
+        }
+      >
+        {title}
+        {
+          this.state.filter_s == `${name}+asc` ?
+            <i className="waves-effect material-icons tiny tooltipped">
+              arrow_drop_down
+            </i>
+            :
+            <div />
+        }
+        {
+          this.state.filter_s == `${name}+desc` ?
+            <i className="waves-effect material-icons tiny tooltipped">
+              arrow_drop_up
+            </i>
+            :
+            <div />
+        }
+      </a>
+    )
+  }
   
 	tableList() {
     const data = (
@@ -78,6 +111,14 @@ class getServiceTypeList extends Component {
             <td>
               {service_type.sector_name}
             </td>
+            {
+              this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+                <td>
+                  {service_type.city_hall_name}
+                </td>
+                :
+                null
+            }
             <td>
               <a className='back-bt waves-effect btn-flat' 
                  href='#' 
@@ -97,44 +138,38 @@ class getServiceTypeList extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>
-          <a
-            href='#'
-            onClick={
-              () => {
-                this.setState({
-                  ['filter_s']: this.state.filter_s == "description+asc" ? 'description+desc' : "description+asc"
-                }, this.handleFilterSubmit.bind(this,true))
-              }
-            }
-          >
-            Descrição 
-            {
-              this.state.filter_s == "description+asc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_down
-                </i>
-                :
-                <div />
-            }
-            {
-              this.state.filter_s == "description+desc" ?
-                <i className="waves-effect material-icons tiny tooltipped">
-                  arrow_drop_up
-                </i>
-                :
-                <div />
-            }
-          </a>
-        </th>
-        <th>Situação</th>
-        <th>Setor</th>
+        <th>{this.sortableColumn.bind(this)('Descrição','description')}</th>
+        <th>{this.sortableColumn.bind(this)('Situação','active')}</th>
+        <th>{this.sortableColumn.bind(this)('Setor','sector_name')}</th>
+        {
+          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+            <th>{this.sortableColumn.bind(this)('Prefeitura','sector_city_hall_name')}</th> :
+            null
+        }
         <th></th>
       </tr>
     )
 
+    var num_items_per_page = 25
+    var num_pages = Math.ceil(this.state.num_entries/num_items_per_page)
     return (
       <div>
+        <p className={styles['description-column']}>
+          Mostrando
+          {
+            num_pages != 0
+              ?
+                this.state.current_page == num_pages
+                  ?
+                    this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `
+                  :
+                    ` ${num_items_per_page} `
+              :
+                ' 0 '
+          }
+          de {this.state.num_entries} registros
+        </p>
+        <br />
         <table className={styles['table-list']}>
           <thead>
             {fields}
@@ -156,7 +191,7 @@ class getServiceTypeList extends Component {
             }
           }
           className={styles['pagination']}
-          items={Math.ceil(this.state.num_entries/25)}
+          items={Math.ceil(this.state.num_entries/num_items_per_page)}
           activePage={this.state.current_page}
           maxButtons={8}
         />
@@ -232,6 +267,7 @@ class getServiceTypeList extends Component {
   handleFilterSubmit(sort_only) {
     var description
     var situation
+    var current_page
     if(sort_only) {
       description = this.state.last_fetch_description
       situation = this.state.last_fetch_situation
@@ -247,6 +283,7 @@ class getServiceTypeList extends Component {
                     +`&q[active]=${situation}`
                     +`&q[s]=${this.state.filter_s}`
                     +`&page=${this.state.current_page}`
+    current_page = sort_only ? this.state.current_page : 1
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -257,7 +294,8 @@ class getServiceTypeList extends Component {
         service_types: resp.entries,
         num_entries: resp.num_entries,
         last_fetch_description: description,
-        last_fetch_situation: situation
+        last_fetch_situation: situation,
+        current_page: current_page
       })
     });
   }
