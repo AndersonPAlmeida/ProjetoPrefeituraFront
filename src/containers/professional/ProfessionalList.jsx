@@ -9,6 +9,7 @@ import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import strftime from 'strftime';
+import MaskedInput from 'react-maskedinput';
 
 const role_name = {
   'citizen': "Cidadão",
@@ -26,7 +27,8 @@ class getProfessionalList extends Component {
           collections: {
             permissions: [],
             occupations: [],
-            service_places: []
+            service_places: [],
+            city_hall: []
           },
           professionals: [],
           filter_name: '',
@@ -36,6 +38,7 @@ class getProfessionalList extends Component {
           filter_occupation: '',
           filter_service_place: '',
           filter_situation: '',
+          filter_city_hall: '',
           last_fetch_name: '',
           last_fetch_registration: '',
           last_fetch_cpf: '',
@@ -43,6 +46,7 @@ class getProfessionalList extends Component {
           last_fetch_occupation: '',
           last_fetch_service_place: '',
           last_fetch_situation: '',
+          last_fetch_city_hall: '',
           filter_s: '',
           num_entries: 0,
           current_page: 1
@@ -52,7 +56,7 @@ class getProfessionalList extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    var collection = `forms/create_professional`
+    var collection = `forms/professional_index`
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -200,13 +204,13 @@ class getProfessionalList extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>{this.sortableColumn.bind(this)('Nome','name')}</th>
+        <th>{this.sortableColumn.bind(this)('Nome','citizen_name')}</th>
         <th>{this.sortableColumn.bind(this)('Matrícula','registration')}</th>
         <th>Permissão</th>
         <th>{this.sortableColumn.bind(this)('Cargo','occupation')}</th>
         <th>{this.sortableColumn.bind(this)('CPF','citizen_cpf')}</th>
         <th>Telefone</th>
-        <th>{this.sortableColumn.bind(this)('E-mail','email')}</th>
+        <th>{this.sortableColumn.bind(this)('E-mail','citizen_email')}</th>
         <th>{this.sortableColumn.bind(this)('Situação','active')}</th>
         <th>Situação</th>
         <th></th>
@@ -270,9 +274,11 @@ class getProfessionalList extends Component {
     const value = target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
-    })
+    if(target.validity.valid) {
+      this.setState({
+        [name]: value
+      })
+    }
   }
   
   pickName() {
@@ -307,6 +313,7 @@ class getProfessionalList extends Component {
                 type="text"
                 className='input-field'
                 name="filter_registration"
+                pattern="[0-9|/]*"
                 value={this.state.filter_registration}
                 onChange={this.handleInputFilterChange.bind(this)}
               />
@@ -325,9 +332,10 @@ class getProfessionalList extends Component {
           <div className="" >
             <h6>CPF:</h6>
             <label>
-              <input
+              <MaskedInput
                 type="text"
                 className='input-field'
+                mask="111.111.111-11"
                 name="filter_cpf"
                 value={this.state.filter_cpf}
                 onChange={this.handleInputFilterChange.bind(this)}
@@ -461,9 +469,46 @@ class getProfessionalList extends Component {
     )
   }
 
+  pickCityHall() {
+    const cityHallList = (
+      this.state.collections.city_hall.map((city_hall) => {
+        return (
+          <option value={city_hall.id}>{city_hall.name}</option>
+        )
+      })
+    )
+    return (
+      <Col>
+        <div className='select-field'>
+          <h6>Prefeitura:</h6>
+          <Input s={12} m={12} name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+            onChange={
+              (event) => {
+                var selected_city_hall = event.target.value
+                if(this.state.filter_city_hall != selected_city_hall) {
+                  this.setState({
+                    filter_city_hall: selected_city_hall,
+                  });
+                }
+              }
+            }
+          >
+            <option value={''}>Todas</option>
+            {cityHallList}
+          </Input>
+        </div>
+      </Col>
+    )
+  }
+
   filterProfessional() {
     return (
       <div>
+        {
+          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+            this.pickCityHall() :
+            null
+        }
         {this.pickPermission()}
         {this.pickOccupation()}
         {this.pickServicePlace()}
@@ -491,7 +536,8 @@ class getProfessionalList extends Component {
       'filter_permission': '',
       'filter_occupation': '',
       'filter_service_place': '',
-      'filter_situation': ''
+      'filter_situation': '',
+      'filter_city_hall': ''
     })
   }
 
@@ -503,6 +549,7 @@ class getProfessionalList extends Component {
     var occupation
     var service_place
     var situation
+    var city_hall
     var current_page
     if(sort_only) {
       name = this.state.last_fetch_name
@@ -512,6 +559,7 @@ class getProfessionalList extends Component {
       occupation = this.state.last_fetch_occupation
       service_place = this.state.last_fetch_service_place
       situation = this.state.last_fetch_situation
+      city_hall = this.state.last_fetch_city_hall
     } else {
       name = this.state.filter_name
       cpf = this.state.filter_cpf
@@ -520,7 +568,9 @@ class getProfessionalList extends Component {
       occupation = this.state.filter_occupation
       service_place = this.state.filter_service_place
       situation = this.state.filter_situation
+      city_hall = this.state.filter_city_hall
     }
+    cpf = cpf.replace(/(\.|-)/g,'');
     name = name.replace(/\s/g,'+')
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `/professionals`;
@@ -530,8 +580,11 @@ class getProfessionalList extends Component {
                     +`&q[occupation]=${occupation}`
                     +`&q[service_place]=${service_place}`
                     +`&q[situation]=${situation}`
+                    +`&q[city_hall]=${city_hall}`
                     +`&q[occupation]=${occupation}`
                     +`&q[active]=${situation}`
+                    +`&q[registration]=${registration}`
+                    +`&q[cpf]=${cpf}`
                     +`&q[s]=${this.state.filter_s}`
                     +`&page=${this.state.current_page}`
     current_page = sort_only ? this.state.current_page : 1
@@ -551,6 +604,7 @@ class getProfessionalList extends Component {
         last_fetch_occupation: occupation,
         last_fetch_service_place: service_place,
         last_fetch_situation: situation,
+        last_fetch_city_hall: city_hall,
         current_page: current_page
       })
     });
@@ -587,8 +641,10 @@ class getProfessionalList extends Component {
 
 const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
+  const current_role = user.roles[user.current_role_idx]
   return {
-    user
+    user,
+    current_role
   }
 }
 

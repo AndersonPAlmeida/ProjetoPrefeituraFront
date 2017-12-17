@@ -6,7 +6,6 @@ import MaskedInput from 'react-maskedinput';
 import {fetch} from "../../redux-auth";
 import { browserHistory } from 'react-router';
 
-
 export default function () {
   return (
     <Col s={12} m={12} l={6}>

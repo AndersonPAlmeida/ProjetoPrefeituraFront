@@ -17,7 +17,7 @@ export default function () {
         <h6>Telefone 1{this.props.user_class == `dependant` ? '' : '*'}:</h6>
         <label>
           <MaskedInput
-            mask={this.state.aux.phonemask}
+            mask={this.state.aux.phonemask1}
             type="text"
             className='input-field'
             name="phone1" 
@@ -28,14 +28,14 @@ export default function () {
                 if(event.target.value.replace(/(_|-|(|))/g,'').length == 14) {
                   this.setState({aux: update(this.state.aux,
                     {
-                      phonemask: {$set: "(11) 11111-1111"},
+                      phonemask1: {$set: "(11) 11111-1111"},
                     })
                   })
                 }
                 else {
                   this.setState({aux: update(this.state.aux,
                     {
-                      phonemask: {$set: "(11) 1111-11111"},
+                      phonemask1: {$set: "(11) 1111-11111"},
                     })
                   })
                 }
@@ -49,12 +49,30 @@ export default function () {
         <h6>Telefone 2:</h6>
         <label>
           <MaskedInput
-            mask={this.state.aux.phonemask}
+            mask={this.state.aux.phonemask2}
             type="text"
             className='input-field'
             name="phone2"
             value={this.state.user.phone2}
-            onChange={this.handleInputUserChange.bind(this)}
+            onChange={
+              (event) => {
+                this.handleInputUserChange.bind(this)(event)
+                if(event.target.value.replace(/(_|-|(|))/g,'').length == 14) {
+                  this.setState({aux: update(this.state.aux,
+                    {
+                      phonemask2: {$set: "(11) 11111-1111"},
+                    })
+                  })
+                }
+                else {
+                  this.setState({aux: update(this.state.aux,
+                    {
+                      phonemask2: {$set: "(11) 1111-11111"},
+                    })
+                  })
+                }
+              }
+            }
           />
         </label>
       </div>

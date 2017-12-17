@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/ProfessionalShow.css'
-import { port, apiHost, apiPort, apiVer } from '../../../config/env';
-import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
-import {fetch} from "../../redux-auth";
+import styles from './styles/ProfessionalUserShow.css'
+import { port, apiHost, apiPort, apiVer } from '../../../../config/env';
+import {parseResponse} from "../../../redux-auth/utils/handle-fetch-response";
+import {fetch} from "../../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 

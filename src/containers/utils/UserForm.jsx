@@ -53,7 +53,8 @@ class getUserForm extends Component {
         password_confirmation: "",
         state_abbreviation: '',
         pcd_value: '',
-        phonemask: "(11) 1111-11111",
+        phonemask1: "(11) 1111-11111",
+        phonemask2: "(11) 1111-11111",
         service_place_id: 0,
         permission_id: 0,
         service_place: {},
@@ -300,8 +301,8 @@ class getUserForm extends Component {
     let errors = []
     let form_mandatory = 
       [
-        { id: 'name', name: 'nome' },
-        { id: 'name', name: 'birth_date' }
+        { id: 'name', name: 'Nome' },
+        { id: 'birth_date', name: 'Data de nascimento' }
       ]
     if(this.props.user_class == `citizen`) {
       form_mandatory.push({ id: 'cpf', name: 'CPF' })
@@ -332,9 +333,9 @@ class getUserForm extends Component {
     }
     formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
     if(formData['phone1'])
-      formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
+      formData['phone1'] = formData['phone1'].replace(/[()_\-\s]/gi, '');
     if(formData['phone2'])
-      formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
+      formData['phone2'] = formData['phone2'].replace(/[()_\-\s]/gi, '');
     formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
     formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
     formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`

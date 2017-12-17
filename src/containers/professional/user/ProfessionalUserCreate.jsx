@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
-import UserForm from '../utils/UserForm'
+import UserForm from '../../utils/UserForm'
 
 class SignUp extends Component {
   prev() {

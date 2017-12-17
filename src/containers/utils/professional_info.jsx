@@ -12,9 +12,12 @@ function handleInputProfessionalChange(event) {
   const target = event.target;
   const value = target.value;
   const name = target.name;
-  this.setState({
-    professional: update(this.state.professional, { [name]: {$set: value} })
-  })
+
+  if(target.validity.valid) {
+    this.setState({
+      professional: update(this.state.professional, { [name]: {$set: value} })
+    })
+  }
 }
 
 function pickOccupation() {
@@ -199,11 +202,12 @@ export default function () {
       <div className="field-input">
         <h6>Matrícula:</h6>
         <label>
-          <MaskedInput
+          <input
             type="text"
             className='input-field'
             mask="1111/11"
             name="registration"
+            pattern="[0-9|/]*"
             value={this.state.professional.registration}
             onChange={handleInputProfessionalChange.bind(this)}
           />

@@ -1,26 +1,27 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input, Pagination } from 'react-materialize'
-import styles from './styles/SectorList.css'
+import styles from './styles/ProfessionalUserList.css'
 import 'react-day-picker/lib/style.css'
-import { port, apiHost, apiPort, apiVer } from '../../../config/env';
-import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
-import {fetch} from "../../redux-auth";
+import { port, apiHost, apiPort, apiVer } from '../../../../config/env';
+import {parseResponse} from "../../../redux-auth/utils/handle-fetch-response";
+import {fetch} from "../../../redux-auth";
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import strftime from 'strftime';
+import MaskedInput from 'react-maskedinput';
 
-class getSectorList extends Component {
+class getProfessionalUserList extends Component {
   constructor(props) {
       super(props)
       this.state = {
-          sectors: [],
           city_halls: [],
+          citizens: [],
           filter_name: '',
-          filter_description: '',
+          filter_cpf: '',
           filter_city_hall: '',
           last_fetch_name: '',
-          last_fetch_description: '',
+          last_fetch_cpf: '',
           last_fetch_city_hall: '',
           filter_s: '',
           num_entries: 0,
@@ -31,7 +32,7 @@ class getSectorList extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    var collection = `sectors`;
+    var collection = `forms/citizen_index`
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -40,45 +41,51 @@ class getSectorList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       self.setState({ 
-                      sectors: resp.entries,
+                      city_halls: resp.city_halls
+                    })
+    });
+    collection = `citizens`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get",
+    }).then(parseResponse).then(resp => {
+      self.setState({ 
+                      citizens: resp.entries,
                       num_entries: resp.num_entries
                     })
     });
-    if(this.props.current_role && this.props.current_role.role == 'adm_c3sl') {
-      collection = 'forms/service_type_index';
-      fetch(`${apiUrl}/${collection}?${params}`, {
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json" },
-          method: "get",
-      }).then(parseResponse).then(resp => {
-        self.setState({ city_halls: resp.city_halls })
-      });
-    }
   }
 
   mainComponent() {
     return (
       <div className='card'>
         <div className='card-content'>
-          <h2 className='card-title h2-title-home'> Setor </h2>
-          {this.filterSector()}
+          <h2 className='card-title h2-title-home'> Profissional </h2>
+          {this.filterCitizen()}
           {this.tableList()}
         </div>
         <div className="card-action">
-          {this.newSectorButton()}
+          {this.newCitizenButton()}
         </div>
       </div>
       )
   }
   
+  formatCPF(n) {
+    n = n.replace(/\D/g,"");
+    n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
+    return (n);
+  }
+
   sortableColumn(title, name) {
     return (
       <a
         href='#'
         onClick={
           () => {
-            this.setState({ 
+            this.setState({
               ['filter_s']: this.state.filter_s == `${name}+asc` ? `${name}+desc` : `${name}+asc`
             }, this.handleFilterSubmit.bind(this,true))
           }
@@ -107,44 +114,41 @@ class getSectorList extends Component {
 
 	tableList() {
     const data = (
-      this.state.sectors.map((sector) => {
+      this.state.citizens.map((citizen) => {
         return (
           <tr>
             <td>
               <a className='back-bt waves-effect btn-flat' 
                 href='#' 
                 onClick={ () => 
-                  browserHistory.push(`/sectors/${sector.id}`) 
+                  browserHistory.push(`/professionals/users/${citizen.id}`) 
                 }>
-                {sector.name}
+                {citizen.name}
               </a>
             </td>
-            <td className='description-column' >
-              {sector.description}
+            <td>
+              {citizen.birth_date}
             </td>
             <td>
-              {sector.active ? 'Ativo' : 'Inativo'}
+              {this.formatCPF(citizen.cpf)}
             </td>
             <td>
-              {sector.schedules_by_sector}
+              {citizen.num_of_dependants}
             </td>
-            {
-              this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
-                <td>
-                  {sector.city_hall_name}
-                </td>
-                :
-                null
-            }
             <td>
               <a className='back-bt waves-effect btn-flat' 
                  href='#' 
-                 onClick={ () => 
-                 browserHistory.push(`/sectors/${sector.id}/edit`) 
-                }>
-                  <i className="waves-effect material-icons tooltipped">
-                    edit
-                  </i>
+                 onClick={(e) => 
+                   {
+                     e.preventDefault()
+                     browserHistory.push({
+                       pathname: `/professionals/users/${citizen.id}/edit`
+                     }) 
+                   }
+                 }>
+                <i className="waves-effect material-icons tooltipped">
+                  edit
+                </i>
               </a> 
             </td>
           </tr>
@@ -156,35 +160,32 @@ class getSectorList extends Component {
     const fields = (
       <tr>
         <th>{this.sortableColumn.bind(this)('Nome','name')}</th>
-        <th>{this.sortableColumn.bind(this)('Descrição','description')}</th>
-        <th>{this.sortableColumn.bind(this)('Situação','situation')}</th>
-        <th>{this.sortableColumn.bind(this)('Agendamentos por setor','schedules_by_sector')}</th>
-        {
-          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
-            <th>{this.sortableColumn.bind(this)('Prefeitura','city_hall_name')}</th> :
-            null
-        }
+        <th>{this.sortableColumn.bind(this)('Data de nascimento','birth_date')}</th>
+        <th>{this.sortableColumn.bind(this)('CPF','cpf')}</th>
+        <th>Dependentes</th>
         <th></th>
       </tr>
     )
 
     var num_items_per_page = 25
     var num_pages = Math.ceil(this.state.num_entries/num_items_per_page)
+
     return (
-      <div> 
+      <div>
         <p className={styles['description-column']}>
-          Mostrando  
-          { 
-            num_pages != 0
-              ?
-                this.state.current_page == num_pages 
-                  ? 
-                    this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `  
+          Mostrando
+          {
+            num_pages != 0 
+              ? 
+                this.state.current_page == num_pages
+                  ?
+                    this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `
                   :
                     ` ${num_items_per_page} `
               :
                 ' 0 '
-          } 
+              
+          }
           de {this.state.num_entries} registros
         </p>
         <br />
@@ -200,7 +201,7 @@ class getSectorList extends Component {
         <Pagination
           value={this.state.current_page}
           onSelect={ (val) =>
-            { 
+            {
               this.setState(
                 {
                   current_page: val
@@ -210,7 +211,7 @@ class getSectorList extends Component {
             }
           }
           className={styles['pagination']}
-          items={Math.ceil(this.state.num_entries/num_items_per_page)} 
+          items={Math.ceil(this.state.num_entries/num_items_per_page)}
           activePage={this.state.current_page}
           maxButtons={8}
         />
@@ -223,16 +224,61 @@ class getSectorList extends Component {
     const value = target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
-    })
+    if(target.validity.valid) {
+      this.setState({
+        [name]: value
+      })
+    }
+  }
+  
+  pickName() {
+    return (
+      <Row className='filter-container'>
+        <Col>
+          <div>
+            <h6>Nome:</h6>
+            <label>
+              <input
+                type="text"
+                className='input-field'
+                name="filter_name"
+                value={this.state.filter_name}
+                onChange={this.handleInputFilterChange.bind(this)}
+              />
+            </label>
+          </div>
+        </Col>
+      </Row>
+    )
+  }
+
+  pickCPF () {
+    return (
+      <Row className='filter-container'>
+        <Col>
+          <div className="" >
+            <h6>CPF:</h6>
+            <label>
+              <MaskedInput
+                type="text"
+                className='input-field'
+                mask="111.111.111-11"
+                name="filter_cpf"
+                value={this.state.filter_cpf}
+                onChange={this.handleInputFilterChange.bind(this)}
+              />
+            </label>
+          </div>
+        </Col>
+      </Row>
+    )
   }
 
   pickCityHall() {
     const cityHallList = (
       this.state.city_halls.map((city_hall) => {
         return (
-          <option value={city_hall.id}>{city_hall.name}</option>
+          <option value={city_hall.city_id}>{city_hall.name}</option>
         )
       })
     )
@@ -260,7 +306,7 @@ class getSectorList extends Component {
     )
   }
 
-  filterSector() {
+  filterCitizen() {
     return (
       <div>
         {
@@ -268,43 +314,15 @@ class getSectorList extends Component {
             this.pickCityHall() :
             null
         }
-        <Row className='filter-container'>
+        {this.pickName()}
+        {this.pickCPF()}
+        <Row>
           <Col>
-            <div className="field-input" >
-              <h6>Nome:</h6>
-              <label>
-                <input
-                  type="text"
-                  className='input-field'
-                  name="filter_name"
-                  value={this.state.filter_name}
-                  onChange={this.handleInputFilterChange.bind(this)}
-                />
-              </label>
-            </div>
+            <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
           </Col>
           <Col>
-            <div className="field-input" >
-              <h6>Descrição:</h6>
-              <label>
-                <input
-                  type="text"
-                  className='input-field'
-                  name="filter_description"
-                  value={this.state.filter_description}
-                  onChange={this.handleInputFilterChange.bind(this)}
-                />
-              </label>
-            </div>
+            <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
           </Col>
-          <Row>
-            <Col>
-              <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
-            </Col>
-            <Col>
-              <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
-            </Col>
-          </Row>
         </Row>
       </div>
     )
@@ -312,34 +330,34 @@ class getSectorList extends Component {
 
   cleanFilter() {
     this.setState({
-      'filter_description': '',
       'filter_name': '',
+      'filter_cpf': '',
       'filter_city_hall': ''
     })
   }
 
   handleFilterSubmit(sort_only) {
     var name
-    var description
+    var cpf
     var city_hall
     var current_page
     if(sort_only) {
       name = this.state.last_fetch_name
-      description = this.state.last_fetch_description
+      cpf = this.state.last_fetch_cpf
       city_hall = this.state.last_fetch_city_hall
     } else {
       name = this.state.filter_name
-      description = this.state.filter_description
+      cpf = this.state.filter_cpf
       city_hall = this.state.filter_city_hall
     }
+    cpf = cpf.replace(/(\.|-)/g,'');
     name = name.replace(/\s/g,'+')
-    description = description.replace(/\s/g,'+')
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `sectors`;
+    const collection = `/citizens`;
     const params = `permission=${this.props.user.current_role}`
                     +`&q[name]=${name}`
-                    +`&q[description]=${description}`
-                    +`&q[city_hall_id]=${city_hall}`
+                    +`&q[cpf]=${cpf}`
+                    +`&q[city_id]=${city_hall}`
                     +`&q[s]=${this.state.filter_s}`
                     +`&page=${this.state.current_page}`
     current_page = sort_only ? this.state.current_page : 1
@@ -350,26 +368,26 @@ class getSectorList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       this.setState({
-        sectors: resp.entries,
+        citizens: resp.entries,
         num_entries: resp.num_entries,
         last_fetch_name: name,
-        last_fetch_description: description,
+        last_fetch_cpf: cpf,
         last_fetch_city_hall: city_hall,
         current_page: current_page
       })
     });
   }
 
-	newSectorButton() {
+	newCitizenButton() {
 		return (
 			<button 
         onClick={() =>
-          browserHistory.push({ pathname: `/sectors/new`}) 
+          browserHistory.push({pathname: `/professionals/users`}) 
         }
         className="btn waves-effect btn button-color" 
         name="anterior" 
         type="submit">
-          CADASTRAR NOVO SETOR
+          CADASTRAR NOVO CIDADÃO
       </button>
 		)
 	}
@@ -398,7 +416,7 @@ const mapStateToProps = (state) => {
   }
 }
 
-const SectorList = connect(
+const ProfessionalUserList = connect(
   mapStateToProps
-)(getSectorList)
-export default SectorList
+)(getProfessionalUserList)
+export default ProfessionalUserList

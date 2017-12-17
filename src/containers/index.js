@@ -41,3 +41,8 @@ export ProfessionalCreate from './professional/ProfessionalCreate';
 
 export ProfessionalSearch from './professional/ProfessionalSearch';
 export ProfessionalSchedule from './professional/ProfessionalSchedule';
+
+export ProfessionalUserList from './professional/user/ProfessionalUserList';
+export ProfessionalUserEdit from './professional/user/ProfessionalUserEdit';
+export ProfessionalUserShow from './professional/user/ProfessionalUserShow';
+export ProfessionalUserCreate from './professional/user/ProfessionalUserCreate';

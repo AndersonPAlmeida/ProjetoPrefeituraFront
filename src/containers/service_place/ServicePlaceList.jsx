@@ -15,12 +15,15 @@ class getServicePlaceList extends Component {
       super(props)
       this.state = {
           service_places: [],
+          city_halls: [],
           filter_name: '',
           filter_situation: '',
           filter_neighborhood: '',
+          filter_city_hall: '',
           last_fetch_name: '',
           last_fetch_situation: '',
           last_fetch_neighborhood: '',
+          last_fetch_city_hall: '',
           filter_s: '',
           num_entries: 0,
           current_page: 1
@@ -30,7 +33,7 @@ class getServicePlaceList extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `service_places`;
+    var collection = `service_places`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -43,6 +46,17 @@ class getServicePlaceList extends Component {
                       num_entries: resp.num_entries
                     })
     });
+    if(this.props.current_role && this.props.current_role.role == 'adm_c3sl') {
+      collection = 'forms/service_place_index';
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        self.setState({ city_halls: resp.city_halls })
+      });
+    }
   }
 
   mainComponent() {
@@ -228,9 +242,46 @@ class getServicePlaceList extends Component {
     })
   }
 
+  pickCityHall() {
+    const cityHallList = (
+      this.state.city_halls.map((city_hall) => {
+        return (
+          <option value={city_hall.id}>{city_hall.name}</option>
+        )
+      })
+    )
+    return (
+      <Col>
+        <div className='select-field'>
+          <h6>Prefeitura:</h6>
+          <Input s={12} m={12} name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+            onChange={
+              (event) => {
+                var selected_city_hall = event.target.value
+                if(this.state.filter_city_hall != selected_city_hall) {
+                  this.setState({
+                    filter_city_hall: selected_city_hall,
+                  });
+                }
+              }
+            }
+          >
+            <option value={''}>Todas</option>
+            {cityHallList}
+          </Input>
+        </div>
+      </Col>
+    )
+  }
+
   filterServicePlace() {
     return (
       <div>
+        {
+          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+            this.pickCityHall() :
+            null
+        }
         <Row className='filter-container'>
           <Col>
             <div className="field-input" >
@@ -294,7 +345,8 @@ class getServicePlaceList extends Component {
     this.setState({
       'filter_name': '',
       'filter_situation': '',
-      'filter_neighborhood': ''
+      'filter_neighborhood': '',
+      'filter_city_hall': ''
     })
   }
 
@@ -302,15 +354,18 @@ class getServicePlaceList extends Component {
     var name
     var situation
     var neighborhood
+    var city_hall
     var current_page
     if(sort_only) {
       name = this.state.last_fetch_name
       situation = this.state.last_fetch_situation
       neighborhood = this.state.last_fetch_neighborhood
+      city_hall = this.state.last_fetch_city_hall
     } else {
       name = this.state.filter_name
       situation = this.state.filter_situation
       neighborhood = this.state.filter_neighborhood
+      city_hall = this.state.filter_city_hall
     }
     name = name.replace(/\s/g,'+')
     neighborhood = neighborhood.replace(/\s/g,'+')
@@ -320,6 +375,7 @@ class getServicePlaceList extends Component {
                   +`&q[name]=${name}`
                   +`&q[active]=${situation}`
                   +`&q[neighborhood]=${neighborhood}`
+                  +`&q[city_hall_id]=${city_hall}`
                   +`&q[s]=${this.state.filter_s}`
     current_page = sort_only ? this.state.current_page : 1
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -334,6 +390,7 @@ class getServicePlaceList extends Component {
         last_fetch_name: name,
         last_fetch_situation: situation,
         last_fetch_neighborhood: neighborhood,
+        last_fetch_city_hall: city_hall,
         current_page: current_page
       })
     });
@@ -370,8 +427,10 @@ class getServicePlaceList extends Component {
 
 const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
+  const current_role = user.roles[user.current_role_idx]
   return {
-    user
+    user,
+    current_role
   }
 }
 

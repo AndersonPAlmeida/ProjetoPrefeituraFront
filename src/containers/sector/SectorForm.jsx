@@ -53,6 +53,31 @@ class getSectorForm extends Component {
     self.setState({ sector: data })
   }
 
+  checkEmptyFields(obj, fields) {
+    let errors = []
+    for (var i = 0; i < fields.length; i++) {
+      if(!obj[fields[i].id])
+        errors.push(`Campo ${fields[i].name} é obrigatório`)
+    }
+    return errors;
+  }
+
+  checkErrors(formData) {
+    let errors = []
+    let form_mandatory = 
+      [
+        { id: 'name', name: 'Nome' },
+        { id: 'absence_max', name: 'Numero de faltas para gerar impedimento' },
+        { id: 'blocking_days', name: 'Número de dias de impedimento' },
+        { id: 'cancel_limit', name: 'Limite de cancelamentos' },
+        { id: 'previous_notice', name: 'Horas de antecedências' },
+        { id: 'description', name: 'Descrição' },
+        { id: 'schedules_by_sector', name: 'Agendamentos por setor' }
+      ]
+    errors = this.checkEmptyFields(formData, form_mandatory)
+    return errors;
+  }
+
   handleInputSectorChange(event) {
     const target = event.target;
     const name = target.name;
@@ -65,12 +90,8 @@ class getSectorForm extends Component {
   }
 
   handleSubmit() {
-    let errors = [];
-    let formData = {};
-    formData = this.state.sector;
-
-    if(!formData['name'])
-      errors.push("Campo Nome é obrigatório.");
+    let formData = this.state.sector;
+    let errors = this.checkErrors.bind(this)(formData)
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });

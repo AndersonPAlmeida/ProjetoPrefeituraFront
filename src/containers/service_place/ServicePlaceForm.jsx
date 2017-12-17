@@ -57,7 +57,6 @@ class getServicePlaceForm extends Component {
   }
 
   componentDidUpdate() {
-    console.log(this.state)
     /* check true for all service types that belongs to the service place */
     if(this.state.update_checkbox) {
       this.state.aux.city_hall.service_types.map((service_type, idx) => {
@@ -80,9 +79,11 @@ class getServicePlaceForm extends Component {
     const value = target.value;
     const name = target.name
 
-    this.setState({
-      service_place: update(this.state.service_place, { [name]: {$set: value} })
-    })
+    if(target.validity.valid) {
+      this.setState({
+        service_place: update(this.state.service_place, { [name]: {$set: value} })
+      })
+    }
   }
 
   handleCheckboxChange(event) {
@@ -134,37 +135,53 @@ class getServicePlaceForm extends Component {
     })
   }
 
+  checkEmptyFields(obj, fields) {
+    let errors = []
+    for (var i = 0; i < fields.length; i++) {
+      if(!obj[fields[i].id])
+        errors.push(`Campo ${fields[i].name} é obrigatório`)
+    }
+    return errors;
+  }
+
+  checkErrors(formData) {
+    let errors = []
+    let form_mandatory =
+      [
+        { id: 'name', name: 'Nome' },
+        { id: 'cep', name: 'CEP' },
+        { id: 'address_number', name: 'Número' }
+      ]
+    errors = this.checkEmptyFields(formData, form_mandatory)
+    return errors;
+  }
+
+  generateBody(formData) {
+    if(formData['phone1'])
+      formData['phone1'] = formData['phone1'].replace(/[()_\-\s]/gi, '');
+    if(formData['phone2'])
+      formData['phone2'] = formData['phone2'].replace(/[()_\-\s]/gi, '');
+    formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
+    let service_types = [];
+    this.state.aux.city_hall.service_types.map((service_type) => {
+      if(service_type.checked)
+        service_types.push(service_type.id)
+    })
+    formData['service_types'] = service_types
+    let fetch_body = {}
+    fetch_body['service_place'] = formData
+    return fetch_body
+  }
+
   handleSubmit() {
-    let errors = [];
-    let formData = {};
-    formData = this.state.service_place;
-    if(!formData['name'])
-      errors.push("Campo Nome é obrigatório.");
-    if(!formData['cep'])
-      errors.push("Campo CEP é obrigatório.");
+    let formData = this.state.service_place;
+    let errors = this.checkErrors.bind(this)(formData);
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
-      if(formData['phone1'])
-        formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
-      if(formData['phone2'])
-        formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
-      formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
-      let service_types = [];
-      this.state.aux.city_hall.service_types.map((service_type) => {
-        if(service_type.checked)
-          service_types.push(service_type.id)
-      })
-      formData['service_types'] = service_types
-      let fetch_body = {}
-      if(this.props.is_edit) {
-        fetch_body['service_place'] = formData
-      }
-      else {
-        fetch_body['service_place'] = formData
-      }
+      let fetch_body = this.generateBody.bind(this)(formData)
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
@@ -239,7 +256,7 @@ class getServicePlaceForm extends Component {
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
                     <div className="field-input" >
-                      <h6>Situação:</h6>
+                      <h6>Situação*:</h6>
                       <div>
                         <Input s={6} m={32} l={6} 
                                type='select'
@@ -253,7 +270,7 @@ class getServicePlaceForm extends Component {
                       </div>
                     </div>
                     <div className="field-input" >
-                      <h6>Nome:</h6>
+                      <h6>Nome*:</h6>
                       <label>
                         <input 
                           type="text" 
@@ -265,7 +282,7 @@ class getServicePlaceForm extends Component {
                       </label>
                     </div>
                     <div className="field-input" >
-                      <h6>CEP:</h6>
+                      <h6>CEP*:</h6>
                       <label>
                         <MaskedInput
                           type="text"
@@ -286,7 +303,7 @@ class getServicePlaceForm extends Component {
                     </div>
 
                     <div className="field-input" >
-                      <h6>Prefeitura:</h6>
+                      <h6>Prefeitura*:</h6>
                       <label>
                         <input
                           type="text"
@@ -298,7 +315,7 @@ class getServicePlaceForm extends Component {
                     </div>
 
                     <div className="field-input" >
-                      <h6>Estado do endereço:</h6>
+                      <h6>Estado do endereço*:</h6>
                       <label>
                         <input
                           type="text"
@@ -310,7 +327,7 @@ class getServicePlaceForm extends Component {
                     </div>
 
                     <div className="field-input" >
-                      <h6>Munícipio:</h6>
+                      <h6>Munícipio*:</h6>
                       <label>
                         <input
                           type="text"
@@ -323,7 +340,7 @@ class getServicePlaceForm extends Component {
                     </div>
 
                     <div className="field-input" >
-                      <h6>Bairro:</h6>
+                      <h6>Bairro*:</h6>
                       <label>
                         <input
                           type="text"
@@ -335,12 +352,13 @@ class getServicePlaceForm extends Component {
                     </div>
 
                     <div className="field-input" >
-                      <h6>Número:</h6>
+                      <h6>Número*:</h6>
                       <label>
                         <input
                           type="text"
                           className='input-field'
                           name="address_number"
+                          pattern="[0-9]*"
                           value={this.state.service_place.address_number}
                           onChange={this.handleInputServicePlaceChange.bind(this)}
                         />

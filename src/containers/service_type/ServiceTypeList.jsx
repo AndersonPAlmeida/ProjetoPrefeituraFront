@@ -15,6 +15,7 @@ class getServiceTypeList extends Component {
       super(props)
       this.state = {
           service_types: [],
+          city_halls: [],
           filter_description: '',
           filter_situation: '',
           last_fetch_description: '',
@@ -28,7 +29,7 @@ class getServiceTypeList extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `service_types`;
+    var collection = `service_types`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -41,6 +42,17 @@ class getServiceTypeList extends Component {
                       num_entries: resp.num_entries
                     })
     });
+    if(this.props.current_role && this.props.current_role.role == 'adm_c3sl') {
+      collection = 'forms/service_type_index';
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        self.setState({ city_halls: resp.city_halls })
+      });
+    }
   }
 
   mainComponent() {
@@ -209,9 +221,46 @@ class getServiceTypeList extends Component {
     })
   }
 
+  pickCityHall() {
+    const cityHallList = (
+      this.state.city_halls.map((city_hall) => {
+        return (
+          <option value={city_hall.id}>{city_hall.name}</option>
+        )
+      })
+    )
+    return (
+      <Col>
+        <div className='select-field'>
+          <h6>Prefeitura:</h6>
+          <Input s={12} m={12} name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+            onChange={
+              (event) => {
+                var selected_city_hall = event.target.value
+                if(this.state.filter_city_hall != selected_city_hall) {
+                  this.setState({
+                    filter_city_hall: selected_city_hall,
+                  });
+                }
+              }
+            }
+          >
+            <option value={''}>Todas</option>
+            {cityHallList}
+          </Input>
+        </div>
+      </Col>
+    )
+  }
+
   filterServiceType() {
     return (
       <div>
+        {
+          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+            this.pickCityHall() :
+            null
+        }
         <Row className='filter-container'>
           <Col>
             <div className="field-input" >
@@ -260,20 +309,24 @@ class getServiceTypeList extends Component {
   cleanFilter() {
     this.setState({
       'filter_description': '',
-      'filter_situation': ''
+      'filter_situation': '',
+      'filter_city_hall': ''
     })
   }
 
   handleFilterSubmit(sort_only) {
     var description
     var situation
+    var city_hall
     var current_page
     if(sort_only) {
       description = this.state.last_fetch_description
       situation = this.state.last_fetch_situation
+      city_hall = this.state.last_fetch_city_hall
     } else {
       description = this.state.filter_description
       situation = this.state.filter_situation
+      city_hall = this.state.filter_city_hall
     }
     description = description.replace(/\s/g,'+')
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
@@ -281,6 +334,7 @@ class getServiceTypeList extends Component {
     const params = `permission=${this.props.user.current_role}`
                     +`&q[description]=${description}`
                     +`&q[active]=${situation}`
+                    +`&q[city_hall_id]=${city_hall}`
                     +`&q[s]=${this.state.filter_s}`
                     +`&page=${this.state.current_page}`
     current_page = sort_only ? this.state.current_page : 1
@@ -295,6 +349,7 @@ class getServiceTypeList extends Component {
         num_entries: resp.num_entries,
         last_fetch_description: description,
         last_fetch_situation: situation,
+        last_fetch_city_hall: city_hall,
         current_page: current_page
       })
     });
@@ -331,8 +386,10 @@ class getServiceTypeList extends Component {
 
 const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
+  const current_role = user.roles[user.current_role_idx]
   return {
-    user
+    user,
+    current_role
   }
 }
 
