@@ -109,13 +109,7 @@ class getServiceTypeList extends Component {
         return (
           <tr>
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/service_types/${service_type.id}`) 
-                }>
-                {service_type.description}
-              </a>
+              {service_type.description}
             </td>
             <td>
               {service_type.active ? 'Ativo' : 'Inativo'}
@@ -131,6 +125,17 @@ class getServiceTypeList extends Component {
                 :
                 null
             }
+            <td>
+              <a className='back-bt waves-effect btn-flat' 
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/service_types/${service_type.id}`) 
+                }>
+                  <i className="waves-effect material-icons tooltipped">
+                    visibility
+                  </i>
+              </a> 
+            </td>
             <td>
               <a className='back-bt waves-effect btn-flat' 
                  href='#' 
@@ -158,6 +163,7 @@ class getServiceTypeList extends Component {
             <th>{this.sortableColumn.bind(this)('Prefeitura','sector_city_hall_name')}</th> :
             null
         }
+        <th></th>
         <th></th>
       </tr>
     )

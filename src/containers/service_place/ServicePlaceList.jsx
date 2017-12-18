@@ -151,6 +151,8 @@ class getServicePlaceList extends Component {
                     visibility
                   </i>
               </a> 
+            </td>
+            <td>
               <a className='back-bt waves-effect btn-flat' 
                  href='#' 
                  onClick={ () => 
@@ -181,6 +183,7 @@ class getServicePlaceList extends Component {
             <th>{this.sortableColumn.bind(this)('Prefeitura','city_hall_name')}</th> :
             null
         }
+        <th></th>
         <th></th>
       </tr>
     )
