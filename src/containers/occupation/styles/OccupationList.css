@@ -89,3 +89,18 @@
 .clear-filter {
 	display: none;
 }
+
+a {
+  color: #1A1A1A;
+  text-decoration: none;
+}
+
+a:hover
+{
+  color:#1A1A1A;
+  text-decoration:none;
+  cursor:pointer;
+}
+.row-occupation{
+	margin-left: 0px;
+}
