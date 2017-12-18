@@ -21,7 +21,6 @@ class getSchedulesReport extends Component {
       schedulesIndex:[]
     }
     this.getSchedulesList = this.getSchedulesList.bind(this)
-    this.returnSchedulesList = this.returnSchedulesList.bind(this)
     this.formatDateTime = this.formatDateTime.bind(this)
   }
 
