@@ -11,8 +11,7 @@ import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
 import styles from './styles/MyReport.css';
 import { LogoImage } from '../images';
-var jspdf
-var jspdfautotable
+import ReportPDF from './reportPDF'
 
 class getMyReport extends Component {
   constructor(props) {
@@ -21,7 +20,6 @@ class getMyReport extends Component {
       rows: [],
       columns: []
     }
-    this.pdfToHTML=this.pdfToHTML.bind(this);
   }
   componentDidMount(){
     this.setState({"rows": [
@@ -40,26 +38,6 @@ class getMyReport extends Component {
     this.setState({"columns":
       ["Dados Cadastrais"," "]
     })
-    jspdf = require('jspdf')
-    jspdfautotable = require('jspdf-autotable')
-  }
-
-   convertImgToDataURLviaCanvas(url, callback, outputFormat) {
-    var img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.onload = function() {
-      var canvas = document.createElement('CANVAS');
-      var ctx = canvas.getContext('2d');
-      var dataURL;
-      canvas.height = this.height;
-      canvas.width = this.width;
-      ctx.drawImage(this, 0, 0);
-      dataURL = canvas.toDataURL(outputFormat);
-      canvas = null;
-      return(dataURL);
-    };
-    img.src = url;
-    return(img)
   }
 
   formatDateTime(dateTime){
@@ -76,40 +54,6 @@ class getMyReport extends Component {
     }
     return(newTime)
   }
-
-  pdfToHTML(){
-    var doc = new jspdf('p', 'pt');
-    var name = this.props.user.citizen.name
-    var nowTime = new Date()
-    var dateURL = "Criado em " + window.location.href + "  " + this.formatDateTime(nowTime)
-    var dataImage = this.convertImgToDataURLviaCanvas(LogoImage, function(image){return(image)}, 'png')
-    console.log(dataImage)
-
-    doc.autoTable(this.state.columns, this.state.rows, {
-      headerStyles: {fillColor: [146, 191, 35]},
-      margin: {top: 60},
-      addPageContent: function(data) {
-      //header
-      doc.setFontSize(20);
-      doc.setTextColor(40);
-      doc.setFontStyle('normal');
-      doc.text("Relatório Cadastral", data.settings.margin.left + 50, 22);
-      doc.text(name, data.settings.margin.left + 50, 50);
-      if (dataImage) {
-          doc.addImage(dataImage, 'png', data.settings.margin.left, 15, 35, 35);
-      }
-      //footer
-      var str = "Página " + data.pageCount;
-      doc.setFontSize(10);
-      doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
-      doc.text(dateURL, data.settings.margin.left + 100, doc.internal.pageSize.height - 10)
-    }
-    })
-    doc.save("relatorio_cadastral.pdf");
-  }
-
-
-
 
   formatCpf(cpf){
     return(cpf[0] + cpf[1] + cpf[2] + '.' + cpf[3] + cpf[4] + cpf[5] + '.' + cpf[6] + cpf[7] + cpf[8] + '-' + cpf[9] + cpf[10])
@@ -176,7 +120,7 @@ class getMyReport extends Component {
               </tbody>
             </Table>
           </div>
-          <Button onClick={this.pdfToHTML}>Baixar Relatório em PDF</Button>
+          <ReportPDF h1="Relatório cadastral" h2={this.props.user.citizen.name} rows={this.state.rows} cols={this.state.columns} filename="relatorio_cadastral.pdf" />
         </div>
       </div>
     </div>
