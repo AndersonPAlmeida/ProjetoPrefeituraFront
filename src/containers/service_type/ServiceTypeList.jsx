@@ -230,25 +230,23 @@ class getServiceTypeList extends Component {
       })
     )
     return (
-      <Col>
-        <div className='select-field'>
-          <h6>Prefeitura:</h6>
-          <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
-            onChange={
-              (event) => {
-                var selected_city_hall = event.target.value
-                if(this.state.filter_city_hall != selected_city_hall) {
-                  this.setState({
-                    filter_city_hall: selected_city_hall,
-                  });
-                }
+      <Col s={3}>
+        <h6>Prefeitura:</h6>
+        <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+          onChange={
+            (event) => {
+              var selected_city_hall = event.target.value
+              if(this.state.filter_city_hall != selected_city_hall) {
+                this.setState({
+                  filter_city_hall: selected_city_hall,
+                });
               }
             }
-          >
-            <option value={''}>Todas</option>
-            {cityHallList}
-          </Input>
-        </div>
+          }
+        >
+          <option value={''}>Todas</option>
+          {cityHallList}
+        </Input>
       </Col>
     )
   }
@@ -256,19 +254,19 @@ class getServiceTypeList extends Component {
   filterServiceType() {
     return (
       <div>
-        {
-          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
-            this.pickCityHall() :
-            null
-        }
-        <Row className='filter-container'>
-          <Col>
-            <div className="field-input" >
+        <Row s={12}></Row>
+        <Row s={12}>
+          {
+            this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+              this.pickCityHall() :
+              null
+          }
+          <Col s={3}>
+            <div>
               <h6>Descrição:</h6>
               <label>
                 <input
                   type="text"
-                  className='input-field'
                   name="filter_description"
                   value={this.state.filter_description}
                   onChange={this.handleInputFilterChange.bind(this)}
@@ -276,11 +274,11 @@ class getServiceTypeList extends Component {
               </label>
             </div>
           </Col>
-          <Col>
-            <div className="field-input" >
+          <Col s={3}>
+            <div>
               <h6>Situação:</h6>
               <div>
-                <Input s={6} m={32} l={6}
+                <Input
                        type='select'
                        name='filter_situation'
                        value={this.state.filter_situation}
@@ -293,14 +291,14 @@ class getServiceTypeList extends Component {
               </div>
             </div>
           </Col>
-          <Row>
-            <Col>
-              <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
-            </Col>
-            <Col>
-              <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
-            </Col>
-          </Row>
+        </Row>
+        <Row s={12}>
+          <Col>
+            <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+          </Col>
+          <Col>
+            <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+          </Col>
         </Row>
       </div>
     )
@@ -374,9 +372,7 @@ class getServiceTypeList extends Component {
       <main>
       	<Row>
 	        <Col s={12}>
-		      	<div>
 		      		{this.mainComponent()}
-		      	</div>
 	      	</Col>
 	    </Row>
 	  </main>

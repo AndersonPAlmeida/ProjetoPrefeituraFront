@@ -254,24 +254,22 @@ class getServicePlaceList extends Component {
     )
     return (
       <Col s={3}>
-        <div>
-          <h6>Prefeitura:</h6>
-          <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
-            onChange={
-              (event) => {
-                var selected_city_hall = event.target.value
-                if(this.state.filter_city_hall != selected_city_hall) {
-                  this.setState({
-                    filter_city_hall: selected_city_hall,
-                  });
-                }
+        <h6>Prefeitura:</h6>
+        <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+          onChange={
+            (event) => {
+              var selected_city_hall = event.target.value
+              if(this.state.filter_city_hall != selected_city_hall) {
+                this.setState({
+                  filter_city_hall: selected_city_hall,
+                });
               }
             }
-          >
-            <option value={''}>Todas</option>
-            {cityHallList}
-          </Input>
-        </div>
+          }
+        >
+          <option value={''}>Todas</option>
+          {cityHallList}
+        </Input>
       </Col>
     )
   }
@@ -279,6 +277,7 @@ class getServicePlaceList extends Component {
   filterServicePlace() {
     return (
       <div>
+        <Row s={12}></Row>
         <Row s={12}>
           {
             this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
