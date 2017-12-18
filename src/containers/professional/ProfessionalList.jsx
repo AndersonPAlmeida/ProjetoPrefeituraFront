@@ -151,13 +151,7 @@ class getProfessionalList extends Component {
         return (
           <tr>
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/professionals/${professional.id}`) 
-                }>
-                {professional.name}
-              </a>
+              {professional.name}
             </td>
             <td>
               {professional.registration}
@@ -179,6 +173,17 @@ class getProfessionalList extends Component {
             </td>
             <td>
               {professional.active ? 'Ativo' : 'Inativo'}
+            </td>
+            <td>
+              <a className='back-bt waves-effect btn-flat' 
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/professionals/${professional.id}`) 
+                }>
+                <i className="waves-effect material-icons tooltipped">
+                  visibility
+                </i>
+              </a> 
             </td>
             <td>
               <a className='back-bt waves-effect btn-flat' 
@@ -213,6 +218,7 @@ class getProfessionalList extends Component {
         <th>{this.sortableColumn.bind(this)('E-mail','citizen_email')}</th>
         <th>{this.sortableColumn.bind(this)('Situação','active')}</th>
         <th>Situação</th>
+        <th></th>
         <th></th>
       </tr>
     )
@@ -283,67 +289,58 @@ class getProfessionalList extends Component {
   
   pickName() {
     return (
-      <Row className='filter-container'>
-        <Col>
-          <div>
-            <h6>Nome:</h6>
-            <label>
-              <input
-                type="text"
-                className='input-field'
-                name="filter_name"
-                value={this.state.filter_name}
-                onChange={this.handleInputFilterChange.bind(this)}
-              />
-            </label>
-          </div>
-        </Col>
-      </Row>
+      <Col s={3}>
+        <div>
+          <h6>Nome:</h6>
+          <label>
+            <input
+              type="text"
+              name="filter_name"
+              value={this.state.filter_name}
+              onChange={this.handleInputFilterChange.bind(this)}
+            />
+          </label>
+        </div>
+      </Col>
     )
   }
 
   pickRegistration() {
     return (
-      <Row className='filter-container'>
-        <Col>
-          <div>
-            <h6>Matrícula:</h6>
-            <label>
-              <input
-                type="text"
-                className='input-field'
-                name="filter_registration"
-                pattern="[0-9|/]*"
-                value={this.state.filter_registration}
-                onChange={this.handleInputFilterChange.bind(this)}
-              />
-            </label>
-          </div>
-        </Col>
-      </Row>
+      <Col s={3}>
+        <div>
+          <h6>Matrícula:</h6>
+          <label>
+            <input
+              type="text"
+              name="filter_registration"
+              pattern="[0-9|/]*"
+              value={this.state.filter_registration}
+              onChange={this.handleInputFilterChange.bind(this)}
+            />
+          </label>
+        </div>
+      </Col>
     )
   }
 
 
   pickCPF () {
     return (
-      <Row className='filter-container'>
-        <Col>
-          <div className="" >
-            <h6>CPF:</h6>
-            <label>
-              <MaskedInput
-                type="text"
-                className='input-field'
-                mask="111.111.111-11"
-                name="filter_cpf"
-                value={this.state.filter_cpf}
-                onChange={this.handleInputFilterChange.bind(this)}
-              />
-            </label>
-          </div>
-        </Col>
-      </Row>
+      <Col s={3}>
+        <div className="" >
+          <h6>CPF:</h6>
+          <label>
+            <MaskedInput
+              type="text"
+              mask="111.111.111-11"
+              name="filter_cpf"
+              value={this.state.filter_cpf}
+              onChange={this.handleInputFilterChange.bind(this)}
+            />
+          </label>
+        </div>
+      </Col>
     )
   }
 
@@ -356,10 +353,10 @@ class getProfessionalList extends Component {
       })
     )
     return (
-      <Col>
-        <div className='select-field'>
+      <Col s={3}>
+        <div>
           <h6>Permissão:</h6>
-          <Input s={12} m={12} name="filter_permission" type='select' value={this.state.filter_permission}
+          <Input name="filter_permission" type='select' value={this.state.filter_permission}
             onChange={
               (event) => {
                 var selected_permission = event.target.value
@@ -388,10 +385,10 @@ class getProfessionalList extends Component {
       })
     )
     return (
-      <Col>
-        <div className='select-field'>
+      <Col s={3}>
+        <div>
           <h6>Cargo:</h6>
-          <Input s={12} m={12} name="filter_occupation" type='select' value={this.state.filter_occupation}
+          <Input name="filter_occupation" type='select' value={this.state.filter_occupation}
             onChange={
               (event) => {
                 var selected_occupation = event.target.value
@@ -420,10 +417,10 @@ class getProfessionalList extends Component {
       })
     )
     return (
-      <Col>
-        <div className='select-field'>
+      <Col s={3}>
+        <div>
           <h6>Local de Atendimento:</h6>
-          <Input s={12} m={12} name="filter_service_place" type='select' value={this.state.filter_service_place}
+          <Input name="filter_service_place" type='select' value={this.state.filter_service_place}
             onChange={
               (event) => {
                 var selected_service_place = event.target.value
@@ -445,10 +442,10 @@ class getProfessionalList extends Component {
 
   pickSituation() {
     return (
-      <Col>
-        <div className='select-field'>
+      <Col s={3}>
+        <div>
           <h6>Situação:</h6>
-          <Input s={12} m={12} name="filter_situation" type='select' value={this.state.filter_situation}
+          <Input name="filter_situation" type='select' value={this.state.filter_situation}
             onChange={
               (event) => {
                 var selected_situation = event.target.value
@@ -478,10 +475,10 @@ class getProfessionalList extends Component {
       })
     )
     return (
-      <Col>
-        <div className='select-field'>
+      <Col s={3}>
+        <div>
           <h6>Prefeitura:</h6>
-          <Input s={12} m={12} name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+          <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
             onChange={
               (event) => {
                 var selected_city_hall = event.target.value
@@ -504,19 +501,24 @@ class getProfessionalList extends Component {
   filterProfessional() {
     return (
       <div>
-        {
-          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
-            this.pickCityHall() :
-            null
-        }
-        {this.pickPermission()}
-        {this.pickOccupation()}
-        {this.pickServicePlace()}
-        {this.pickSituation()}
-        {this.pickName()}
-        {this.pickRegistration()}
-        {this.pickCPF()}
-        <Row>
+        <Row></Row>
+        <Row s={12}>
+          {this.pickSituation()}
+          {this.pickName()}
+          {this.pickRegistration()}
+          {this.pickCPF()}
+        </Row>
+        <Row s={12}>
+          {
+            this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+              this.pickCityHall() :
+              null
+          }
+          {this.pickPermission()}
+          {this.pickOccupation()}
+          {this.pickServicePlace()}
+        </Row>
+        <Row s={12}>
           <Col>
             <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
           </Col>
@@ -629,9 +631,7 @@ class getProfessionalList extends Component {
       <main>
       	<Row>
 	        <Col s={12}>
-		      	<div>
-		      		{this.mainComponent()}
-		      	</div>
+            {this.mainComponent()}
 	      	</Col>
 	    </Row>
 	  </main>
