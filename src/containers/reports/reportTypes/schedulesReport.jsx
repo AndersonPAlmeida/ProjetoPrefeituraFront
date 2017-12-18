@@ -10,14 +10,15 @@ import { findDOMNode } from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
 import styles from './styles/schedulesReport.css'
-var jsPDF
+import ReportPDF from '../reportPDF'
 
 
 class getSchedulesReport extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      schedulesList: []
+      schedulesList: [],
+      schedulesIndex:[]
     }
     this.getSchedulesList = this.getSchedulesList.bind(this)
     this.returnSchedulesList = this.returnSchedulesList.bind(this)
@@ -25,17 +26,13 @@ class getSchedulesReport extends Component {
   }
 
   componentDidMount(){
-    jsPDF = require('jspdf')
-    this.returnSchedulesList()
+    this.getSchedulesIndex()
   }
 
-returnSchedulesList(){
-    if(this.state.schedulesList.length == 0){
-      this.getSchedulesList()
-    }
-    console.log(this.state.schedulesList)
-    return(this.state.schedulesList)
-}
+  getSchedulesIndex(){
+    //return index of schedules from backend and set state
+  }
+
 
 getSchedulesList(){
   const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
@@ -63,27 +60,6 @@ getSchedulesList(){
     return(date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3])
   }
 
-  printPDF(){
-        var pdf = new jsPDF('p', 'pt', "a4");
-        pdf.setFont("helvetica");
-        pdf.setFontSize(1);
-      var source = $('#divtoPDF')[0];
-      var specialElementHandlers = {
-        '#bypassme': function(element, renderer) {
-          return true
-        }
-      };
-
-      var margins = { top: 50,left: 10,right:10, width: 650};
-
-      pdf.fromHTML (
-        source, margins.left, margins.top,  {'width': margins.width, 'elementHandlers': specialElementHandlers},
-        function (dispose) {
-          pdf.save('relatorio_cidadaos.pdf');
-        }
-      )
-  }
-
   formatDateTime(dateTime){
     var dateText = new Date(dateTime)
     var returnText = this.addZeroBefore(dateText.getHours()) + ":" + this.addZeroBefore(dateText.getMinutes()) + " - " + dateText.getDate() + "/" + (dateText.getMonth() + 1) + "/" + dateText.getFullYear()
@@ -99,43 +75,70 @@ getSchedulesList(){
     return(newTime)
   }
 
+  getShiftPlaces(){
+    return(["A","B","C","D","E"])
+  }
+
+  getProfessionals(){
+    return(["A","B","C","D","E"])
+  }
+  getShiftTypes(){
+    return(["A","B","C","D","E"])
+  }
+
+  getSituations(){
+    return(["A","B","C","D","E"])
+  }
+
 render() {
     return (
       <div className="contentWrapper">
-        <div id="divtoPDF">
-          <Table className="bordered striped" style={{fontSize:"70%"}}>
-            <thead>
-              <tr>
-                <th>CPF do cidadão</th>
-                <th>Nome do cidadão</th>
-                <th>Número do agendamento</th>
-                <th>Profissional</th>
-                <th>Tipo do agendamento</th>
-                <th>Inicio</th>
-                <th>Fim</th>
-                <th>Situação</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.returnSchedulesList().map(function(element,i){
-                    return(
-                      <tr key={i}>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>{element.id}</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>{this.formatDateTime(element.service_start_time)}</td>
-                        <td>{this.formatDateTime(element.service_end_time)}</td>
-                        <td>{element.situation.description}</td>
-                      </tr>
-                  );
-                },this)}
-            </tbody>
-          </Table>
-          <Button onClick={this.printPDF}>Relatório em PDF</Button>
-        </div>
+        <h5>Filtros do relatório</h5>
+          <div>
+            <br/>
+            <Row>
+            <Input s={4} label="Local do Atendimento" type="select" default="0">
+              {this.getShiftPlaces().map(function(element,i){
+                return(<option key={i} value={i}>{element}</option>)
+              })}
+            </Input>
 
+            <Input s={4} name='on' type='date' label="Data de Início" onChange={function(e, value) {}} />
+            <Input s={4} name='on' type='date' label="Data de Fim" onChange={function(e, value) {}} />
+          </Row>
+
+          <Row>
+            <Input s={4} label="Profissional" type="select" default="0">
+              {this.getProfessionals().map(function(element,i){
+                return(<option key={i} value={i}>{element}</option>)
+              })}
+            </Input>
+
+            <Input s={4} label="Tipo de atendimento" type="select" default="0">
+              {this.getShiftTypes().map(function(element,i){
+                return(<option key={i} value={i}>{element}</option>)
+              })}
+            </Input>
+
+            <Input s={4} label="Situação" type="select" default="0">
+              {this.getSituations().map(function(element,i){
+                return(<option key={i} value={i}>{element}</option>)
+              })}
+            </Input>
+          </Row>
+
+          <Row>
+            <Input s={4} label="Ordernar por" type="select" default="0">
+              <option value="0">Nome do cidadão</option>
+              <option value="1">Situação</option>
+              <option value="2">Número do agendamento</option>
+            </Input>
+            <Input s={4} name='on' type='date' label="CPF" onChange={function(e, value) {}} />
+            <Input s={4} name='on' type='date' label="Nome do Cidadão" onChange={function(e, value) {}} />
+          </Row>
+          </div>
+          <Button style={{marginRight:"1rem"}}>Limpar Campos</Button>
+          <ReportPDF h1="Relatório de Agendamentos" h2="" cols={[]} rows={[]} filename="relatorio_agendamentos.pdf" />
       </div>
     )
   }
