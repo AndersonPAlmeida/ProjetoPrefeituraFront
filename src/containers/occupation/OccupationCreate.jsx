@@ -7,16 +7,16 @@ import { connect } from 'react-redux'
 import OccupationForm from './OccupationForm'
 import { browserHistory } from 'react-router';
 
-class getSectorCreate extends Component {
+class getOccupationCreate extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      sector: []
+      occupation: []
     };
   }
 
   prev() {
-    browserHistory.push(`/sectors`)
+    browserHistory.push(`/occupations`)
   }
 
   render() {
@@ -27,10 +27,10 @@ class getSectorCreate extends Component {
             <OccupationForm
               is_edit={false}
               prev={this.prev}
-              fetch_collection={`sectors`}
+              fetch_collection={`occupations`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
-              submit_url={`/sectors/`}
+              submit_url={`/occupations/`}
               current_role={this.props.user.roles[this.props.user.current_role_idx]}
             />
         }
@@ -47,5 +47,5 @@ const mapStateToProps = (state) => {
 }
 const OccupationCreate = connect(
   mapStateToProps
-)(getSectorCreate)
+)(getOccupationCreate)
 export default OccupationCreate

@@ -8,11 +8,11 @@ import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 
-class getSectorShow extends Component {
+class getOccupationShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      sector: {
+      occupation: {
         active: '',
         absence_max: '',
         blocking_days: '',
@@ -20,7 +20,7 @@ class getSectorShow extends Component {
         description: '',
         name: '',
         previous_notice: '',
-        schedules_by_sector: ''
+        schedules_by_occupation: ''
       },
     }
   }
@@ -28,7 +28,7 @@ class getSectorShow extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `sectors/${this.props.params.sector_id}`;
+    const collection = `occupations/${this.props.params.occupation_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -36,7 +36,7 @@ class getSectorShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ sector: resp })
+      self.setState({ occupation: resp })
     });
   }
 
@@ -47,35 +47,35 @@ class getSectorShow extends Component {
               <h2 className='card-title h2-title-home'> Informações do Setor: </h2>
               <p>
                 <b>Situação: </b>
-                {this.state.sector.active ? 'Ativo' : 'Inativo'}
+                {this.state.occupation.active ? 'Ativo' : 'Inativo'}
               </p>
               <p>
                 <b>Nome: </b>
-                {this.state.sector.name}
+                {this.state.occupation.name}
               </p>
               <p>
                 <b>Descrição: </b>
-                {this.state.sector.description}
+                {this.state.occupation.description}
               </p>
               <p>
                 <b>Número de Agendamentos por Setor: </b>
-                {this.state.sector.schedules_by_sector}
+                {this.state.occupation.schedules_by_occupation}
               </p>
               <p>
                 <b>Número de dias de impedimento de novos agendamentos: </b>
-                {this.state.sector.blocking_days}
+                {this.state.occupation.blocking_days}
               </p>
               <p>
                 <b>Limite de cancelamentos: </b>
-                {this.state.sector.cancel_limit}
+                {this.state.occupation.cancel_limit}
               </p>
               <p>
                 <b>Horas de antecedência para poder cancelar um atendimento: </b>
-                {this.state.sector.previous_notice}
+                {this.state.occupation.previous_notice}
               </p>
               <p>
                 <b>Número de faltas que gera impedimento de novos agendamentos: </b>
-                {this.state.sector.absence_max}
+                {this.state.occupation.absence_max}
               </p>
             </div>
             {this.editButton()}
@@ -83,19 +83,19 @@ class getSectorShow extends Component {
     )
   }
 
-  editSector () {
-    browserHistory.push(`sectors/${this.props.params.sector_id}/edit`)
+  editOccupation () {
+    browserHistory.push(`occupations/${this.props.params.occupation_id}/edit`)
   }
 
   prev() {
-    browserHistory.push(`sectors`)
+    browserHistory.push(`occupations`)
   }
 
 	editButton() {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
-				<button className="waves-effect btn right" name="commit" onClick={this.editSector.bind(this)} type="submit">Editar</button>
+				<button className="waves-effect btn right" name="commit" onClick={this.editOccupation.bind(this)} type="submit">Editar</button>
       </div>
 		)
 	}
@@ -121,7 +121,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const SectorShow = connect(
+const OccupationShow = connect(
   mapStateToProps
-)(getSectorShow)
-export default SectorShow
+)(getOccupationShow)
+export default OccupationShow

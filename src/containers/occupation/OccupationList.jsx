@@ -43,7 +43,7 @@ class getOccupationList extends Component {
     return (
       <div className='card card-occupation' >
         <div className='card-content'>
-          <h2 className='card-title h2-title-home'> I18N Occupation</h2>
+          <h2 className='card-title h2-title-home'>Cargos</h2>
           {this.filterOccupation()}
           {this.tableList()}
         </div>
@@ -156,9 +156,9 @@ class getOccupationList extends Component {
   filterOccupation() {
     return (
       <div>
-      <Row>
-          <Col s={3}>
-            <div className="field-input" >
+      <Row className="row-occupation">
+          <Col s={12} m={4}  >
+            <div>
               <h6>Nome:</h6>
               <label>
                 <input
@@ -171,8 +171,8 @@ class getOccupationList extends Component {
               </label>
             </div>
           </Col>
-          <Col s={3}>
-            <div className="field-input" >
+          <Col s={12} m={4}>
+            <div>
               <h6>Descrição:</h6>
               <label>
                 <input
@@ -189,12 +189,12 @@ class getOccupationList extends Component {
 
           <Row>
             <Col>
-              <button className="waves-effect btn button-green search-button" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">BUSCAR I18N</button>
+              <button className="waves-effect btn button-green search-button" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">BUSCAR </button>
             </Col>
-            <Col >
-              <button className="waves-effect btn button-white clean-button" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">LIMPAR CAMPOS I18N </button>
+            <Col>
+              <button className="waves-effect btn button-white clean-button" onClick={this.cleanFilter.bind(this)} name="commit">LIMPAR CAMPOS  </button>
             </Col>
-            <Col >
+            <Col>
               {this.newOccupationButton()}
             </Col>
           </Row>
@@ -207,6 +207,19 @@ class getOccupationList extends Component {
       'filter_description': '',
       'filter_name': '',
     })
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `occupations`;
+    const params = `permission=${this.props.user.current_role}`
+
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get",
+    }).then(parseResponse).then(resp => {
+      self.setState({ occupations: resp.entries })
+    });
   }
 
   handleFilterSubmit(sort_only) {
@@ -231,7 +244,7 @@ class getOccupationList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       this.setState({
-        occupations: resp,
+        occupations: resp.entries,
         last_fetch_name: name,
         last_fetch_description: description
       })
@@ -247,7 +260,7 @@ class getOccupationList extends Component {
         className="waves-effect btn button-green new-occupation-button"
         name="new occupation"
         type="submit">
-          INSERIR NOVO CARGO I18N
+          INSERIR NOVO CARGO
       </button>
 		)
 	}

@@ -8,7 +8,7 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
-import { SectorImg } from '../images';
+import { OccupationImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
 
@@ -17,7 +17,7 @@ class getOccupationForm extends Component {
  constructor(props) {
     super(props)
     this.state = {
-      sector: {
+      occupation: {
         active: true,
         absence_max: '',
         blocking_days: '',
@@ -25,7 +25,7 @@ class getOccupationForm extends Component {
         description: '',
         name: '',
         previous_notice: '',
-        schedules_by_sector: '',
+        schedules_by_occupation: '',
         city_hall_id: 0
       },
       city_halls: []
@@ -35,11 +35,11 @@ class getOccupationForm extends Component {
   componentDidMount() {
     var self = this;
     if(this.props.is_edit) {
-      self.setState({ sector: this.props.data })
+      self.setState({ occupation: this.props.data })
     }
     if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
       this.setState({
-        sector: update(this.state.sector, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
+        occupation: update(this.state.occupation, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
       })
     }
     else {
@@ -63,14 +63,14 @@ class getOccupationForm extends Component {
     const name = target.name;
 
     this.setState({
-      sector: update(this.state.sector, { [name]: {$set: value} })
+      occupation: update(this.state.occupation, { [name]: {$set: value} })
     })
   }
 
   handleSubmit() {
     let errors = [];
     let formData = {};
-    formData = this.state.sector;
+    formData = this.state.occupation;
 
     if(!formData['name'])
       errors.push("Campo Nome é obrigatório.");
@@ -84,7 +84,7 @@ class getOccupationForm extends Component {
       const params = this.props.fetch_params;
       let fetch_body = {}
       if(this.props.is_edit) {
-        fetch_body['sector'] = formData
+        fetch_body['occupation'] = formData
       }
       else {
         fetch_body = formData
@@ -145,11 +145,11 @@ class getOccupationForm extends Component {
       <Input
         name="city_hall_id"
         type='select'
-        value={this.state.sector.city_hall_id}
+        value={this.state.occupation.city_hall_id}
         onChange={
           (event) => {
             if(event.target.value != this.state.selected_city_hall) {
-                this.handleInputSectorChange(event);
+                this.handleInputOccupationChange(event);
             }
           }
         }
@@ -186,8 +186,8 @@ class getOccupationForm extends Component {
                         <Input s={6} m={32} l={6}
                                type='select'
                                name='active'
-                               value={this.state.sector.active}
-                               onChange={this.handleInputSectorChange.bind(this)}
+                               value={this.state.occupation.active}
+                               onChange={this.handleInputOccupationChange.bind(this)}
                         >
                           <option key={0} value={true}>Ativo</option>
                           <option key={1} value={false}>Inativo</option>
@@ -201,8 +201,8 @@ class getOccupationForm extends Component {
                           type="text"
                           className='input-field'
                           name="name"
-                          value={this.state.sector.name}
-                          onChange={this.handleInputSectorChange.bind(this)}
+                          value={this.state.occupation.name}
+                          onChange={this.handleInputOccupationChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -212,9 +212,9 @@ class getOccupationForm extends Component {
                         <input
                           type="text"
                           className='input-field'
-                          name="schedules_by_sector"
-                          value={this.state.sector.schedules_by_sector}
-                          onChange={this.handleInputSectorChange.bind(this)}
+                          name="schedules_by_occupation"
+                          value={this.state.occupation.schedules_by_occupation}
+                          onChange={this.handleInputOccupationChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -225,8 +225,8 @@ class getOccupationForm extends Component {
                           type="text"
                           className='input-field'
                           name="blocking_days"
-                          value={this.state.sector.blocking_days}
-                          onChange={this.handleInputSectorChange.bind(this)}
+                          value={this.state.occupation.blocking_days}
+                          onChange={this.handleInputOccupationChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -237,8 +237,8 @@ class getOccupationForm extends Component {
                           type="text"
                           className='input-field'
                           name="cancel_limit"
-                          value={this.state.sector.cancel_limit}
-                          onChange={this.handleInputSectorChange.bind(this)}
+                          value={this.state.occupation.cancel_limit}
+                          onChange={this.handleInputOccupationChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -249,8 +249,8 @@ class getOccupationForm extends Component {
                           type="text"
                           className='input-field'
                           name="previous_notice"
-                          value={this.state.sector.previous_notice}
-                          onChange={this.handleInputSectorChange.bind(this)}
+                          value={this.state.occupation.previous_notice}
+                          onChange={this.handleInputOccupationChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -261,8 +261,8 @@ class getOccupationForm extends Component {
                           type="text"
                           className='input-field'
                           name="absence_max"
-                          value={this.state.sector.absence_max}
-                          onChange={this.handleInputSectorChange.bind(this)}
+                          value={this.state.occupation.absence_max}
+                          onChange={this.handleInputOccupationChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -272,8 +272,8 @@ class getOccupationForm extends Component {
                         <textarea
                           className='input-field materialize-textarea'
                           name="description"
-                          value={this.state.sector.description}
-                          onChange={this.handleInputSectorChange.bind(this)}
+                          value={this.state.occupation.description}
+                          onChange={this.handleInputOccupationChange.bind(this)}
                         />
                       </label>
                     </div>
