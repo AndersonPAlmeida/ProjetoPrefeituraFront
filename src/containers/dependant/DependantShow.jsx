@@ -12,47 +12,10 @@ class getDependantShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      update_address: 0,
       dependant: {
-        account_id: '',
-        active: '',
-        address: {
-          address: '',
-          complement: '',
-          complement2: '',
-          id: '',
-          neighborhood: '',
-          zipcode: ''
-        },
-        address_complement: '',
-        address_number: '',
-        address_street: '',
-        avatar_content_type: '',
-        avatar_file_name: '',
-        avatar_file_size: '',
-        avatar_updated_at: '',
-        birth_date: '',
-        cep: '',
-        city: {
-          id: '',
-          name: ''
-        },
-        cpf: '',
-        email: '',
-        id: '',
-        name: '',
-        neighborhood: '',
-        note: '',
-        pcd: '',
-        phone1: '',
-        phone2: '',
-        responsible_id: '',
-        rg: '',
-        state: {
-          abbreviation: '',
-          id: '',
-          name: ''
-        }
+        address: {},
+        city: {},
+        state: {}
       }
     }
   }

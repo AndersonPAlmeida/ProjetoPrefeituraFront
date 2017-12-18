@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import UserForm from '../../utils/UserForm'
 
-class SignUp extends Component {
-  prev() {
-    browserHistory.push(`/`)
+class getProfessionalUserEdit extends Component {
+  prev(e) {
+    e.preventDefault()
+    browserHistory.push(`/professionals/users`)
   }
 
   render() {
@@ -14,13 +15,24 @@ class SignUp extends Component {
         user_class={`citizen`}
         is_edit={false}
         prev={this.prev}
-        fetch_collection={`auth`}
-        fetch_params={``}
+        fetch_collection={`citizens`}
+        fetch_params={`permission=${this.props.user.current_role}`}
         fetch_method={'post'}
-        submit_url={`/`}
+        submit_url={`/professionals/users`}
       />
     )
   }
 }
 
-export default connect(({ routes }) => ({ routes }))(SignUp);
+const mapStateToProps = (state) => {
+  const user = state.get('user').getIn(['userInfo'])
+  return {
+    user
+  }
+}
+const ProfessionalUserEdit = connect(
+  mapStateToProps
+)(getProfessionalUserEdit)
+export default ProfessionalUserEdit
+
+

@@ -7,11 +7,11 @@ import { connect } from 'react-redux'
 import UserForm from '../../utils/UserForm'
 import { browserHistory } from 'react-router';
 
-class getCitizenEdit extends Component {
+class getProfessionalUserDependantEdit extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      citizen: [],
+      dependant: {},
       fetching: true
     };
   }
@@ -19,7 +19,7 @@ class getCitizenEdit extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.params.citizen_id}`;
+    const collection = `citizens/${this.props.params.citizen_id}/dependants/${this.props.params.dependant_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -27,29 +27,29 @@ class getCitizenEdit extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ citizen: resp, fetching: false })
+      self.setState({ dependant: resp.citizen, fetching: false })
     });
   }
 
   prev(e) {
     e.preventDefault()
-    browserHistory.push(`/professionals/users`)
+    browserHistory.push(`/professionals/users/${this.props.params.citizen_id}`)
   }
 
   render() {
     return (
       <div>
         {
-          this.state.fetching ? <div /> :
+          this.state.fetching ? <div /> : 
             <UserForm 
-              user_data={this.state.citizen} 
-              user_class={`citizen`}
+              user_data={this.state.dependant} 
+              user_class={`dependant`}
               is_edit={true} 
               prev={this.prev}
-              fetch_collection={`citizens/${this.props.params.citizen_id}`}
+              fetch_collection={`citizens/${this.props.params.citizen_id}/dependants/${this.props.params.dependant_id}`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'put'}
-              submit_url={`/professionals/users`}
+              submit_url={`/professionals/users/${this.props.params.citizen_id}`}
             />
         }
       </div>
@@ -63,7 +63,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const CitizenEdit = connect(
+const ProfessionalUserDependantEdit = connect(
   mapStateToProps
-)(getCitizenEdit)
-export default CitizenEdit
+)(getProfessionalUserDependantEdit)
+export default ProfessionalUserDependantEdit

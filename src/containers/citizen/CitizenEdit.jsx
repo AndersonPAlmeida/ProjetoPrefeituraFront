@@ -19,6 +19,7 @@ class getCitizenEdit extends Component {
         user_data={this.props.user.citizen} 
         user_class={`citizen`}
         is_edit={true} 
+        current_citizen={true}
         prev={this.prev}
         fetch_collection={`auth`}
         fetch_params={`permission=${this.props.user.current_role}`}

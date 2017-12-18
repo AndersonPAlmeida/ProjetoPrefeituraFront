@@ -8,18 +8,19 @@ import {fetch} from "../../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 
-class getProfessionalShow extends Component {
+class getProfessionalUserShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      professional: { citizen: { city: {}, state: {} }, service_places: [] }
+      citizen: {},
+      dependants: []
     }
   }
 
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `professionals/${this.props.params.professional_id}`;
+    var collection = `citizens/${this.props.params.citizen_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -27,21 +28,38 @@ class getProfessionalShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ professional: resp })
+      self.setState({ citizen: resp })
+    });
+    collection = `citizens/${this.props.params.citizen_id}/dependants`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get",
+    }).then(parseResponse).then(resp => {
+      self.setState({ dependants: resp })
     });
   }
 
-  showServicePlaces() {
-    const servicePlacesList = (
-      this.state.professional.service_places.map((service_place) => {
+  showDependants() {
+    const dependantsList = (
+      this.state.dependants.map((dependant) => {
         return (
-          <div>{service_place.name}</div>
+          <p>
+            <a className='back-bt waves-effect btn-flat'
+              href='#'
+              onClick={ () =>
+                browserHistory.push(`/professionals/users/${this.props.params.citizen_id}/dependants/${dependant.id}`)
+              }>
+              {dependant.name}
+            </a>
+          </p>
         )
       })
     )
     return (
       <div>
-        {servicePlacesList}
+        {dependantsList}
       </div>
     )
   }
@@ -49,95 +67,84 @@ class getProfessionalShow extends Component {
   mainComponent() {
     return (
       <div className='card'>
-            <div className='card-content'>
-              <h2 className='card-title h2-title-home'> Informações do Profissional: </h2>
-              <p> 
-                <b>Nome: </b>
-                {this.state.professional.citizen.name}
-              </p>
-              <p> 
-                <b>CPF: </b>
-                {this.state.professional.citizen.cpf}
-              </p>
-              <p> 
-                <b>RG: </b>
-                {this.state.professional.citizen.rg}
-              </p>
-              <p> 
-                <b>Data de Nascimento: </b>
-                {this.state.professional.citizen.birth_date}
-              </p>
-              <p> 
-                <b>Telefone 1: </b>
-                {this.state.professional.citizen.phone1}
-              </p>
-              <p> 
-                <b>Telefone 2: </b>
-                {this.state.professional.citizen.phone2}
-              </p>
-              <p> 
-                <b>E-mail: </b>
-                {this.state.professional.citizen.email}
-              </p>
-              <p> 
-                <b>CEP: </b>
-                {this.state.professional.citizen.cep}
-              </p>
-              <p> 
-                <b>Estado: </b>
-                {this.state.professional.citizen.state.name}
-              </p>
-              <p> 
-                <b>Município: </b>
-                {this.state.professional.citizen.city.name}
-              </p>
-              <p> 
-                <b>Bairro: </b>
-                {this.state.professional.citizen.neighborhood}
-              </p>
-              <p> 
-                <b>Endereço: </b>
-                {this.state.professional.citizen.address_street}
-              </p>
-              <p> 
-                <b>Complemento do endereço: </b>
-                {this.state.professional.citizen.address_complement}
-              </p>
-              <p> 
-                <b>Matrícula: </b>
-                {this.state.professional.registration}
-              </p>
-              <p> 
-                <b>Cargo: </b>
-                {this.state.professional.occupation_name}
-              </p>
-              <p> 
-                <b>Locais de atendimento: </b>
-                {this.showServicePlaces()}
-              </p>
-              <p> 
-                <b>Observações: </b>
-                {this.state.professional.citizen.note}
-              </p>
-            </div>
-            {this.editButton()}
+        <div className='card-content'>
+          <h2 className='card-title h2-title-home'> Informações do Cidadão: </h2>
+          <p> 
+            <b>Nome: </b>
+            {this.state.citizen.name}
+          </p>
+          <p> 
+            <b>CPF: </b>
+            {this.state.citizen.cpf}
+          </p>
+          <p> 
+            <b>RG: </b>
+            {this.state.citizen.rg}
+          </p>
+          <p> 
+            <b>Data de Nascimento: </b>
+            {this.state.citizen.birth_date}
+          </p>
+          <p> 
+            <b>Telefone 1: </b>
+            {this.state.citizen.phone1}
+          </p>
+          <p> 
+            <b>Telefone 2: </b>
+            {this.state.citizen.phone2}
+          </p>
+          <p> 
+            <b>E-mail: </b>
+            {this.state.citizen.email}
+          </p>
+          <p> 
+            <b>CEP: </b>
+            {this.state.citizen.cep}
+          </p>
+          <p> 
+            <b>Bairro: </b>
+            {this.state.citizen.neighborhood}
+          </p>
+          <p> 
+            <b>Endereço: </b>
+            {this.state.citizen.address_street}
+          </p>
+          <p> 
+            <b>Complemento do endereço: </b>
+            {this.state.citizen.address_complement}
+          </p>
+          <p> 
+            <b>Dependentes: </b>
+            {this.showDependants.bind(this)()}
+          </p>
+          <p> 
+            <b>Observações: </b>
+            {this.state.citizen.note}
+          </p>
         </div>
+        {this.editButton()}
+      </div>
     )
   }
 
-  editProfessional () {
-    browserHistory.push(`professionals/${this.props.params.professional_id}/edit`)
+  editCitizen () {
+    browserHistory.push(`professionals/users/${this.props.params.citizen_id}/edit`)
+  }
+
+  createDependant () {
+    browserHistory.push(`professionals/users/${this.props.params.citizen_id}/dependants/new`)
   }
 
   prev() {
-    browserHistory.push(`professionals`)
+    browserHistory.push(`professionals/users`)
   }  
 
 	editButton() {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
-				<button className="waves-effect btn right" name="commit" onClick={this.editProfessional.bind(this)} type="submit">Editar</button>
+				<button className="waves-effect btn right" name="commit" onClick={this.createDependant.bind(this)} type="submit">Novo dependente</button>
+				<button className="waves-effect btn right" name="commit" onClick={this.editCitizen.bind(this)} type="submit">Editar</button>
       </div>
 		)
 	}
@@ -163,7 +170,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const ProfessionalShow = connect(
+const ProfessionalUserShow = connect(
   mapStateToProps
-)(getProfessionalShow)
-export default ProfessionalShow
+)(getProfessionalUserShow)
+export default ProfessionalUserShow

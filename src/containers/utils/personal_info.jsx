@@ -77,7 +77,7 @@ export default function () {
       </div>
 
       <div className="field-input">
-        <h6>CPF:</h6>
+        <h6>CPF{this.props.user_class == `dependant` ? '' : '*'}:</h6>
         <label>
           <MaskedInput
             type="text"

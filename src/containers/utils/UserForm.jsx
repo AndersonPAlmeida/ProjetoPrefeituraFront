@@ -299,21 +299,19 @@ class getUserForm extends Component {
 
   checkErrors(formData, auxData, send_password) {
     let errors = []
-    let form_mandatory = 
-      [
-        { id: 'name', name: 'Nome' },
-        { id: 'birth_date', name: 'Data de nascimento' }
-      ]
+    let form_mandatory = [ { id: 'name', name: 'Nome' } ]
     if(this.props.user_class == `citizen`) {
       form_mandatory.push({ id: 'cpf', name: 'CPF' })
       form_mandatory.push({ id: 'cep', name: 'CEP' })
       form_mandatory.push({ id: 'phone1', name: 'Telefone 1' })
     }
-    if(send_password) {
-      form_mandatory.push({ id: 'password', name: 'Senha' })
-      form_mandatory.push({ id: 'password_confirmation', name: 'Confirmação de Senha' })
-    }
     errors = this.checkEmptyFields(formData, form_mandatory)
+    if(send_password) {
+      if(!auxData['password'])
+        errors.push("Campo senha não pode estar vazio.")
+      if(!auxData['password_confirmation'])
+        errors.push("Campo Confirmação de senha não pode estar vazio.")
+    }
     if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
       errors.push("Campo Data de Nascimento é obrigatório.");
     if(auxData['password_confirmation'] != auxData['password'])
@@ -413,7 +411,7 @@ class getUserForm extends Component {
     let formData = this.state.user;
     let auxData = this.state.aux;
     var send_password = false;
-    if(!this.props.is_edit || auxData['password']) {
+    if(this.props.user_class != `dependant` && (!this.props.is_edit || auxData['current_password'])) {
       send_password = true
     }
     let errors = this.checkErrors.bind(this)(formData,auxData,send_password)
@@ -433,7 +431,7 @@ class getUserForm extends Component {
         method: this.props.fetch_method,
         body: JSON.stringify(fetch_body)
       }).then(parseResponse).then(resp => {
-        if(this.props.is_edit && this.props.user_class == `citizen`) {
+        if(this.props.is_edit && this.props.user_class == `citizen` && this.props.current_citizen) {
           this.props.dispatch(userSignIn(resp.data))
           if(this.state.aux.photo_has_changed)
             this.props.dispatch(userUpdatePicture(resp.data.citizen.id))
@@ -441,6 +439,7 @@ class getUserForm extends Component {
         Materialize.toast(this.successMessage.bind(this)(), 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
       }).catch((errors) => {
+        console.log(errors)
         if(errors && errors['full_messages']) {
           let full_error_msg = "";
           errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n' });
