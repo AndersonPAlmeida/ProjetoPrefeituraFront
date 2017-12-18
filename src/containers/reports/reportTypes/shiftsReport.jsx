@@ -10,8 +10,7 @@ import { findDOMNode } from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
 import styles from './styles/shiftsReport.css'
-var jsPDF
-
+import ReportPDF from '../reportPDF'
 
 class getShiftsReport extends Component {
   constructor(props) {
@@ -25,7 +24,6 @@ class getShiftsReport extends Component {
   }
 
   componentDidMount(){
-    jsPDF = require('jspdf')
     this.getShiftsList()
   }
 
@@ -99,41 +97,70 @@ getShiftsList(){
     return(newTime)
   }
 
-render() {
+  getShiftPlaces(){
+    return(["A","B","C","D","E"])
+  }
+
+  getProfessionals(){
+    return(["A","B","C","D","E"])
+  }
+  getShiftTypes(){
+    return(["A","B","C","D","E"])
+  }
+
+  getSituations(){
+    return(["A","B","C","D","E"])
+  }
+
+  render() {
     return (
       <div className="contentWrapper">
-        <div id="divtoPDF">
-          <Table className="bordered striped" style={{fontSize:"70%"}}>
-            <thead>
-              <tr>
-                <th>Número do Atendimento</th>
-                <th>Profissional 1</th>
-                <th>Profissional 2</th>
-                <th>Local do Atendimento</th>
-                <th>Tipo do Atendimento</th>
-                <th>Inicio</th>
-                <th>Fim</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.returnShiftsList().map(function(element,i){
-                    return(
-                      <tr key={i}>
-                        <td>{element.id}</td>
-                        <td>{element.professional.registration}</td>
-                        <td>{element.professional_2.registration}</td>
-                        <td>{element.service_place.name}</td>
-                        <td>{element.service_type.description}</td>
-                        <td>{this.formatDateTime(element.execution_start_time)}</td>
-                        <td>{this.formatDateTime(element.execution_end_time)}</td>
-                      </tr>
-                  );
-                },this)}
-            </tbody>
-          </Table>
-          <Button onClick={this.printPDF}>Relatório em PDF</Button>
-        </div>
+        <h5>Filtros do relatório</h5>
+          <div>
+            <br/>
+            <Row>
+            <Input s={4} label="Local do Atendimento" type="select" default="0">
+              {this.getShiftPlaces().map(function(element,i){
+                return(<option key={i} value={i}>{element}</option>)
+              })}
+            </Input>
 
+            <Input s={4} name='on' type='date' label="Data de Início" onChange={function(e, value) {}} />
+            <Input s={4} name='on' type='date' label="Data de Fim" onChange={function(e, value) {}} />
+          </Row>
+
+          <Row>
+            <Input s={4} label="Profissional" type="select" default="0">
+              {this.getProfessionals().map(function(element,i){
+                return(<option key={i} value={i}>{element}</option>)
+              })}
+            </Input>
+
+            <Input s={4} label="Tipo de atendimento" type="select" default="0">
+              {this.getShiftTypes().map(function(element,i){
+                return(<option key={i} value={i}>{element}</option>)
+              })}
+            </Input>
+
+            <Input s={4} label="Situação" type="select" default="0">
+              {this.getSituations().map(function(element,i){
+                return(<option key={i} value={i}>{element}</option>)
+              })}
+            </Input>
+          </Row>
+
+          <Row>
+            <Input s={4} label="Ordernar por" type="select" default="0">
+              <option value="0">Nome do cidadão</option>
+              <option value="1">Situação</option>
+              <option value="2">Número do agendamento</option>
+            </Input>
+            <Input s={4} name='on' type='date' label="CPF" onChange={function(e, value) {}} />
+            <Input s={4} name='on' type='date' label="Nome do Cidadão" onChange={function(e, value) {}} />
+          </Row>
+          </div>
+          <Button style={{marginRight:"1rem"}}>Limpar Campos</Button>
+          <ReportPDF h1="Relatório de Agendamentos" h2="" cols={[]} rows={[]} filename="relatorio_agendamentos.pdf" />
       </div>
     )
   }
