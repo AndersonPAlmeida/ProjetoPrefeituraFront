@@ -18,8 +18,10 @@ class getServiceTypeList extends Component {
           city_halls: [],
           filter_description: '',
           filter_situation: '',
+          filter_city_hall: '',
           last_fetch_description: '',
           last_fetch_situation: '',
+          last_fetch_city_hall: '',
           filter_s: '',
           num_entries: 0,
           current_page: 1 
@@ -342,6 +344,7 @@ class getServiceTypeList extends Component {
                     +`&q[s]=${this.state.filter_s}`
                     +`&page=${this.state.current_page}`
     current_page = sort_only ? this.state.current_page : 1
+    console.log(`${apiUrl}/${collection}?${params}`)
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
