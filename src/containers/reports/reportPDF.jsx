@@ -62,7 +62,7 @@ class ReportPDF extends Component{
       doc.setFontSize(20);
       doc.setTextColor(40);
       doc.setFontStyle('normal');
-      doc.text(h1, data.settings.margin.left + 50, 22);
+      doc.text(h1, data.settings.margin.left + 50, 30);
       doc.text(h2, data.settings.margin.left + 50, 50);
       if (dataImage) {
               doc.addImage(dataImage, 'png', data.settings.margin.left, 15, 35, 35);
