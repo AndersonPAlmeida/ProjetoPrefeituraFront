@@ -233,7 +233,7 @@ class getServiceTypeList extends Component {
       <Col>
         <div className='select-field'>
           <h6>Prefeitura:</h6>
-          <Input s={12} m={12} name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+          <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
             onChange={
               (event) => {
                 var selected_city_hall = event.target.value

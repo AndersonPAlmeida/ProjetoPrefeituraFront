@@ -113,13 +113,7 @@ class getServicePlaceList extends Component {
         return (
           <tr>
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/service_places/${service_place.id}`) 
-                }>
-                {service_place.name}
-              </a>
+              {service_place.name}
             </td>
             <td>
               {service_place.cep}
@@ -148,6 +142,15 @@ class getServicePlaceList extends Component {
                 null
             }
             <td>
+              <a className='back-bt waves-effect btn-flat' 
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/service_places/${service_place.id}`) 
+                }>
+                  <i className="waves-effect material-icons tooltipped">
+                    visibility
+                  </i>
+              </a> 
               <a className='back-bt waves-effect btn-flat' 
                  href='#' 
                  onClick={ () => 
@@ -181,7 +184,6 @@ class getServicePlaceList extends Component {
         <th></th>
       </tr>
     )
-
     var num_items_per_page = 25
     var num_pages = Math.ceil(this.state.num_entries/num_items_per_page)
     return (
@@ -251,10 +253,10 @@ class getServicePlaceList extends Component {
       })
     )
     return (
-      <Col>
-        <div className='select-field'>
+      <Col s={3}>
+        <div>
           <h6>Prefeitura:</h6>
-          <Input s={12} m={12} name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+          <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
             onChange={
               (event) => {
                 var selected_city_hall = event.target.value
@@ -277,19 +279,18 @@ class getServicePlaceList extends Component {
   filterServicePlace() {
     return (
       <div>
-        {
-          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
-            this.pickCityHall() :
-            null
-        }
-        <Row className='filter-container'>
-          <Col>
-            <div className="field-input" >
+        <Row s={12}>
+          {
+            this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+              this.pickCityHall() :
+              null
+          }
+          <Col s={3}>
+            <div>
               <h6>Nome:</h6>
               <label>
                 <input
                   type="text"
-                  className='input-field'
                   name="filter_name"
                   value={this.state.filter_name}
                   onChange={this.handleInputFilterChange.bind(this)}
@@ -297,13 +298,12 @@ class getServicePlaceList extends Component {
               </label>
             </div>
           </Col>
-          <Col>
-            <div className="field-input" >
+          <Col s={3}>
+            <div>
               <h6>Bairro:</h6>
               <label>
                 <input
                   type="text"
-                  className='input-field'
                   name="filter_neighborhood"
                   value={this.state.filter_neighborhood}
                   onChange={this.handleInputFilterChange.bind(this)}
@@ -311,11 +311,11 @@ class getServicePlaceList extends Component {
               </label>
             </div>
           </Col>
-          <Col>
-            <div className="field-input" >
+          <Col s={3}>
+            <div>
               <h6>Situação:</h6>
               <div>
-                <Input s={6} m={32} l={6}
+                <Input
                        type='select'
                        name='filter_situation'
                        value={this.state.filter_situation}
@@ -328,14 +328,14 @@ class getServicePlaceList extends Component {
               </div>
             </div>
           </Col>
-          <Row>
-            <Col>
-              <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
-            </Col>
-            <Col>
-              <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
-            </Col>
-          </Row>
+        </Row>
+        <Row s={12}>
+          <Col>
+            <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+          </Col>
+          <Col>
+            <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+          </Col>
         </Row>
       </div>
     )
@@ -413,14 +413,12 @@ class getServicePlaceList extends Component {
   render() {
     return (
       <main>
-      	<Row>
-	        <Col s={12}>
-		      	<div>
-		      		{this.mainComponent()}
-		      	</div>
-	      	</Col>
-	    </Row>
-	  </main>
+        <Row>
+          <Col s={12}>
+            {this.mainComponent()}
+          </Col>
+        </Row>
+      </main>
     )
   }
 }

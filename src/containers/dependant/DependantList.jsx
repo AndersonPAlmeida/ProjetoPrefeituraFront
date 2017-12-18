@@ -47,7 +47,7 @@ class getDependantList extends Component {
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Dependente </h2>
           {this.filterDependant()}
-          {this.tableList()}
+          {this.state.dependants.length > 0 ? this.tableList() : '- Nenhum dependente encontrado'}
         </div>
         <div className="card-action">
           {this.newDependantButton()}
