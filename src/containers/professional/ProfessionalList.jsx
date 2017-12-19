@@ -131,15 +131,12 @@ class getProfessionalList extends Component {
               arrow_drop_down
             </i>
             :
-            <div />
-        }
-        {
-          this.state.filter_s == `${name}+desc` ?
-            <i className="waves-effect material-icons tiny tooltipped">
-              arrow_drop_up
-            </i>
-            :
-            <div />
+            this.state.filter_s == `${name}+desc` ?
+              <i className="waves-effect material-icons tiny tooltipped">
+                arrow_drop_up
+              </i>
+              :
+              <div />
         }
       </a>
     )
@@ -290,7 +287,7 @@ class getProfessionalList extends Component {
   
   pickName() {
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <div>
           <h6>Nome:</h6>
           <label>
@@ -308,7 +305,7 @@ class getProfessionalList extends Component {
 
   pickRegistration() {
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <div>
           <h6>Matrícula:</h6>
           <label>
@@ -328,7 +325,7 @@ class getProfessionalList extends Component {
 
   pickCPF () {
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <div className="" >
           <h6>CPF:</h6>
           <label>
@@ -354,7 +351,7 @@ class getProfessionalList extends Component {
       })
     )
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <div>
           <h6>Permissão:</h6>
           <Input name="filter_permission" type='select' value={this.state.filter_permission}
@@ -386,7 +383,7 @@ class getProfessionalList extends Component {
       })
     )
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <div>
           <h6>Cargo:</h6>
           <Input name="filter_occupation" type='select' value={this.state.filter_occupation}
@@ -418,7 +415,7 @@ class getProfessionalList extends Component {
       })
     )
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <div>
           <h6>Local de Atendimento:</h6>
           <Input name="filter_service_place" type='select' value={this.state.filter_service_place}
@@ -443,7 +440,7 @@ class getProfessionalList extends Component {
 
   pickSituation() {
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <div>
           <h6>Situação:</h6>
           <Input name="filter_situation" type='select' value={this.state.filter_situation}
@@ -476,7 +473,7 @@ class getProfessionalList extends Component {
       })
     )
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <div>
           <h6>Prefeitura:</h6>
           <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
