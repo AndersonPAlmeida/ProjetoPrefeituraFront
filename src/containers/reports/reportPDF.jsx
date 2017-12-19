@@ -45,11 +45,17 @@ class ReportPDF extends Component{
     return(returnText)
   }
 
-  pdfToHTML(h1, h2, cols, rows, filename){
+  pdfToHTML(h1, h2, cols, rows, filename, o){
+    var orientation
+    if(o){
+      orientation = o
+    }else{
+      orientation = 'p'
+    }
+
     var jspdf = require('jspdf')
     var jspdfautotable = require('jspdf-autotable')
-
-    var doc = new jspdf('p', 'pt');
+    var doc = new jspdf(orientation, 'pt','a4');
     var nowTime = new Date()
     var dateURL = "Criado em " + window.location.href + "  " + this.formatDateTime(nowTime)
     var dataImage = this.convertImgToDataURLviaCanvas(LogoImage, function(image){return(image)}, 'png')
@@ -81,7 +87,7 @@ class ReportPDF extends Component{
 
   render(){
     return(
-    <Button onClick={() => {this.pdfToHTML(this.props.h1, this.props.h2, this.props.cols, this.props.rows, this.props.filename)}}>
+    <Button onClick={() => {this.pdfToHTML(this.props.h1, this.props.h2, this.props.cols, this.props.rows, this.props.filename, this.props.o)}}>
       Relatório em PDF
     </Button>
       )
