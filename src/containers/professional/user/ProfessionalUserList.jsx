@@ -64,7 +64,13 @@ class getProfessionalUserList extends Component {
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Profissional </h2>
           {this.filterCitizen()}
-          {this.tableList()}
+        </div>
+        <div className='card-content'>
+          <Row s={12}>
+            <Col s={12}>
+              {this.tableList()}
+            </Col>
+          </Row>
         </div>
         <div className="card-action">
           {this.newCitizenButton()}
@@ -118,13 +124,7 @@ class getProfessionalUserList extends Component {
         return (
           <tr>
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/professionals/users/${citizen.id}`) 
-                }>
-                {citizen.name}
-              </a>
+              {citizen.name}
             </td>
             <td>
               {citizen.birth_date}
@@ -134,6 +134,18 @@ class getProfessionalUserList extends Component {
             </td>
             <td>
               {citizen.num_of_dependants}
+            </td>
+            <td>
+              <a className='back-bt waves-effect btn-flat' 
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/professionals/users/${citizen.id}`) 
+                }>
+
+                <i className="waves-effect material-icons tooltipped">
+                  visibility
+                </i>
+              </a> 
             </td>
             <td>
               <a className='back-bt waves-effect btn-flat' 
@@ -163,6 +175,7 @@ class getProfessionalUserList extends Component {
         <th>{this.sortableColumn.bind(this)('Data de nascimento','birth_date')}</th>
         <th>{this.sortableColumn.bind(this)('CPF','cpf')}</th>
         <th>Dependentes</th>
+        <th></th>
         <th></th>
       </tr>
     )
@@ -233,44 +246,38 @@ class getProfessionalUserList extends Component {
   
   pickName() {
     return (
-      <Row className='filter-container'>
-        <Col>
-          <div>
-            <h6>Nome:</h6>
-            <label>
-              <input
-                type="text"
-                className='input-field'
-                name="filter_name"
-                value={this.state.filter_name}
-                onChange={this.handleInputFilterChange.bind(this)}
-              />
-            </label>
-          </div>
-        </Col>
-      </Row>
+      <Col s={3}>
+        <div>
+          <h6>Nome:</h6>
+          <label>
+            <input
+              type="text"
+              name="filter_name"
+              value={this.state.filter_name}
+              onChange={this.handleInputFilterChange.bind(this)}
+            />
+          </label>
+        </div>
+      </Col>
     )
   }
 
   pickCPF () {
     return (
-      <Row className='filter-container'>
-        <Col>
-          <div className="" >
-            <h6>CPF:</h6>
-            <label>
-              <MaskedInput
-                type="text"
-                className='input-field'
-                mask="111.111.111-11"
-                name="filter_cpf"
-                value={this.state.filter_cpf}
-                onChange={this.handleInputFilterChange.bind(this)}
-              />
-            </label>
-          </div>
-        </Col>
-      </Row>
+      <Col s={3}>
+        <div className="" >
+          <h6>CPF:</h6>
+          <label>
+            <MaskedInput
+              type="text"
+              mask="111.111.111-11"
+              name="filter_cpf"
+              value={this.state.filter_cpf}
+              onChange={this.handleInputFilterChange.bind(this)}
+            />
+          </label>
+        </div>
+      </Col>
     )
   }
 
@@ -283,10 +290,10 @@ class getProfessionalUserList extends Component {
       })
     )
     return (
-      <Col>
-        <div className='select-field'>
+      <Col s={3}>
+        <div>
           <h6>Prefeitura:</h6>
-          <Input s={12} m={12} name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+          <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
             onChange={
               (event) => {
                 var selected_city_hall = event.target.value
@@ -309,13 +316,16 @@ class getProfessionalUserList extends Component {
   filterCitizen() {
     return (
       <div>
-        {
-          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
-            this.pickCityHall() :
-            null
-        }
-        {this.pickName()}
-        {this.pickCPF()}
+        <Row s={12}></Row>
+        <Row s={12}>
+          {
+            this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+              this.pickCityHall() :
+              null
+          }
+          {this.pickName()}
+          {this.pickCPF()}
+        </Row>
         <Row>
           <Col>
             <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
@@ -397,9 +407,7 @@ class getProfessionalUserList extends Component {
       <main>
       	<Row>
 	        <Col s={12}>
-		      	<div>
-		      		{this.mainComponent()}
-		      	</div>
+            {this.mainComponent()}
 	      	</Col>
 	    </Row>
 	  </main>

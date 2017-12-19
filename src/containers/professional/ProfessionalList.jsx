@@ -217,7 +217,6 @@ class getProfessionalList extends Component {
         <th>Telefone</th>
         <th>{this.sortableColumn.bind(this)('E-mail','citizen_email')}</th>
         <th>{this.sortableColumn.bind(this)('Situação','active')}</th>
-        <th>Situação</th>
         <th></th>
         <th></th>
       </tr>
@@ -245,14 +244,16 @@ class getProfessionalList extends Component {
           de {this.state.num_entries} registros
         </p>
         <br />
-        <table className={styles['table-list']}>
-          <thead>
-            {fields}
-          </thead>
-          <tbody>
-            {data}
-          </tbody>
-        </table>
+        <div className='div-table'>
+          <table className={styles['table-list']}>
+            <thead>
+              {fields}
+            </thead>
+            <tbody>
+              {data}
+            </tbody>
+          </table>
+        </div>
         <br />
         <Pagination
           value={this.state.current_page}
