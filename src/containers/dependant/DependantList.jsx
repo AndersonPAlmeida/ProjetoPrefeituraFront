@@ -81,15 +81,12 @@ class getDependantList extends Component {
               arrow_drop_down
             </i>
             :
-            <div />
-        }
-        {
-          this.state.filter_s == `${name}+desc` ?
-            <i className="waves-effect material-icons tiny tooltipped">
-              arrow_drop_up
-            </i>
-            :
-            <div />
+            this.state.filter_s == `${name}+desc` ?
+              <i className="waves-effect material-icons tiny tooltipped">
+                arrow_drop_up
+              </i>
+              :
+              <div />
         }
       </a>
     )
@@ -101,19 +98,24 @@ class getDependantList extends Component {
         return (
           <tr>
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/dependants/${dependant.id}`) 
-                }>
-                {dependant.name}
-              </a>
+              {dependant.name}
             </td>
             <td>
               {strftime.timezone('+0000')('%d/%m/%Y', new Date(dependant.birth_date))}
             </td>
             <td>
               {this.formatCPF(dependant.cpf)}
+            </td>
+            <td>
+              <a className='back-bt waves-effect btn-flat' 
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/dependants/${dependant.id}`) 
+                }>
+                  <i className="waves-effect material-icons tooltipped">
+                    visibility
+                  </i>
+              </a>
             </td>
             <td>
               <a className='back-bt waves-effect btn-flat' 
@@ -138,6 +140,7 @@ class getDependantList extends Component {
         <th>{this.sortableColumn.bind(this)('Data de Nascimento','citizen_birth_date')}</th>
         <th>{this.sortableColumn.bind(this)('CPF','citizen_cpf')}</th>
         <th></th>
+        <th></th>
       </tr>
     )
     var num_items_per_page = 25
@@ -160,14 +163,16 @@ class getDependantList extends Component {
           de {this.state.num_entries} registros
         </p>
         <br />
-        <table className={styles['table-list']}>
-          <thead>
-            {fields}
-          </thead>
-          <tbody>
-            {data}
-          </tbody>
-        </table>
+        <div className='div-table'>
+          <table className={styles['table-list']}>
+            <thead>
+              {fields}
+            </thead>
+            <tbody>
+              {data}
+            </tbody>
+          </table>
+        </div>
         <br />
         <Pagination
           value={this.state.current_page}
@@ -203,29 +208,27 @@ class getDependantList extends Component {
   filterDependant() {
     return (
       <div>
-        <Row className='filter-container'>
-          <Col>
-            <div className="field-input" >
-              <h6>Nome:</h6>
-              <label>
-                <input
-                  type="text"
-                  className='input-field'
-                  name="filter_name"
-                  value={this.state.filter_name}
-                  onChange={this.handleInputFilterChange.bind(this)}
-                />
-              </label>
-            </div>
+        <Row s={12}></Row>
+        <Row s={12}>
+          <Col s={12} m={3}>
+            <h6>Nome:</h6>
+            <label>
+              <input
+                type="text"
+                name="filter_name"
+                value={this.state.filter_name}
+                onChange={this.handleInputFilterChange.bind(this)}
+              />
+            </label>
           </Col>
-          <Row>
-            <Col>
-              <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
-            </Col>
-            <Col>
-              <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
-            </Col>
-          </Row>
+        </Row>
+        <Row s={12}>
+          <Col>
+            <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+          </Col>
+          <Col>
+            <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+          </Col>
         </Row>
       </div>
     )
@@ -284,12 +287,10 @@ class getDependantList extends Component {
       <main>
       	<Row>
 	        <Col s={12}>
-		      	<div>
-		      		{this.mainComponent()}
-		      	</div>
+            {this.mainComponent()}
 	      	</Col>
-	    </Row>
-	  </main>
+        </Row>
+      </main>
     )
   }
 }

@@ -68,7 +68,7 @@ class getProfessionalUserList extends Component {
         <div className='card-content'>
           <Row s={12}>
             <Col s={12}>
-              {this.tableList()}
+              {this.state.citizens.length > 0 ? this.tableList() : 'Nenhum cidadão encontrado'}
             </Col>
           </Row>
         </div>
@@ -104,15 +104,12 @@ class getProfessionalUserList extends Component {
               arrow_drop_down
             </i>
             :
-            <div />
-        }
-        {
-          this.state.filter_s == `${name}+desc` ?
-            <i className="waves-effect material-icons tiny tooltipped">
-              arrow_drop_up
-            </i>
-            :
-            <div />
+            this.state.filter_s == `${name}+desc` ?
+              <i className="waves-effect material-icons tiny tooltipped">
+                arrow_drop_up
+              </i>
+              :
+              <div />
         }
       </a>
     )
@@ -202,14 +199,16 @@ class getProfessionalUserList extends Component {
           de {this.state.num_entries} registros
         </p>
         <br />
-        <table className={styles['table-list']}>
-          <thead>
-            {fields}
-          </thead>
-          <tbody>
-            {data}
-          </tbody>
-        </table>
+          <div className='div-table'> 
+            <table className={styles['table-list']}>
+              <thead>
+                {fields}
+              </thead>
+              <tbody>
+                {data}
+              </tbody>
+            </table>
+          </div>
         <br />
         <Pagination
           value={this.state.current_page}
@@ -246,7 +245,7 @@ class getProfessionalUserList extends Component {
   
   pickName() {
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <div>
           <h6>Nome:</h6>
           <label>
@@ -264,7 +263,7 @@ class getProfessionalUserList extends Component {
 
   pickCPF () {
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <div className="" >
           <h6>CPF:</h6>
           <label>
@@ -290,7 +289,7 @@ class getProfessionalUserList extends Component {
       })
     )
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <div>
           <h6>Prefeitura:</h6>
           <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}

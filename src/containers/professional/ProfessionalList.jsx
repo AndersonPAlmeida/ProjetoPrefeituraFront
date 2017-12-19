@@ -88,7 +88,7 @@ class getProfessionalList extends Component {
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Profissional </h2>
           {this.filterProfessional()}
-          {this.tableList()}
+          {this.state.professionals.length > 0 ? this.tableList() : '- Nenhum profissional encontrado'}
         </div>
         <div className="card-action">
           {this.newProfessionalButton()}

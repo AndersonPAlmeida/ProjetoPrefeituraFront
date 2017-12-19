@@ -63,7 +63,7 @@ class getServiceTypeList extends Component {
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Tipo de Atendimento </h2>
           {this.filterServiceType()}
-          {this.tableList()}
+          {this.state.service_types.length > 0 ? this.tableList() : '- Nenhum tipo de atendimento encontrado'}
         </div>
         <div className="card-action">
           {this.newServiceTypeButton()}
@@ -238,7 +238,7 @@ class getServiceTypeList extends Component {
       })
     )
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <h6>Prefeitura:</h6>
         <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
           onChange={
@@ -269,7 +269,7 @@ class getServiceTypeList extends Component {
               this.pickCityHall() :
               null
           }
-          <Col s={3}>
+          <Col s={12} m={3}>
             <div>
               <h6>Descrição:</h6>
               <label>
@@ -282,7 +282,7 @@ class getServiceTypeList extends Component {
               </label>
             </div>
           </Col>
-          <Col s={3}>
+          <Col s={12} m={3}>
             <div>
               <h6>Situação:</h6>
               <div>
@@ -381,7 +381,7 @@ class getServiceTypeList extends Component {
       <main>
       	<Row>
 	        <Col s={12}>
-		      		{this.mainComponent()}
+            {this.mainComponent()}
 	      	</Col>
 	    </Row>
 	  </main>

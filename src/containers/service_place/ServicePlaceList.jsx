@@ -65,7 +65,7 @@ class getServicePlaceList extends Component {
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Local de Atendimento </h2>
           {this.filterServicePlace()}
-          {this.tableList()}
+          {this.state.service_places.length > 0 ? this.tableList() : '- Nenhum local de atendimento encontrado'}
         </div>
         <div className="card-action">
           {this.newServicePlaceButton()}
@@ -93,15 +93,12 @@ class getServicePlaceList extends Component {
               arrow_drop_down
             </i>
             :
-            <div />
-        }
-        {
-          this.state.filter_s == `${name}+desc` ?
-            <i className="waves-effect material-icons tiny tooltipped">
-              arrow_drop_up
-            </i>
-            :
-            <div />
+            this.state.filter_s == `${name}+desc` ?
+              <i className="waves-effect material-icons tiny tooltipped">
+                arrow_drop_up
+              </i>
+              :
+              <div />
         }
       </a>
     )
@@ -207,14 +204,16 @@ class getServicePlaceList extends Component {
           de {this.state.num_entries} registros
         </p>
         <br />
-        <table className={styles['table-list']}>
-          <thead>
-            {fields}
-          </thead>
-          <tbody>
-            {data}
-          </tbody>
-        </table>
+        <div className='div-table'>
+          <table className={styles['table-list']}>
+            <thead>
+              {fields}
+            </thead>
+            <tbody>
+              {data}
+            </tbody>
+          </table>
+        </div>
         <br />
         <Pagination
           value={this.state.current_page}
@@ -256,7 +255,7 @@ class getServicePlaceList extends Component {
       })
     )
     return (
-      <Col s={3}>
+      <Col s={12} m={3}>
         <h6>Prefeitura:</h6>
         <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
           onChange={
@@ -287,7 +286,7 @@ class getServicePlaceList extends Component {
               this.pickCityHall() :
               null
           }
-          <Col s={3}>
+          <Col s={12} m={3}>
             <div>
               <h6>Nome:</h6>
               <label>
@@ -300,7 +299,7 @@ class getServicePlaceList extends Component {
               </label>
             </div>
           </Col>
-          <Col s={3}>
+          <Col s={12} m={3}>
             <div>
               <h6>Bairro:</h6>
               <label>
@@ -313,7 +312,7 @@ class getServicePlaceList extends Component {
               </label>
             </div>
           </Col>
-          <Col s={3}>
+          <Col s={12} m={3}>
             <div>
               <h6>Situação:</h6>
               <div>
