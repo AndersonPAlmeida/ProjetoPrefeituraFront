@@ -132,10 +132,10 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col> 
-        <div className='select-field'>
+      <Col s={12} m={3}> 
+        <div>
           <h6>Setor:</h6>
-          <Input s={12} m={12} name="filter_sector" type='select' value={this.state.filter_sector}
+          <Input name="filter_sector" type='select' value={this.state.filter_sector}
             onChange={
               (event) => {
                 var selected_sector = event.target.value
@@ -179,10 +179,10 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col> 
-        <div className='select-field'>
+      <Col s={12} m={3}> 
+        <div>
           <h6>Tipo de Atendimento:</h6>
-          <Input s={12} m={12} name="filter_service_type" type='select' value={this.state.filter_service_type}
+          <Input name="filter_service_type" type='select' value={this.state.filter_service_type}
             onChange={
               (event) => {
                 var selected_service_type = event.target.value
@@ -229,10 +229,10 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col> 
-        <div className='select-field'>
+      <Col s={12} m={3}> 
+        <div>
           <h6>Local de Atendimento:</h6>
-          <Input s={12} m={12} name="filter_service_place" type='select' value={this.state.filter_service_place}
+          <Input name="filter_service_place" type='select' value={this.state.filter_service_place}
             onChange={
               (event) => {
                 var selected_service_place = event.target.value
@@ -261,10 +261,10 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col> 
-        <div className='select-field'>
+      <Col s={12} m={3}> 
+        <div>
           <h6>Situação:</h6>
-          <Input s={12} m={12} name="filter_situation" type='select' value={this.state.filter_situation}
+          <Input name="filter_situation" type='select' value={this.state.filter_situation}
             onChange={
               (event) => {
                 var selected_situation = event.target.value
@@ -287,11 +287,14 @@ class getCitizenSchedule extends Component {
   filterSchedule() {
     return (
       <div>
-        {this.pickSector()}
-        {this.pickServiceType()}
-        {this.pickServicePlace()}
-        {this.pickSituation()}
-        <Row>
+        <Row></Row>
+        <Row s={12}>
+          {this.pickSector()}
+          {this.pickServiceType()}
+          {this.pickServicePlace()}
+          {this.pickSituation()}
+        </Row>
+        <Row s={12}>
           <Col> 
             <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
           </Col>
@@ -312,13 +315,13 @@ class getCitizenSchedule extends Component {
     })
   }
 
-  handleFilterSubmit(sort_only) {
+  handleFilterSubmit(page_only) {
     var sector
     var service_type
     var service_place
     var situation
     var current_page
-    if(sort_only) {
+    if(page_only) {
       sector = this.state.last_fetch_sector
       service_type = this.state.last_fetch_service_type
       service_place = this.state.last_fetch_service_place
@@ -348,7 +351,7 @@ class getCitizenSchedule extends Component {
                     +`&page=${this.state.current_page}`
                     +`&dependant_page=${this.state.current_dependant_page}`
                     +`&dependant_id=${this.state.current_dependant_id}`
-    if(!sort_only) {
+    if(!page_only) {
       this.setState({
         current_dependant_page: 1,
         current_page: 1
@@ -449,14 +452,16 @@ class getCitizenSchedule extends Component {
           de {num_entries} registros
         </p>
         <br />
-        <table className={styles['table-list']}>
-          <thead>
-            {fields}
-          </thead>
-          <tbody>
-            {data}
-          </tbody>
-        </table>
+        <div className='div-table'>
+          <table className={styles['table-list']}>
+            <thead>
+              {fields}
+            </thead>
+            <tbody>
+              {data}
+            </tbody>
+          </table>
+        </div>
         <br />
         <Pagination 
           value={current_page}
