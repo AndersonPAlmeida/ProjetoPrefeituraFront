@@ -66,3 +66,10 @@ input {
 .collection{
   border-color: #b7b7b7;
 }
+#select-citizen > div > div >  ul{
+  max-height: 300px;
+}
+#select-citizen > div{
+  padding: 0;
+  width: 295px;
+}

@@ -44,7 +44,8 @@ class getResourceList extends Component {
       resources: [],
       resource_types:[],
       service_places:[],
-      current_permission: ''
+      current_permission: '',
+      resource_bookings_details:[]
     };
     this.getCityHallName = this.getCityHallName.bind(this);      
     this.getResourceWithDetails = this.getResourceWithDetails.bind(this);      
@@ -65,7 +66,9 @@ class getResourceList extends Component {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_bookings';
     const params = `permission=${this.props.user.current_role}&view=${this.props.user.current_role != 'citizen' ? 'professional' : 'citizen'}`;
+    
     this.getResourceWithDetails();
+    this.getExtraDetails();
 
     if(current_permission == 'adm_c3sl'){
       this.getCityHallName();   
@@ -77,7 +80,6 @@ class getResourceList extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      console.log(resp);
       self.setState({ resource_bookings: resp });    
     });
   }
@@ -95,6 +97,23 @@ class getResourceList extends Component {
         </div>
       </div>
     );
+  }
+
+  getExtraDetails() {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'resource_bookings_get_extra_info/';
+    const params = `permission=${this.props.user.current_role}&view=${this.props.user.current_role != 'citizen' ? 'professional' : 'citizen'}`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      self.setState({ 
+        resource_bookings_details: resp, 
+      });
+    });
   }
 
   getResourceWithDetails() {
@@ -184,8 +203,7 @@ class getResourceList extends Component {
     const data = (
       this.state.resource_bookings.map((resource_booking) => {
         let timer = this.resolveTimeReminder(resource_booking);
-
-        console.log(resource_booking);
+        let resource_extra_info = this.state.resource_bookings_details.find(rbd => resource_booking.id === rbd.resource_booking_id);
         return (
           <tr>
             <td key={Math.random()} >
@@ -193,7 +211,11 @@ class getResourceList extends Component {
             </td>        
             
             <td key={Math.random()} >
-              {resource_booking.citizen_id}
+              {resource_extra_info ? resource_extra_info.resource_type_name : ''}
+            </td> 
+
+            <td key={Math.random()} >
+              {resource_extra_info ? resource_extra_info.citizen_name : ''}
             </td>    
 
             <td key={Math.random()} >
@@ -218,6 +240,7 @@ class getResourceList extends Component {
             </td> 
 
             <td key={Math.random()} >
+            
               <a className='back-bt waves-effect btn-flat' 
                 id="iconTable"
                 href='#' 
@@ -250,6 +273,8 @@ class getResourceList extends Component {
       <tr>        
         <th># Reserva</th>
         
+        <th>Tipo de Recurso</th>
+
         <th>Cidadão</th>
 
         <th>Dia inicial de execução</th>
@@ -268,15 +293,18 @@ class getResourceList extends Component {
     );
 
     return (
-      <div className={'table-size'}>
-        <table className={ styles['table-list']}>
-          <thead>
-            {fields}
-          </thead>
-          <tbody>
-            {data}
-          </tbody>
-        </table>
+      <div>
+        <h5>Agendamentos Realizados</h5>
+        <div className={'table-size'}>
+          <table className={ styles['table-list']}>
+            <thead>
+              {fields}
+            </thead>
+            <tbody>
+              {data}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }

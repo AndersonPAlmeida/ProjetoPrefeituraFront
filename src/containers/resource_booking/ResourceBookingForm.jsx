@@ -17,15 +17,8 @@ class getResourceForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      resource_shift:{
-        active:1,
-        borrowed:0,
-        execution_end_time:'',
-        execution_start_time:'',
-        next_shift_id:null,
-        notes:'',
-        professional_responsible_id:0,
-        resource_id:0,
+      resource_booking:{
+
       },
       previous_data: undefined,
       current_service_place:'',
@@ -35,13 +28,16 @@ class getResourceForm extends Component {
       resource: [],
       pickable_resource:[],
       current_resource:{},
-      resource_types_id:'',
+      resource_types_id:'', 
       service_place_with_professional:{},
       service_place_and_professionals:[],
       service_place:{},
       dates:[],
       time_start:'',
-      time_end:''
+      time_end:'',
+      citizens:[],
+      selected_citizen:0,
+      selected_shift:0
     };
     this.save_days = this.save_days.bind(this);
     this.getResourceType = this.getResourceType.bind(this); 
@@ -56,6 +52,7 @@ class getResourceForm extends Component {
     var role = this.props.current_role.id;
     this.getResourceType(role);
     this.getResource(role);
+    this.getCitizens(role);
 
     if(this.props.current_role.role != 'adm_local'){
       this.getCityHall(role);
@@ -76,7 +73,7 @@ class getResourceForm extends Component {
       };
     if(this.props.current_role.role != 'adm_c3sl') {
       if (this.props.is_edit)
-        this.setState({ resource_shift: previous_data });
+        this.setState({ resource_booking: previous_data });
     }
     else {
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
@@ -90,7 +87,7 @@ class getResourceForm extends Component {
       }).then(parseResponse).then(resp => {
         if (this.props.is_edit){
           let time = this.transformTime(previous_data);
-          this.setState({ resource_shift: previous_data,
+          this.setState({ resource_booking: previous_data,
             dates:[new Date(previous_data.execution_start_time)],
             time_start: time.begin_time,
             time_end: time.end_time
@@ -146,7 +143,7 @@ class getResourceForm extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      var resource = resp.find(r => Number(this.state.resource_shift.resource_id)=== r.id );
+      var resource = resp.find(r => Number(this.state.resource_booking.resource_id)=== r.id );
       this.setState({ selected_resource: resource });
       self.setState({ resource: resp });
     });
@@ -163,31 +160,37 @@ class getResourceForm extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ city_halls: resp });
+      self.setState({ city_halls: resp.entries });
     });
   }
   
-  buildServicePlaceArray(){
-    var service_place_professional = [];
-    var professionals = this.state.professionals;
-    var service_place = this.state.service_place;
-    
-    for(let i = 0; i < service_place.length; i++ ){
-      let item = {service_place_id: service_place[i].id, service_place_name: service_place[i].name};
-      var professional = [];
-      for(let j = 0; j < professionals.length; j++){
-        for (let k = 0; k < professionals[j].service_place_ids.length; k++){          
-          if (Number(professionals[j].service_place_ids[k]) == Number(service_place[i].id)){
-            professional.push({professional_id:professionals[j].id, professional_name:professionals[j].name});
-          }
-        }
-        item['professionals'] = professional;
-      }
-      service_place_professional.push(item);
-    }
-    this.setState({service_place_and_professionals: service_place_professional});
+  getCitizens(role) {
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'citizens/';
+    const params = `permission=${role}`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      this.setState({ citizens: resp.entries });
+    });
   }
 
+  getShifts(value){
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'resource_shifts/';
+    const params = `permission=${this.props.current_role.id}&q[resource_id]=${Number(value)}&q[borrowed]=0&q[active]=1`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      this.setState({ resource_shifts: resp });
+    });
+  }
 
   handleInputResourceChange(event) {
     const target = event.target;
@@ -199,15 +202,15 @@ class getResourceForm extends Component {
       if (name == 'current_resource'){
         let service_place = this.state.resource.find(r => Number(value)=== r.id ).service_place_id;
         this.setState({current_service_place: `${service_place}`});
-        this.buildServicePlaceArray();
+        this.getShifts(value);
       }
     }   
-    if(name == 'time_end' || name == 'time_start'){
+    if(name == 'time_end' || name == 'time_start' || name == 'selected_citizen' || name =='selected_shift'){
       this.setState({[name]: value});
     }
     else{
       this.setState({
-        resource_shift: update(this.state.resource_shift, { [name]: {$set: name =='active' ? Number(value):value} })
+        resource_booking: update(this.state.resource_booking, { [name]: {$set: name =='active' ? Number(value):value} })
       });
     }
 
@@ -228,7 +231,7 @@ class getResourceForm extends Component {
     let minute_end = this.state.time_end.split(':')[1];
 
     if (this.props.is_edit){
-      formData = this.state.resource_shift;
+      formData = this.state.resource_booking;
       formData['execution_start_time'] = new Date(dates[0].setHours(Number(hour_begin), Number(minute_begin)));
       formData['execution_end_time'] = new Date(dates[0].setHours(Number(hour_end), Number(minute_end)));
       formData['professional_responsible_id'] = Number(formData.professional_responsible_id);
@@ -248,12 +251,12 @@ class getResourceForm extends Component {
       const params = this.props.fetch_params; 
       let fetch_body = {};
       if(this.props.is_edit) {
-        fetch_body['resource_shift'] = formData;
+        fetch_body['resource_booking'] = formData;
       }
       else {
         var bodies = [];
         for(let i = 0; i < formData.length; i++){
-          bodies.push({resource_shift:formData[i]});
+          bodies.push({resource_booking:formData[i]});
         }        
       }
       if(this.props.is_edit){
@@ -303,8 +306,8 @@ class getResourceForm extends Component {
 
   formatItems(){
 
-    var final_resource_shifts = [];
-    let formData = this.state.resource_shift;
+    var final_resource_bookings = [];
+    let formData = this.state.resource_booking;
     var dates = this.state.dates;
 
     let hour_begin = this.state.time_start.split(':')[0];
@@ -325,11 +328,11 @@ class getResourceForm extends Component {
       aux['notes'] = formData.note;
       aux['professional_responsible_id'] = Number(formData.professional_responsible_id);
       aux['resource_id'] = Number(this.state.current_resource);
-      final_resource_shifts.push(aux);
+      final_resource_bookings.push(aux);
       aux = {};    
     }
-    this.setState({resource_shift:final_resource_shifts});
-    return final_resource_shifts;
+    this.setState({resource_booking:final_resource_bookings});
+    return final_resource_bookings;
 
   }
 
@@ -343,6 +346,93 @@ class getResourceForm extends Component {
     );
   }
 
+  formatCPF(cpf){
+    return(
+      `${cpf[0]}${cpf[1]}${cpf[2]}.${cpf[3]}${cpf[4]}${cpf[5]}.${cpf[6]}${cpf[7]}${cpf[8]}-${cpf[9]}${cpf[10]}`
+    );
+  }
+
+  formatTime(time){
+    let day_shift = strftime.timezone('+0000')('%d/%m/%Y', new Date(time));
+    let time_shift = this.timeSizeFixer((new Date(time).getHours()).toString()) + ':' + this.timeSizeFixer((new Date(time).getMinutes()).toString());
+    return(`${day_shift} - ${time_shift} h`);
+  }
+
+  pickShift(){
+    if(this.state.resource_shifts){
+      const shiftList = (
+        this.state.resource_shifts.map((rs) => {
+          return (
+            <option key={Math.random()} value={rs ? rs.id : 0}>
+              {`[ #${rs.id} ] ${this.formatTime(new Date(rs.execution_start_time))}`} 
+            </option>
+          );
+        })
+      );
+    
+      return (
+        <Input 
+          name="selected_shift"   
+          type='select' 
+          value={this.state.selected_shift}
+          onChange={
+            (event) => {
+              if(event.target.value != this.state.selected_professional) {
+                this.handleInputResourceChange(event);
+              }
+            }
+          }
+        >
+          <option value='0' disabled>Escolha um horário</option>
+          {shiftList}
+        </Input>
+      );
+    }
+    return (
+      <Input 
+        name="selected_shift"   
+        type='select' 
+        value={this.state.selected_shift}
+        onChange={
+          (event) => {
+            if(event.target.value != this.state.selected_professional) {
+              this.handleInputResourceChange(event);
+            }
+          }
+        }
+      >
+        <option value='0' disabled>Escolha um horário</option>
+      </Input>
+    );
+  }
+  pickCitizen(){
+    const citizensList = (
+      this.state.citizens.map((c) => {
+        return (
+          <option key={Math.random()} value={c ? c.cpf : 0}>
+            {`${c.name} (${this.formatCPF(c.cpf)})`} 
+          </option>
+        );
+      })
+    );
+    return (
+      <Input 
+        name="selected_citizen"   
+        type='select' 
+        value={this.state.selected_citizen}
+        onChange={
+          (event) => {
+            if(event.target.value != this.state.selected_professional) {
+              this.handleInputResourceChange(event);
+            }
+          }
+        }
+      >
+        <option value='0' disabled>Escolha o cidadão</option>
+        {citizensList}
+      </Input>
+    );
+  }
   pickResourceType() {
     var resourceTypesList;
 
@@ -388,7 +478,7 @@ class getResourceForm extends Component {
       );
     }
     else{      
-      var resource = this.state.resource.find(r => Number(this.state.resource_shift.resource_id)=== r.id );
+      var resource = this.state.resource.find(r => Number(this.state.resource_booking.resource_id)=== r.id );
 
       return (
         <Input 
@@ -469,7 +559,7 @@ class getResourceForm extends Component {
         <Input 
           name="professional_responsible_id" 
           type='select' 
-          value={this.state.resource_shift.professional_responsible_id}
+          value={this.state.resource_booking.professional_responsible_id}
           onChange={
             (event) => {
               if(event.target.value != this.state.selected_professional) {
@@ -498,7 +588,7 @@ class getResourceForm extends Component {
       <Input 
         name="professional_responsible_id" 
         type='select' 
-        value={this.state.resource_shift.professional_responsible_id}
+        value={this.state.resource_booking.professional_responsible_id}
         onChange={
           (event) => {
             if(event.target.value != this.state.selected_professional) {
@@ -574,7 +664,7 @@ class getResourceForm extends Component {
         <Input 
           name="professional_responsible_id" 
           type='select' 
-          value={this.state.resource_shift.professional_responsible_id}
+          value={this.state.resource_booking.professional_responsible_id}
           onChange={
             (event) => {
               if(event.target.value != this.state.selected_professional) {
@@ -603,7 +693,7 @@ class getResourceForm extends Component {
       <Input 
         name="professional_responsible_id" 
         type='select' 
-        value={this.state.resource_shift.professional_responsible_id}
+        value={this.state.resource_booking.professional_responsible_id}
         onChange={
           (event) => {
             if(event.target.value != this.state.selected_professional) {
@@ -644,12 +734,17 @@ class getResourceForm extends Component {
       transfBegin_time = this.timeSizeFixer((new Date(begin_time).getHours()).toString()) + ':' + this.timeSizeFixer((new Date(begin_time).getMinutes()).toString());
       transfEnd_time = this.timeSizeFixer((new Date(end_time).getHours()).toString()) + ':' + this.timeSizeFixer((new Date(end_time).getMinutes()).toString());    
     }
-    return({day: this.state.resource_shift.execution_start_time,begin_time:transfBegin_time,end_time:transfEnd_time});
+    return({day: this.state.resource_booking.execution_start_time,begin_time:transfBegin_time,end_time:transfEnd_time});
   }
   renderFormCreate(){
     return(
       <Row className='first-line'>
         <Col s={12} m={12} l={12}>
+
+          <div className="field-input" id='select-citizen'>
+            <h6>Cidadão*:</h6>
+            {this.pickCitizen()}
+          </div>
       
           <div className="field-input" id="no-padding">
             <h6>Tipo de recurso*:</h6>
@@ -661,65 +756,19 @@ class getResourceForm extends Component {
             {this.pickResource()}
           </div>
 
-          <div className="field-input" id="no-padding">
-            <h6>Profissional responsável:</h6>
-            {this.pickProfessional()}
-          </div>               
- 
-          <Collection>
-            <CollectionItem style={{textAlign:'center', fontSize:'large'}}>
-              <b>ATENÇÃO:</b> Os horários serão aplicados para todos os dias selecionados
-            </CollectionItem>
-          </Collection>
-
-          <Row>
-            <Col s={12} m={6}>
-              <div style={{marginBottom:20}}>
-                <h6 style={{marginBottom:30}}>Escolha as datas das escalas*:</h6>
-                <Calendar save_days={this.save_days} order='asc'/>
-              </div>
-            </Col>
-
-            <Col s={12} m={6} id='time-shift'>                        
-              <div className="" >
-                <h6 style={{marginBottom:30}}>Escolha o horário inicial da(s) escala(s)*:</h6>
-                <label>
-                  <input 
-                    type="time" 
-                    id='time-select' 
-                    name="time_start" 
-                    value={this.state.time_start} 
-                    onChange={this.handleInputResourceChange.bind(this)} 
-                  />
-                </label>
-                <span>h</span>
-              </div>
-
-              <div className="" >
-                <h6 style={{marginBottom:30}}>Escolha o horário final da(s) escala(s)*:</h6>
-                <label>
-                  <input 
-                    type="time" 
-                    id='time-select' 
-                    name="time_end" 
-                    value={this.state.time_end} 
-                    onChange={this.handleInputResourceChange.bind(this)} 
-                  />
-                </label>
-                <span>h</span>
-              </div>
-
-            </Col>
-          </Row>
+          <div className="field-input" id='select-citizen'>
+            <h6>Horário*:</h6>
+            {this.pickShift()}
+          </div>         
 
           <div id="field-textarea">
-            <h6>Nota:</h6>
+            <h6>Motivo da reserva:</h6>
             <label>
               <textarea  
                 className='input-field materialize-textarea black-text'
                 name="note" 
-                placeholder="Adicione uma anotação"
-                value={this.state.resource_shift.note} 
+                placeholder="Explique o motivo para reservar este recurso"
+                value={this.state.resource_booking.booking_reason} 
                 onChange={this.handleInputResourceChange.bind(this)} 
               />
             </label>
@@ -735,8 +784,8 @@ class getResourceForm extends Component {
     var resource_type = undefined;
     var listSpProf = this.getProfessionalListForServicePlace();
     // var time = this.transformTime();
-    if(this.state.resource_shift.resource_id){
-      resource_id = this.state.resource_shift.resource_id;
+    if(this.state.resource_booking.resource_id){
+      resource_id = this.state.resource_booking.resource_id;
     }
     if (resource_id)
       resource = this.state.resource.find(r => resource_id == r.id);
@@ -769,7 +818,7 @@ class getResourceForm extends Component {
               <Input s={6} m={32} l={12} 
                 type='select'
                 name='active'
-                value={Number(this.state.resource_shift.active)}
+                value={Number(this.state.resource_booking.active)}
                 onChange={this.handleInputResourceChange.bind(this)} 
               >
                 <option key={0} value={1}>Ativo</option>
@@ -831,7 +880,7 @@ class getResourceForm extends Component {
                 className='input-field materialize-textarea black-text'
                 name="notes" 
                 placeholder="Adicione uma anotação"
-                value={this.state.resource_shift.notes} 
+                value={this.state.resource_booking.notes} 
                 onChange={this.handleInputResourceChange.bind(this)} 
               />
             </label>

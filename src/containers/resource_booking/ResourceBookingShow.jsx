@@ -13,28 +13,14 @@ class getResourceShiftShow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      resource_booking: {
-        active:undefined,
-        borrowed:undefined,
-        created_at:undefined,
-        execution_end_time:undefined,
-        execution_start_time:undefined,
-        id:undefined,
-        next_shift_id:undefined,
-        notes:undefined,
-        professional_responsible_id:undefined,
-        resource_id:undefined,
-        updated_at:undefined
-      },
+      resource_booking: {},
       current_permission: undefined,
       details:{},
       resource_type:{},
       service_place:{},
       resource:{},
-      time_solved:{},
       professional_name:''
     };
-    this.getDetails = this.getDetails.bind(this);
     this.resolveTime = this.resolveTime.bind(this);
 
   }
@@ -50,11 +36,12 @@ class getResourceShiftShow extends Component {
       }
     }
     this.setState({current_permission: current_permission});
-
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `resource_bookings/${this.props.params.resource_booking_id}`;
-    const params = `permission=${this.props.user.current_role}`;
+    const params = `permission=${this.props.user.current_role}&view=${this.props.user.current_role != 'citizen' ? 'professional' : 'citizen'}`;
+    this.getExtraDetails();
+    
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         'Accept': 'application/json',
@@ -62,11 +49,25 @@ class getResourceShiftShow extends Component {
       method: 'get',
     }).then(parseResponse).then(resp => {
       self.setState({ resource_booking: resp });
-      this.getDetails(resp.resource_id);
-      this.getProfessionalName(resp.professional_responsible_id);
       this.resolveTime(resp);
     });
   }
+  
+  getProfessionalNameResource(id) {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `resource_shift_professional_responsible/${id}`;
+    const params = `permission=${this.props.user.current_role}`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      self.setState({ professional_name_resource: resp.professional_name });
+    });
+  }
+
   getDetails(id) {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
@@ -78,37 +79,43 @@ class getResourceShiftShow extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ details: resp });
-      self.setState({ resource: resp.resource });
-      self.setState({ resource_type: resp.resource_type });
       self.setState({ service_place: resp.service_place });
     });
   }
-  getProfessionalName(id) {
+
+  getExtraDetails() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `resource_booking_professional_responsible/${id}`;
-    const params = `permission=${this.props.user.current_role}`;
+    const collection = 'resource_bookings_get_extra_info/';
+    const params = `permission=${this.props.user.current_role}&view=${this.props.user.current_role != 'citizen' ? 'professional' : 'citizen'}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ professional_name: resp.professional_name });
+      let fetch_response = resp.find(r => r.resource_booking_id === Number(this.props.params.resource_booking_id));
+      let resource = fetch_response.resource;
+      this.getProfessionalNameResource(Number(resource.professional_responsible_id));
+      this.getDetails(resource.id);
+      self.setState({ 
+        resource_bookings_details: fetch_response,
+        resource: fetch_response.resource
+      });
     });
   }
+
   mainComponent() {
     return (
       <div className='card'>
         <div className='card-content'>
-          <h2 className='card-title h2-title-home'> Informações da Escala do Recurso: </h2>
+          <h2 className='card-title h2-title-home'> Informações da Reserva do Recurso: </h2>
           <Row>   
             <Col s={12} m={6} >
               <Card className='' title={'Recurso'} >
                 <p> 
                   <b>Tipo do recurso: </b>
-                  {this.state.resource_type.name}
+                  {this.state.resource_bookings_details ? this.state.resource_bookings_details.resource_type_name : ''}
                 </p> 
                 <p> 
                   <b>Marca: </b>
@@ -128,11 +135,11 @@ class getResourceShiftShow extends Component {
                 </p>     
                 <p> 
                   <b>Profissional responsável: </b>
-                  {this.state.details.professional_name}
+                  {this.state.professional_name_resource}
                 </p>   
                 <p> 
                   <b>Descrição do Recurso: </b>
-                  {this.state.resource_type.description}
+                  {this.state.resource_bookings_details ? this.state.resource_bookings_details.resource_type_description : ''}
                 </p> 
                 <p> 
                   <b>Recurso Móvel: </b>
@@ -155,39 +162,51 @@ class getResourceShiftShow extends Component {
               </Card>  
             </Col>         
             <Col s={12} m={6}>
-              <Card className='' title={'Escala do Recurso'}>
+              <Card className='' title={'Reserva do Recurso'}>
+                <p>
+                  <b>Cidadão solicitante: </b>
+                  {this.state.resource_bookings_details ? this.state.resource_bookings_details.citizen_name : ''}
+                </p>
+                <p>
+                  <b>Status: </b>
+                  {this.state.resource_booking ? this.state.resource_booking.status : ''}
+                </p>
                 <p> 
                   <b>Data e dia inicial: </b>
-                  {this.state.time_solved.day_start}
+                  {this.state.time_solved ? this.state.time_solved.day_start:''}    
                   <span style={{marginLeft:4, marginRight:4}}>-</span>
-                  {this.state.time_solved.time_start}
-                  <span style={{marginLeft:4}}>h</span>                                    
+                  {this.state.time_solved ? this.state.time_solved.time_start:''}                      
+                  <span style={{marginLeft:4}}>h</span>                        
                 </p>  
                 <p> 
                   <b>Data e dia final: </b>
-                  {this.state.time_solved.day_end}
+                  {this.state.time_solved ? this.state.time_solved.day_end:''}    
                   <span style={{marginLeft:4, marginRight:4}}>-</span>
-                  {this.state.time_solved.time_end}
-                  <span style={{marginLeft:4}}>h</span>                                    
+                  {this.state.time_solved ? this.state.time_solved.time_end:''}                      
+                  <span style={{marginLeft:4}}>h</span>                                  
                 </p> 
+                
                 <p>
-                  <b>Emprestado: </b>
-                  {this.state.resource_booking.borrowed==0 ? 'Não' : 'Sim' }
+                  <b>Motivo da reserva: </b>
+                  {this.state.resource_booking ? this.state.resource_booking.booking_reason : ''}
                 </p> 
-                <p>
-                  <b>Profissional responsável pela escala: </b>
-                  {this.state.professional_name}
-                </p> 
+
+
                 <p>
                   <b>Situação: </b>
-                  {this.state.resource_booking.active==0 ? 'Inativo' : 'Ativo' }
+                  {this.state.resource_booking.active == 1 ? 'Ativo' : 'Inativo'}                  
                 </p> 
+
+
                 <p>
-                  <b>Anotação: </b>
-                  {this.state.resource_booking.notes}
-                </p> 
+                  <b></b>
+                </p>
+
+
+
+
               </Card>  
-            </Col>
+            </Col>    
             <Col s={12} m={6}>
               <Card className='' title={'Local do Recurso'}>
                 <p>
@@ -205,7 +224,7 @@ class getResourceShiftShow extends Component {
                   {this.state.service_place.neighborhood}                 
                 </p> 
               </Card>              
-            </Col>           
+            </Col>             
           </Row>    
         </div>
         {this.editButton()}
@@ -231,17 +250,17 @@ class getResourceShiftShow extends Component {
       }
     }
   }
-  resolveTime(shift){
+  resolveTime(booking){
     // Start time
-    let day_start = strftime.timezone('+0000')('%d/%m/%Y', new Date(shift.execution_start_time));
-    let hour_start = new Date(shift.execution_start_time).getHours().toString();
-    let minute_start = new Date(shift.execution_start_time).getMinutes().toString();
+    let day_start = strftime.timezone('+0000')('%d/%m/%Y', new Date(booking.booking_start_time));
+    let hour_start = new Date(booking.booking_start_time).getHours().toString();
+    let minute_start = new Date(booking.booking_start_time).getMinutes().toString();
     let time_start = this.timeSizeFixer(hour_start) + ':' + this.timeSizeFixer(minute_start);
     
     // End time
-    let day_end = strftime.timezone('+0000')('%d/%m/%Y', new Date(shift.execution_end_time));      
-    let hour_end = new Date(shift.execution_end_time).getHours().toString();
-    let minute_end = new Date(shift.execution_end_time).getMinutes().toString();
+    let day_end = strftime.timezone('+0000')('%d/%m/%Y', new Date(booking.booking_end_time));      
+    let hour_end = new Date(booking.booking_end_time).getHours().toString();
+    let minute_end = new Date(booking.booking_end_time).getMinutes().toString();
     let time_end = this.timeSizeFixer(hour_end) + ':' + this.timeSizeFixer(minute_end);
     
     this.setState({time_solved:{day_start: day_start, time_start: time_start, day_end: day_end, time_end: time_end}});

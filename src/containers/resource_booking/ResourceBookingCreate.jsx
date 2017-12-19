@@ -32,7 +32,12 @@ class getResourceBookingCreate extends Component {
               fetch_method={'post'}
               submit_url={'/resource_bookings/'}
               current_role={this.props.user.roles[this.props.user.current_role_idx]}
-              city_hall_id={this.props.user.roles[this.props.user.current_role_idx].city_hall_id}
+              current_citizen={this.props.user.citizen}
+              city_hall_id={
+                this.props.user.current_role_idx == -1 ? 
+                  this.props.user.citizen.city_id
+                  :
+                  this.props.user.roles[this.props.user.current_role_idx].city_hall_id}
             />
         }
       </div>
