@@ -18,31 +18,32 @@ class getOccupationForm extends Component {
     super(props)
     this.state = {
       occupation: {
-        active: true,
-        absence_max: '',
-        blocking_days: '',
-        cancel_limt: '',
+        id: '',
         description: '',
         name: '',
-        previous_notice: '',
-        schedules_by_occupation: '',
+        active: true,
         city_hall_id: 0
       },
       city_halls: []
     };
   }
+  // if(this.props.is_edit) {
+  //   console.log(this.props.data);
+  //   self.setState({ occupation: this.props.data })
+  // }
+  // if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
+  //   this.setState({
+  //     occupation: update(this.state.occupation, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
+  //   })
+  // }
 
   componentDidMount() {
     var self = this;
-    if(this.props.is_edit) {
-      self.setState({ occupation: this.props.data })
-    }
+    var occupation = this.props.is_edit ? this.props.data : this.state.occupation;
+
     if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
-      this.setState({
-        occupation: update(this.state.occupation, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
-      })
-    }
-    else {
+      occupation['city_hall_id'] = this.props.current_role.city_hall_id;
+    } else {
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'forms/service_type_index';
       const params = this.props.fetch_params;
@@ -55,6 +56,8 @@ class getOccupationForm extends Component {
         self.setState({ city_halls: resp.city_halls })
       });
     }
+
+    self.setState({ occupation: occupation },() => console.log(this.state.occupation));
   }
 
   handleInputOccupationChange(event) {
@@ -74,6 +77,8 @@ class getOccupationForm extends Component {
 
     if(!formData['name'])
       errors.push("Campo Nome é obrigatório.");
+    if(!formData['description'])
+      errors.push("Campo Descrição é obrigatório.");
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
@@ -97,9 +102,9 @@ class getOccupationForm extends Component {
         body: JSON.stringify(fetch_body)
       }).then(parseResponse).then(resp => {
         if(this.props.is_edit)
-          Materialize.toast('Setor editado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+          Materialize.toast('Cargo editado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
         else
-          Materialize.toast('Setor criado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+          Materialize.toast('Cargo criado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
       }).catch(({errors}) => {
         if(errors) {
@@ -168,9 +173,9 @@ class getOccupationForm extends Component {
             <div className='card'>
               <div className='card-content'>
                 {this.props.is_edit ?
-                  <h2 className="card-title">Alterar setor: {this.props.data.name}</h2>
+                  <h2 className="card-title">Alterar cargo: {this.props.data.name}</h2>
                   :
-                  <h2 className="card-title">Cadastrar setor</h2>
+                  <h2 className="card-title">Cadastrar cargo</h2>
                 }
                 <Row className='first-line'>
                   <Col s={12} m={12} l={6}>
@@ -180,6 +185,7 @@ class getOccupationForm extends Component {
                         {this.pickCityHall()}
                       </div>
                     </div>
+
                     <div className="field-input" >
                       <h6>Situação:</h6>
                       <div>
@@ -194,8 +200,9 @@ class getOccupationForm extends Component {
                         </Input>
                       </div>
                     </div>
+
                     <div className="field-input" >
-                      <h6>Nome:</h6>
+                      <h6>Nome*:</h6>
                       <label>
                         <input
                           type="text"
@@ -206,68 +213,9 @@ class getOccupationForm extends Component {
                         />
                       </label>
                     </div>
-                    <div className="field-input" >
-                      <h6>Número de agendamentos por setor:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="schedules_by_occupation"
-                          value={this.state.occupation.schedules_by_occupation}
-                          onChange={this.handleInputOccupationChange.bind(this)}
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Número de dias de impedimento de novos agendamentos:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="blocking_days"
-                          value={this.state.occupation.blocking_days}
-                          onChange={this.handleInputOccupationChange.bind(this)}
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Limite de cancelamentos:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="cancel_limit"
-                          value={this.state.occupation.cancel_limit}
-                          onChange={this.handleInputOccupationChange.bind(this)}
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Horas de antecedências para poder cancelar um atendimento:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="previous_notice"
-                          value={this.state.occupation.previous_notice}
-                          onChange={this.handleInputOccupationChange.bind(this)}
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Número de faltas que gera impedimento de novos agendamentos:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="absence_max"
-                          value={this.state.occupation.absence_max}
-                          onChange={this.handleInputOccupationChange.bind(this)}
-                        />
-                      </label>
-                    </div>
+
                     <div>
-                      <h6>Descrição:</h6>
+                      <h6>Descrição*:</h6>
                       <label>
                         <textarea
                           className='input-field materialize-textarea'

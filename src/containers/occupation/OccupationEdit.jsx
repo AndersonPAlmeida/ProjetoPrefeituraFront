@@ -27,7 +27,7 @@ class getOccupationEdit extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ occupation: resp, fetching: false })
+      self.setState({ occupation: resp, fetching: false }, () => console.log(this.state))
     });
   }
 

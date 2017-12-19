@@ -12,16 +12,7 @@ class getOccupationShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      occupation: {
-        active: '',
-        absence_max: '',
-        blocking_days: '',
-        cancel_limt: '',
-        description: '',
-        name: '',
-        previous_notice: '',
-        schedules_by_occupation: ''
-      },
+      occupation: []
     }
   }
 
@@ -36,7 +27,7 @@ class getOccupationShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ occupation: resp })
+      this.setState({ occupation: resp })
     });
   }
 
@@ -44,7 +35,7 @@ class getOccupationShow extends Component {
     return (
       <div className='card'>
             <div className='card-content'>
-              <h2 className='card-title h2-title-home'> Informações do Setor: </h2>
+              <h2 className='card-title h2-title-home'> Informações do Cargo: </h2>
               <p>
                 <b>Situação: </b>
                 {this.state.occupation.active ? 'Ativo' : 'Inativo'}
@@ -58,24 +49,8 @@ class getOccupationShow extends Component {
                 {this.state.occupation.description}
               </p>
               <p>
-                <b>Número de Agendamentos por Setor: </b>
-                {this.state.occupation.schedules_by_occupation}
-              </p>
-              <p>
-                <b>Número de dias de impedimento de novos agendamentos: </b>
-                {this.state.occupation.blocking_days}
-              </p>
-              <p>
-                <b>Limite de cancelamentos: </b>
-                {this.state.occupation.cancel_limit}
-              </p>
-              <p>
-                <b>Horas de antecedência para poder cancelar um atendimento: </b>
-                {this.state.occupation.previous_notice}
-              </p>
-              <p>
-                <b>Número de faltas que gera impedimento de novos agendamentos: </b>
-                {this.state.occupation.absence_max}
+                <b>Prefeitura: </b>
+                {this.state.occupation.city_hall_name}
               </p>
             </div>
             {this.editButton()}

@@ -126,7 +126,6 @@ class getOccupationList extends Component {
         <th>{this.sortableColumn.bind(this)('Nome','name')}</th>
         <th>{this.sortableColumn.bind(this)('Descrição','description')}</th>
         <th>{this.sortableColumn.bind(this)('Situação','situation')}</th>
-        {/* <th>{this.sortableColumn.bind(this)('Agendamentos por setor','schedules_by_sector')}</th> */}
         <th></th>
       </tr>
     )

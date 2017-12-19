@@ -91,9 +91,9 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="sectors/new" component={UserIsAuthenticated(SectorCreate)} />
         <Route path="sectors/:sector_id" component={UserIsAuthenticated(SectorShow)} />
         <Route path="occupations" component={UserIsAuthenticated(OccupationList)}/>
-        {/* <Route path="occupations/:sector_id/edit" component={UserIsAuthenticated(OccupationEdit)} /> */}
+        <Route path="occupations/:occupation_id/edit" component={UserIsAuthenticated(OccupationEdit)} />
         <Route path="occupations/new" component={UserIsAuthenticated(OccupationCreate)} />
-        {/* <Route path="occupations/:sector_id" component={UserIsAuthenticated(OccupationShow)} /> */}
+        <Route path="occupations/:occupation_id" component={UserIsAuthenticated(OccupationShow)} />
         <Route path="service_places" component={UserIsAuthenticated(ServicePlaceList)} />
         <Route path="service_places/:service_place_id/edit" component={UserIsAuthenticated(ServicePlaceEdit)} />
         <Route path="service_places/new" component={UserIsAuthenticated(ServicePlaceCreate)} />
