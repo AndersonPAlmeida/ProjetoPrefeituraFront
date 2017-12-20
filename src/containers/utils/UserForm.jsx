@@ -341,8 +341,8 @@ class getUserForm extends Component {
     if(this.state.aux.photo_has_changed) {
       var image = {};
       image['content'] = this.state.aux.photo_obj.split(',')[1];
-      image['content_type'] = this.state.aux.photo_obj.slice(5,14);
-      image['filename'] = this.state.aux.photo;
+      image['content_type'] = this.state.aux.photo_obj.split(",")[0].split(":")[1].split(";")[0];
+      image['filename'] = this.state.aux.photo;;
       formData['image'] = image;
     }
 

@@ -44,11 +44,11 @@ export function userUpdatePicture(user_id) {
     })
       .then(resp => {
         var contentType = resp.headers.get("content-type");
-        if(contentType && contentType.indexOf("image") !== -1) {
+        if(resp.status == 200 && contentType && contentType.indexOf("image") !== -1) {
           resp.blob().then(photo => {
             dispatch(userUpdate({ 'image': URL.createObjectURL(photo)}));
           })
         }
-      })
+      }).catch(e => {})
   };
 }

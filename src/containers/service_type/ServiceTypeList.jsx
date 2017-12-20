@@ -344,7 +344,6 @@ class getServiceTypeList extends Component {
                     +`&q[s]=${this.state.filter_s}`
                     +`&page=${this.state.current_page}`
     current_page = sort_only ? this.state.current_page : 1
-    console.log(`${apiUrl}/${collection}?${params}`)
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",

@@ -24,7 +24,7 @@ class getCitizenEdit extends Component {
         fetch_collection={`auth`}
         fetch_params={`permission=${this.props.user.current_role}`}
         fetch_method={'put'}
-        submit_url={`/citizens/schedules?home=true`}
+        submit_url={`/citizens/schedules/history?home=true`}
         photo={this.props.user.image}
         current_professional={this.props.is_professional}
         professional_data={{'registration': this.props.user.registration, 'occupation_id': this.props.user.occupation_id}}
