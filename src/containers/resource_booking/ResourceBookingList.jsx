@@ -113,6 +113,8 @@ class getResourceList extends Component {
       self.setState({ 
         resource_bookings_details: resp, 
       });
+    }).catch(error =>{
+      console.log(error);
     });
   }
 

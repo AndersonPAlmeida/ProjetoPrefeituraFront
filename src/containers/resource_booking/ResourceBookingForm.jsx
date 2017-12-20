@@ -44,7 +44,6 @@ class getResourceForm extends Component {
     this.getResource = this.getResource.bind(this); 
     this.getCityHall = this.getCityHall.bind(this);
     this.getServicePlaceWithProfessional = this.getServicePlaceWithProfessional.bind(this);
-    this.formatItems = this.formatItems.bind(this);
   }
 
   componentWillMount() {
@@ -222,14 +221,7 @@ class getResourceForm extends Component {
   handleSubmit() {
     let errors = [];
     let formData = {};
-    let dates = this.state.dates;
-
-    let hour_begin = this.state.time_start.split(':')[0];
-    let hour_end = this.state.time_end.split(':')[0];
-
-    let minute_begin = this.state.time_start.split(':')[1];
-    let minute_end = this.state.time_end.split(':')[1];
-
+    
     if (this.props.is_edit){
       formData = this.state.resource_booking;
       formData['execution_start_time'] = new Date(dates[0].setHours(Number(hour_begin), Number(minute_begin)));
@@ -238,7 +230,7 @@ class getResourceForm extends Component {
       formData['situation'] = Boolean(formData['active']);
     }
     else{     
-      formData = this.formatItems();
+      formData = this.buildBody();
     }
 
     if(errors.length > 0) {
@@ -254,10 +246,7 @@ class getResourceForm extends Component {
         fetch_body['resource_booking'] = formData;
       }
       else {
-        var bodies = [];
-        for(let i = 0; i < formData.length; i++){
-          bodies.push({resource_booking:formData[i]});
-        }        
+        fetch_body['resource_booking'] = formData;       
       }
       if(this.props.is_edit){
         fetch(`${apiUrl}/${collection}?${params}`, {
@@ -279,71 +268,71 @@ class getResourceForm extends Component {
         });
       }
       else {
-        for(let i = 0; i < bodies.length; i++){
+        fetch(`${apiUrl}/${collection}?${params}`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json' },
+          method: this.props.fetch_method,
+          body: JSON.stringify(fetch_body)
+        }).then(parseResponse).then(resp => {
+          this.updateShift(Number(this.state.selected_shift));          
+          Materialize.toast('Tipo de recurso criado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
+          browserHistory.push(this.props.submit_url);
+        }).catch(({errors}) => {
+          if(errors) {
+            let full_error_msg = '';
+            errors.forEach(function(elem){ full_error_msg += elem + '\n'; });
+            Materialize.toast(full_error_msg, 10000, 'red',function(){$('#toast-container').remove();});
+            throw errors;
+          }
+        });
 
-          fetch(`${apiUrl}/${collection}?${params}`, {
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json' },
-            method: this.props.fetch_method,
-            body: JSON.stringify(bodies[i])
-          }).then(parseResponse).then(resp => {
-            Materialize.toast('Tipo de recurso criado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
-            browserHistory.push(this.props.submit_url);
-          }).catch(({errors}) => {
-            if(errors) {
-              let full_error_msg = '';
-              errors.forEach(function(elem){ full_error_msg += elem + '\n'; });
-              Materialize.toast(full_error_msg, 10000, 'red',function(){$('#toast-container').remove();});
-              throw errors;
-            }
-          });
-        }
       }
 
     }
   }
 
-  formatItems(){
+  updateShift(id){
+    var fetch_body = {resource_shift: {borrowed:1}};
 
-    var final_resource_bookings = [];
-    let formData = this.state.resource_booking;
-    var dates = this.state.dates;
-
-    let hour_begin = this.state.time_start.split(':')[0];
-    let hour_end = this.state.time_end.split(':')[0];
-
-    let minute_begin = this.state.time_start.split(':')[1];
-    let minute_end = this.state.time_end.split(':')[1];
-
-    let number_of_shifts = dates.length;
-    let aux = {};
-
-
-    for(let i = 0; i < number_of_shifts; i++){
-      aux['active'] = formData.active;
-      aux['borrowed'] = formData.borrowed;
-      aux['execution_start_time'] = new Date(dates[i].setHours(Number(hour_begin), Number(minute_begin)));
-      aux['execution_end_time'] = new Date(dates[i].setHours(Number(hour_end), Number(minute_end)));
-      aux['notes'] = formData.note;
-      aux['professional_responsible_id'] = Number(formData.professional_responsible_id);
-      aux['resource_id'] = Number(this.state.current_resource);
-      final_resource_bookings.push(aux);
-      aux = {};    
-    }
-    this.setState({resource_booking:final_resource_bookings});
-    return final_resource_bookings;
-
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `resource_shifts/${id}`;
+    const params = `permission=${this.props.current_role.id}`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'put',
+      body: JSON.stringify(fetch_body)
+    }).then(parseResponse).then(resp => {
+    });
   }
-
   confirmButton() {
     return (
       <div className="card-action">
         <a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
         <button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">{this.props.is_edit ? 'Atualizar' : 'Criar'}</button>
-        {/* <button className="waves-effect btn right button-color" onClick={this.formatItems.bind(this)} name="commit" type="submit">{this.props.is_edit ? 'Atualizar' : 'Criar'}</button> */}
+        {/* <button className="waves-effect btn right button-color" onClick={this.testOutput.bind(this)} name="commit" type="submit">{this.props.is_edit ? 'Atualizar' : 'Criar'}</button> */}
       </div>
     );
+  }
+
+  buildBody(){
+    var final_message = {};
+
+    let shift = this.state.resource_shifts.find(rs => Number(this.state.selected_shift) === rs.id );
+
+    final_message['citizen_id'] = Number(this.state.selected_citizen);
+    final_message['resource_shift_id'] = Number(this.state.selected_shift);
+    final_message['service_place_id'] = Number(this.state.current_service_place);
+    final_message['booking_start_time'] = new Date(shift.execution_start_time);
+    final_message['booking_end_time'] = new Date(shift.execution_end_time);
+    
+    final_message['booking_reason'] = this.state.resource_booking.booking_reason;
+    final_message['status'] = 'Reservado';
+    final_message['situation_id'] = 1;
+    final_message['active'] = 1;
+    return final_message;
   }
 
   formatCPF(cpf){
@@ -360,8 +349,9 @@ class getResourceForm extends Component {
 
   pickShift(){
     if(this.state.resource_shifts){
+      var resource_shifts = this.state.resource_shifts.sort(function(a,b) {return (a.execution_start_time > b.execution_start_time) ? 1 : ((b.execution_start_time > a.execution_start_time) ? -1 : 0);} );  
       const shiftList = (
-        this.state.resource_shifts.map((rs) => {
+        resource_shifts.map((rs) => {
           return (
             <option key={Math.random()} value={rs ? rs.id : 0}>
               {`[ #${rs.id} ] ${this.formatTime(new Date(rs.execution_start_time))}`} 
@@ -406,10 +396,11 @@ class getResourceForm extends Component {
     );
   }
   pickCitizen(){
+    var citizens = this.state.citizens.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} );  
     const citizensList = (
-      this.state.citizens.map((c) => {
+      citizens.map((c) => {
         return (
-          <option key={Math.random()} value={c ? c.cpf : 0}>
+          <option key={Math.random()} value={c ? c.id : 0}>
             {`${c.name} (${this.formatCPF(c.cpf)})`} 
           </option>
         );
@@ -766,7 +757,7 @@ class getResourceForm extends Component {
             <label>
               <textarea  
                 className='input-field materialize-textarea black-text'
-                name="note" 
+                name="booking_reason" 
                 placeholder="Explique o motivo para reservar este recurso"
                 value={this.state.resource_booking.booking_reason} 
                 onChange={this.handleInputResourceChange.bind(this)} 
