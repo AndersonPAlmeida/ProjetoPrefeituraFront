@@ -13,7 +13,7 @@ class getCitizenSchedule extends Component {
       super(props)
       this.state = {
           collections: [],
-          schedules: [],
+          schedules: { sectors: [], num_entries: 0 },
           dependants: [],
           sectors: [],
           situation: [],
@@ -28,7 +28,8 @@ class getCitizenSchedule extends Component {
           last_fetch_service_place: 0,
           last_fetch_situation: 0,
           current_page: 1,
-          num_pages: 5
+          current_dependant_id: '',
+          current_dependant_page: 1,
       };
   }
 
@@ -84,13 +85,14 @@ class getCitizenSchedule extends Component {
 	}	
 
 	secondComponent() {
-    const sectorsLimit = (
-      this.state.sectors.map((sector) => {
+    const sectorsLimit = this.state.schedules && this.state.schedules.sectors.length > 0 ?
+    (
+      this.state.schedules.sectors.map((sector) => {
         return (
-          <p>{sector.name}: X/Y</p> /* <p>{sector.name}: {dependant.num_schedules_sector[sector.id]}/{sector.schedules_by_sector}</p> */
+          <p>{sector.name}: {sector.schedules}/{sector.schedules_by_sector}</p>
         )
       })
-    )
+    ) : <p>Nenhum agendamento realizado</p>
 		return (
 			<div>
 				<div className='card'>
@@ -130,10 +132,10 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col> 
-        <div className='select-field'>
+      <Col s={12} m={3}> 
+        <div>
           <h6>Setor:</h6>
-          <Input s={12} m={12} name="filter_sector" type='select' value={this.state.filter_sector}
+          <Input name="filter_sector" type='select' value={this.state.filter_sector}
             onChange={
               (event) => {
                 var selected_sector = event.target.value
@@ -177,10 +179,10 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col> 
-        <div className='select-field'>
+      <Col s={12} m={3}> 
+        <div>
           <h6>Tipo de Atendimento:</h6>
-          <Input s={12} m={12} name="filter_service_type" type='select' value={this.state.filter_service_type}
+          <Input name="filter_service_type" type='select' value={this.state.filter_service_type}
             onChange={
               (event) => {
                 var selected_service_type = event.target.value
@@ -227,10 +229,10 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col> 
-        <div className='select-field'>
+      <Col s={12} m={3}> 
+        <div>
           <h6>Local de Atendimento:</h6>
-          <Input s={12} m={12} name="filter_service_place" type='select' value={this.state.filter_service_place}
+          <Input name="filter_service_place" type='select' value={this.state.filter_service_place}
             onChange={
               (event) => {
                 var selected_service_place = event.target.value
@@ -259,10 +261,10 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col> 
-        <div className='select-field'>
+      <Col s={12} m={3}> 
+        <div>
           <h6>Situação:</h6>
-          <Input s={12} m={12} name="filter_situation" type='select' value={this.state.filter_situation}
+          <Input name="filter_situation" type='select' value={this.state.filter_situation}
             onChange={
               (event) => {
                 var selected_situation = event.target.value
@@ -285,11 +287,14 @@ class getCitizenSchedule extends Component {
   filterSchedule() {
     return (
       <div>
-        {this.pickSector()}
-        {this.pickServiceType()}
-        {this.pickServicePlace()}
-        {this.pickSituation()}
-        <Row>
+        <Row></Row>
+        <Row s={12}>
+          {this.pickSector()}
+          {this.pickServiceType()}
+          {this.pickServicePlace()}
+          {this.pickSituation()}
+        </Row>
+        <Row s={12}>
           <Col> 
             <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
           </Col>
@@ -310,12 +315,13 @@ class getCitizenSchedule extends Component {
     })
   }
 
-  handleFilterSubmit(sort_only) {
+  handleFilterSubmit(page_only) {
     var sector
     var service_type
     var service_place
     var situation
-    if(sort_only) {
+    var current_page
+    if(page_only) {
       sector = this.state.last_fetch_sector
       service_type = this.state.last_fetch_service_type
       service_place = this.state.last_fetch_service_place
@@ -343,6 +349,14 @@ class getCitizenSchedule extends Component {
                     +`&q[service_place_id]=${service_place}`
                     +`&q[situation_id]=${situation}`
                     +`&page=${this.state.current_page}`
+                    +`&dependant_page=${this.state.current_dependant_page}`
+                    +`&dependant_id=${this.state.current_dependant_id}`
+    if(!page_only) {
+      this.setState({
+        current_dependant_page: 1,
+        current_page: 1
+      })
+    }
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -351,10 +365,11 @@ class getCitizenSchedule extends Component {
     }).then(parseResponse).then(resp => {
       this.setState({
         schedules: resp.schedules,
+        dependants: resp.dependants,
         last_fetch_sector: sector,
         last_fetch_service_type: service_type,
         last_fetch_service_place: service_place,
-        last_fetch_situation: situation
+        last_fetch_situation: situation,
       })
     });
   }
@@ -363,7 +378,7 @@ class getCitizenSchedule extends Component {
     return (n < 10 ? '0' : '') + n;
   }
 
-  tableList(schedules) {
+  tableList(schedules, num_entries, current_page, pagination_function) {
     var date
     var d
     var time
@@ -396,6 +411,9 @@ class getCitizenSchedule extends Component {
             <td>
               {schedule.situation}
             </td>
+            <td>
+              {`Não disponível`}
+            </td>
           </tr>
         )
       })
@@ -411,36 +429,46 @@ class getCitizenSchedule extends Component {
         <th>Data</th>
         <th>Hora</th>
         <th>Situação</th>
+        <th>Comprovante</th>
       </tr>
     )
-
+    var num_items_per_page = 25
+    var num_pages = Math.ceil(num_entries/num_items_per_page)
     return (
       <div>
-        <p>Mostrando <b>{schedules.length}</b> {schedules.length > 1 ? 'registros' : 'registro'}</p>
-        <table className={styles['table-list']}>
-          <thead>
-            {fields}
-          </thead>
-          <tbody>
-            {data}
-          </tbody>
-        </table>
+        <p className={styles['description-column']}>
+          Mostrando
+          {
+            num_pages != 0
+              ?
+                this.state.current_page == num_pages
+                  ?
+                    num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${num_entries % num_items_per_page} `
+                  :
+                    ` ${num_items_per_page} `
+              :
+                ' 0 '
+          }
+          de {num_entries} registros
+        </p>
+        <br />
+        <div className='div-table'>
+          <table className={styles['table-list']}>
+            <thead>
+              {fields}
+            </thead>
+            <tbody>
+              {data}
+            </tbody>
+          </table>
+        </div>
         <br />
         <Pagination 
-          value={this.state.current_page}
-          onSelect={ (val) => 
-            { 
-              this.setState(
-                {
-                  current_page: val
-                }, 
-                () => {this.handleFilterSubmit.bind(this)(true)}
-              )
-            }
-          }
+          value={current_page}
+          onSelect={pagination_function.bind(this)}
           className={styles['pagination']} 
-          items={this.state.num_pages} 
-          activePage={this.state.current_page} 
+          items={Math.ceil(num_entries/num_items_per_page)} 
+          activePage={current_page} 
           maxButtons={8} 
         />
       </div>
@@ -452,21 +480,34 @@ class getCitizenSchedule extends Component {
     const dependantList = (
       this.state.dependants.map((dependant) => {
         sectorsLimit = (
-          this.state.sectors.map((sector) => {
-            let num_schedules = this.state.dependants
+          dependant.schedules.sectors.map((sector) => {
             return (
-              <p>{sector.name}: X/Y</p> /* <p>{sector.name}: {dependant.num_schedules_sector[sector.id]}/{sector.schedules_by_sector}</p> */
+              <p>{sector.name}: {sector.schedules}/{sector.schedules_by_sector}</p>
             )
           })
         )
         return (
-          <div>
-              <CollapsibleItem header={dependant.name}>
-                {sectorsLimit}
-                <br />
-                {dependant.schedules.length > 0 ? this.tableList(dependant.schedules) : '- Nenhum agendamento encontrado'}
-              </CollapsibleItem>
-          </div>
+          <CollapsibleItem header={dependant.name}>
+            {sectorsLimit}
+            <br />
+            {
+              dependant.schedules.entries.length > 0 ? 
+                this.tableList(dependant.schedules.entries, dependant.schedules.num_entries, 
+                  (dependant.id == this.state.current_dependant_id) ? this.state.current_dependant_page : 1,
+                  (val) => 
+                    { 
+                      this.setState(
+                        {
+                          current_dependant_page: val,
+                          current_dependant_id: dependant.id
+                        }, 
+                        () => {this.handleFilterSubmit.bind(this)(true)}
+                      )
+                    }
+                ) 
+                : '- Nenhum agendamento encontrado'
+            }
+          </CollapsibleItem>
         )
       })
     )
@@ -474,7 +515,7 @@ class getCitizenSchedule extends Component {
       <div>
         <br /><br />
         <b>Dependentes:</b>
-        <Collapsible>
+        <Collapsible accordion>
           {dependantList}
         </Collapsible>
       </div>
@@ -488,7 +529,21 @@ class getCitizenSchedule extends Component {
           <div className='card-content'>
             <h2 className='card-title h2-title-home'>Buscar agendamentos </h2>
             {this.filterSchedule()}
-            {this.state.schedules.length > 0 ? this.tableList(this.state.schedules) : '- Nenhum agendamento encontrado'}
+            {
+              (this.state.schedules && this.state.schedules.entries && this.state.schedules.entries.length) > 0 ? 
+                this.tableList(this.state.schedules.entries, this.state.schedules.num_entries, this.state.current_page,
+                  (val) => 
+                    { 
+                      this.setState(
+                        {
+                          current_page: val
+                        }, 
+                        () => {this.handleFilterSubmit.bind(this)(true)}
+                      )
+                    }
+                ) 
+                : '- Nenhum agendamento encontrado'
+            }
             {this.dependantSchedules()}
           </div>
 		    </div>
@@ -503,7 +558,6 @@ class getCitizenSchedule extends Component {
         var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
         home = query
     }
-
     return (
       <div> 
 	      <main>

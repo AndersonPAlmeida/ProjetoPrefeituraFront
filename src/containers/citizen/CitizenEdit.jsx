@@ -19,12 +19,15 @@ class getCitizenEdit extends Component {
         user_data={this.props.user.citizen} 
         user_class={`citizen`}
         is_edit={true} 
+        current_citizen={true}
         prev={this.prev}
         fetch_collection={`auth`}
         fetch_params={`permission=${this.props.user.current_role}`}
         fetch_method={'put'}
-        submit_url={`/citizens/schedules?home=true`}
+        submit_url={`/citizens/schedules/history?home=true`}
         photo={this.props.user.image}
+        current_professional={this.props.is_professional}
+        professional_data={{'registration': this.props.user.registration, 'occupation_id': this.props.user.occupation_id}}
       />
     )
   }
@@ -32,8 +35,10 @@ class getCitizenEdit extends Component {
 
 const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
+  let is_professional = (user.roles && user.roles.length > 0)
   return {
-    user
+    user,
+    is_professional
   }
 }
 const CitizenEdit = connect(
