@@ -1,43 +1,43 @@
-import React, {Component} from 'react'
-import { Link } from 'react-router'
-import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/ResourceTypeList.css'
-import 'react-day-picker/lib/style.css'
+import React, {Component} from 'react';
+import { Link } from 'react-router';
+import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize';
+import styles from './styles/ResourceTypeList.css';
+import 'react-day-picker/lib/style.css';
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
-import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
-import {fetch} from "../../redux-auth";
+import {parseResponse} from '../../redux-auth/utils/handle-fetch-response';
+import {fetch} from '../../redux-auth';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import strftime from 'strftime';
 
 class getResourceTypeList extends Component {
   constructor(props) {
-      super(props)
-      this.state = {
-          resourceTypes: [],
-          filter_name: '',
-          filter_description: '',
-          last_fetch_name: '',
-          last_fetch_description: '',
-          filter_s: '',
-          city_hall:{}
-      };
+    super(props);
+    this.state = {
+      resourceTypes: [],
+      filter_name: '',
+      filter_description: '',
+      last_fetch_name: '',
+      last_fetch_description: '',
+      filter_s: '',
+      city_hall:{}
+    };
     this.getCityHallName = this.getCityHallName.bind(this);      
   }
 
   componentWillMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `resource_types`;
-    const params = `permission=${this.props.user.current_role}`
-    this.getCityHallName()    
+    const collection = 'resource_types';
+    const params = `permission=${this.props.user.current_role}`;
+    this.getCityHallName();    
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get",
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ resourceTypes: resp })
+      self.setState({ resourceTypes: resp });
     });
   }
 
@@ -53,35 +53,35 @@ class getResourceTypeList extends Component {
           {this.newResourceTypeButton()}
         </div>
       </div>
-      )
+    );
   }
 
   getCityHallName() {
-    var city_halls = {}
-      city_halls = this.state.city_hall
+    var city_halls = {};
+    city_halls = this.state.city_hall;
     
-      var self = this;
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-      const collection = `city_halls/`;
-      const params = `permission=${this.props.user.current_role}`
-      fetch(`${apiUrl}/${collection}?${params}`, {
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json" },
-          method: "get",
-      }).then(parseResponse).then(resp => {
-        resp.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );
-        self.setState({ city_hall: resp })
-      });
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'city_halls/';
+    const params = `permission=${this.props.user.current_role}`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      resp.entries.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );
+      self.setState({ city_hall: resp.entries });
+    });
   }
 
-	tableList() {
-    var current_role = this.props.user.current_role
-    var user_roles = this.props.user.roles
-    var current_permission = undefined
+  tableList() {
+    var current_role = this.props.user.current_role;
+    var user_roles = this.props.user.roles;
+    var current_permission = undefined;
     for (let i = 0; i < user_roles.length; i++){
       if (user_roles[i].id === current_role){
-        current_permission = user_roles[i].role 
+        current_permission = user_roles[i].role; 
         break;
       }
     }
@@ -102,31 +102,31 @@ class getResourceTypeList extends Component {
               {resourceType.description}
             </td>
             <td key={Math.random()} >
-              {resourceType.mobile === "false" ? 'Não' : 'Sim'}
+              {resourceType.mobile === 'false' ? 'Não' : 'Sim'}
             </td>
             <td key={Math.random()} >
-              {Boolean(resourceType.active) ? 'Ativo' : 'Inativo'}
+              {resourceType.active ? 'Ativo' : 'Inativo'}
             </td>
             <td key={Math.random()}>
               {
-                  this.state.city_hall[resourceType.city_hall_id-1].name 
+                this.state.city_hall[resourceType.city_hall_id-1].name 
               }
             </td>
             <td key={Math.random()} >
               <a className='back-bt waves-effect btn-flat' 
-                 href='#' 
-                 onClick={ () => 
-                 browserHistory.push(`/resource_types/${resourceType.id}/edit`) 
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/resource_types/${resourceType.id}/edit`) 
                 }>
-                  <i className="waves-effect material-icons tooltipped">
+                <i className="waves-effect material-icons tooltipped">
                     edit
-                  </i>
+                </i>
               </a> 
             </td>
           </tr>
-        )
+        );
       })
-    )
+    );
 
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
@@ -137,18 +137,18 @@ class getResourceTypeList extends Component {
             className="grey-text text-darken-3 "
             onClick={ 
               () => { 
-                if (this.state.filter_s == "name+asc"){
-                  document.getElementById("ascNameIcon").style.display = "none"
-                  document.getElementById("descNameIcon").style.display = "inline-block"                    
+                if (this.state.filter_s == 'name+asc'){
+                  document.getElementById('ascNameIcon').style.display = 'none';
+                  document.getElementById('descNameIcon').style.display = 'inline-block';                    
                 } 
                 else{
-                  document.getElementById("descNameIcon").style.display = "none"               
-                  document.getElementById("ascNameIcon").style.display = "inline-block"
+                  document.getElementById('descNameIcon').style.display = 'none';               
+                  document.getElementById('ascNameIcon').style.display = 'inline-block';
                 }
                   
                 this.setState({
-                  ['filter_s']: this.state.filter_s == "name+asc" ? 'name+desc' : "name+asc"
-                }, this.handleFilterSubmit.bind(this,true))
+                  ['filter_s']: this.state.filter_s == 'name+asc' ? 'name+desc' : 'name+asc'
+                }, this.handleFilterSubmit.bind(this,true));
               }
             }
           >
@@ -169,18 +169,18 @@ class getResourceTypeList extends Component {
             className="grey-text text-darken-3 "
             onClick={ 
               () => { 
-                if (this.state.filter_s == "mobile+asc"){
-                  document.getElementById("ascMobileIcon").style.display = "none"
-                  document.getElementById("descMobileIcon").style.display = "inline-block"                    
+                if (this.state.filter_s == 'mobile+asc'){
+                  document.getElementById('ascMobileIcon').style.display = 'none';
+                  document.getElementById('descMobileIcon').style.display = 'inline-block';                    
                 } 
                 else{
-                  document.getElementById("descMobileIcon").style.display = "none"               
-                  document.getElementById("ascMobileIcon").style.display = "inline-block"
+                  document.getElementById('descMobileIcon').style.display = 'none';               
+                  document.getElementById('ascMobileIcon').style.display = 'inline-block';
                 }
                   
                 this.setState({
-                  ['filter_s']: this.state.filter_s == "mobile+asc" ? 'mobile+desc' : "mobile+asc"
-                }, this.handleFilterSubmit.bind(this,true))
+                  ['filter_s']: this.state.filter_s == 'mobile+asc' ? 'mobile+desc' : 'mobile+asc'
+                }, this.handleFilterSubmit.bind(this,true));
               }
             }
           >
@@ -204,18 +204,18 @@ class getResourceTypeList extends Component {
             className="grey-text text-darken-3 "
             onClick={ 
               () => { 
-                if (this.state.filter_s == "city_hall_id+asc"){
-                  document.getElementById("ascCityHallIcon").style.display = "none"
-                  document.getElementById("descCityHallIcon").style.display = "inline-block"                    
+                if (this.state.filter_s == 'city_hall_id+asc'){
+                  document.getElementById('ascCityHallIcon').style.display = 'none';
+                  document.getElementById('descCityHallIcon').style.display = 'inline-block';                    
                 } 
                 else{
-                  document.getElementById("descCityHallIcon").style.display = "none"               
-                  document.getElementById("ascCityHallIcon").style.display = "inline-block"
+                  document.getElementById('descCityHallIcon').style.display = 'none';               
+                  document.getElementById('ascCityHallIcon').style.display = 'inline-block';
                 }
                   
                 this.setState({
-                  ['filter_s']: this.state.filter_s == "city_hall_id+asc" ? 'city_hall_id+desc' : "city_hall_id+asc"
-                }, this.handleFilterSubmit.bind(this,true))
+                  ['filter_s']: this.state.filter_s == 'city_hall_id+asc' ? 'city_hall_id+desc' : 'city_hall_id+asc'
+                }, this.handleFilterSubmit.bind(this,true));
               }
             }
           >
@@ -232,7 +232,7 @@ class getResourceTypeList extends Component {
 
         <th></th>
       </tr>
-    )
+    );
 
     return (
       <table className={styles['table-list']}>
@@ -243,8 +243,8 @@ class getResourceTypeList extends Component {
           {data}
         </tbody>
       </table>
-    )
-	}
+    );
+  }
 
   handleInputFilterChange(event) {
     const target = event.target;
@@ -253,7 +253,7 @@ class getResourceTypeList extends Component {
 
     this.setState({
       [name]: value
-    })
+    });
   }
 
   filterResourceType() {
@@ -292,52 +292,52 @@ class getResourceTypeList extends Component {
             FILTRAR
         </button>
       </div>
-    )
+    );
   }
 
   handleFilterSubmit(sort_only) {
-    var name
-    var description
+    var name;
+    var description;
     if(sort_only) {
-      name = this.state.last_fetch_name
-      description = this.state.last_fetch_description
+      name = this.state.last_fetch_name;
+      description = this.state.last_fetch_description;
     } else {
-      name = this.state.filter_name
-      description = this.state.filter_description
+      name = this.state.filter_name;
+      description = this.state.filter_description;
     }
-    name = name.replace(/\s/g,'+')
-    description = description.replace(/\s/g,'+')
+    name = name.replace(/\s/g,'+');
+    description = description.replace(/\s/g,'+');
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `resource_types`;
-    const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}&q[s]=${this.state.filter_s}`
-    console.log(`${apiUrl}/${collection}?${params}`)
+    const collection = 'resource_types';
+    const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}&q[s]=${this.state.filter_s}`;
+    console.log(`${apiUrl}/${collection}?${params}`);
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get",
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
     }).then(parseResponse).then(resp => {
       this.setState({
         resourceTypes: resp,
         last_fetch_name: name,
         last_fetch_description: description
-      })
+      });
     });
   }
 
-	newResourceTypeButton() {
-		return (
-			<button 
+  newResourceTypeButton() {
+    return (
+      <button 
         onClick={() =>
-          browserHistory.push({ pathname: `/resource_types/new`}) 
+          browserHistory.push({ pathname: '/resource_types/new'}) 
         }
         className="btn waves-effect btn button-color" 
         name="anterior" 
         type="submit">
           CADASTRAR NOVO TIPO DE RECURSO
       </button>
-		)
-	}
+    );
+  }
 
   render() {
     return (
@@ -350,18 +350,18 @@ class getResourceTypeList extends Component {
 	      	</Col>
 	    </Row>
 	  </main>
-    )
+    );
   }
 }
 
 const mapStateToProps = (state) => {
-  const user = state.get('user').getIn(['userInfo'])
+  const user = state.get('user').getIn(['userInfo']);
   return {
     user
-  }
-}
+  };
+};
 
 const ResourceTypeList = connect(
   mapStateToProps
-)(getResourceTypeList)
-export default ResourceTypeList
+)(getResourceTypeList);
+export default ResourceTypeList;
