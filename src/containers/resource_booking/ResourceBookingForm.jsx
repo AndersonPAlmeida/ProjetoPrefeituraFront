@@ -25,7 +25,7 @@ class getResourceForm extends Component {
       city_halls:[],
       resource_types: [],
       professionals:[],
-      resource: [],
+      resource: '',
       pickable_resource:[],
       current_resource:{},
       resource_types_id:'', 
@@ -33,8 +33,6 @@ class getResourceForm extends Component {
       service_place_and_professionals:[],
       service_place:{},
       dates:[],
-      time_start:'',
-      time_end:'',
       citizens:[],
       selected_citizen:0,
       selected_shift:0
@@ -52,6 +50,7 @@ class getResourceForm extends Component {
     this.getResourceType(role);
     this.getResource(role);
     this.getCitizens(role);
+    this.getExtraDetails(role);
 
     if(this.props.current_role.role != 'adm_local'){
       this.getCityHall(role);
@@ -95,6 +94,61 @@ class getResourceForm extends Component {
         self.setState({ city_halls: resp.city_halls });
       });
     }
+
+  }
+
+  getProfessionalNameResource(id, role) {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `resource_shift_professional_responsible/${id}`;
+    const params = `permission=${role}`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      self.setState({ professional_name_resource: resp.professional_name });
+    });
+  }
+
+  getDetails(id, role) {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `resource_details/${id}`;
+    const params = `permission=${role}`;
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      self.setState({ service_place: resp.service_place });
+    });
+  }
+
+  getExtraDetails(role) {
+    var self = this;
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'resource_bookings_get_extra_info/';
+    const params = `permission=${role}&view=${role != 'citizen' ? 'professional' : 'citizen'}`;
+
+    var id = Number(this.props.fetch_collection.split('/')[1]);
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      let fetch_response = resp.find(r => r.resource_booking_id === id);
+      let resource = fetch_response.resource;
+      this.getProfessionalNameResource(Number(resource.professional_responsible_id),role);
+      this.getDetails(resource.id, role);
+      self.setState({ 
+        resource_bookings_details: fetch_response,
+        resource: fetch_response.resource
+      });
+    });
   }
 
   getServicePlaceWithProfessional(role) {
@@ -770,117 +824,45 @@ class getResourceForm extends Component {
       </Row>);
   }
   renderFormEdit(){    
-    var resource_id = undefined;
-    var resource = undefined;
-    var resource_type = undefined;
-    var listSpProf = this.getProfessionalListForServicePlace();
-    // var time = this.transformTime();
-    if(this.state.resource_booking.resource_id){
-      resource_id = this.state.resource_booking.resource_id;
-    }
-    if (resource_id)
-      resource = this.state.resource.find(r => resource_id == r.id);
-    if (resource){
-      resource_type = this.state.resource_types.find(rt => resource.resource_types_id == rt.id);      
-    }
+    console.log(this.props);
+    console.log(this.state);
     return(
       <Row className='first-line'>
         <Col s={12} m={12} l={12}>
-      
-          <div className="field-input" id="no-padding">
-            <h6>Tipo de recurso*:</h6>  
-            {resource_type ? resource_type.name : ''}
+          <div>
+            <h6><b>Horário inicial:</b></h6>
+            {this.formatTime(this.props.data.booking_start_time)}
+          </div> 
+          <div>
+            <h6><b>Horário final:</b></h6>
+            {this.formatTime(this.props.data.booking_end_time)}
+          </div> 
+          <div>
+            <h6><b>Motivo:</b></h6>
+            {this.props.data.booking_reason}
           </div>
-
-          <div className="field-input" id="no-padding">
-            <h6>Recurso*:</h6>
-            {resource ? this.formatResourceDisplay(resource) : ''}
-          </div>
-
-          <div className="field-input" id="no-padding">
-            <h6>Profissional responsável:</h6>
-            {resource ? this.pickProfessionalEdit(listSpProf, resource.service_place_id) : ''}
-          </div>               
- 
-
-          <div className="field-input" id="no-padding">
-            <h6>Situação:</h6>
-            <div>
-              <Input s={6} m={32} l={12} 
-                type='select'
-                name='active'
-                value={Number(this.state.resource_booking.active)}
-                onChange={this.handleInputResourceChange.bind(this)} 
-              >
-                <option key={0} value={1}>Ativo</option>
-                <option key={1} value={0}>Inativo</option>
-              </Input>
-            </div>
-          </div>
-
-          <Collection>
-            <CollectionItem style={{textAlign:'center', fontSize:'large'}}>
-              <b>ATENÇÃO:</b> Os horários serão aplicados para todos os dias selecionados
-            </CollectionItem>
-          </Collection>
-
-          <Row>
-            <Col s={12} m={6}>
-              <div style={{marginBottom:20}}>
-                <h6 style={{marginBottom:30}}>Escolha as datas das escalas*:</h6>
-                <Calendar save_days={this.save_days} order='asc' markedDays={this.state.dates} singleDay={true}/>
-              </div>
-            </Col>
-
-            <Col s={12} m={6} id='time-shift'>                        
-              <div className="" >
-                <h6 style={{marginBottom:30}}>Escolha o horário inicial da(s) escala(s)*:</h6>
-                <label>
-                  <input 
-                    type="time" 
-                    id='time-select' 
-                    name="time_start" 
-                    value={resource ? this.state.time_start: undefined} 
-                    onChange={this.handleInputResourceChange.bind(this)} 
-                  />
-                </label>
-                <span>h</span>
-              </div>
-
-              <div className="" >
-                <h6 style={{marginBottom:30}}>Escolha o horário final da(s) escala(s)*:</h6>
-                <label>
-                  <input 
-                    type="time" 
-                    id='time-select' 
-                    name="time_end" 
-                    value={resource ? this.state.time_end : undefined}  
-                    onChange={this.handleInputResourceChange.bind(this)} 
-                  />
-                </label>
-                <span>h</span>
-              </div>
-
-            </Col>
-          </Row>
-
-          <div id="field-textarea">
-            <h6>Nota:</h6>
-            <label>
-              <textarea  
-                className='input-field materialize-textarea black-text'
-                name="notes" 
-                placeholder="Adicione uma anotação"
-                value={this.state.resource_booking.notes} 
-                onChange={this.handleInputResourceChange.bind(this)} 
-              />
-            </label>
-          </div>
-      
-          <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
+          <div>
+            <h6><b>Tipo de recurso:</b></h6>
+            {this.state.resource_bookings_details ? this.state.resource_bookings_details.resource_type_name : ''}
+          </div> 
+          <div>
+            <h6><b>Recurso: </b></h6>
+            {this.state.resource != '' ? this.formatResourceDisplay(this.state.resource) : ''}
+          </div> 
+          <div>
+            <h6><b>Solicitante:</b></h6>
+            {this.state.resource_bookings_details ? this.state.resource_bookings_details.citizen_name : ''}
+          </div>  
+          <div>
+            <h6><b>Status Atual:</b></h6>
+            {this.props.data.status}
+          </div>  
+           
         </Col>
-      </Row>);
+      </Row>
+    );
   }
+  
   render() {
     return (
       <main>
