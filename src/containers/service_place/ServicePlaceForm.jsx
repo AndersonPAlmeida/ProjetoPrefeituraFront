@@ -36,11 +36,12 @@ class getServicePlaceForm extends Component {
         neighborhood: '',
         password_confirmation: "",
         state_abbreviation: '',
-        update_checkbox: 0,
         city_hall: {
-          name: ''
+          name: '',
+          service_types: []
         }
       },
+      update_checkbox: 0,
       phonemask: "(11) 1111-11111",
     };
   }
@@ -51,13 +52,13 @@ class getServicePlaceForm extends Component {
       self.setState({ service_place: this.props.data })
       if(this.props.data.cep) {
         this.updateAddress.bind(this)(this.props.data.cep.replace(/(\.|-|_)/g,''))
-        this.setState({ aux: update(this.state.aux, {update_checkbox: {$set: 1} })})
       }
     }
   }
 
   componentDidUpdate() {
-    if(this.state.aux.update_checkbox) {
+    /* check true for all service types that belongs to the service place */
+    if(this.state.update_checkbox) {
       this.state.aux.city_hall.service_types.map((service_type, idx) => {
         for(var i = 0; i < this.state.service_place.service_types.length; i++) {
           if (this.state.service_place.service_types[i].id == service_type.id) {
@@ -69,17 +70,20 @@ class getServicePlaceForm extends Component {
           }
         }
       })
-      this.setState({ aux: update(this.state.aux, {update_checkbox: {$set: 0} })})
+      this.setState({ update_checkbox: 0 })
     }
   }
 
   handleInputServicePlaceChange(event) {
     const target = event.target;
     const value = target.value;
+    const name = target.name
 
-    this.setState({
-      service_place: update(this.state.service_place, { [name]: {$set: value} })
-    })
+    if(target.validity.valid) {
+      this.setState({
+        service_place: update(this.state.service_place, { [name]: {$set: value} })
+      })
+    }
   }
 
   handleCheckboxChange(event) {
@@ -108,19 +112,19 @@ class getServicePlaceForm extends Component {
           service_type['checked'] = false
         })
         this.setState(
-        { aux: update(this.state.aux,
+        { 
+          update_checkbox: 1,
+          service_place: update(this.state.service_place,
+          {
+            city_hall_id: {$set: resp.city_halls[0].id}
+          }),
+          aux: update(this.state.aux,
           {
             address: {$set: resp.address},
             neighborhood: {$set: resp.neighborhood},
             city_name: {$set: resp.city_name},
             state_abbreviation: {$set: resp.state_name},
             city_hall: {$set: resp.city_halls[0]}
-          })
-        });
-        this.setState(
-        { service_place: update(this.state.service_place,
-          {
-            city_hall_id: {$set: resp.city_halls[0].id}
           })
         });
       }
@@ -131,37 +135,53 @@ class getServicePlaceForm extends Component {
     })
   }
 
+  checkEmptyFields(obj, fields) {
+    let errors = []
+    for (var i = 0; i < fields.length; i++) {
+      if(!obj[fields[i].id])
+        errors.push(`Campo ${fields[i].name} é obrigatório`)
+    }
+    return errors;
+  }
+
+  checkErrors(formData) {
+    let errors = []
+    let form_mandatory =
+      [
+        { id: 'name', name: 'Nome' },
+        { id: 'cep', name: 'CEP' },
+        { id: 'address_number', name: 'Número' }
+      ]
+    errors = this.checkEmptyFields(formData, form_mandatory)
+    return errors;
+  }
+
+  generateBody(formData) {
+    if(formData['phone1'])
+      formData['phone1'] = formData['phone1'].replace(/[()_\-\s]/gi, '');
+    if(formData['phone2'])
+      formData['phone2'] = formData['phone2'].replace(/[()_\-\s]/gi, '');
+    formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
+    let service_types = [];
+    this.state.aux.city_hall.service_types.map((service_type) => {
+      if(service_type.checked)
+        service_types.push(service_type.id)
+    })
+    formData['service_types'] = service_types
+    let fetch_body = {}
+    fetch_body['service_place'] = formData
+    return fetch_body
+  }
+
   handleSubmit() {
-    let errors = [];
-    let formData = {};
-    formData = this.state.service_place;
-    if(!formData['name'])
-      errors.push("Campo Nome é obrigatório.");
-    if(!formData['cep'])
-      errors.push("Campo CEP é obrigatório.");
+    let formData = this.state.service_place;
+    let errors = this.checkErrors.bind(this)(formData);
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
-      if(formData['phone1'])
-        formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
-      if(formData['phone2'])
-        formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
-      formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
-      let service_types = [];
-      this.state.aux.city_hall.service_types.map((service_type) => {
-        if(service_type.checked)
-          service_types.push(service_type.id)
-      })
-      formData['service_types'] = service_types
-      let fetch_body = {}
-      if(this.props.is_edit) {
-        fetch_body['service_place'] = formData
-      }
-      else {
-        fetch_body['service_place'] = formData
-      }
+      let fetch_body = this.generateBody.bind(this)(formData)
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
@@ -224,211 +244,212 @@ class getServicePlaceForm extends Component {
   render() {
     return (
       <main>
-      	<Row>
-	        <Col s={12}>
-            <div className='card'>
-              <div className='card-content'>
+      	<Row s={12}>
+          <div className='card'>
+            <div className='card-content'>
+              <Row></Row>
+              <Row s={12}>
                 {this.props.is_edit ?
                   <h2 className="card-title">Alterar local de atendimento {this.props.data.name}</h2> 
                   :
                   <h2 className="card-title">Cadastrar local de atendimento</h2> 
                 }
-                <Row className='first-line'>
-                  <Col s={12} m={12} l={6}>
-                    <div className="field-input" >
-                      <h6>Situação:</h6>
-                      <div>
-                        <Input s={6} m={32} l={6} 
-                               type='select'
-                               name='active'
-                               value={this.state.service_place.active}
-                               onChange={this.handleInputServicePlaceChange.bind(this)} 
-                        >
-                          <option key={0} value={true}>Ativo</option>
-                          <option key={1} value={false}>Inativo</option>
-                        </Input>
-                      </div>
+              </Row>
+              <Row s={12}>
+                <Col s={12} m={6}>
+                  <Row></Row>
+                  <Row s={6}>
+                  <h6>Situação*:</h6>
+                    <div>
+                      <Input s={6} m={32} l={6} 
+                             type='select'
+                             name='active'
+                             value={this.state.service_place.active}
+                             onChange={this.handleInputServicePlaceChange.bind(this)} 
+                      >
+                        <option key={0} value={true}>Ativo</option>
+                        <option key={1} value={false}>Inativo</option>
+                      </Input>
                     </div>
-                    <div className="field-input" >
-                      <h6>Nome:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="name" 
-                          value={this.state.service_place.name} 
-                          onChange={this.handleInputServicePlaceChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>CEP:</h6>
-                      <label>
-                        <MaskedInput
-                          type="text"
-                          className='input-field'
-                          mask="11111-111" name="cep"
-                          value={this.state.service_place.cep}
-                          onChange=
-                          {
-                            (event) => {
-                              this.handleInputServicePlaceChange.bind(this)(event)
-                              var cep = event.target.value.replace(/(\.|-|_)/g,'')
-                              if(cep.length == 8)
-                                this.updateAddress.bind(this)(cep)
-                            }
+                  </Row>
+
+                  <Row s={6}>
+                    <h6>Nome*:</h6>
+                    <label>
+                      <input 
+                        type="text" 
+                        name="name" 
+                        value={this.state.service_place.name} 
+                        onChange={this.handleInputServicePlaceChange.bind(this)} 
+                      />
+                    </label>
+                  </Row>
+
+                  <Row s={6}>
+                    <h6>CEP*:</h6>
+                    <label>
+                      <MaskedInput
+                        type="text"
+                        mask="11111-111" name="cep"
+                        value={this.state.service_place.cep}
+                        onChange=
+                        {
+                          (event) => {
+                            this.handleInputServicePlaceChange.bind(this)(event)
+                            var cep = event.target.value.replace(/(\.|-|_)/g,'')
+                            if(cep.length == 8)
+                              this.updateAddress.bind(this)(cep)
                           }
-                        />
-                      </label>
-                    </div>
+                        }
+                      />
+                    </label>
+                  </Row>
 
-                    <div className="field-input" >
-                      <h6>Prefeitura:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="city_hall_name"
-                          value={this.state.aux.city_hall.name}
-                          disabled />
-                      </label>
-                    </div>
+                  <Row s={6}>
+                    <h6>Prefeitura*:</h6>
+                    <label>
+                      <input
+                        type="text"
+                        name="city_hall_name"
+                        value={this.state.aux.city_hall.name}
+                        disabled />
+                    </label>
+                  </Row>
 
-                    <div className="field-input" >
-                      <h6>Estado do endereço:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="state_abbreviation"
-                          value={this.state.aux.state_abbreviation}
-                          disabled />
-                      </label>
-                    </div>
+                  <Row s={6}>
+                    <h6>Estado do endereço*:</h6>
+                    <label>
+                      <input
+                        type="text"
+                        name="state_abbreviation"
+                        value={this.state.aux.state_abbreviation}
+                        disabled />
+                    </label>
+                  </Row>
 
-                    <div className="field-input" >
-                      <h6>Munícipio:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="city"
-                          value={this.state.aux.city_name}
-                          disabled
-                        />
-                      </label>
-                    </div>
+                  <Row s={6}>
+                    <h6>Munícipio*:</h6>
+                    <label>
+                      <input
+                        type="text"
+                        name="city"
+                        value={this.state.aux.city_name}
+                        disabled
+                      />
+                    </label>
+                  </Row>
 
-                    <div className="field-input" >
-                      <h6>Bairro:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="neighborhood"
-                          value={this.state.aux.neighborhood}
-                        />
-                      </label>
-                    </div>
+                  <Row s={6}>
+                    <h6>Bairro*:</h6>
+                    <label>
+                      <input
+                        type="text"
+                        className='input-field'
+                        name="neighborhood"
+                        value={this.state.aux.neighborhood}
+                      />
+                    </label>
+                  </Row>
 
-                    <div className="field-input" >
-                      <h6>Número:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="address_number"
-                          value={this.state.service_place.address_number}
-                          onChange={this.handleInputServicePlaceChange.bind(this)}
-                        />
-                      </label>
-                    </div>
+                  <Row s={6}>
+                    <h6>Número*:</h6>
+                    <label>
+                      <input
+                        type="text"
+                        className='input-field'
+                        name="address_number"
+                        pattern="[0-9]*"
+                        value={this.state.service_place.address_number}
+                        onChange={this.handleInputServicePlaceChange.bind(this)}
+                      />
+                    </label>
+                  </Row>
 
-                    <div className="field-input" >
-                      <h6>Complemento:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="address_complement"
-                          value={this.state.service_place.address_complement}
-                          onChange={this.handleInputServicePlaceChange.bind(this)} />
-                      </label>
-                    </div>
+                  <Row s={6}>
+                    <h6>Complemento:</h6>
+                    <label>
+                      <input
+                        type="text"
+                        className='input-field'
+                        name="address_complement"
+                        value={this.state.service_place.address_complement}
+                        onChange={this.handleInputServicePlaceChange.bind(this)} />
+                    </label>
+                  </Row>
+                </Col>
 
-                    <div className="field-input" >
-                        {this.pickServiceTypes()}
-                    </div>
+                <Col s={12} m={6}>
+                  <Row></Row>
 
-                    <div className="field-input">
-                      <h6>Telefone 1:</h6>
-                      <label>
-                        <MaskedInput
-                          mask={this.state.phonemask}
-                          type="text"
-                          className='input-field'
-                          name="phone1"
-                          value={this.state.service_place.phone1}
-                          onChange={
-                            (event) => {
-                              this.handleInputServicePlaceChange.bind(this)(event)
-                              if(event.target.value.replace(/(_|-|(|))/g,'').length == 13)
-                                this.setState({phonemask: "(11) 11111-1111"})
-                              else
-                                this.setState({phonemask: "(11) 1111-11111"})
-                            }
+                  <Row s={6}>
+                    {this.pickServiceTypes()}
+                  </Row>
+
+                  <Row s={6}>
+                    <h6>Telefone 1:</h6>
+                    <label>
+                      <MaskedInput
+                        mask={this.state.phonemask}
+                        type="text"
+                        name="phone1"
+                        value={this.state.service_place.phone1}
+                        onChange={
+                          (event) => {
+                            this.handleInputServicePlaceChange.bind(this)(event)
+                            if(event.target.value.replace(/(_|-|(|))/g,'').length == 13)
+                              this.setState({phonemask: "(11) 11111-1111"})
+                            else
+                              this.setState({phonemask: "(11) 1111-11111"})
                           }
-                        />
-                      </label>
-                    </div>
+                        }
+                      />
+                    </label>
+                  </Row>
 
-                    <div className="field-input">
-                      <h6>Telefone 2:</h6>
-                      <label>
-                        <MaskedInput
-                          mask={this.state.phonemask}
-                          type="text"
-                          className='input-field'
-                          name="phone2"
-                          value={this.state.service_place.phone2}
-                          onChange={this.handleInputServicePlaceChange.bind(this)}
-                        />
-                      </label>
-                    </div>
+                  <Row s={6}>
+                    <h6>Telefone 2:</h6>
+                    <label>
+                      <MaskedInput
+                        mask={this.state.phonemask}
+                        type="text"
+                        name="phone2"
+                        value={this.state.service_place.phone2}
+                        onChange={this.handleInputServicePlaceChange.bind(this)}
+                      />
+                    </label>
+                  </Row>
 
-                    <div className="field-input">
-                      <h6>E-mail:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="email"
-                          value={this.state.service_place.email}
-                          onChange={this.handleInputServicePlaceChange.bind(this)}
-                        />
-                      </label>
-                    </div>
+                  <Row s={6}>
+                    <h6>E-mail:</h6>
+                    <label>
+                      <input
+                        type="text"
+                        name="email"
+                        value={this.state.service_place.email}
+                        onChange={this.handleInputServicePlaceChange.bind(this)}
+                      />
+                    </label>
+                  </Row>
 
-                    <div className="field-input">
-                      <h6>Site:</h6>
-                      <label>
-                        <input
-                          type="text"
-                          className='input-field'
-                          name="url"
-                          value={this.state.service_place.url}
-                          onChange={this.handleInputServicePlaceChange.bind(this)}
-                        />
-                      </label>
-                    </div>
+                  <Row s={6}>
+                    <h6>Site:</h6>
+                    <label>
+                      <input
+                        type="text"
+                        className='input-field'
+                        name="url"
+                        value={this.state.service_place.url}
+                        onChange={this.handleInputServicePlaceChange.bind(this)}
+                      />
+                    </label>
+                  </Row>
 
-                   <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
-                  </Col>
-                </Row>
-                {this.confirmButton()}
-              </div>
+                  <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
+                </Col>
+              </Row>
+              {this.confirmButton()}
             </div>
-          </Col>
+          </div>
         </Row>
       </main>
     )

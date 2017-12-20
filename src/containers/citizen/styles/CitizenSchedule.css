@@ -48,8 +48,8 @@
   text-align: center;
 }
 
-.description-column {
-  width: 30%
+.div-table {
+  overflow-x: scroll;
 }
 
 .button-color {

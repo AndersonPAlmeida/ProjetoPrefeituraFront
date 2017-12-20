@@ -10,7 +10,11 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
          SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
          ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
          ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, ProfessionalIndex,
-         OccupationCreate,OccupationList,OccupationEdit,OccupationShow
+         ProfessionalList, ProfessionalEdit, ProfessionalShow, ProfessionalCreate,
+         ProfessionalSearch, ProfessionalSchedule, ProfessionalUserList, 
+         ProfessionalUserEdit, ProfessionalUserCreate, ProfessionalUserShow,
+         ProfessionalUserDependantEdit, ProfessionalUserDependantCreate, 
+         ProfessionalUserDependantShow,         OccupationCreate,OccupationList,OccupationEdit,OccupationShow
        } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -102,7 +106,20 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="service_types/:service_type_id/edit" component={UserIsAuthenticated(ServiceTypeEdit)} />
         <Route path="service_types/new" component={UserIsAuthenticated(ServiceTypeCreate)} />
         <Route path="service_types/:service_type_id" component={UserIsAuthenticated(ServiceTypeShow)} />
+        <Route path="schedules" component={UserIsAuthenticated(ProfessionalSchedule)} />
+        <Route path="professionals/users/:citizen_id/dependants/new" component={UserIsAuthenticated(ProfessionalUserDependantCreate)} />
+        <Route path="professionals/users/:citizen_id/dependants/:dependant_id/edit" component={UserIsAuthenticated(ProfessionalUserDependantEdit)} />
+        <Route path="professionals/users/:citizen_id/dependants/:dependant_id" component={UserIsAuthenticated(ProfessionalUserDependantShow)} />
+        <Route path="professionals/users" component={UserIsAuthenticated(ProfessionalUserList)} />
+        <Route path="professionals/users/new" component={UserIsAuthenticated(ProfessionalUserCreate)} />
+        <Route path="professionals/users/:citizen_id/edit" component={UserIsAuthenticated(ProfessionalUserEdit)} />
+        <Route path="professionals/users/:citizen_id" component={UserIsAuthenticated(ProfessionalUserShow)} />
         <Route path="professionals/shifts" component={UserIsAuthenticated(ProfessionalIndex)} />
+        <Route path="professionals" component={UserIsAuthenticated(ProfessionalList)} />
+        <Route path="professionals/new" component={UserIsAuthenticated(ProfessionalCreate)} />
+        <Route path="professionals/search" component={UserIsAuthenticated(ProfessionalSearch)} />
+        <Route path="professionals/:professional_id" component={UserIsAuthenticated(ProfessionalShow)} />
+        <Route path="professionals/:professional_id/edit" component={UserIsAuthenticated(ProfessionalEdit)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

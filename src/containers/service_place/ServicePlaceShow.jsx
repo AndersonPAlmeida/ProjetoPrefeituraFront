@@ -94,7 +94,7 @@ class getServicePlaceShow extends Component {
     return (
     <div className='card'>
           <div className='card-content'>
-            <h2 className='card-title h2-title-home'> Informações do Setor: </h2>
+            <h2 className='card-title h2-title-home'> Informações do Local de Atendimento: </h2>
             <p> 
               <b>Situação: </b>
               {this.state.service_place.active ? 'Ativo' : 'Inativo'}
@@ -109,11 +109,11 @@ class getServicePlaceShow extends Component {
             </p>
             <p>
               <b>CEP: </b>
-              {this.state.service_place.city_hall_name}
+              {this.state.service_place.cep}
             </p>
             <p>
               <b>Bairro: </b>
-              {this.state.service_place.neighborhood}
+              {this.state.service_place.address.neighborhood}
             </p>
             <p>
               <b>Endereço: </b>

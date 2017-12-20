@@ -1,22 +1,28 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input, Pagination } from 'react-materialize'
-import styles from './styles/DependantList.css'
+import styles from './styles/ProfessionalUserList.css'
 import 'react-day-picker/lib/style.css'
-import { port, apiHost, apiPort, apiVer } from '../../../config/env';
-import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
-import {fetch} from "../../redux-auth";
+import { port, apiHost, apiPort, apiVer } from '../../../../config/env';
+import {parseResponse} from "../../../redux-auth/utils/handle-fetch-response";
+import {fetch} from "../../../redux-auth";
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import strftime from 'strftime';
+import MaskedInput from 'react-maskedinput';
 
-class getDependantList extends Component {
+class getProfessionalUserList extends Component {
   constructor(props) {
       super(props)
       this.state = {
-          dependants: [],
+          city_halls: [],
+          citizens: [],
           filter_name: '',
+          filter_cpf: '',
+          filter_city_hall: '',
           last_fetch_name: '',
+          last_fetch_cpf: '',
+          last_fetch_city_hall: '',
           filter_s: '',
           num_entries: 0,
           current_page: 1
@@ -26,8 +32,8 @@ class getDependantList extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/dependants`;
     const params = `permission=${this.props.user.current_role}`
+    var collection = `citizens`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -35,22 +41,36 @@ class getDependantList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       self.setState({ 
-                      dependants: resp.entries,
+                      citizens: resp.entries,
                       num_entries: resp.num_entries
                     })
     });
+
+    if(this.props.current_role && this.props.current_role.role == 'adm_c3sl') {
+      collection = `forms/citizen_index`
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        self.setState({ 
+                        city_halls: resp.city_halls
+                      })
+      });
+    }
   }
 
   mainComponent() {
     return (
       <div className='card'>
         <div className='card-content'>
-          <h2 className='card-title h2-title-home'> Dependente </h2>
-          {this.filterDependant()}
-          {this.state.dependants.length > 0 ? this.tableList() : '- Nenhum dependente encontrado'}
+          <h2 className='card-title h2-title-home'> Profissional </h2>
+          {this.filterCitizen()}
+          {this.state.citizens.length > 0 ? this.tableList() : 'Nenhum cidadão encontrado'}
         </div>
         <div className="card-action">
-          {this.newDependantButton()}
+          {this.newCitizenButton()}
         </div>
       </div>
       )
@@ -94,38 +114,47 @@ class getDependantList extends Component {
 
 	tableList() {
     const data = (
-      this.state.dependants.map((dependant) => {
+      this.state.citizens.map((citizen) => {
         return (
           <tr>
             <td>
-              {dependant.name}
+              {citizen.name}
             </td>
             <td>
-              {strftime.timezone('+0000')('%d/%m/%Y', new Date(dependant.birth_date))}
+              {citizen.birth_date}
             </td>
             <td>
-              {this.formatCPF(dependant.cpf)}
+              {this.formatCPF(citizen.cpf)}
+            </td>
+            <td>
+              {citizen.num_of_dependants}
             </td>
             <td>
               <a className='back-bt waves-effect btn-flat' 
                 href='#' 
                 onClick={ () => 
-                  browserHistory.push(`/dependants/${dependant.id}`) 
+                  browserHistory.push(`/professionals/users/${citizen.id}`) 
                 }>
-                  <i className="waves-effect material-icons tooltipped">
-                    visibility
-                  </i>
-              </a>
+
+                <i className="waves-effect material-icons tooltipped">
+                  visibility
+                </i>
+              </a> 
             </td>
             <td>
               <a className='back-bt waves-effect btn-flat' 
                  href='#' 
-                 onClick={ () => 
-                 browserHistory.push(`/dependants/${dependant.id}/edit`) 
-                }>
-                  <i className="waves-effect material-icons tooltipped">
-                    edit
-                  </i>
+                 onClick={(e) => 
+                   {
+                     e.preventDefault()
+                     browserHistory.push({
+                       pathname: `/professionals/users/${citizen.id}/edit`
+                     }) 
+                   }
+                 }>
+                <i className="waves-effect material-icons tooltipped">
+                  edit
+                </i>
               </a> 
             </td>
           </tr>
@@ -136,22 +165,25 @@ class getDependantList extends Component {
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
       <tr>
-        <th>{this.sortableColumn.bind(this)('Nome','citizen_name')}</th>
-        <th>{this.sortableColumn.bind(this)('Data de Nascimento','citizen_birth_date')}</th>
-        <th>{this.sortableColumn.bind(this)('CPF','citizen_cpf')}</th>
+        <th>{this.sortableColumn.bind(this)('Nome','name')}</th>
+        <th>{this.sortableColumn.bind(this)('Data de nascimento','birth_date')}</th>
+        <th>{this.sortableColumn.bind(this)('CPF','cpf')}</th>
+        <th>Dependentes</th>
         <th></th>
         <th></th>
       </tr>
     )
+
     var num_items_per_page = 25
     var num_pages = Math.ceil(this.state.num_entries/num_items_per_page)
+
     return (
       <div>
         <p className={styles['description-column']}>
           Mostrando
           {
-            num_pages != 0
-              ?
+            num_pages != 0 
+              ? 
                 this.state.current_page == num_pages
                   ?
                     this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `
@@ -159,25 +191,26 @@ class getDependantList extends Component {
                     ` ${num_items_per_page} `
               :
                 ' 0 '
+              
           }
           de {this.state.num_entries} registros
         </p>
         <br />
-        <div className='div-table'>
-          <table className={styles['table-list']}>
-            <thead>
-              {fields}
-            </thead>
-            <tbody>
-              {data}
-            </tbody>
-          </table>
-        </div>
+          <div className='div-table'> 
+            <table className={styles['table-list']}>
+              <thead>
+                {fields}
+              </thead>
+              <tbody>
+                {data}
+              </tbody>
+            </table>
+          </div>
         <br />
         <Pagination
           value={this.state.current_page}
           onSelect={ (val) =>
-            { 
+            {
               this.setState(
                 {
                   current_page: val
@@ -200,29 +233,96 @@ class getDependantList extends Component {
     const value = target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
-    })
+    if(target.validity.valid) {
+      this.setState({
+        [name]: value
+      })
+    }
+  }
+  
+  pickName() {
+    return (
+      <Col s={12} m={3}>
+        <div>
+          <h6>Nome:</h6>
+          <label>
+            <input
+              type="text"
+              name="filter_name"
+              value={this.state.filter_name}
+              onChange={this.handleInputFilterChange.bind(this)}
+            />
+          </label>
+        </div>
+      </Col>
+    )
   }
 
-  filterDependant() {
+  pickCPF () {
+    return (
+      <Col s={12} m={3}>
+        <div className="" >
+          <h6>CPF:</h6>
+          <label>
+            <MaskedInput
+              type="text"
+              mask="111.111.111-11"
+              name="filter_cpf"
+              value={this.state.filter_cpf}
+              onChange={this.handleInputFilterChange.bind(this)}
+            />
+          </label>
+        </div>
+      </Col>
+    )
+  }
+
+  pickCityHall() {
+    const cityHallList = (
+      this.state.city_halls.map((city_hall) => {
+        return (
+          <option value={city_hall.city_id}>{city_hall.name}</option>
+        )
+      })
+    )
+    return (
+      <Col s={12} m={3}>
+        <div>
+          <h6>Prefeitura:</h6>
+          <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+            onChange={
+              (event) => {
+                var selected_city_hall = event.target.value
+                if(this.state.filter_city_hall != selected_city_hall) {
+                  this.setState({
+                    filter_city_hall: selected_city_hall,
+                  });
+                }
+              }
+            }
+          >
+            <option value={''}>Todas</option>
+            {cityHallList}
+          </Input>
+        </div>
+      </Col>
+    )
+  }
+
+  filterCitizen() {
     return (
       <div>
         <Row s={12}></Row>
         <Row s={12}>
-          <Col s={12} m={3}>
-            <h6>Nome:</h6>
-            <label>
-              <input
-                type="text"
-                name="filter_name"
-                value={this.state.filter_name}
-                onChange={this.handleInputFilterChange.bind(this)}
-              />
-            </label>
-          </Col>
+          {
+            this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+              this.pickCityHall() :
+              null
+          }
+          {this.pickName()}
+          {this.pickCPF()}
         </Row>
-        <Row s={12}>
+        <Row>
           <Col>
             <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
           </Col>
@@ -236,22 +336,36 @@ class getDependantList extends Component {
 
   cleanFilter() {
     this.setState({
-      'filter_name': ''
+      'filter_name': '',
+      'filter_cpf': '',
+      'filter_city_hall': ''
     })
   }
 
   handleFilterSubmit(sort_only) {
     var name
+    var cpf
+    var city_hall
     var current_page
     if(sort_only) {
       name = this.state.last_fetch_name
+      cpf = this.state.last_fetch_cpf
+      city_hall = this.state.last_fetch_city_hall
     } else {
       name = this.state.filter_name
+      cpf = this.state.filter_cpf
+      city_hall = this.state.filter_city_hall
     }
+    cpf = cpf.replace(/(\.|-)/g,'');
     name = name.replace(/\s/g,'+')
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/dependants`;
-    const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[s]=${this.state.filter_s}`
+    const collection = `/citizens`;
+    const params = `permission=${this.props.user.current_role}`
+                    +`&q[name]=${name}`
+                    +`&q[cpf]=${cpf}`
+                    +`&q[city_id]=${city_hall}`
+                    +`&q[s]=${this.state.filter_s}`
+                    +`&page=${this.state.current_page}`
     current_page = sort_only ? this.state.current_page : 1
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -260,24 +374,26 @@ class getDependantList extends Component {
         method: "get",
     }).then(parseResponse).then(resp => {
       this.setState({
-        dependants: resp.entries,
+        citizens: resp.entries,
         num_entries: resp.num_entries,
         last_fetch_name: name,
+        last_fetch_cpf: cpf,
+        last_fetch_city_hall: city_hall,
         current_page: current_page
       })
     });
   }
 
-	newDependantButton() {
+	newCitizenButton() {
 		return (
 			<button 
         onClick={() =>
-          browserHistory.push({ pathname: `/dependants/new`, query: {cep: this.props.user.citizen.cep}}) 
+          browserHistory.push({pathname: `/professionals/users/new`}) 
         }
         className="btn waves-effect btn button-color" 
         name="anterior" 
         type="submit">
-          CADASTRAR NOVO DEPENDENTE
+          CADASTRAR NOVO CIDADÃO
       </button>
 		)
 	}
@@ -289,20 +405,22 @@ class getDependantList extends Component {
 	        <Col s={12}>
             {this.mainComponent()}
 	      	</Col>
-        </Row>
-      </main>
+	    </Row>
+	  </main>
     )
   }
 }
 
 const mapStateToProps = (state) => {
   const user = state.get('user').getIn(['userInfo'])
+  const current_role = user.roles[user.current_role_idx]
   return {
-    user
+    user,
+    current_role
   }
 }
 
-const DependantList = connect(
+const ProfessionalUserList = connect(
   mapStateToProps
-)(getDependantList)
-export default DependantList
+)(getProfessionalUserList)
+export default ProfessionalUserList

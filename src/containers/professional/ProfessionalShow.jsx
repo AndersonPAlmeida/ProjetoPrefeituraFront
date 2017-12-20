@@ -1,29 +1,25 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import styles from './styles/DependantShow.css'
+import styles from './styles/ProfessionalShow.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 
-class getDependantShow extends Component {
+class getProfessionalShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      dependant: {
-        address: {},
-        city: {},
-        state: {}
-      }
+      professional: { citizen: { city: {}, state: {} }, service_places: [] }
     }
   }
 
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`;
+    const collection = `professionals/${this.props.params.professional_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -31,70 +27,97 @@ class getDependantShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ dependant: resp.citizen })
+      self.setState({ professional: resp })
     });
+  }
+
+  showServicePlaces() {
+    const servicePlacesList = (
+      this.state.professional.service_places.map((service_place) => {
+        return (
+          <div>{service_place.name}</div>
+        )
+      })
+    )
+    return (
+      <div>
+        {servicePlacesList}
+      </div>
+    )
   }
 
   mainComponent() {
     return (
       <div className='card'>
             <div className='card-content'>
-              <h2 className='card-title h2-title-home'> Informações do Dependente: </h2>
+              <h2 className='card-title h2-title-home'> Informações do Profissional: </h2>
               <p> 
                 <b>Nome: </b>
-                {this.state.dependant.name}
+                {this.state.professional.citizen.name}
               </p>
               <p> 
                 <b>CPF: </b>
-                {this.state.dependant.cpf}
+                {this.state.professional.citizen.cpf}
               </p>
               <p> 
                 <b>RG: </b>
-                {this.state.dependant.rg}
+                {this.state.professional.citizen.rg}
               </p>
               <p> 
                 <b>Data de Nascimento: </b>
-                {this.state.dependant.birth_date}
+                {this.state.professional.citizen.birth_date}
               </p>
               <p> 
                 <b>Telefone 1: </b>
-                {this.state.dependant.phone1}
+                {this.state.professional.citizen.phone1}
               </p>
               <p> 
                 <b>Telefone 2: </b>
-                {this.state.dependant.phone2}
+                {this.state.professional.citizen.phone2}
               </p>
               <p> 
                 <b>E-mail: </b>
-                {this.state.dependant.email}
+                {this.state.professional.citizen.email}
               </p>
               <p> 
                 <b>CEP: </b>
-                {this.state.dependant.cep}
+                {this.state.professional.citizen.cep}
               </p>
               <p> 
                 <b>Estado: </b>
-                {this.state.dependant.state.name}
+                {this.state.professional.citizen.state.name}
               </p>
               <p> 
                 <b>Município: </b>
-                {this.state.dependant.city.name}
+                {this.state.professional.citizen.city.name}
               </p>
               <p> 
                 <b>Bairro: </b>
-                {this.state.dependant.address.neighborhood}
+                {this.state.professional.citizen.neighborhood}
               </p>
               <p> 
                 <b>Endereço: </b>
-                {this.state.dependant.address.address}
+                {this.state.professional.citizen.address_street}
               </p>
               <p> 
                 <b>Complemento do endereço: </b>
-                {this.state.dependant.address.complement}
+                {this.state.professional.citizen.address_complement}
+              </p>
+              <p> 
+                <b>Matrícula: </b>
+                {this.state.professional.registration}
+              </p>
+              <p> 
+                <b>Cargo: </b>
+                {this.state.professional.occupation_name}
+              </p>
+              <p> 
+                <b>Locais de atendimento: </b>
+                {this.showServicePlaces()}
               </p>
               <p> 
                 <b>Observações: </b>
-                {this.state.dependant.note}
+                {this.state.professional.citizen.note}
               </p>
             </div>
             {this.editButton()}
@@ -102,19 +125,19 @@ class getDependantShow extends Component {
     )
   }
 
-  editDependant () {
-    browserHistory.push(`dependants/${this.props.params.dependant_id}/edit`)
+  editProfessional () {
+    browserHistory.push(`professionals/${this.props.params.professional_id}/edit`)
   }
 
   prev() {
-    browserHistory.push(`dependants`)
+    browserHistory.push(`professionals`)
   }  
 
 	editButton() {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
-				<button className="waves-effect btn right" name="commit" onClick={this.editDependant.bind(this)} type="submit">Editar</button>
+				<button className="waves-effect btn right" name="commit" onClick={this.editProfessional.bind(this)} type="submit">Editar</button>
       </div>
 		)
 	}
@@ -140,7 +163,7 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const DependantShow = connect(
+const ProfessionalShow = connect(
   mapStateToProps
-)(getDependantShow)
-export default DependantShow
+)(getProfessionalShow)
+export default ProfessionalShow

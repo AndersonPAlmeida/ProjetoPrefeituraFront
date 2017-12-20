@@ -14,25 +14,46 @@ class getScheduleChoose extends Component {
   constructor(props) {
       super(props)
       this.state = {
-          dependants: []
+          dependants: [],
+          citizen: {
+                     name: '',
+                     cpf: '',
+                     id: ''
+                   }
       };
   }
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/schedule_options`;
-    const params = `permission=${this.props.user.current_role}&cpf=${this.props.user.citizen.cpf}`
-    
-    fetch(`${apiUrl}/${collection}?${params}`, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get",
-    }).then(parseResponse).then(resp => {
-      resp.shift()
-      self.setState({ dependants: resp })
-    });
+
+    if(this.props.professional_page) {
+      self.setState({
+        dependants: this.props.dependants,
+        citizen: this.props.citizen
+      })
+    }
+    else {
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = `citizens/schedule_options`;
+      const params = `permission=${this.props.user.current_role}&cpf=${this.props.user.citizen.cpf}`
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        let citizen
+        for(var i = 0; i < resp.length; i++)
+          if(resp[i].cpf == this.props.user.citizen.cpf) {
+            citizen = resp[i]
+            resp.splice(i, 1)
+          }
+        self.setState({ 
+          dependants: resp,
+          citizen: citizen
+        })
+      });
+    }
   }
 
   mainComponent() {
@@ -73,7 +94,7 @@ class getScheduleChoose extends Component {
   }
 
   scheduleCitizen() {
-    var current_citizen = this.props.user.citizen
+    var current_citizen = this.state.citizen
     var d, date;
     d = new Date(current_citizen.birth_date)
     date = this.addZeroBefore(d.getDate()) + "/" + this.addZeroBefore(d.getMonth()+1) + "/" + this.addZeroBefore(d.getFullYear())
