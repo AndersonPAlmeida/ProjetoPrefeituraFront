@@ -151,7 +151,7 @@ class getOccupationForm extends Component {
         <Input
           name="city_hall_id"
           type='select'
-          value={this.state.sector.city_hall_id}
+          value={this.state.occupation.city_hall_id}
           onChange={
             (event) => {
               if(event.target.value != this.state.selected_city_hall) {

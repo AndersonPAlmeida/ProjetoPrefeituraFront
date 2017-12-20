@@ -108,6 +108,15 @@ class getOccupationList extends Component {
             <td>
               {occupation.active ? 'Ativo' : 'Inativo'}
             </td>
+            {
+           this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+             <td>
+               {occupation.city_hall_name}
+             </td>
+             :
+             null
+           }
+
             <td>
               <a className='back-bt waves-effect btn-flat'
                  href='#'
@@ -130,6 +139,12 @@ class getOccupationList extends Component {
         <th>{this.sortableColumn.bind(this)('Nome','name')}</th>
         <th>{this.sortableColumn.bind(this)('Descrição','description')}</th>
         <th>{this.sortableColumn.bind(this)('Situação','situation')}</th>
+        {
+         this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+           <th>{this.sortableColumn.bind(this)('Prefeitura','city_hall_name')}</th> :
+           null
+       }
+
         <th>Editar</th>
       </tr>
     )
