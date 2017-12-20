@@ -475,36 +475,47 @@ class getUserForm extends Component {
       title += `: ${this.props.user_data.name}`
     return (
       <main>
-      	<Row>
-	        <Col s={12}>
+        <Row>
+          <Col s={12}>
             <div className='card'>
               <div className='card-content'>
                 <h2 className="card-title">{title}</h2>
                 {
                   !this.props.professional_only ?
                     <div>
-                      <Row className='first-line'>
-                        {personal_info.bind(this)()}
-                        {address_info.bind(this)()}
+                      <Row s={12}></Row>
+                      <Row s={12}>
+                        <Col s={12} m={6}>
+                          {personal_info.bind(this)()}
+                        </Col>
+                        <Col s={12} m={6}>
+                          {address_info.bind(this)()}
+                        </Col>
                       </Row>
-                      <Row>
-                        {contact_info.bind(this)()}
-                        {
-                          this.props.user_class != `dependant` ?
-                            password_info.bind(this)() :
-                            null
-                        } 
+                      <Row s={12}>
+                        <Col s={12} m={6}>
+                          {contact_info.bind(this)()}
+                        </Col>
+                        <Col s={12} m={6}>
+                          {
+                            this.props.user_class != `dependant` ?
+                              password_info.bind(this)() :
+                              null
+                          } 
+                        </Col>
                       </Row>
                     </div>
-                  : <div />
+                    : null
                 }
-                <Row>
-                  { 
-                    (this.props.user_class == `professional` || this.props.current_professional) ?
-                      professional_info.bind(this)() :
-                      null
-                  }
-                </Row>
+                { 
+                  (this.props.user_class == `professional` || this.props.current_professional) ?
+                    <Row s={12}>
+                      <Col s={12} m={6}>
+                        {professional_info.bind(this)()}
+                      </Col>
+                    </Row>
+                    : null
+                }
                 <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
                 {this.confirmButton()}
               </div>

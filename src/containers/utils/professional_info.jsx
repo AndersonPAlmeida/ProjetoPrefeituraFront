@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
-import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import { UserImg } from '../images';
-import MaskedInput from 'react-maskedinput';
+import { Button, Input, Row, Col } from 'react-materialize'
 import {fetch} from "../../redux-auth";
 import { browserHistory } from 'react-router';
 import update from 'react-addons-update';
@@ -29,18 +27,15 @@ function pickOccupation() {
     })
   )
   return (
-    <div className='select-field'>
+    <div>
       <h6>Cargo*:</h6>
-      <br></br>
       <div>
-        <Row className='sector-select'>
-          <Input s={12} l={4} m={12} name="occupation_id" type='select' value={this.state.professional.occupation_id}
-            onChange={handleInputProfessionalChange.bind(this)}
-          >
-            <option value='0' disabled>Escolha o cargo</option>
-            {occupationsList}
-          </Input>
-        </Row>
+        <Input name="occupation_id" type='select' value={this.state.professional.occupation_id}
+          onChange={handleInputProfessionalChange.bind(this)}
+        >
+          <option value='0' disabled>Escolha o cargo</option>
+          {occupationsList}
+        </Input>
       </div>
     </div>
   )
@@ -55,11 +50,10 @@ function pickPermission() {
     })
   )
   return (
-    <div className='select-field'>
+    <div>
       <h6>Permissão:</h6>
-      <br></br>
       <div>
-        <Input s={12} l={4} m={12} name="permission_id" type='select' 
+        <Input name="permission_id" type='select' 
           value={this.state.aux.permission_id}
           onChange={this.handleChange.bind(this)}
         >
@@ -80,14 +74,13 @@ function pickServicePlace() {
     })
   )
   return (
-    <div className='select-field'>
+    <div>
       <h6>Local de Atendimento:</h6>
-      <br></br>
       <div>
-        <Input s={6} l={4} m={12} name="service_place_id" type='select' value={this.state.aux.service_place_id}
+        <Input name="service_place_id" type='select' value={this.state.aux.service_place_id}
           onChange={this.handleChange.bind(this)}
         >
-          <option value={0} disabled>Escolha o local de atendimento</option>
+          <option value={0} disabled>Escolha o local</option>
           {servicePlacesList}
         </Input>
       </div>
@@ -192,42 +185,49 @@ function insertServicePlace() {
 
 export default function () {
   return (
-    <Col s={12} m={12} l={12}>
+    <div>
+      <Row s={12}></Row>
+
       <div className='category-title'>
         <p>Dados de Profissional</p>
       </div>
 
-      {pickOccupation.bind(this)()}
+      <Row s={12}>
+        {pickOccupation.bind(this)()}
+      </Row>
 
-      <div className="field-input">
-        <h6>Matrícula:</h6>
-        <label>
-          <input
-            type="text"
-            className='input-field'
-            mask="1111/11"
-            name="registration"
-            pattern="[0-9|/]*"
-            value={this.state.professional.registration}
-            onChange={handleInputProfessionalChange.bind(this)}
-          />
-        </label>
-      </div>
+      <Row s={12}>
+        <div className="field-input">
+          <h6>Matrícula:</h6>
+          <label>
+            <input
+              type="text"
+              name="registration"
+              pattern="[0-9|/]*"
+              value={this.state.professional.registration}
+              onChange={handleInputProfessionalChange.bind(this)}
+            />
+          </label>
+        </div>
+      </Row>
 
       { (this.props.current_professional) ? null :
         <div>
-          <Row>
+          <Row></Row>
+          <Row s={12}>
             {pickServicePlace.bind(this)()}
           </Row>
-          <Row>
+          <Row s={12}>
             {pickPermission.bind(this)()}
+          </Row>
+          <Row s={12}>
             <Button floating large className='green' waves='light' icon='add' onClick={insertServicePlace.bind(this)} />
           </Row>
-          <Row>
+          <Row s={12}>
             {tableList.bind(this)()}
           </Row>
         </div>
       }
-    </Col>
+    </div>
   )
 }

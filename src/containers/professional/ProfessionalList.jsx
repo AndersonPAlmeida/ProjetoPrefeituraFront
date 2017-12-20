@@ -631,8 +631,8 @@ class getProfessionalList extends Component {
 	        <Col s={12}>
             {this.mainComponent()}
 	      	</Col>
-	    </Row>
-	  </main>
+        </Row>
+      </main>
     )
   }
 }

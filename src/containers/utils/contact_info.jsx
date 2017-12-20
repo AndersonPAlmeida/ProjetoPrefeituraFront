@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
-import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
-import { UserImg } from '../images';
+import { Input } from 'react-materialize'
 import MaskedInput from 'react-maskedinput';
 import {fetch} from "../../redux-auth";
 import { browserHistory } from 'react-router';
@@ -9,7 +8,7 @@ import update from 'react-addons-update';
 
 export default function () {
   return (
-    <Col s={12} m={12} l={6}>
+    <div>
       <div className='category-title'>
         <p>Informações de Contato</p>
       </div>
@@ -102,6 +101,6 @@ export default function () {
           />
         </label>
       </div>
-    </Col>
+    </div>
   )
 }

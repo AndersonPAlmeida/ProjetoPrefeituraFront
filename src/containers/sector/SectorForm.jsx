@@ -174,135 +174,144 @@ class getSectorForm extends Component {
 
   render() {
     return (
-      <main>
-      	<Row>
-	        <Col s={12}>
-            <div className='card'>
-              <div className='card-content'>
-                {this.props.is_edit ?
-                  <h2 className="card-title">Alterar setor: {this.props.data.name}</h2> 
-                  :
-                  <h2 className="card-title">Cadastrar setor</h2> 
-                }
-                <Row className='first-line'>
-                  <Col s={12} m={12} l={6}>
-                    <div className="field-input" >
-                      <h6>Prefeitura*:</h6>
-                      <div>
-                        {this.pickCityHall()}
-                      </div>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Situação*:</h6>
-                      <div>
-                        <Input s={6} m={32} l={6} 
-                               type='select'
-                               name='active'
-                               value={this.state.sector.active}
-                               onChange={this.handleInputSectorChange.bind(this)} 
-                        >
-                          <option key={0} value={true}>Ativo</option>
-                          <option key={1} value={false}>Inativo</option>
-                        </Input>
-                      </div>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Nome*:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="name" 
-                          value={this.state.sector.name} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Número de agendamentos por setor*:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="schedules_by_sector" 
-                          pattern="[0-9]*"
-                          value={this.state.sector.schedules_by_sector} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Número de dias de impedimento de novos agendamentos*:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="blocking_days" 
-                          pattern="[0-9]*"
-                          value={this.state.sector.blocking_days} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Limite de cancelamentos*:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="cancel_limit" 
-                          pattern="[0-9]*"
-                          value={this.state.sector.cancel_limit} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Horas de antecedências para poder cancelar um atendimento*:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="previous_notice" 
-                          pattern="[0-9]*"
-                          value={this.state.sector.previous_notice} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Número de faltas que gera impedimento de novos agendamentos*:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="absence_max" 
-                          pattern="[0-9]*"
-                          value={this.state.sector.absence_max} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <div>
-                      <h6>Descrição*:</h6>
-                      <label>
-                        <textarea  
-                          className='input-field materialize-textarea'
-                          name="description" 
-                          value={this.state.sector.description} 
-                          onChange={this.handleInputSectorChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
-                  </Col>
+      <Row s={12}>
+        <div className='card'>
+          <div className='card-content'>
+            <Row></Row>
+
+            <Row s={12}>
+              {this.props.is_edit ?
+                <h2 className="card-title">Alterar setor: {this.props.data.name}</h2> 
+                :
+                <h2 className="card-title">Cadastrar setor</h2> 
+              }
+            </Row>
+
+            <Row s={12}>
+              <Col s={12} m={6}>
+                <Row></Row>
+                <Row s={6}>
+                  <h6>Prefeitura*:</h6>
+                  <div>
+                    {this.pickCityHall()}
+                  </div>
                 </Row>
-                {this.confirmButton()}
-              </div>
-            </div>
-          </Col>
-        </Row>
-      </main>
+
+                <Row s={6}>
+                  <h6>Situação*:</h6>
+                  <div>
+                    <Input s={6} m={32} l={6} 
+                           type='select'
+                           name='active'
+                           value={this.state.sector.active}
+                           onChange={this.handleInputSectorChange.bind(this)} 
+                    >
+                      <option key={0} value={true}>Ativo</option>
+                      <option key={1} value={false}>Inativo</option>
+                    </Input>
+                  </div>
+                </Row>
+
+                <Row s={6}>
+                  <h6>Nome*:</h6>
+                  <label>
+                    <input 
+                      type="text" 
+                      name="name" 
+                      value={this.state.sector.name} 
+                      onChange={this.handleInputSectorChange.bind(this)} 
+                    />
+                  </label>
+                </Row>
+
+                <Row s={6}>
+                  <h6>Número de agendamentos por setor*:</h6>
+                  <label>
+                    <input 
+                      type="text" 
+                      name="schedules_by_sector" 
+                      pattern="[0-9]*"
+                      value={this.state.sector.schedules_by_sector} 
+                      onChange={this.handleInputSectorChange.bind(this)} 
+                    />
+                  </label>
+                </Row>
+
+                <Row s={6}>
+                  <h6>Número de dias de impedimento de novos agendamentos*:</h6>
+                  <label>
+                    <input 
+                      type="text" 
+                      name="blocking_days" 
+                      pattern="[0-9]*"
+                      value={this.state.sector.blocking_days} 
+                      onChange={this.handleInputSectorChange.bind(this)} 
+                    />
+                  </label>
+                </Row>
+              </Col>
+
+              <Col s={12} m={6}>
+                <Row></Row>
+
+                <Row s={6}>
+                  <h6>Limite de cancelamentos*:</h6>
+                  <label>
+                    <input 
+                      type="text" 
+                      name="cancel_limit" 
+                      pattern="[0-9]*"
+                      value={this.state.sector.cancel_limit} 
+                      onChange={this.handleInputSectorChange.bind(this)} 
+                    />
+                  </label>
+                </Row>
+
+                <Row s={6}>
+                  <h6>Horas de antecedências para poder cancelar um atendimento*:</h6>
+                  <label>
+                    <input 
+                      type="text" 
+                      name="previous_notice" 
+                      pattern="[0-9]*"
+                      value={this.state.sector.previous_notice} 
+                      onChange={this.handleInputSectorChange.bind(this)} 
+                    />
+                  </label>
+                </Row>
+
+                <Row s={6}>
+                  <h6>Número de faltas que gera impedimento de novos agendamentos*:</h6>
+                  <label>
+                    <input 
+                      type="text" 
+                      name="absence_max" 
+                      pattern="[0-9]*"
+                      value={this.state.sector.absence_max} 
+                      onChange={this.handleInputSectorChange.bind(this)} 
+                    />
+                  </label>
+                </Row>
+
+                <Row s={6}>
+                  <h6>Descrição*:</h6>
+                  <label>
+                    <textarea  
+                      className='input-field materialize-textarea'
+                      name="description" 
+                      value={this.state.sector.description} 
+                      onChange={this.handleInputSectorChange.bind(this)} 
+                    />
+                  </label>
+                </Row>
+
+                <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
+              </Col>
+            </Row>
+            {this.confirmButton()}
+          </div>
+        </div>
+      </Row>
     )
   }
 }

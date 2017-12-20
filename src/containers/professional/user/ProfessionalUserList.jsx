@@ -32,19 +32,8 @@ class getProfessionalUserList extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    var collection = `forms/citizen_index`
     const params = `permission=${this.props.user.current_role}`
-    fetch(`${apiUrl}/${collection}?${params}`, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get",
-    }).then(parseResponse).then(resp => {
-      self.setState({ 
-                      city_halls: resp.city_halls
-                    })
-    });
-    collection = `citizens`;
+    var collection = `citizens`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -56,6 +45,20 @@ class getProfessionalUserList extends Component {
                       num_entries: resp.num_entries
                     })
     });
+
+    if(this.props.current_role && this.props.current_role.role == 'adm_c3sl') {
+      collection = `forms/citizen_index`
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        self.setState({ 
+                        city_halls: resp.city_halls
+                      })
+      });
+    }
   }
 
   mainComponent() {
@@ -64,13 +67,7 @@ class getProfessionalUserList extends Component {
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Profissional </h2>
           {this.filterCitizen()}
-        </div>
-        <div className='card-content'>
-          <Row s={12}>
-            <Col s={12}>
-              {this.state.citizens.length > 0 ? this.tableList() : 'Nenhum cidadão encontrado'}
-            </Col>
-          </Row>
+          {this.state.citizens.length > 0 ? this.tableList() : 'Nenhum cidadão encontrado'}
         </div>
         <div className="card-action">
           {this.newCitizenButton()}
