@@ -21,10 +21,10 @@ class getProfessionalsReport extends Component {
       professionalsIndex:[],
       requestState:0,
 
-      filterOccupation:[],
-      filterServicePlace:[],
-      filterPermission:[],
-      filterOrder:[],
+      filterOccupation:null,
+      filterServicePlace:null,
+      filterPermission:null,
+      filterOrder:null,
       rows:[],
       cols:[]
     }
@@ -73,27 +73,6 @@ class getProfessionalsReport extends Component {
   }
 
 
-  printPDF(){
-        var pdf = new jsPDF('p', 'pt', "a4");
-        pdf.setFont("helvetica");
-        pdf.setFontSize(1);
-      var source = $('#divtoPDF')[0];
-      var specialElementHandlers = {
-        '#bypassme': function(element, renderer) {
-          return true
-        }
-      };
-
-      var margins = { top: 50,left: 10,right:10, width: 650};
-
-      pdf.fromHTML (
-        source, margins.left, margins.top,  {'width': margins.width, 'elementHandlers': specialElementHandlers},
-        function (dispose) {
-          pdf.save('relatorio_cidadaos.pdf');
-        }
-      )
-  }
-
   arrangeList(list){
     var i
     var returnText = list[0]
@@ -133,15 +112,34 @@ class getProfessionalsReport extends Component {
     for(i = 0; i< this.state.professionalsList.num_entries; i++){
       current = this.state.professionalsList.entries[i]
       protoRows.push([current.name, current.registration, current.occupation_name, current.cpf, current.email, current.phone1, this.arrangeList(current.roles_names)])
-    }
+          }
     this.setState({"cols":["Nome", "Registro", "Cargo", "CPF", "Email", "Telefone", "Funções"]})
     this.setState({"rows":protoRows})
 
   }
   confirmFilters(){
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      var filters = ''
+      if(this.state.filterOrder != null){
+        filters = filters + `&q[s]=${this.state.filterOrder}+asc`
+        console.log("ord")
+      }
+      if(this.state.filterPermission != null){
+        filters = filters + `&q[role]=${this.state.filterPermission}`
+        console.log("perm")
+      }
+      if(this.state.filterOccupation != null){
+        filters = filters + `&q[occupation]=${this.state.filterOccupation}`
+        console.log("occup")
+      }
+      if(this.state.filterServicePlace != null){
+        filters = filters + `&q[service_places]=${this.state.filterServicePlace}`
+        console.log("place")
+      }
+
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = `professionals`;
-      const params = `permission=${this.props.user.current_role}`
+      const params = `permission=${this.props.user.current_role}${filters}`
+      console.log(params)
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -163,7 +161,12 @@ class getProfessionalsReport extends Component {
   }
 
   clearFields(){
-    this.setState({"requestState":0})
+    this.setState({"requestState":0,
+      filterOrder:null,
+      filterOccupation:null,
+      filterPermission:null,
+      filterServicePlace:null
+    })
   }
 
   updateFilters(e){
@@ -195,17 +198,20 @@ class getProfessionalsReport extends Component {
             <br/>
             <Row>
             <Input id="filter0" s={4} label="Cargo" type="select" default="0" onChange={this.updateFilters}>
+              <option value={[]}>Nenhum</option>
               {this.getJobs().map(function(element,i){
                 return(<option key={i} value={element.id}>{element.name}</option>)
               })}
             </Input>
             <Input id="filter1" s={4} label="Local do Atendimento" type="select" default="0" onChange={this.updateFilters}>
+              <option value={[]}>Nenhum</option>
               {this.getShiftPlaces().map(function(element,i){
                 return(<option key={i} value={element.id}>{element.name}</option>)
               })}
             </Input>
 
             <Input id="filter2" s={4} label="Permissão" type="select" default="0" onChange={this.updateFilters}>
+              <option value={[]}>Nenhum</option>
               {this.getPermission().map(function(element,i){
                 return(<option key={i} value={element.role}>{element.name}</option>)
               })}
@@ -214,9 +220,9 @@ class getProfessionalsReport extends Component {
 
           <Row>
             <Input id="filter3" s={6} label="Ordernar por" type="select" default="0" onChange={this.updateFilters}>
-              <option value="0">Todos</option>
-              <option value="1">Nome</option>
-              <option value="2">Ocupação</option>
+              <option value={[]}>Nenhum</option>
+              <option value="name">Nome</option>
+              <option value="occupation_name">Ocupação</option>
             </Input>
           </Row>
           </div>
