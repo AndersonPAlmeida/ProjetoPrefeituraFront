@@ -104,3 +104,6 @@ a:hover
 .row-occupation{
 	margin-left: 0px;
 }
+.div-table {
+  overflow-x: scroll;
+}

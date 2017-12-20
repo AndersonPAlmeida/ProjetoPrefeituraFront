@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
-import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize'
+import { Button, Card, Row, Col, Dropdown, Input, Pagination} from 'react-materialize'
 import styles from './styles/OccupationList.css'
 import 'react-day-picker/lib/style.css'
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
@@ -19,7 +19,10 @@ class getOccupationList extends Component {
           filter_description: '',
           last_fetch_name: '',
           last_fetch_description: '',
-          filter_s: ''
+          filter_s: '',
+          num_entries: 0,
+          current_page: 1
+
       };
   }
 
@@ -35,7 +38,11 @@ class getOccupationList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ occupations: resp.entries })
+      self.setState({
+                  occupations: resp.entries,
+                  num_entries: resp.num_entries
+                })
+
     });
   }
 
@@ -70,15 +77,12 @@ class getOccupationList extends Component {
               arrow_drop_down
             </i>
             :
-            <div />
-        }
-        {
-          this.state.filter_s == `${name}+desc` ?
-            <i className="waves-effect material-icons tiny tooltipped">
-              arrow_drop_up
-            </i>
-            :
-            <div />
+            this.state.filter_s == `${name}+desc` ?
+              <i className="waves-effect material-icons tiny tooltipped">
+                arrow_drop_up
+              </i>
+              :
+              <div />
         }
       </a>
     )
@@ -126,21 +130,69 @@ class getOccupationList extends Component {
         <th>{this.sortableColumn.bind(this)('Nome','name')}</th>
         <th>{this.sortableColumn.bind(this)('Descrição','description')}</th>
         <th>{this.sortableColumn.bind(this)('Situação','situation')}</th>
-        <th></th>
+        <th>Editar</th>
       </tr>
     )
 
+    var num_items_per_page = 25
+    var num_pages = Math.ceil(this.state.num_entries/num_items_per_page)
     return (
-      <table className={styles['table-list']}>
-        <thead>
-          {fields}
-        </thead>
-        <tbody>
-          {data}
-        </tbody>
-      </table>
-    )
-	}
+      <div>
+        <p className={styles['description-column']}>
+          Mostrando{
+             num_pages != 0
+             ?
+             this.state.current_page == num_pages
+             ?
+             this.state.num_entries % num_items_per_page == 0
+             ?
+             ` ${num_items_per_page} `
+             :
+             ` ${this.state.num_entries % num_items_per_page} `
+             :
+             ` ${num_items_per_page} `
+             :
+             ' 0 '
+           }
+          de {
+            ` ${this.state.num_entries} `
+
+          }
+           registros
+            </p>
+            <br />
+            <div className='div-table'>
+              <table className={styles['table-list']}>
+                <thead>
+                  {fields}
+                </thead>
+                <tbody>
+                  {data}
+                </tbody>
+              </table>
+            </div>
+            <br />
+            <Pagination
+              value={this.state.current_page}
+              onSelect={ (val) =>
+                {
+                  this.setState(
+                    {
+                      current_page: val
+                    },
+                    () => {this.handleFilterSubmit.bind(this)(true)}
+                  )
+                }
+              }
+              className={styles['pagination']}
+              items={Math.ceil(this.state.num_entries/num_items_per_page)}
+              activePage={this.state.current_page}
+              maxButtons={8}
+            />
+          </div>
+        )
+    }
+
 
   handleInputFilterChange(event) {
     const target = event.target;
@@ -222,20 +274,26 @@ class getOccupationList extends Component {
   }
 
   handleFilterSubmit(sort_only) {
-    var name
-    var description
+    var name;
+    var description;
+    var current_page;
     if(sort_only) {
-      name = this.state.last_fetch_name
-      description = this.state.last_fetch_description
+      name = this.state.last_fetch_name;
+      description = this.state.last_fetch_description;
     } else {
-      name = this.state.filter_name
-      description = this.state.filter_description
+      name = this.state.filter_name;
+      description = this.state.filter_description;
     }
-    name = name.replace(/\s/g,'+')
-    description = description.replace(/\s/g,'+')
+    name = name.replace(/\s/g,'+');
+    description = description.replace(/\s/g,'+');
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `occupations`;
-    const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}&q[s]=${this.state.filter_s}`
+    const params = `permission=${this.props.user.current_role}`
+                    +`&q[name]=${name}`
+                    +`&q[description]=${description}`
+                    +`&q[s]=${this.state.filter_s}`
+                    +`&page=${this.state.current_page}`;
+    current_page = sort_only ? this.state.current_page : 1;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -244,8 +302,10 @@ class getOccupationList extends Component {
     }).then(parseResponse).then(resp => {
       this.setState({
         occupations: resp.entries,
+        num_entries: resp.num_entries,
         last_fetch_name: name,
-        last_fetch_description: description
+        last_fetch_description: description,
+        current_page: current_page
       })
     });
   }

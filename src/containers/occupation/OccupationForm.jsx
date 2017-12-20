@@ -22,7 +22,9 @@ class getOccupationForm extends Component {
         description: '',
         name: '',
         active: true,
+        city_hall_name: '',
         city_hall_id: 0
+
       },
       city_halls: []
     };
@@ -127,43 +129,43 @@ class getOccupationForm extends Component {
   }
 
   pickCityHall() {
-    if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
+      if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
+        return (
+          <input disabled
+             name="selected_city_hall"
+             type='text'
+             className='input-field'
+             value={this.props.current_role.city_hall_name}
+          />
+        )
+      }
+
+      const cityHallsList = (
+        this.state.city_halls.map((city_hall) => {
+          return (
+            <option value={city_hall.id}>{city_hall.name}</option>
+          )
+        })
+      )
       return (
-        <Input disabled
-               name="selected_city_hall"
-               type='select'
-               value={this.props.current_role.city_hall_id}
+        <Input
+          name="city_hall_id"
+          type='select'
+          value={this.state.sector.city_hall_id}
+          onChange={
+            (event) => {
+              if(event.target.value != this.state.selected_city_hall) {
+                  this.handleInputSectorChange(event);
+              }
+            }
+          }
         >
-          <option value={this.props.current_role.city_hall_id}>{this.props.current_role.city_hall_name}</option>
+          <option value='0' disabled>Escolha a prefeitura</option>
+          {cityHallsList}
         </Input>
       )
     }
 
-    const cityHallsList = (
-      this.state.city_halls.map((city_hall) => {
-        return (
-          <option value={city_hall.id}>{city_hall.name}</option>
-        )
-      })
-    )
-    return (
-      <Input
-        name="city_hall_id"
-        type='select'
-        value={this.state.occupation.city_hall_id}
-        onChange={
-          (event) => {
-            if(event.target.value != this.state.selected_city_hall) {
-                this.handleInputOccupationChange(event);
-            }
-          }
-        }
-      >
-        <option value='0' disabled>Escolha a prefeitura</option>
-        {cityHallsList}
-      </Input>
-    )
-  }
 
   render() {
     return (
