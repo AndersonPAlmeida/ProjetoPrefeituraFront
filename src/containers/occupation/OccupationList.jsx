@@ -15,9 +15,12 @@ class getOccupationList extends Component {
       super(props)
       this.state = {
           occupations: [],
+          city_halls: [],
           filter_name: '',
           filter_description: '',
           last_fetch_name: '',
+          filter_city_hall_name: '',
+          last_fetch_city_hall_name: '',
           last_fetch_description: '',
           filter_s: '',
           num_entries: 0,
@@ -29,7 +32,7 @@ class getOccupationList extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `occupations`;
+    var collection = `occupations`;
     const params = `permission=${this.props.user.current_role}`
 
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -44,6 +47,18 @@ class getOccupationList extends Component {
                 })
 
     });
+    if(this.props.current_role && this.props.current_role.role == 'adm_c3sl') {
+     collection = 'forms/occupation_index';
+     fetch(`${apiUrl}/${collection}?${params}`, {
+       headers: {
+         "Accept": "application/json",
+         "Content-Type": "application/json" },
+         method: "get",
+     }).then(parseResponse).then(resp => {
+       self.setState({ city_halls: resp.city_halls })
+     });
+   }
+
   }
 
   mainComponent() {
@@ -251,6 +266,20 @@ class getOccupationList extends Component {
               </label>
             </div>
           </Col>
+          <Col s={12} m={4}>
+            <div>
+              <h6>Prefeitura:</h6>
+              <label>
+                <input
+                  type="text"
+                  className='input-field'
+                  name="filter_city_hall_name"
+                  value={this.state.filter_city_hall_name}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
         </Row>
 
           <Row>
@@ -291,21 +320,27 @@ class getOccupationList extends Component {
   handleFilterSubmit(sort_only) {
     var name;
     var description;
+    var city_hall_name;
     var current_page;
     if(sort_only) {
       name = this.state.last_fetch_name;
       description = this.state.last_fetch_description;
+      city_hall_name = this.state.last_fetch_city_hall_name;
     } else {
       name = this.state.filter_name;
+      city_hall_name = this.state.filter_city_hall_name;
       description = this.state.filter_description;
     }
     name = name.replace(/\s/g,'+');
     description = description.replace(/\s/g,'+');
+    city_hall_name = city_hall_name.replace(/\s/g,'+');
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `occupations`;
     const params = `permission=${this.props.user.current_role}`
                     +`&q[name]=${name}`
                     +`&q[description]=${description}`
+                    +`&q[description]=${description}`
+
                     +`&q[s]=${this.state.filter_s}`
                     +`&page=${this.state.current_page}`;
     current_page = sort_only ? this.state.current_page : 1;
