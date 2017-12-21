@@ -16,7 +16,7 @@ import address_info from './address_info';
 import contact_info from './contact_info';
 import password_info from './password_info';
 import professional_info from './professional_info';
-import {userSignIn, userUpdatePicture} from '../../actions/user';
+import {userSignIn} from '../../actions/user';
 
 class getUserForm extends Component {
 
@@ -435,8 +435,6 @@ class getUserForm extends Component {
       }).then(parseResponse).then(resp => {
         if(this.props.is_edit && this.props.user_class == `citizen` && this.props.current_citizen) {
           this.props.dispatch(userSignIn(resp.data))
-          if(this.state.aux.photo_has_changed)
-            this.props.dispatch(userUpdatePicture(resp.data.citizen.id))
         }
         Materialize.toast(this.successMessage.bind(this)(), 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)

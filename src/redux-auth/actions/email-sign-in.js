@@ -7,7 +7,7 @@ import {storeCurrentEndpointKey} from "./configure";
 import {parseResponse} from "../utils/handle-fetch-response";
 import fetch from "../utils/fetch";
 import { port, apiHost, apiPort, apiVer } from '../../../config/env';
-import {userSignIn, userUpdate, userUpdatePicture} from "../../actions/user"
+import {userSignIn, userUpdate} from "../../actions/user"
 
 export const EMAIL_SIGN_IN_START       = "EMAIL_SIGN_IN_START";
 export const EMAIL_SIGN_IN_COMPLETE    = "EMAIL_SIGN_IN_COMPLETE";
@@ -50,7 +50,6 @@ export function emailSignIn(body, endpointKey) {
       .then((user) => {
         dispatch(userSignIn(user.data))
         dispatch(emailSignInComplete(currentEndpointKey, user))
-        dispatch(userUpdatePicture(user.data.citizen.id))
        })
       .catch((errors) => {
         // revert endpoint key to what it was before failed request
