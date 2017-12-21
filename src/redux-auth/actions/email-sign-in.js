@@ -49,8 +49,8 @@ export function emailSignIn(body, endpointKey) {
       .then(parseResponse)
       .then((user) => {
         dispatch(userSignIn(user.data))
-        dispatch(userUpdatePicture(user.data.citizen.id))
         dispatch(emailSignInComplete(currentEndpointKey, user))
+        dispatch(userUpdatePicture(user.data.citizen.id))
        })
       .catch((errors) => {
         // revert endpoint key to what it was before failed request

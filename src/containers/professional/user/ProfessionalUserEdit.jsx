@@ -12,14 +12,15 @@ class getCitizenEdit extends Component {
     super(props)
     this.state = {
       citizen: [],
-      fetching: true
+      fetching: true,
+      photo: null
     };
   }
 
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.params.citizen_id}`;
+    var collection = `citizens/${this.props.params.citizen_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -27,7 +28,27 @@ class getCitizenEdit extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ citizen: resp, fetching: false })
+      self.setState({ citizen: resp }, () => {
+          collection = `citizens/${this.state.citizen.id}/picture`
+          fetch(`${apiUrl}/${collection}?${params}`, {
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            method: "get"
+          })
+            .then(resp => {
+              var contentType = resp.headers.get("content-type");
+              if(resp.status == 200 && contentType && contentType.indexOf("image") !== -1) {
+                resp.blob().then(photo => {
+                  self.setState({ photo: URL.createObjectURL(photo), fetching: false });
+                })
+              } else {
+                self.setState({ fetching: false });
+              }
+          }).catch(e => {})
+        }
+      )
     });
   }
 
@@ -45,6 +66,7 @@ class getCitizenEdit extends Component {
               user_data={this.state.citizen} 
               user_class={`citizen`}
               is_edit={true} 
+              photo={this.state.photo}
               prev={this.prev}
               fetch_collection={`citizens/${this.props.params.citizen_id}`}
               fetch_params={`permission=${this.props.user.current_role}`}

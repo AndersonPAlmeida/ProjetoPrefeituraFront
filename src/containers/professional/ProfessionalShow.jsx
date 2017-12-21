@@ -7,19 +7,21 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
+import { UserImg } from '../images';
 
 class getProfessionalShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      professional: { citizen: { city: {}, state: {} }, service_places: [] }
+      professional: { citizen: { city: {}, state: {} }, service_places: [] },
+      photo: null
     }
   }
 
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `professionals/${this.props.params.professional_id}`;
+    var collection = `professionals/${this.props.params.professional_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -27,7 +29,27 @@ class getProfessionalShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ professional: resp })
+      self.setState({ professional: resp }, () => {
+          collection = `citizens/${this.state.professional.citizen.id}/picture`
+          fetch(`${apiUrl}/${collection}?${params}`, {
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            method: "get"
+          })
+            .then(resp => {
+              var contentType = resp.headers.get("content-type");
+              if(resp.status == 200 && contentType && contentType.indexOf("image") !== -1) {
+                resp.blob().then(photo => {
+                  self.setState({ photo: URL.createObjectURL(photo)});
+                })
+              } else {
+                self.setState({ photo: UserImg });
+              }
+          }).catch(e => {})
+        }
+      )
     });
   }
 
@@ -51,6 +73,12 @@ class getProfessionalShow extends Component {
       <div className='card'>
             <div className='card-content'>
               <h2 className='card-title h2-title-home'> Informações do Profissional: </h2>
+              <img
+                id='user_photo'
+                width='230'
+                height='230'
+                src={this.state.photo}
+              />
               <p> 
                 <b>Nome: </b>
                 {this.state.professional.citizen.name}

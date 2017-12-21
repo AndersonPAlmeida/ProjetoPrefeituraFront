@@ -120,6 +120,7 @@ class getServiceTypeList extends Component {
               {service_type.sector_name}
             </td>
             {
+              this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
               this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
                 <td>
                   {service_type.city_hall_name}
@@ -161,6 +162,7 @@ class getServiceTypeList extends Component {
         <th>{this.sortableColumn.bind(this)('Situação','active')}</th>
         <th>{this.sortableColumn.bind(this)('Setor','sector_name')}</th>
         {
+          this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
           this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
             <th>{this.sortableColumn.bind(this)('Prefeitura','sector_city_hall_name')}</th> :
             null
@@ -265,6 +267,7 @@ class getServiceTypeList extends Component {
         <Row s={12}></Row>
         <Row s={12}>
           {
+            this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
             this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
               this.pickCityHall() :
               null

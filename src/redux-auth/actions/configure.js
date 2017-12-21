@@ -17,7 +17,7 @@ import {destroySession} from "../utils/session-storage";
 import verifyAuth from "../utils/verify-auth";
 import getRedirectInfo from "../utils/parse-url";
 import {push} from "react-router-redux";
-import {userSignIn} from "../../actions/user"
+import {userSignIn, userPictureUpdate} from "../../actions/user"
 
 export const SET_ENDPOINT_KEYS = "SET_ENDPOINT_KEYS";
 export const STORE_CURRENT_ENDPOINT_KEY = "STORE_CURRENT_ENDPOINT_KEY";
@@ -129,6 +129,7 @@ export function configure(endpoint={}, settings={}) {
       .then(user => {
         dispatch(authenticateComplete(user));
         dispatch(userSignIn(user));
+        dispatch(userPictureUpdate(user.citizen.id));
 
         if (firstTimeLogin) {
           dispatch(showFirstTimeLoginSuccessModal());

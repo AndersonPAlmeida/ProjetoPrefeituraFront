@@ -152,6 +152,7 @@ export const getOptions = (user_permission,user_name) =>
         { 'name': user_name, 
           'rolldown': true, 
           'sign_out': true,
+          'img': true,
           'fields': 
                 [ 
                   { 'name': "Responsável Atendimento", 'link': "/choose_role", 'separator': true },
@@ -172,6 +173,7 @@ export const getOptions = (user_permission,user_name) =>
         { 'name': user_name, 
           'rolldown': true, 
           'sign_out': true,
+          'img': true,
           'fields': 
                 [ 
                   { 'name': "Cidadão", 'link': "/choose_role", 'separator': true },

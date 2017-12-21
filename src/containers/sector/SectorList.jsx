@@ -120,6 +120,7 @@ class getSectorList extends Component {
               {sector.schedules_by_sector}
             </td>
             {
+              this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
               this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
                 <td>
                   {sector.city_hall_name}
@@ -163,6 +164,7 @@ class getSectorList extends Component {
         <th>{this.sortableColumn.bind(this)('Situação','situation')}</th>
         <th>{this.sortableColumn.bind(this)('Agendamentos por setor','schedules_by_sector')}</th>
         {
+          this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
           this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
             <th>{this.sortableColumn.bind(this)('Prefeitura','city_hall_name')}</th> :
             null
@@ -270,6 +272,7 @@ class getSectorList extends Component {
         <Row></Row>
         <Row s={12}>
           {
+            this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
             this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
               this.pickCityHall() :
               null
