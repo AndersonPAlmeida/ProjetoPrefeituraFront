@@ -1,4 +1,4 @@
-import "../redux-auth/utils/fetch";
+import fetch from "../redux-auth/utils/fetch";
 import {parseResponse} from "../redux-auth/utils/handle-fetch-response";
 import { signOut } from "../redux-auth/actions/sign-out";
 import { port, apiHost, apiPort, apiVer } from '../../config/env';
