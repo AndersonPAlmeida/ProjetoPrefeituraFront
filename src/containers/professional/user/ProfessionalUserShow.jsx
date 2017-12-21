@@ -69,6 +69,7 @@ class getProfessionalUserShow extends Component {
       this.state.dependants.map((dependant) => {
         return (
           <p>
+            <b>Dependentes: </b>
             <a className='back-bt waves-effect btn-flat'
               href='#'
               onClick={ () =>
@@ -142,10 +143,7 @@ class getProfessionalUserShow extends Component {
             <b>Complemento do endereço: </b>
             {this.state.citizen.address_complement}
           </p>
-          <p> 
-            <b>Dependentes: </b>
-            {this.showDependants.bind(this)()}
-          </p>
+          {this.showDependants.bind(this)()}
           <p> 
             <b>Observações: </b>
             {this.state.citizen.note}

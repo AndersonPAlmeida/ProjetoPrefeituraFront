@@ -28,7 +28,8 @@ const initialUser = {
                                  }, 
                         current_role: 'citizen',
                         current_role_idx: -1, 
-                        roles: [] 
+                        roles: [],
+                        photo: null 
                       } 
                     }
 const initialState = Immutable.Map(initialUser)
