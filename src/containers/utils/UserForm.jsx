@@ -107,12 +107,15 @@ class getUserForm extends Component {
       if(typeof location !== 'undefined' && location.search) {
         var search = location.search.substring(1);
         var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+        var cep = ""
+        var cpf = query['cpf'] ? query['cpf'] : ""
         if(query['cep']) {
-          self.setState({
-            user: update(this.state.user, { cep: {$set: query['cep']} })
-          })
-          this.updateAddress.bind(this)(query['cep'].replace(/(\.|-|_)/g,'')) 
+          cep = query['cep']
+          this.updateAddress.bind(this)(cep.replace(/(\.|-|_)/g,'')) 
         }
+        self.setState({
+          user: update(this.state.user, { cep: {$set: cep}, cpf: {$set: cpf} })
+        })
       }
     }
     if(this.props.user_class == `professional`) {
@@ -303,7 +306,7 @@ class getUserForm extends Component {
 
   checkErrors(formData, auxData, send_password) {
     let errors = []
-    let form_mandatory = [ { id: 'name', name: 'Nome' } ]
+    let form_mandatory = (!this.props.professional_only) ? [ { id: 'name', name: 'Nome' } ] : []
     if(this.props.user_class == `citizen`) {
       form_mandatory.push({ id: 'cpf', name: 'CPF' })
       form_mandatory.push({ id: 'cep', name: 'CEP' })
@@ -315,11 +318,12 @@ class getUserForm extends Component {
         errors.push("Campo senha não pode estar vazio.")
       if(!auxData['password_confirmation'])
         errors.push("Campo Confirmação de senha não pode estar vazio.")
+      if(auxData['password_confirmation'] != auxData['password'])
+        errors.push("A senha de confirmação não corresponde a senha atual.");
     }
-    if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
-      errors.push("Campo Data de Nascimento é obrigatório.");
-    if(auxData['password_confirmation'] != auxData['password'])
-      errors.push("A senha de confirmação não corresponde a senha atual.");
+    if(!this.props.professional_only)
+      if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
+        errors.push("Campo Data de Nascimento é obrigatório.");
     return errors;
   }
 
@@ -362,11 +366,12 @@ class getUserForm extends Component {
     if(this.props.user_class == `professional`) {
       var { cpf, ...other } = formData
       if(this.props.professional_only) {
-        fetch_body['cpf'] = this.props.cpf_citizen
         fetch_body['professional'] = this.state.professional
       }
-      else
+      else {
         fetch_body['professional'] = Object.assign({},this.state.professional,other)
+        fetch_body['professional']['cpf'] = cpf
+      }
       fetch_body['cpf'] = cpf
     } else if(this.props.user_class == `dependant`) {
       fetch_body['dependant'] = formData
@@ -415,7 +420,7 @@ class getUserForm extends Component {
     let formData = this.state.user;
     let auxData = this.state.aux;
     var send_password = false;
-    if(this.props.user_class != `dependant` && (!this.props.is_edit || auxData['current_password'])) {
+    if((!this.props.professional_only) && this.props.user_class != `dependant` && (!this.props.is_edit || auxData['current_password'])) {
       send_password = true
     }
     let errors = this.checkErrors.bind(this)(formData,auxData,send_password)
@@ -427,7 +432,10 @@ class getUserForm extends Component {
       let fetch_body = this.generateBody.bind(this)(formData,auxData,send_password)
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
-      const params = this.props.fetch_params; 
+      var params = this.props.fetch_params; 
+      if(this.props.user_class == `professional` && (!this.props.is_edit))
+        params += this.props.professional_only ? "&create_citizen=false" : "&create_citizen=true"  
+      console.log(fetch_body)
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",

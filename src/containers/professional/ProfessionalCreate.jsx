@@ -48,7 +48,7 @@ class getProfessionalCreate extends Component {
             prev={this.prev}
             professional_only={this.state.professional_only}
             cpf_citizen={this.state.cpf}
-            fetch_collection={`/professionals`}
+            fetch_collection={`professionals`}
             fetch_params={`permission=${this.props.user.current_role}`}
             fetch_method={'post'}
             submit_url={`/professionals/`}
