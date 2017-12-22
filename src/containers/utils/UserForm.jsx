@@ -435,7 +435,6 @@ class getUserForm extends Component {
       var params = this.props.fetch_params; 
       if(this.props.user_class == `professional` && (!this.props.is_edit))
         params += this.props.professional_only ? "&create_citizen=false" : "&create_citizen=true"  
-      console.log(fetch_body)
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -449,8 +448,7 @@ class getUserForm extends Component {
         Materialize.toast(this.successMessage.bind(this)(), 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
       }).catch((errors) => {
-        console.log(errors)
-        if(errors && errors['full_messages']) {
+        if(errors && errors['full_messages']) { // TODO: UPDATE ERRORS ARRAY ACCORDING TO API
           let full_error_msg = "";
           errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n' });
           Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});

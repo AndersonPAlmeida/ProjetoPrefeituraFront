@@ -3,20 +3,18 @@ import styles from './styles/Home.css'
 import { Button, Card, Row, Col, Dropdown, NavItem, Navbar } from 'react-materialize'
 import { McImg, LogoImage } from '../images'
 import { browserHistory } from 'react-router';
-import stylesBarra from './styles/barraGoverno.css'
 
 export const GovernmentBar = () => (
-    <div id="barra-brasil">
-      <ul id="menu-barra-temp">
-      <li><a href="http://brasil.gov.br">Portal do Governo Brasileiro</a></li>
-      <li><a href="http://epwg.governoeletronico.gov.br/barra/atualize.html">Atualize sua Barra de Governo</a></li>
-    </ul>
-  </div>
+        <div className="show-on-large-only government-bar"> 
+          <ul>
+              <li><a href="http://brasil.gov.br">Portal do Governo Brasileiro</a></li> 
+              <li><a href="http://epwg.governoeletronico.gov.br/barra/atualize.html">Atualize sua Barra de Governo</a></li>
+          </ul>
+        </div>
 )
-
 export const Header = () => (
         <div>
-          <div className={styles['logo-content']}>
+          <div className={styles['logo-content']}> 
               <img
                 className={styles['logo-image']}
                 src={LogoImage} />
@@ -24,7 +22,7 @@ export const Header = () => (
           </div>
         </div>
 )
-export const Footer = (props) =>
+export const Footer = (props) => 
 {
   const items = props.footerItems;
   const listItems = items.map((item, idx) =>

@@ -23,6 +23,11 @@ export SectorEdit from './sector/SectorEdit';
 export SectorShow from './sector/SectorShow';
 export SectorCreate from './sector/SectorCreate';
 
+export OccupationList from './occupation/OccupationList';
+export OccupationEdit from './occupation/OccupationEdit';
+export OccupationCreate from './occupation/OccupationCreate';
+export OccupationShow from './occupation/OccupationShow';
+
 export ServicePlaceList from './service_place/ServicePlaceList';
 export ServicePlaceEdit from './service_place/ServicePlaceEdit';
 export ServicePlaceShow from './service_place/ServicePlaceShow';

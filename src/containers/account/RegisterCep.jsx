@@ -32,14 +32,14 @@ class SignUpCep extends Component {
     formData["cep"] = {};
     formData["cep"]["number"] = this.state.cep.replace(/(\.|-)/g,'');
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `validate_cep`
+    const collection = 'validate_cep';
     fetch(`${apiUrl}/${collection}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
       method: 'post',
-      body: formData
-    }).then(resp => {
+      body: JSON.stringify(formData)
+    }).then(parseResponse).then(resp => {
       browserHistory.push({ pathname: '/signup2', query: {cep: formData["cep"]["number"]} })
     }).catch(({errors}) => {
       Materialize.toast("CEP Invalido", 10000, "red",function(){$("#toast-container").remove()});
@@ -77,12 +77,11 @@ class SignUpCep extends Component {
     return (
       <main>
         <Row>
-          <Col>
+          <Col offset={'s5'}>
             <h6>CEP:</h6>
             <label>
               <MaskedInput
                 type="text"
-                className='input-field'
                 mask="11111-111"
                 name="cep"
                 value={this.state.cep}

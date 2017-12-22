@@ -11,7 +11,7 @@ export default function () {
       </div>
 
       <div className="field-input">
-        <h6>Senha atual:</h6>
+        <h6>Senha{(!this.props.edit) ? '*' : ''}:</h6>
         <label>
           <input 
             type="password"
@@ -24,7 +24,7 @@ export default function () {
       </div>
       
       <div className="field-input">
-        <h6>Confirmação de senha:</h6>
+        <h6>Confirmação de senha{(!this.props.edit) ? '*' : ''}:</h6>
         <label>
           <input 
             type="password" 
