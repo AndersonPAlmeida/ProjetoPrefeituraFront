@@ -14,7 +14,8 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
          ProfessionalSearch, ProfessionalSchedule, ProfessionalUserList, 
          ProfessionalUserEdit, ProfessionalUserCreate, ProfessionalUserShow,
          ProfessionalUserDependantEdit, ProfessionalUserDependantCreate, 
-         ProfessionalUserDependantShow
+         ProfessionalUserDependantShow, ShiftShow, ShiftEdit, ShiftCreate,
+         ShiftList
        } from './containers';
 import { configure } from './redux-auth';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -116,6 +117,10 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="professionals/search" component={UserIsAuthenticated(ProfessionalSearch)} />
         <Route path="professionals/:professional_id" component={UserIsAuthenticated(ProfessionalShow)} />
         <Route path="professionals/:professional_id/edit" component={UserIsAuthenticated(ProfessionalEdit)} />
+        <Route path="shifts" component={UserIsAuthenticated(ShiftList)} />
+        <Route path="shifts/:shift_id/edit" component={UserIsAuthenticated(ShiftEdit)} />
+        <Route path="shifts/new" component={UserIsAuthenticated(ShiftCreate)} />
+        <Route path="shifts/:shift_id" component={UserIsAuthenticated(ShiftShow)} />
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

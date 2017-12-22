@@ -8,7 +8,6 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
-import { SectorImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
 

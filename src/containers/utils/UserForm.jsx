@@ -74,11 +74,11 @@ class getUserForm extends Component {
   componentDidMount() {
     var self = this;
     var is_pcd = false;
+    var img;
     if(this.props.is_edit) {
       if(this.props.user_data.pcd) {
         is_pcd = true;
       }
-      var img;
       if(!this.props.photo)
         img = UserImg
       else
@@ -100,14 +100,16 @@ class getUserForm extends Component {
       this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
     }
     else {
-      var img = UserImg
+      img = UserImg
+      self.setState({
+        aux: update(this.state.aux, { photo_obj: {$set: img} })
+      })
       if(typeof location !== 'undefined' && location.search) {
         var search = location.search.substring(1);
         var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
         if(query['cep']) {
           self.setState({
-            user: update(this.state.user, { cep: {$set: query['cep']} }),
-            aux: update(this.state.aux, { photo_obj: {$set: img} })
+            user: update(this.state.user, { cep: {$set: query['cep']} })
           })
           this.updateAddress.bind(this)(query['cep'].replace(/(\.|-|_)/g,'')) 
         }

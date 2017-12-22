@@ -89,6 +89,7 @@ export const getOptions = (user_permission,user_name) =>
         { 'name': user_name, 
           'rolldown': true, 
           'sign_out': true,
+          'img': true,
           'fields': 
                 [ 
                   { 'name': "Administrador Local", 'link': "/choose_role", 'separator': true },
