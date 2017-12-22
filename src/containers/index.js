@@ -33,4 +33,25 @@ export ServiceTypeEdit from './service_type/ServiceTypeEdit';
 export ServiceTypeShow from './service_type/ServiceTypeShow';
 export ServiceTypeCreate from './service_type/ServiceTypeCreate';
 
-export ProfessionalIndex from './professional/ProfessionalIndex'
+export ProfessionalIndex from './professional/ProfessionalIndex';
+export ProfessionalList from './professional/ProfessionalList';
+export ProfessionalEdit from './professional/ProfessionalEdit';
+export ProfessionalShow from './professional/ProfessionalShow';
+export ProfessionalCreate from './professional/ProfessionalCreate';
+
+export ProfessionalSearch from './professional/ProfessionalSearch';
+export ProfessionalSchedule from './professional/ProfessionalSchedule';
+
+export ProfessionalUserList from './professional/user/ProfessionalUserList';
+export ProfessionalUserEdit from './professional/user/ProfessionalUserEdit';
+export ProfessionalUserShow from './professional/user/ProfessionalUserShow';
+export ProfessionalUserCreate from './professional/user/ProfessionalUserCreate';
+
+export ProfessionalUserDependantEdit from './professional/user/ProfessionalUserDependantEdit';
+export ProfessionalUserDependantShow from './professional/user/ProfessionalUserDependantShow';
+export ProfessionalUserDependantCreate from './professional/user/ProfessionalUserDependantCreate';
+
+export ShiftList from './shift/ShiftList';
+export ShiftEdit from './shift/ShiftEdit';
+export ShiftShow from './shift/ShiftShow';
+export ShiftCreate from './shift/ShiftCreate';

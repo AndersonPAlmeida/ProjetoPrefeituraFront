@@ -11,7 +11,12 @@ import { browserHistory } from 'react-router';
 import { UserImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
-import {userSignIn, userUpdatePicture} from '../../actions/user';
+import personal_info from './personal_info';
+import address_info from './address_info';
+import contact_info from './contact_info';
+import password_info from './password_info';
+import professional_info from './professional_info';
+import {userSignIn} from '../../actions/user';
 
 class getUserForm extends Component {
 
@@ -48,25 +53,39 @@ class getUserForm extends Component {
         password_confirmation: "",
         state_abbreviation: '',
         pcd_value: '',
-        phonemask: "(11) 1111-11111"
+        phonemask1: "(11) 1111-11111",
+        phonemask2: "(11) 1111-11111",
+        service_place_id: 0,
+        permission_id: 0,
+        service_place: {},
+        service_places: [],
+        occupations: [],
+        permissions: []
       },
+      professional: {
+        active: '',
+        registration: '',
+        occupation_id: 0,
+        roles: []
+      }
     };
   }
 
   componentDidMount() {
     var self = this;
     var is_pcd = false;
+    var img;
     if(this.props.is_edit) {
       if(this.props.user_data.pcd) {
         is_pcd = true;
       }
-      var img;
       if(!this.props.photo)
         img = UserImg
       else
         img = this.props.photo
       var year = parseInt(this.props.user_data.birth_date.substring(0,4))
       self.setState({
+        professional: this.props.professional_data,
         user: this.props.user_data,
         aux: update(this.state.aux, 
         {
@@ -79,29 +98,78 @@ class getUserForm extends Component {
         })
       })
       this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
-        
     }
     else {
+      img = UserImg
+      self.setState({
+        aux: update(this.state.aux, { photo_obj: {$set: img} })
+      })
       if(typeof location !== 'undefined' && location.search) {
         var search = location.search.substring(1);
         var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+        var cep = ""
+        var cpf = query['cpf'] ? query['cpf'] : ""
         if(query['cep']) {
-          self.setState({
-            user: update(this.state.user, { cep: {$set: query['cep']} })
-          })
-          this.updateAddress.bind(this)(query['cep'].replace(/(\.|-|_)/g,'')) 
+          cep = query['cep']
+          this.updateAddress.bind(this)(cep.replace(/(\.|-|_)/g,'')) 
         }
+        self.setState({
+          user: update(this.state.user, { cep: {$set: cep}, cpf: {$set: cpf} })
+        })
       }
     }
+    if(this.props.user_class == `professional`) {
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = `forms/create_professional`
+      fetch(`${apiUrl}/${collection}?${this.props.fetch_params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+      }).then(parseResponse).then(resp => {
+        var professional_roles = []
+        if(this.props.is_edit) {
+          professional_roles = this.props.roles_data
+          for(var i = 0; i < professional_roles.length; i++) {
+            if(!(this.belongsToCollection(professional_roles[i].service_place_id,resp.service_places,'id')) ||
+               !(this.belongsToCollection(professional_roles[i].role,resp.permissions),'role')) {
+              professional_roles.splice(i,1)
+            }
+          }
+        }
+        self.setState({
+                        professional: update(this.state.professional,
+                        {
+                          roles: {$set: professional_roles}
+                        }),
+                        aux: update(this.state.aux,
+                        {
+                          occupations: {$set: resp.occupations},
+                          permissions: {$set: resp.permissions},
+                          service_places: {$set: resp.service_places}
+                        })
+                      })
+      });
+    }
+  }
+
+  belongsToCollection(identifier, collection, collection_id) {
+    for(var i = 0; i < collection.length; i++) {
+      if(identifier == collection[i][collection_id])
+        return true
+    }
+    return false
   }
 
   handleInputUserChange(event) {
     const target = event.target;
-    const value = target.value;
     const name = target.name;
-    this.setState({
-      user: update(this.state.user, { [name]: {$set: value} })
-    })
+    const value = target.value
+    if(target.validity.valid) {
+      this.setState({
+        user: update(this.state.user, { [name]: {$set: value} })
+      })
+    }
   }
 
   handleChange(event){
@@ -227,88 +295,147 @@ class getUserForm extends Component {
     })
   }
 
-  handleSubmit() {
+  checkEmptyFields(obj, fields) {
+    let errors = []
+    for (var i = 0; i < fields.length; i++) {
+      if(!obj[fields[i].id])
+        errors.push(`Campo ${fields[i].name} é obrigatório`)
+    }
+    return errors;
+  }
+
+  checkErrors(formData, auxData, send_password) {
+    let errors = []
+    let form_mandatory = (!this.props.professional_only) ? [ { id: 'name', name: 'Nome' } ] : []
+    if(this.props.user_class == `citizen`) {
+      form_mandatory.push({ id: 'cpf', name: 'CPF' })
+      form_mandatory.push({ id: 'cep', name: 'CEP' })
+      form_mandatory.push({ id: 'phone1', name: 'Telefone 1' })
+    }
+    errors = this.checkEmptyFields(formData, form_mandatory)
+    if(send_password) {
+      if(!auxData['password'])
+        errors.push("Campo senha não pode estar vazio.")
+      if(!auxData['password_confirmation'])
+        errors.push("Campo Confirmação de senha não pode estar vazio.")
+      if(auxData['password_confirmation'] != auxData['password'])
+        errors.push("A senha de confirmação não corresponde a senha atual.");
+    }
+    if(!this.props.professional_only)
+      if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
+        errors.push("Campo Data de Nascimento é obrigatório.");
+    return errors;
+  }
+
+  generateBody(formData, auxData, send_password) {
     const monthNames = [
       "Jan", "Feb", "Mar",
       "Apr", "May", "Jun", 
       "Jul", "Aug", "Sep", 
       "Oct", "Nov", "Dec"
     ];
-    let errors = [];
-    let formData = {};
-    let auxData = {};
-    var image = {};
-    var send_password = false;
-    formData = this.state.user;
-    auxData = this.state.aux;
-    if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
-      errors.push("Campo Data de Nascimento é obrigatório.");
-    if(!formData['cep'])
-      errors.push("Campo CEP é obrigatório.");
-    if(this.props.user_class == `citizen`) {
-      if(!formData['cpf'])
-        errors.push("Campo CPF é obrigatório.");
-      else
-        formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
-      if(!this.props.is_edit || auxData['password']) {
-        send_password = true;
-        if(!auxData['password'])
-          errors.push("Campo Senha é obrigatório.");
-        if(!auxData['password'])
-          errors.push("Campo Confirmação de Senha é obrigatório..");
-        if(auxData['password_confirmation'] != auxData['password'])
-          errors.push("A senha de confirmação não corresponde a senha atual.");
-      }
-    }
     if(!auxData['pcd_value']) {
       formData['pcd'] = ''
     }
+    formData['cpf'] = formData['cpf'].replace(/(\.|-)/g,'');
+    if(formData['phone1'])
+      formData['phone1'] = formData['phone1'].replace(/[()_\-\s]/gi, '');
+    if(formData['phone2'])
+      formData['phone2'] = formData['phone2'].replace(/[()_\-\s]/gi, '');
+    formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
+    formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
+    formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`
+
+    if(this.state.aux.photo_has_changed) {
+      var image = {};
+      image['content'] = this.state.aux.photo_obj.split(',')[1];
+      image['content_type'] = this.state.aux.photo_obj.split(",")[0].split(":")[1].split(";")[0];
+      image['filename'] = this.state.aux.photo;;
+      formData['image'] = image;
+    }
+
+    if(send_password) {
+      formData['password'] = auxData['password'] 
+      formData['password_confirmation'] = auxData['password_confirmation'] 
+      if(auxData['current_password'])
+        formData['current_password'] = auxData['current_password'] 
+    }
+
+    /* adaptate fetch object info to api request */
+    let fetch_body = {}
+    if(this.props.user_class == `professional`) {
+      var { cpf, ...other } = formData
+      if(this.props.professional_only) {
+        fetch_body['professional'] = this.state.professional
+      }
+      else {
+        fetch_body['professional'] = Object.assign({},this.state.professional,other)
+        fetch_body['professional']['cpf'] = cpf
+      }
+      fetch_body['cpf'] = cpf
+    } else if(this.props.user_class == `dependant`) {
+      fetch_body['dependant'] = formData
+    } else {
+      if(this.props.is_edit) {
+        var { password, current_password, password_confirmation, ...other } = formData
+        if(password) {
+          fetch_body['password'] = password
+          fetch_body['current_password'] = current_password
+          fetch_body['password_confirmation'] = password_confirmation
+        }
+        if(this.props.current_professional) {
+          fetch_body['registration'] = this.state.professional.registration
+          fetch_body['occupation_id'] = this.state.professional.occupation_id
+        }
+        fetch_body['citizen'] = other
+      }
+      else
+        fetch_body = formData
+    }
+    return fetch_body
+  }
+
+
+  successMessage() {
+    let success_msg = ''
+    switch(this.props.user_class) {
+      case `dependant`:
+        success_msg += 'Dependente'
+        break
+      case `professional`:
+        success_msg += 'Profissional'
+        break
+      default:
+        success_msg += 'Cidadão'
+    }
+
+    if(this.props.is_edit)
+      success_msg += ' editado com sucesso'
+    else
+      success_msg += ' criado com sucesso'
+    return success_msg
+  }
+
+  handleSubmit() {
+    let formData = this.state.user;
+    let auxData = this.state.aux;
+    var send_password = false;
+    if((!this.props.professional_only) && this.props.user_class != `dependant` && (!this.props.is_edit || auxData['current_password'])) {
+      send_password = true
+    }
+    let errors = this.checkErrors.bind(this)(formData,auxData,send_password)
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
-      if(formData['phone1'])
-        formData['phone1'] = formData['phone1'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
-      if(formData['phone2'])
-        formData['phone2'] = formData['phone2'].replace(/[`~!@#$%^&*()_|+\-=?\s;:'",.<>\{\}\[\]\\\/]/gi, '');
-      formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
-      formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
-      formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`
-      let fetch_body = {};
-
-      if(this.state.aux.photo_has_changed) {
-        image['content'] = this.state.aux.photo_obj.split(',')[1];
-        image['content_type'] = this.state.aux.photo_obj.slice(5,14);
-        image['filename'] = this.state.aux.photo;
-        formData['image'] = image;
-      }
-      let success_msg
-      if(this.props.user_class == `dependant`) {
-        if(this.props.is_edit)
-          success_msg = 'Dependente editado com sucesso'
-        else
-          success_msg = 'Dependente criado com sucesso'
-        fetch_body['dependant'] = formData;
-      } else {
-        if(this.props.is_edit) {
-          fetch_body['citizen'] = formData;
-          success_msg = 'Dados editados com sucesso'
-        }
-        else {
-          fetch_body = formData;
-          success_msg = 'Cadastro efetuado com sucesso'
-        }
-        if(send_password) {
-          fetch_body['password'] = auxData['password'] 
-          fetch_body['password_confirmation'] = auxData['password_confirmation'] 
-          if(auxData['current_password'])
-            fetch_body['current_password'] = auxData['current_password'] 
-        }
-      }
+      let fetch_body = this.generateBody.bind(this)(formData,auxData,send_password)
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
-      const params = this.props.fetch_params; 
+      var params = this.props.fetch_params; 
+      if(this.props.user_class == `professional` && (!this.props.is_edit))
+        params += this.props.professional_only ? "&create_citizen=false" : "&create_citizen=true"  
+      console.log(fetch_body)
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -316,14 +443,13 @@ class getUserForm extends Component {
         method: this.props.fetch_method,
         body: JSON.stringify(fetch_body)
       }).then(parseResponse).then(resp => {
-        if(this.props.is_edit && this.props.user_class == `citizen`) {
+        if(this.props.is_edit && this.props.user_class == `citizen` && this.props.current_citizen) {
           this.props.dispatch(userSignIn(resp.data))
-          if(this.state.aux.photo_has_changed)
-            this.props.dispatch(userUpdatePicture(resp.data.citizen.id))
         }
-        Materialize.toast(success_msg, 10000, "green",function(){$("#toast-container").remove()});
+        Materialize.toast(this.successMessage.bind(this)(), 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
-      }).catch(({errors}) => {
+      }).catch((errors) => {
+        console.log(errors)
         if(errors && errors['full_messages']) {
           let full_error_msg = "";
           errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n' });
@@ -344,353 +470,63 @@ class getUserForm extends Component {
   }
 
   render() {
+    var title = this.props.is_edit ? 'Editar ' : 'Cadastrar ';
+    switch (this.props.user_class) {
+      case `citizen`:
+        title += 'Cidadão'
+        break
+      case `dependant`:
+        title += 'Dependente'
+        break
+      default:
+        title += 'Profissional'
+    }
+    if(this.props.is_edit)
+      title += `: ${this.props.user_data.name}`
     return (
       <main>
-      	<Row>
-	        <Col s={12}>
+        <Row>
+          <Col s={12}>
             <div className='card'>
               <div className='card-content'>
-                {this.props.is_edit ?
-                  this.props.user_class == `citizen` ?
-                    <h2 className="card-title">Alterar cadastro: {this.props.user_data.name}</h2>
-                    :
-                    <h2 className="card-title">Alterar dependente: {this.props.user_data.name}</h2> 
-                    :
-                    this.props.user_class == `citizen` ?
-                      <h2 className="card-title">Cadastrar cidadão</h2>
-                      :
-                      <h2 className="card-title">Cadastrar dependente</h2> 
-                }
-                <Row className='first-line'>
-                  <Col s={12} m={12} l={6}>
+                <h2 className="card-title">{title}</h2>
+                {
+                  !this.props.professional_only ?
                     <div>
-                      <img
-                        id='user_photo'
-                        width='230'
-                        height='230'
-                        src={this.state.aux.photo_obj}
-                      />
-                      <div className='file-input'>
-                        <Input 
-                          type='file'
-                          name='photo'
-                          accept='image/*'
-                          onChange={this.handleFile.bind(this)} 
-                        />
-                      </div>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Nome*:</h6>
-                      <label>
-                        <input type="text" name="name" className='input-field' value={this.state.user.name} onChange={this.handleInputUserChange.bind(this)} />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Data de nascimento*:</h6>
-                      {this.selectDate()}
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>Possui algum tipo de deficiência:</h6>
-                      <div className="check-input">
-                        <Input 
-                          onChange={this.handleChange.bind(this)} 
-                          checked={this.state.aux.pcd_value} 
-                          s={12} l={12} 
-                          name='pcd_value' 
-                          type='radio' 
-                          value='true' 
-                          label='Sim' 
-                        />
-                        <Input 
-                          onChange={this.handleChange.bind(this)} 
-                          checked={!this.state.aux.pcd_value} 
-                          s={12} l={12} 
-                          name='pcd_value' 
-                          type='radio' 
-                          value='' 
-                          label='Não' 
-                        />
-
-                        { this.state.aux.pcd_value ? 
-                          <div>
-                            <h6>Qual tipo de deficiência:</h6>
-                            <label>
-                              <input 
-                                type="text" 
-                                className='input-field' 
-                                name="pcd" 
-                                value={this.state.user.pcd} 
-                                onChange={this.handleInputUserChange.bind(this)}
-                                />
-                            </label>
-                          </div> 
-                          : null 
-                        }
-                      </div>
-                    </div>
-
-                    <div className="field-input">
-                      <h6>CPF:</h6>
-                      <label>
-                        <MaskedInput 
-                          type="text" 
-                          className='input-field' 
-                          mask="111.111.111-11" 
-                          name="cpf" 
-                          value={this.state.user.cpf} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    
-                    <div className="field-input">
-                      <h6>RG:</h6>
-                      <label>
-                        <MaskedInput 
-                          type="text" 
-                          className='input-field' 
-                          mask="11.111.111-1" 
-                          name="rg" 
-                          value={this.state.user.rg} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                  </Col>
-
-                  <Col s={12} m={12} l={6}>
-                    <div className='category-title'>
-                      <p>Endereço</p>
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>CEP:</h6>
-                      <label>
-                        <MaskedInput 
-                          type="text" 
-                          className='input-field' 
-                          mask="11111-111" name="cep" 
-                          value={this.state.user.cep} 
-                          onChange=
+                      <Row s={12}></Row>
+                      <Row s={12}>
+                        <Col s={12} m={6}>
+                          {personal_info.bind(this)()}
+                        </Col>
+                        <Col s={12} m={6}>
+                          {address_info.bind(this)()}
+                        </Col>
+                      </Row>
+                      <Row s={12}>
+                        <Col s={12} m={6}>
+                          {contact_info.bind(this)()}
+                        </Col>
+                        <Col s={12} m={6}>
                           {
-                            (event) => {
-                              this.handleInputUserChange.bind(this)(event)
-                              var cep = event.target.value.replace(/(\.|-|_)/g,'')
-                              if(cep.length == 8)
-                                this.updateAddress.bind(this)(cep) 
-                            }
+                            this.props.user_class != `dependant` ?
+                              password_info.bind(this)() :
+                              null
                           } 
-                        />
-                      </label>
+                        </Col>
+                      </Row>
                     </div>
-
-                    <div className="field-input" >
-                      <h6>Estado do endereço:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="state_abbreviation" 
-                          value={this.state.aux.state_abbreviation}  
-                          disabled />
-                      </label>
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>Munícipio:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="city" 
-                          value={this.state.aux.city_name}  
-                          disabled 
-                        />
-                      </label>
-                    </div>
-                    <div className="field-input" >
-                      <h6>Bairro:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="neighborhood" 
-                          value={this.state.aux.neighborhood} 
-                        />
-                      </label>
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>Endereço:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="address" 
-                          value={this.state.aux.address} 
-                        />
-                      </label>
-                    </div>
-                    
-                    <div className="field-input" >
-                      <h6>Número:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="address_number" 
-                          value={this.state.user.address_number} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-
-                    <div className="field-input" >
-                      <h6>Complemento:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="address_complement" 
-                          value={this.state.user.address_complement} 
-                          onChange={this.handleInputUserChange.bind(this)} />
-                      </label>
-                    </div>
-                    </Col>
-                </Row>
-                <Row className='first-line'>
-                  <Col s={12} m={12} l={6}>
-
-                    <div className='category-title'>
-                      <p>Informações de Contato</p>
-                    </div>
-
-                    <div className="field-input">
-                      <h6>Telefone 1:</h6>
-                      <label>
-                        <MaskedInput
-                          mask={this.state.aux.phonemask}
-                          type="text" 
-                          className='input-field' 
-                          name="phone1" 
-                          value={this.state.user.phone1} 
-                          onChange={
-                            (event) => {
-                              this.handleInputUserChange.bind(this)(event)
-                              if(event.target.value.replace(/(_|-|(|))/g,'').length == 14) {
-                                this.setState({aux: update(this.state.aux, 
-                                  {
-                                    phonemask: {$set: "(11) 11111-1111"},
-                                  })
-                                })
-                              }
-                              else {
-                                this.setState({aux: update(this.state.aux, 
-                                  {
-                                    phonemask: {$set: "(11) 1111-11111"},
-                                  })
-                                })
-                              }
-                            }
-                          }
-                        />
-                      </label>
-                    </div>
-
-                    <div className="field-input">
-                      <h6>Telefone 2:</h6>
-                      <label>
-                        <MaskedInput
-                          mask={this.state.aux.phonemask} 
-                          type="text" 
-                          className='input-field' 
-                          name="phone2" 
-                          value={this.state.user.phone2} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-
-                    <div className="field-input">
-                      <h6>E-mail:</h6>
-                      <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="email" 
-                          value={this.state.user.email} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-
-                    <div>
-                      <h6>Observações:</h6>
-                      <label>
-                        <textarea  
-                          className='input-field materialize-textarea'
-                          placeholder="Deixe este campo em branco caso não exista observações a serem feitas" 
-                          name="note" 
-                          value={this.state.user.note} 
-                          onChange={this.handleInputUserChange.bind(this)} 
-                        />
-                      </label>
-                    </div>
-                    </Col>
-
-                    {this.props.user_class == `citizen` ?
-                      <Col s={12} m={12} l={6}>
-
-                        <div className='category-title'>
-                          <p>Senha</p>
-                        </div>
-
-                        <div className="field-input">
-                          <h6>Senha atual:</h6>
-                          <label>
-                            <input 
-                              type="password" 
-                              className='input-field' 
-                              name="password" 
-                              value={this.state.aux.password}
-                              onChange={this.handleChange.bind(this)} 
-                            />
-                          </label>
-                        </div>
-                        
-                        <div className="field-input">
-                          <h6>Confirmação de senha:</h6>
-                          <label>
-                            <input 
-                              type="password" 
-                              className='input-field' 
-                              name="password_confirmation" 
-                              value={this.state.aux.password_confirmation} 
-                              onChange={this.handleChange.bind(this)} 
-                            />
-                          </label>
-                        </div>
-
-                        {this.props.is_edit ?
-                          <div className="field-input">
-                            <h6>Nova senha: <i>(mínimo 6 caracteres)</i></h6>
-                            <label>
-                              <input 
-                                type="password" 
-                                className='input-field' 
-                                name="current_password" 
-                                value={this.state.aux.current_password}
-                                onChange={this.handleChange.bind(this)} 
-                              />
-                            </label>
-                          </div>
-                        : null}
-
-                        <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
-                      </Col> : null
-                    } 
-                </Row>
+                    : null
+                }
+                { 
+                  (this.props.user_class == `professional` || this.props.current_professional) ?
+                    <Row s={12}>
+                      <Col s={12} m={6}>
+                        {professional_info.bind(this)()}
+                      </Col>
+                    </Row>
+                    : null
+                }
+                <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
                 {this.confirmButton()}
               </div>
             </div>

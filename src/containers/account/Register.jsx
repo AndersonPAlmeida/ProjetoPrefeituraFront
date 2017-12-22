@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import { EmailSignUpForm } from "../../redux-auth/views/default";
 import { browserHistory } from 'react-router';
 import UserForm from '../utils/UserForm'
 
