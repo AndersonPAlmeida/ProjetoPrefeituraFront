@@ -1,10 +1,11 @@
-export const getOptions = (user_permission,user_name) => 
+export const getOptions = (user_permission,user_name) =>
 {
   if (user_permission == 'adm_c3sl') {
     return (
-      [ 
-        { 'name': user_name, 
+      [
+        { 'name': user_name,
           'rolldown': true,
+          'sign_out': true,
           'img': true,
           'fields': 
                 [ 
@@ -12,7 +13,6 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': 'Mudar Permissão', 'link': '/choose_role', 'separator': false },
                   { 'name': 'Editar', 'link': '/citizens/edit', 'separator': false },
                   { 'name': 'Imprimir Cadastro', 'link': '/citizens/my_report/report.pdf', 'separator': true },
-                  { 'name': 'Sair', 'link': '/citizens/sign_out', 'separator': false } 
                 ]
         },
         { 'name': 'Sistema', 
@@ -54,8 +54,8 @@ export const getOptions = (user_permission,user_name) =>
   }
   else if (user_permission == 'adm_prefeitura') {
     return(
-      [ 
-        { 'name': user_name, 
+      [
+        { 'name': user_name,
           'rolldown': true,
           'img': true, 
           'fields': 
@@ -64,7 +64,6 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': 'Mudar Permissão', 'link': '/choose_role', 'separator': false },
                   { 'name': 'Editar', 'link': '/citizens/edit', 'separator': false },
                   { 'name': 'Imprimir Cadastro', 'link': '/citizens/my_report/report.pdf', 'separator': true },
-                  { 'name': 'Sair', 'link': '/citizens/sign_out', 'separator': false } 
                 ]
         },
         { 'name': 'Sistema', 
@@ -99,22 +98,23 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': 'Agendamentos', 'link': '/schedules', 'separator': false },
                   { 'name': 'Cadastro de Cidadãos', 'link': '/professionals/users', 'separator': false } 
                 ]
-        } 
+        }
       ]
     );
   }
   else if (user_permission == 'adm_local') {
     return (
-      [ 
-        { 'name': user_name, 
-          'rolldown': true, 
+      [
+        { 'name': user_name,
+          'rolldown': true,
+          'sign_out': true,
+          'img': true,
           'fields': 
                 [ 
                   { 'name': 'Administrador Local', 'link': '/choose_role', 'separator': true },
                   { 'name': 'Mudar Permissão', 'link': '/choose_role', 'separator': false },
                   { 'name': 'Editar', 'link': '/citizens/edit', 'separator': false },
                   { 'name': 'Imprimir Cadastro', 'link': '/citizens/my_report/report.pdf', 'separator': true },
-                  { 'name': 'Sair', 'link': '/citizens/sign_out', 'separator': false } 
                 ]
         },
         { 'name': 'Sistema', 
@@ -158,7 +158,6 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': 'Mudar Permissão', 'link': '/choose_role', 'separator': false },
                   { 'name': 'Editar', 'link': '/citizens/edit', 'separator': false },
                   { 'name': 'Imprimir Cadastro', 'link': '/citizens/my_report/report.pdf', 'separator': true },
-                  { 'name': 'Sair', 'link': '/citizens/sign_out', 'separator': false } 
                 ]
         },
         { 'name': 'Recursos', 
@@ -184,16 +183,17 @@ export const getOptions = (user_permission,user_name) =>
   }
   else if (user_permission == 'responsavel_atendimento') {
     return (
-      [ 
-        { 'name': user_name, 
-          'rolldown': true, 
+      [
+        { 'name': user_name,
+          'rolldown': true,
+          'sign_out': true,
+          'img': true,
           'fields': 
                 [ 
                   { 'name': 'Responsável Atendimento', 'link': '/choose_role', 'separator': true },
                   { 'name': 'Mudar Permissão', 'link': '/choose_role', 'separator': false },
                   { 'name': 'Editar', 'link': '/citizens/edit', 'separator': false },
                   { 'name': 'Imprimir Cadastro', 'link': '/citizens/my_report/report.pdf', 'separator': true },
-                  { 'name': 'Sair', 'link': '/citizens/sign_out', 'separator': false } 
                 ]
         },
         { 'name': 'Recursos', 
@@ -209,11 +209,13 @@ export const getOptions = (user_permission,user_name) =>
     );
   }
   else {
-    return ( 
+    return (
       [
 
-        { 'name': user_name, 
-          'rolldown': true, 
+        { 'name': user_name,
+          'rolldown': true,
+          'sign_out': true,
+          'img': true,
           'fields': 
                 [ 
                   { 'name': 'Cidadão', 'link': '/choose_role', 'separator': true },
@@ -221,7 +223,6 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': 'Editar', 'link': '/citizens/edit', 'separator': false },
                   { 'name': 'Dependentes', 'link': '/dependants', 'separator': false },
                   { 'name': 'Imprimir Cadastro', 'link': '/citizens/my_report/report.pdf', 'separator': true },
-                  { 'name': 'Sair', 'link': '/citizens/sign_out', 'separator': false }
                 ]
         },
         { 'name': 'Recursos', 

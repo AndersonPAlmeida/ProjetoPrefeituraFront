@@ -23,6 +23,11 @@ export SectorEdit from './sector/SectorEdit';
 export SectorShow from './sector/SectorShow';
 export SectorCreate from './sector/SectorCreate';
 
+export OccupationList from './occupation/OccupationList';
+export OccupationEdit from './occupation/OccupationEdit';
+export OccupationCreate from './occupation/OccupationCreate';
+export OccupationShow from './occupation/OccupationShow';
+
 export ServicePlaceList from './service_place/ServicePlaceList';
 export ServicePlaceEdit from './service_place/ServicePlaceEdit';
 export ServicePlaceShow from './service_place/ServicePlaceShow';
@@ -52,3 +57,25 @@ export ResourceBookingList from './resource_booking/ResourceBookingList';
 export ResourceBookingShow from './resource_booking/ResourceBookingShow';
 export ResourceBookingEdit from './resource_booking/ResourceBookingEdit';
 export ResourceBookingCreate from './resource_booking/ResourceBookingCreate';
+export ProfessionalIndex from './professional/ProfessionalIndex';
+export ProfessionalList from './professional/ProfessionalList';
+export ProfessionalEdit from './professional/ProfessionalEdit';
+export ProfessionalShow from './professional/ProfessionalShow';
+export ProfessionalCreate from './professional/ProfessionalCreate';
+
+export ProfessionalSearch from './professional/ProfessionalSearch';
+export ProfessionalSchedule from './professional/ProfessionalSchedule';
+
+export ProfessionalUserList from './professional/user/ProfessionalUserList';
+export ProfessionalUserEdit from './professional/user/ProfessionalUserEdit';
+export ProfessionalUserShow from './professional/user/ProfessionalUserShow';
+export ProfessionalUserCreate from './professional/user/ProfessionalUserCreate';
+
+export ProfessionalUserDependantEdit from './professional/user/ProfessionalUserDependantEdit';
+export ProfessionalUserDependantShow from './professional/user/ProfessionalUserDependantShow';
+export ProfessionalUserDependantCreate from './professional/user/ProfessionalUserDependantCreate';
+
+export ShiftList from './shift/ShiftList';
+export ShiftEdit from './shift/ShiftEdit';
+export ShiftShow from './shift/ShiftShow';
+export ShiftCreate from './shift/ShiftCreate';

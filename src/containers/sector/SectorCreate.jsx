@@ -32,7 +32,6 @@ class getSectorCreate extends Component {
               fetch_method={'post'}
               submit_url={`/sectors/`}
               current_role={this.props.user.roles[this.props.user.current_role_idx]}
-              city_hall_id={this.props.user.roles[this.props.user.current_role_idx].city_hall_id}
             />
         }
       </div>

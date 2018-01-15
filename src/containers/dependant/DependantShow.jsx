@@ -7,60 +7,25 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
+import { UserImg } from '../images';
 
 class getDependantShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      update_address: 0,
       dependant: {
-        account_id: '',
-        active: '',
-        address: {
-          address: '',
-          complement: '',
-          complement2: '',
-          id: '',
-          neighborhood: '',
-          zipcode: ''
-        },
-        address_complement: '',
-        address_number: '',
-        address_street: '',
-        avatar_content_type: '',
-        avatar_file_name: '',
-        avatar_file_size: '',
-        avatar_updated_at: '',
-        birth_date: '',
-        cep: '',
-        city: {
-          id: '',
-          name: ''
-        },
-        cpf: '',
-        email: '',
-        id: '',
-        name: '',
-        neighborhood: '',
-        note: '',
-        pcd: '',
-        phone1: '',
-        phone2: '',
-        responsible_id: '',
-        rg: '',
-        state: {
-          abbreviation: '',
-          id: '',
-          name: ''
-        }
-      }
+        address: {},
+        city: {},
+        state: {}
+      },
+      photo: null
     }
   }
 
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`;
+    var collection = `citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -68,7 +33,27 @@ class getDependantShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ dependant: resp.citizen })
+      self.setState({ dependant: resp.citizen }, () => {
+          collection = `citizens/${this.state.dependant.id}/picture`
+          fetch(`${apiUrl}/${collection}?${params}`, {
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            method: "get"
+          })
+            .then(resp => {
+              var contentType = resp.headers.get("content-type");
+              if(resp.status == 200 && contentType && contentType.indexOf("image") !== -1) {
+                resp.blob().then(photo => {
+                  self.setState({ photo: URL.createObjectURL(photo)});
+                })
+              } else {
+                self.setState({ photo: UserImg });
+              }
+          }).catch(e => {})
+        }
+      )
     });
   }
 
@@ -77,6 +62,12 @@ class getDependantShow extends Component {
       <div className='card'>
             <div className='card-content'>
               <h2 className='card-title h2-title-home'> Informações do Dependente: </h2>
+              <img
+                id='user_photo'
+                width='230'
+                height='230'
+                src={this.state.photo}
+              />
               <p> 
                 <b>Nome: </b>
                 {this.state.dependant.name}

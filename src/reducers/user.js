@@ -28,20 +28,23 @@ const initialUser = {
                                  }, 
                         current_role: 'citizen',
                         current_role_idx: -1, 
-                        roles: [] 
+                        roles: [],
+                        image: null 
                       } 
                     }
 const initialState = Immutable.Map(initialUser)
 
 const userReducer = (state = initialState, action) => {
   if (action.type === USER_SIGN_IN) {
-    action.user.current_role = "citizen";
-    action.user.current_role_idx = -1;
+    let current_role = localStorage.getItem("current_role")
+    let current_role_idx = localStorage.getItem("current_role_idx")
+    action.user.current_role = current_role ? current_role : 'citizen'
+    action.user.current_role_idx = current_role_idx ? current_role_idx : -1
     return state.set('userInfo', action.user);
   }
 
   if (action.type === USER_SIGN_OUT) {
-    return state.set('userInfo', null);
+    return state.set('userInfo', initialUser);
   }
 
   if (action.type === USER_UPDATE) {

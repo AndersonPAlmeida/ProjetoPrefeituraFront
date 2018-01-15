@@ -27,7 +27,6 @@ export default class Default extends React.Component {
           { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/Login.css')._style }} /> : null }
           { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/SignIn.css')._style }} /> : null }
           { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/SignUp.css')._style }} /> : null }
-          { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/SignUpForm.css')._style }} /> : null }
           <script
             dangerouslySetInnerHTML={{ __html: `window.__API_URL__='${apiUrl}'` }}
             charSet="UTF-8"

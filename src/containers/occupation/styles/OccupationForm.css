@@ -1,0 +1,32 @@
+.occupation-select {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+}
+
+.occupation-select .input-field {
+  margin-top: 0 !important;
+}
+
+.select-field {
+  font-size: 13px;
+  font-family: 'Roboto', 'Arial';
+}
+
+.file-input {
+  overflow: auto;
+  margin-bottom: 20px;
+}
+
+.field-input {
+  width: 300px !important;
+  height: 115px !important;
+}
+
+input {
+   color: black;
+ }
+
+.check-input {
+  margin-bottom: 5px;
+  overflow: auto;
+}
