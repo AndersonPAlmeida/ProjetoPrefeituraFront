@@ -58,7 +58,7 @@ class getResourceForm extends Component {
     
     this.getServicePlaceWithProfessional(role);
 
-    if (this.props.is_edit)    
+    if (this.props.is_edit)  {  
       var previous_data = {
         situation:Boolean(this.props.data.active),
         borrowed:Boolean(this.props.data.borrowed),
@@ -69,6 +69,8 @@ class getResourceForm extends Component {
         professional_responsible_id:this.props.data.professional_responsible_id,
         resource_id:this.props.data.resource_id
       };
+      this.setState({status: this.props.data.status});
+    }
     if(this.props.current_role.role != 'adm_c3sl') {
       if (this.props.is_edit)
         this.setState({ resource_booking: previous_data });
@@ -258,7 +260,7 @@ class getResourceForm extends Component {
         this.getShifts(value);
       }
     }   
-    if(name == 'time_end' || name == 'time_start' || name == 'selected_citizen' || name =='selected_shift'){
+    if(name == 'time_end' || name == 'time_start' || name == 'selected_citizen' || name =='selected_shift' || name == 'status'){
       this.setState({[name]: value});
     }
     else{
@@ -278,10 +280,7 @@ class getResourceForm extends Component {
     
     if (this.props.is_edit){
       formData = this.state.resource_booking;
-      formData['execution_start_time'] = new Date(dates[0].setHours(Number(hour_begin), Number(minute_begin)));
-      formData['execution_end_time'] = new Date(dates[0].setHours(Number(hour_end), Number(minute_end)));
-      formData['professional_responsible_id'] = Number(formData.professional_responsible_id);
-      formData['situation'] = Boolean(formData['active']);
+      formData['status'] = this.state.status;
     }
     else{     
       formData = this.buildBody();
@@ -448,6 +447,38 @@ class getResourceForm extends Component {
         <option value='0' disabled>Escolha um horário</option>
       </Input>
     );
+  }
+
+  pickStatus(){
+    var available_status = ['Requisitado', 'Empréstimo concedido','Recusado', 'Emprestado', 'Devolvido com avarias' , 'Devolvido', 'Não Devolvido'];
+
+    const statusList = (
+      available_status.map((as) => {
+        return (
+          <option key={Math.random()} value={as}>
+            {`${as}`} 
+          </option>
+        );
+      })
+    );
+    return (
+      <Input 
+        name="status"   
+        type='select' 
+        value={this.state.status}
+        onChange={
+          (event) => {
+            if(event.target.value != this.state.status) {
+              console.log(event.target.value, this.state.status);
+              this.handleInputResourceChange(event);
+            }
+          }
+        }
+      >
+        {statusList}
+      </Input>
+    );
+  
   }
   pickCitizen(){
     var citizens = this.state.citizens.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} );  
@@ -855,7 +886,7 @@ class getResourceForm extends Component {
           </div>  
           <div>
             <h6><b>Status Atual:</b></h6>
-            {this.props.data.status}
+            {this.pickStatus()}
           </div>  
            
         </Col>
