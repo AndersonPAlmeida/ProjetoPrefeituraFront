@@ -29,26 +29,3 @@ export function userDestroySession(endpoint) {
     })
   }
 }
-
-export function userUpdatePicture(user_id) {
-  return dispatch => {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${user_id}/picture`;
-    const params = `size=large&permission=citizen`;
-    return fetch(`${apiUrl}/${collection}?${params}`, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      },
-      method: "get"
-    })
-      .then(resp => {
-        var contentType = resp.headers.get("content-type");
-        if(resp.status == 200 && contentType && contentType.indexOf("image") !== -1) {
-          resp.blob().then(photo => {
-            dispatch(userUpdate({ 'image': URL.createObjectURL(photo)}));
-          })
-        }
-      }).catch(e => {})
-  };
-}

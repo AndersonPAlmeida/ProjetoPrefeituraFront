@@ -89,8 +89,9 @@ export const getOptions = (user_permission,user_name) =>
         { 'name': user_name,
           'rolldown': true,
           'sign_out': true,
-          'fields':
-                [
+          'img': true,
+          'fields': 
+                [ 
                   { 'name': "Administrador Local", 'link': "/choose_role", 'separator': true },
                   { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
                   { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
@@ -152,8 +153,9 @@ export const getOptions = (user_permission,user_name) =>
         { 'name': user_name,
           'rolldown': true,
           'sign_out': true,
-          'fields':
-                [
+          'img': true,
+          'fields': 
+                [ 
                   { 'name': "Responsável Atendimento", 'link': "/choose_role", 'separator': true },
                   { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
                   { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },
@@ -172,8 +174,9 @@ export const getOptions = (user_permission,user_name) =>
         { 'name': user_name,
           'rolldown': true,
           'sign_out': true,
-          'fields':
-                [
+          'img': true,
+          'fields': 
+                [ 
                   { 'name': "Cidadão", 'link': "/choose_role", 'separator': true },
                   { 'name': "Mudar Permissão", 'link': "/choose_role", 'separator': false },
                   { 'name': "Editar", 'link': "/citizens/edit", 'separator': false },

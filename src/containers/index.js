@@ -55,3 +55,8 @@ export ProfessionalUserCreate from './professional/user/ProfessionalUserCreate';
 export ProfessionalUserDependantEdit from './professional/user/ProfessionalUserDependantEdit';
 export ProfessionalUserDependantShow from './professional/user/ProfessionalUserDependantShow';
 export ProfessionalUserDependantCreate from './professional/user/ProfessionalUserDependantCreate';
+
+export ShiftList from './shift/ShiftList';
+export ShiftEdit from './shift/ShiftEdit';
+export ShiftShow from './shift/ShiftShow';
+export ShiftCreate from './shift/ShiftCreate';

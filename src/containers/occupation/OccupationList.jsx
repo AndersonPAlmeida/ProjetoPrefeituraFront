@@ -124,6 +124,7 @@ class getOccupationList extends Component {
               {occupation.active ? 'Ativo' : 'Inativo'}
             </td>
             {
+           this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
            this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
              <td>
                {occupation.city_hall_name}
@@ -155,6 +156,7 @@ class getOccupationList extends Component {
         <th>{this.sortableColumn.bind(this)('Descrição','description')}</th>
         <th>{this.sortableColumn.bind(this)('Situação','situation')}</th>
         {
+         this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
            <th>{this.sortableColumn.bind(this)('Prefeitura','city_hall_name')}</th> :
            null

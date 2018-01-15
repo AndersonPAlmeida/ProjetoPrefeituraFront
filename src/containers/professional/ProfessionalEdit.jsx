@@ -14,14 +14,15 @@ class getProfessionalEdit extends Component {
       professional: [],
       citizen: [],
       roles: [],
-      fetching: true
+      fetching: true,
+      photo: null
     };
   }
 
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `professionals/${this.props.params.professional_id}`;
+    var collection = `professionals/${this.props.params.professional_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -46,8 +47,27 @@ class getProfessionalEdit extends Component {
                       citizen: resp.citizen, 
                       professional: professional_data,
                       roles: roles_data,
-                      fetching: false 
-                   })
+                   }, () => {
+          collection = `citizens/${this.state.citizen.id}/picture`
+          fetch(`${apiUrl}/${collection}?${params}`, {
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            method: "get"
+          })
+            .then(resp => {
+              var contentType = resp.headers.get("content-type");
+              if(resp.status == 200 && contentType && contentType.indexOf("image") !== -1) {
+                resp.blob().then(photo => {
+                  self.setState({ photo: URL.createObjectURL(photo), fetching: false });
+                })
+              } else {
+                self.setState({ fetching: false });
+              }
+          }).catch(e => {})
+        }
+      )
     });
   }
 
@@ -66,6 +86,7 @@ class getProfessionalEdit extends Component {
               professional_data={this.state.professional} 
               user_class={`professional`}
               is_edit={true} 
+              photo={this.state.photo}
               professional_only={false}
               prev={this.prev}
               fetch_collection={`professionals/${this.props.params.professional_id}`}

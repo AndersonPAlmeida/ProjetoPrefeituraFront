@@ -54,3 +54,27 @@ input {
   background-color: #92bf23;
   color: black;
 }
+
+.form-signup {
+  display: inline-block;
+  text-align: left;
+}
+
+.main-signup {
+  height: 100%;
+  margin-bottom: 5%;
+  font-family: 'Roboto', 'Arial';
+  text-align: center;
+}
+
+.category-title {
+  border-bottom: 2px solid black;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.caret {
+  border-top: 0 !important;
+}
+

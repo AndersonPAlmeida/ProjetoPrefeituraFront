@@ -315,6 +315,7 @@ class getProfessionalUserList extends Component {
         <Row s={12}></Row>
         <Row s={12}>
           {
+            this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
             this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
               this.pickCityHall() :
               null

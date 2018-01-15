@@ -12,14 +12,15 @@ class getProfessionalUserDependantEdit extends Component {
     super(props)
     this.state = {
       dependant: {},
-      fetching: true
+      fetching: true,
+      photo: null
     };
   }
 
   componentDidMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `citizens/${this.props.params.citizen_id}/dependants/${this.props.params.dependant_id}`;
+    var collection = `citizens/${this.props.params.citizen_id}/dependants/${this.props.params.dependant_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -27,7 +28,27 @@ class getProfessionalUserDependantEdit extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ dependant: resp.citizen, fetching: false })
+      self.setState({ dependant: resp.citizen }, () => {
+          collection = `citizens/${this.state.dependant.id}/picture`
+          fetch(`${apiUrl}/${collection}?${params}`, {
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            method: "get"
+          })
+            .then(resp => {
+              var contentType = resp.headers.get("content-type");
+              if(resp.status == 200 && contentType && contentType.indexOf("image") !== -1) {
+                resp.blob().then(photo => {
+                  self.setState({ photo: URL.createObjectURL(photo), fetching: false });
+                })
+              } else {
+                self.setState({ fetching: false });
+              }
+          }).catch(e => {})
+        }
+      )
     });
   }
 
@@ -45,7 +66,8 @@ class getProfessionalUserDependantEdit extends Component {
               user_data={this.state.dependant} 
               user_class={`dependant`}
               is_edit={true} 
-              prev={this.prev}
+              photo={this.state.photo}
+              prev={this.prev.bind(this)}
               fetch_collection={`citizens/${this.props.params.citizen_id}/dependants/${this.props.params.dependant_id}`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'put'}

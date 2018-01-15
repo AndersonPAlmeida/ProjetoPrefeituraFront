@@ -8,7 +8,6 @@ import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
-import { SectorImg } from '../images';
 import MaskedInput from 'react-maskedinput';
 import update from 'react-addons-update';
 
@@ -114,7 +113,7 @@ class getSectorForm extends Component {
         else
           Materialize.toast('Setor criado com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
-      }).catch(({errors}) => {
+      }).catch(({errors}) => { // // TODO: UPDATE ERRORS ARRAY ACCORDING TO API
         if(errors) {
           let full_error_msg = "";
           errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n' });

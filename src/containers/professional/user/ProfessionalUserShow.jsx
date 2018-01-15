@@ -7,13 +7,15 @@ import {parseResponse} from "../../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
+import { UserImg } from '../../images';
 
 class getProfessionalUserShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
       citizen: {},
-      dependants: []
+      dependants: [],
+      photo: null
     }
   }
 
@@ -28,8 +30,29 @@ class getProfessionalUserShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ citizen: resp })
+      self.setState({ citizen: resp }, () => {
+          collection = `citizens/${this.state.citizen.id}/picture`
+          fetch(`${apiUrl}/${collection}?${params}`, {
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            method: "get"
+          })
+            .then(resp => {
+              var contentType = resp.headers.get("content-type");
+              if(resp.status == 200 && contentType && contentType.indexOf("image") !== -1) {
+                resp.blob().then(photo => {
+                  self.setState({ photo: URL.createObjectURL(photo)});
+                })
+              } else {
+                self.setState({ photo: UserImg });
+              }
+          }).catch(e => {})
+        }
+      )
     });
+
     collection = `citizens/${this.props.params.citizen_id}/dependants`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -46,6 +69,7 @@ class getProfessionalUserShow extends Component {
       this.state.dependants.map((dependant) => {
         return (
           <p>
+            <b>Dependentes: </b>
             <a className='back-bt waves-effect btn-flat'
               href='#'
               onClick={ () =>
@@ -69,6 +93,12 @@ class getProfessionalUserShow extends Component {
       <div className='card'>
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Informações do Cidadão: </h2>
+          <img
+            id='user_photo'
+            width='230'
+            height='230'
+            src={this.state.photo}
+          />
           <p> 
             <b>Nome: </b>
             {this.state.citizen.name}
@@ -113,10 +143,7 @@ class getProfessionalUserShow extends Component {
             <b>Complemento do endereço: </b>
             {this.state.citizen.address_complement}
           </p>
-          <p> 
-            <b>Dependentes: </b>
-            {this.showDependants.bind(this)()}
-          </p>
+          {this.showDependants.bind(this)()}
           <p> 
             <b>Observações: </b>
             {this.state.citizen.note}

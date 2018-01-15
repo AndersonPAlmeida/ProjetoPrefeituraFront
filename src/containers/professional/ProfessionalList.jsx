@@ -508,6 +508,7 @@ class getProfessionalList extends Component {
         </Row>
         <Row s={12}>
           {
+            this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
             this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
               this.pickCityHall() :
               null
@@ -579,9 +580,7 @@ class getProfessionalList extends Component {
                     +`&q[role]=${permission}`
                     +`&q[occupation]=${occupation}`
                     +`&q[service_place]=${service_place}`
-                    +`&q[situation]=${situation}`
                     +`&q[city_hall]=${city_hall}`
-                    +`&q[occupation]=${occupation}`
                     +`&q[active]=${situation}`
                     +`&q[registration]=${registration}`
                     +`&q[cpf]=${cpf}`
