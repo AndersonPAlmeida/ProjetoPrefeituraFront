@@ -18,10 +18,10 @@ class getOccupationList extends Component {
           city_halls: [],
           filter_name: '',
           filter_description: '',
+          filter_city_hall: '',
           last_fetch_name: '',
-          filter_city_hall_name: '',
-          last_fetch_city_hall_name: '',
           last_fetch_description: '',
+          last_fetch_city_hall: '',
           filter_s: '',
           num_entries: 0,
           current_page: 1
@@ -236,10 +236,45 @@ class getOccupationList extends Component {
     })
   }
 
+  pickCityHall() {
+    const cityHallList = (
+      this.state.city_halls.map((city_hall) => {
+        return (
+          <option value={city_hall.id}>{city_hall.name}</option>
+        )
+      })
+    )
+    return (
+      <Col s={12} m={3}>
+        <h6>Prefeitura:</h6>
+        <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+          onChange={
+            (event) => {
+              var selected_city_hall = event.target.value
+              if(this.state.filter_city_hall != selected_city_hall) {
+                this.setState({
+                  filter_city_hall: selected_city_hall,
+                });
+              }
+            }
+          }
+        >
+          <option value={''}>Todas</option>
+          {cityHallList}
+        </Input>
+      </Col>
+    )
+  }
+
   filterOccupation() {
     return (
       <div>
       <Row className="row-occupation">
+        {
+          this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+            this.pickCityHall() :
+            null
+        }
           <Col s={12} m={4}  >
             <div>
               <h6>Nome:</h6>
@@ -263,20 +298,6 @@ class getOccupationList extends Component {
                   className='input-field'
                   name="filter_description"
                   value={this.state.filter_description}
-                  onChange={this.handleInputFilterChange.bind(this)}
-                />
-              </label>
-            </div>
-          </Col>
-          <Col s={12} m={4}>
-            <div>
-              <h6>Prefeitura:</h6>
-              <label>
-                <input
-                  type="text"
-                  className='input-field'
-                  name="filter_city_hall_name"
-                  value={this.state.filter_city_hall_name}
                   onChange={this.handleInputFilterChange.bind(this)}
                 />
               </label>
@@ -320,29 +341,29 @@ class getOccupationList extends Component {
   }
 
   handleFilterSubmit(sort_only) {
-    var name;
-    var description;
-    var city_hall_name;
-    var current_page;
+    var name
+    var description
+    var city_hall
+    var current_page
     if(sort_only) {
-      name = this.state.last_fetch_name;
-      description = this.state.last_fetch_description;
-      city_hall_name = this.state.last_fetch_city_hall_name;
+      name = this.state.last_fetch_name
+      description = this.state.last_fetch_description
+      city_hall = this.state.last_fetch_city_hall
     } else {
-      name = this.state.filter_name;
-      city_hall_name = this.state.filter_city_hall_name;
-      description = this.state.filter_description;
+      name = this.state.filter_name
+      description = this.state.filter_description
+      city_hall = this.state.filter_city_hall
     }
-    name = name.replace(/\s/g,'+');
-    description = description.replace(/\s/g,'+');
-    city_hall_name = city_hall_name.replace(/\s/g,'+');
+    name = name.replace(/\s/g,'+')
+    description = description.replace(/\s/g,'+')
+
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `occupations`;
     const params = `permission=${this.props.user.current_role}`
                     +`&q[name]=${name}`
                     +`&q[description]=${description}`
                     +`&q[description]=${description}`
-
+                    +`&q[city_hall_id]=${city_hall}`
                     +`&q[s]=${this.state.filter_s}`
                     +`&page=${this.state.current_page}`;
     current_page = sort_only ? this.state.current_page : 1;
@@ -357,6 +378,7 @@ class getOccupationList extends Component {
         num_entries: resp.num_entries,
         last_fetch_name: name,
         last_fetch_description: description,
+        last_fetch_city_hall: city_hall,
         current_page: current_page
       })
     });
