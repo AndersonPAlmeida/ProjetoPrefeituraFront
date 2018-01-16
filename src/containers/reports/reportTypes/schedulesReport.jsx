@@ -41,6 +41,8 @@ class getSchedulesReport extends Component {
     this.getSituations = this.getSituations.bind(this)
     this.updateFilters = this.updateFilters.bind(this)
     this.clearFields = this.clearFields.bind(this)
+
+    this.confirmFilters = this.confirmFilters.bind(this)
   }
 
   componentWillMount(){
@@ -49,8 +51,7 @@ class getSchedulesReport extends Component {
     })
   }
 
-
-getSchedulesList(){
+  getSchedulesList(){
   const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = `schedules`;
     const params = `permission=${this.props.user.current_role}`
@@ -80,6 +81,7 @@ getSchedulesList(){
   formatDateTime(dateTime){
     var dateText = new Date(dateTime)
     var returnText = this.addZeroBefore(dateText.getHours()) + ":" + this.addZeroBefore(dateText.getMinutes()) + " - " + dateText.getDate() + "/" + (dateText.getMonth() + 1) + "/" + dateText.getFullYear()
+    console.log(returnText)
     return(returnText)
   }
 
@@ -120,7 +122,6 @@ getSchedulesList(){
     this.getShiftTypes()
     this.getSituations()
   }
-
   getShiftPlaces(){
     if(this.state.schedulesIndex.service_places == null){
       return([])
@@ -128,7 +129,6 @@ getSchedulesList(){
       return(this.state.schedulesIndex.service_places)
     }
   }
-
   getProfessionals(){
     if(this.state.schedulesIndex.professionals == null){
       return([])
@@ -143,7 +143,6 @@ getSchedulesList(){
       return(this.state.schedulesIndex.service_types)
     }
   }
-
   getSituations(){
     if(this.state.schedulesIndex.situation == null){
       return([])
@@ -151,7 +150,6 @@ getSchedulesList(){
       return(this.state.schedulesIndex.situation)
     }
   }
-
   clearFields(){
     this.setState({"filterServicePlace":-1})
     this.setState({"filterStartDate":""})
@@ -162,8 +160,8 @@ getSchedulesList(){
     this.setState({"filterSort":0})
     this.setState({"filterCPF":""})
     this.setState({"filterName":""})
+    this.setState({"requestState":0})
   }
-
   updateFilters(e){
     switch(e.target.id){
       case "filter0":
@@ -198,6 +196,80 @@ getSchedulesList(){
         console.log(this.state)
     }
     console.log(this.state)
+  }
+
+  confirmFilters(){
+      var filters = ''
+      if(this.state.filterOrder != null){
+        filters = filters + `&q[s]=${this.state.filterOrder}+asc`
+        console.log("ord")
+      }
+      if(this.state.filterProfessional != -1){
+        filters = filters + `&q[professional]=${this.state.filterProfessional}`
+        console.log("perm")
+      }
+      if(this.state.filterCPF != ""){
+        filters = filters + `&q[cpf]=${this.state.filterCPF}`
+        console.log("occup")
+      }
+      if(this.state.filterServicePlace != -1){
+        filters = filters + `&q[service_places]=${this.state.filterServicePlace}`
+        console.log("place")
+      }
+      if(this.state.filterServiceType != -1){
+        filters = filters + `&q[service_type]=${this.state.filterServiceType}+asc`
+        console.log("ord")
+      }
+      if(this.state.filterStartDate != ""){
+        filters = filters + `&q[start_date]=${this.state.filterStartDate}`
+        console.log("perm")
+      }
+      if(this.state.filterEndDate != ""){
+        filters = filters + `&q[end_date]=${this.state.filterEndDate}`
+        console.log("occup")
+      }
+      if(this.state.filterName != ""){
+        filters = filters + `&q[name]=${this.state.filterName}`
+        console.log("place")
+      }
+
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = `schedules`;
+      const params = `permission=${this.props.user.current_role}${filters}`
+      console.log(params)
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get"
+      }).then(parseResponse).then(resp => {
+        this.setState({"schedulesList":resp}, () => this.arrangeData())
+      }).catch(({errors}) => {
+        if(errors) {
+          let full_error_msg = "";
+          errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+          Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+          throw errors;
+          }
+        }
+      )
+
+    this.setState({"requestState":1})
+  }
+
+  arrangeData(){
+    console.log(this.state.schedulesList)
+    var protoRows = []
+    var i
+    var current
+    for(i = 0; i< this.state.schedulesList.num_entries; i++){
+      current = this.state.schedulesList.entries[i]
+      console.log(current)
+       protoRows.push([current.id, current.service_type,  current.situation_description, current.professional_name, current.professional_performer_id, this.formatDateTime(current.service_start_time), this.formatDateTime(current.service_end_time) ,current.citizen_name, current.citizen_cpf ])
+          }
+    this.setState({"cols":["ID", "Tipo de Serviço", "Situação", "Nome do profissional", "ID Profissional", "Horário de Início", "Horário de Fim", "Nome do cidadão", "CPF do cidadão"]})
+    this.setState({"rows":protoRows})
+
   }
 
 render() {
