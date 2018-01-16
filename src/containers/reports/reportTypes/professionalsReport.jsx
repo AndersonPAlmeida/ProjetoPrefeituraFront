@@ -229,7 +229,7 @@ class getProfessionalsReport extends Component {
           <Button style={{marginRight:"1rem"}} onClick={this.clearFields}>Limpar Campos</Button>
           {this.state.requestState == "0"
             ?(<Button onClick={this.confirmFilters}>Confirmar filtros</Button>)
-            :(<ReportPDF h1="Relatório de Profissionais" h2="" cols={this.state.cols} rows={this.state.rows} filename="relatorio_agendamentos.pdf" o='l'/>)
+            :(<ReportPDF h1="Relatório de Profissionais" h2="" cols={this.state.cols} rows={this.state.rows} filename="relatorio_profissionais.pdf" o='l'/>)
           }
 
       </div>
