@@ -349,13 +349,11 @@ class getResourceList extends Component {
     var start_date;
     if(sort_only) {
       end_date = this.state.last_fetch_end_date;
-      start_date = this.state.last_fetch_start_date; 
+      start_date = this.state.last_fetch_start_date;  
     } else {
       end_date = this.state.filter_end_date;
       start_date = this.state.filter_start_date;
     }
-    start_date = start_date.replace(/\s/g,'+');
-    end_date = end_date.replace(/\s/g,'+');
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_shifts';
     const params = `permission=${this.props.user.current_role}&q[execution_start_time]=${start_date}&q[execution_end_time]=${end_date}&q[s]=${this.state.filter_s}`;
@@ -368,7 +366,7 @@ class getResourceList extends Component {
       method: 'get',
     }).then(parseResponse).then(resp => {
       this.setState({
-        resources: resp,
+        resource_shifts: resp,
         last_fetch_start_date: start_date,
         last_fetch_end_date: end_date
       });
