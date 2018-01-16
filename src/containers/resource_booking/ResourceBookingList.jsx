@@ -349,8 +349,12 @@ class getResourceList extends Component {
               />
             </label>
           </div>
-        </Col>      
+        </Col>
+             
         <div>
+          <div className='right' id='createResourceBookingButton'>
+            {this.newResourceBookingButton()}
+          </div>  
           <button 
             id="filterBtn"
             className="waves-effect btn right button-color" 
@@ -359,6 +363,7 @@ class getResourceList extends Component {
             type="submit">
               FILTRAR
           </button>
+          
         </div>        
       </Row>
     );

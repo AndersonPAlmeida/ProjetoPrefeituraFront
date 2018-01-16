@@ -71,3 +71,13 @@
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
 }
+
+#createResourceShiftButton{
+	margin-left: 35px;
+}
+@media screen and (max-width: 620px) {
+	#createResourceShiftButton{
+		margin-left: 35px;
+		margin-bottom: 15px;
+	}
+}

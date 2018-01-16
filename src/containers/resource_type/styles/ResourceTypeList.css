@@ -59,3 +59,15 @@
 #filterBtn{
 	margin-bottom: 20px
 }
+#createResourceTypeButton{
+	margin-left: 35px;
+}
+@media screen and (max-width: 767px) {
+	#createResourceTypeButton{
+		margin-left: 35px;
+		margin-bottom: 15px;
+	}
+	#table-resource-type{
+		margin-top: 125px;
+	}
+}

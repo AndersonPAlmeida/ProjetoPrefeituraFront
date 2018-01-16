@@ -338,14 +338,16 @@ class getResourceList extends Component {
     );
 
     return (
-      <table className={styles['table-list']}>
-        <thead>
-          {fields}
-        </thead>
-        <tbody>
-          {data}
-        </tbody>
-      </table>
+      <div className={'table-size'}>
+        <table className={styles['table-list']}>
+          <thead>
+            {fields}
+          </thead>
+          <tbody>
+            {data}
+          </tbody>
+        </table>
+      </div>
     );
   }
 
@@ -362,44 +364,53 @@ class getResourceList extends Component {
   filterResourceType() {
     return (
       <div>
+        <Row id='filterRow'>
+          <Col s={12} m={4}>
+            <div>
+              <h6>Marca:</h6>
+              <label>
+                <input
+                  type="text"
+                  name="filter_brand"
+                  value={this.state.filter_brand}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
 
-        <div className="field-input" >
-          <h6>Marca:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_brand"
-              value={this.state.filter_brand}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
+          <Col s={12} m={4}>
+            <div>
+              <h6>Modelo:</h6>
+              <label>
+                <input
+                  type="text"
+                  name="filter_model"
+                  value={this.state.filter_model}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
+          <Col s={12} m={4}>
+            <div >
+              <h6>Etiqueta:</h6>
+              <label>
+                <input
+                  type="text"
+                  name="filter_label"
+                  value={this.state.filter_label}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
+        </Row>
+
+        <div className='right' id='createResourceButton'>
+          {this.newResourceTypeButton()}
         </div>
 
-        <div className="field-input" >
-          <h6>Modelo:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_model"
-              value={this.state.filter_model}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
-        </div>
-        <div className="field-input" >
-          <h6>Etiqueta:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_label"
-              value={this.state.filter_label}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
-        </div>
         <button 
           id="filterBtn"
           className="waves-effect btn right button-color" 
@@ -408,6 +419,8 @@ class getResourceList extends Component {
           type="submit">
             FILTRAR
         </button>
+        
+      
       </div>
     );
   }

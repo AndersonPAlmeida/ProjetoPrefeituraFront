@@ -235,14 +235,16 @@ class getResourceTypeList extends Component {
     );
 
     return (
-      <table className={styles['table-list']}>
-        <thead>
-          {fields}
-        </thead>
-        <tbody>
-          {data}
-        </tbody>
-      </table>
+      <div className={'table-size'} id='table-resource-type'>
+        <table className={styles['table-list']}>
+          <thead>
+            {fields}
+          </thead>
+          <tbody>
+            {data}
+          </tbody>
+        </table>
+      </div>
     );
   }
 
@@ -259,30 +261,40 @@ class getResourceTypeList extends Component {
   filterResourceType() {
     return (
       <div>
-        <div className="field-input" >
-          <h6>Nome:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_name"
-              value={this.state.filter_name}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
+        <Row id='filterRow'>
+          <Col s={12} m={6}>
+            <div>
+              <h6>Nome:</h6>
+              <label>
+                <input
+                  type="text"
+                  className='input-field'
+                  name="filter_name"
+                  value={this.state.filter_name}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
+          <Col s={12} m={6}>
+            <div>
+              <h6>Descrição:</h6>
+              <label>
+                <input
+                  type="text"
+                  className='input-field'
+                  name="filter_description"
+                  value={this.state.filter_description}
+                  onChange={this.handleInputFilterChange.bind(this)}
+                />
+              </label>
+            </div>
+          </Col>
+        </Row>
+        <div className='right' id='createResourceTypeButton'>
+          {this.newResourceTypeButton()}
         </div>
-        <div className="field-input" >
-          <h6>Descrição:</h6>
-          <label>
-            <input
-              type="text"
-              className='input-field'
-              name="filter_description"
-              value={this.state.filter_description}
-              onChange={this.handleInputFilterChange.bind(this)}
-            />
-          </label>
-        </div>
+
         <button 
           id="filterBtn"
           className="waves-effect btn right button-color" 
@@ -291,6 +303,7 @@ class getResourceTypeList extends Component {
           type="submit">
             FILTRAR
         </button>
+        
       </div>
     );
   }

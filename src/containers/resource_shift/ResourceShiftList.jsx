@@ -325,6 +325,11 @@ class getResourceList extends Component {
           </div>
         </Col>      
         <div>
+
+          <div className='right' id='createResourceShiftButton'>
+            {this.newResourceTypeButton()}
+          </div>
+
           <button 
             id="filterBtn"
             className="waves-effect btn right button-color" 
@@ -333,6 +338,7 @@ class getResourceList extends Component {
             type="submit">
               FILTRAR
           </button>
+        
         </div>        
       </Row>
     );

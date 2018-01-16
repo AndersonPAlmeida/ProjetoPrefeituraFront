@@ -64,3 +64,22 @@
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
 }
+#filterRow{
+	margin: 0
+}
+#createResourceButton{
+	margin-left: 35px;
+}
+@media screen and (max-width: 620px) {
+	#createResourceButton{
+		margin-left: 35px;
+		margin-bottom: 15px;
+	}
+}
+.btn:hover{
+	background-color: #84ac1f
+}
+input:not([type]):focus:not([readonly]), input[type=text]:focus:not([readonly]), input[type=password]:focus:not([readonly]), input[type=email]:focus:not([readonly]), input[type=url]:focus:not([readonly]), input[type=time]:focus:not([readonly]), input[type=date]:focus:not([readonly]), input[type=datetime]:focus:not([readonly]), input[type=datetime-local]:focus:not([readonly]), input[type=tel]:focus:not([readonly]), input[type=number]:focus:not([readonly]), input[type=search]:focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]){
+	border-bottom: 1px solid #92bf23;
+    box-shadow: 0 1px 0 0 #92bf23;
+}
