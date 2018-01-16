@@ -379,11 +379,9 @@ class getResourceList extends Component {
       end_date = this.state.filter_end_date;
       start_date = this.state.filter_start_date;
     }
-    start_date = start_date.replace(/\s/g,'+');
-    end_date = end_date.replace(/\s/g,'+');
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_bookings';
-    const params = `permission=${this.props.user.current_role}&q[execution_start_time]=${start_date}&q[execution_end_time]=${end_date}&q[s]=${this.state.filter_s}`;
+    const params = `permission=${this.props.user.current_role}&view=${this.state.current_permission ? 'professional':'citizen'}&q[booking_start_time]=${start_date}&q[booking_end_time]=${end_date}&q[s]=${this.state.filter_s}`;
 
     console.log(`${apiUrl}/${collection}?${params}`);
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -393,7 +391,7 @@ class getResourceList extends Component {
       method: 'get',
     }).then(parseResponse).then(resp => {
       this.setState({
-        resources: resp,
+        resource_bookings: resp,
         last_fetch_start_date: start_date,
         last_fetch_end_date: end_date
       });
