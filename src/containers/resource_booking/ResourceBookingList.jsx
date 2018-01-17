@@ -279,15 +279,102 @@ class getResourceList extends Component {
 
         <th>Cidadão</th>
 
-        <th>Dia inicial de execução</th>
+        <th>
+          <a 
+            href='#' 
+            className="grey-text text-darken-3 "
+            onClick={ 
+              () => { 
+                if (this.state.filter_s == 'day_start+asc'){
+                  document.getElementById('ascDayStartIcon').style.display = 'none';
+                  document.getElementById('descDayStartIcon').style.display = 'inline-block';                    
+                } 
+                else{
+                  document.getElementById('descDayStartIcon').style.display = 'none';               
+                  document.getElementById('ascDayStartIcon').style.display = 'inline-block';
+                }
+                  
+                this.setState({
+                  ['filter_s']: this.state.filter_s == 'day_start+asc' ? 'day_start+desc' : 'day_start+asc'
+                }, this.sortItems.bind(this,'day_start',this.state.filter_s));
+              }
+            }
+          >
+            Dia inicial de execução
+            <i className="waves-effect material-icons tiny tooltipped" id="ascDayStartIcon" style={{display:'none'}}>
+              arrow_drop_down
+            </i>
+            <i className="waves-effect material-icons tiny tooltipped" id="descDayStartIcon" style={{display:'none'}}>
+              arrow_drop_up
+            </i>
+          </a>
+        </th>
         <th>Horário inicial de execução</th>
 
-        <th>Dia final de execução</th>
+        <th>
+          <a 
+            href='#' 
+            className="grey-text text-darken-3 "
+            onClick={ 
+              () => { 
+                if (this.state.filter_s == 'day_end+asc'){
+                  document.getElementById('ascDayEndIcon').style.display = 'none';
+                  document.getElementById('descDayEndIcon').style.display = 'inline-block';                    
+                } 
+                else{
+                  document.getElementById('descDayEndIcon').style.display = 'none';               
+                  document.getElementById('ascDayEndIcon').style.display = 'inline-block';
+                }
+                  
+                this.setState({
+                  ['filter_s']: this.state.filter_s == 'day_end+asc' ? 'day_end+desc' : 'day_end+asc'
+                }, this.sortItems.bind(this,'day_end',this.state.filter_s));
+              }
+            }
+          >
+            Dia final de execução
+            <i className="waves-effect material-icons tiny tooltipped" id="ascDayEndIcon" style={{display:'none'}}>
+              arrow_drop_down
+            </i>
+            <i className="waves-effect material-icons tiny tooltipped" id="descDayEndIcon" style={{display:'none'}}>
+              arrow_drop_up
+            </i>
+          </a>
+        </th>
         <th>Horário final de execução</th>
 
         <th>Ativo</th>
 
-        <th>Status</th>
+        <th>
+          <a 
+            href='#' 
+            className="grey-text text-darken-3 "
+            onClick={ 
+              () => { 
+                if (this.state.filter_s == 'day_end+asc'){
+                  document.getElementById('ascDayEndIcon').style.display = 'none';
+                  document.getElementById('descDayEndIcon').style.display = 'inline-block';                    
+                } 
+                else{
+                  document.getElementById('descDayEndIcon').style.display = 'none';               
+                  document.getElementById('ascDayEndIcon').style.display = 'inline-block';
+                }
+                  
+                this.setState({
+                  ['filter_s']: this.state.filter_s == 'day_end+asc' ? 'day_end+desc' : 'day_end+asc'
+                }, this.sortItems.bind(this,'day_end',this.state.filter_s));
+              }
+            }
+          >
+            Status
+            <i className="waves-effect material-icons tiny tooltipped" id="ascDayEndIcon" style={{display:'none'}}>
+              arrow_drop_down
+            </i>
+            <i className="waves-effect material-icons tiny tooltipped" id="descDayEndIcon" style={{display:'none'}}>
+              arrow_drop_up
+            </i>
+          </a>
+        </th>
         
         <th></th>
 
@@ -309,6 +396,31 @@ class getResourceList extends Component {
         </div>
       </div>
     );
+  }
+
+  sortItems(parameter, order){
+    var items = this.state.resource_bookings;
+    var newItems = [];
+    switch(parameter){
+    case 'day_start':
+      newItems = items.sort(function(a,b){return (a.booking_start_time > b.booking_start_time) ? 1 : ((b.booking_start_time > a.booking_start_time) ? -1 : 0);} );
+      if(order=='day_start+asc'){
+        newItems = newItems.reverse();
+      }
+      break;
+    case 'day_end':
+      newItems = items.sort(function(a,b){return (a.booking_end_time > b.booking_end_time) ? 1 : ((b.booking_end_time > a.booking_end_time) ? -1 : 0);} );
+      if(order=='day_end+asc'){
+        newItems = newItems.reverse();
+      }
+      break;
+    case 'status':
+      newItems = items.sort(function(a,b){return (a.status > b.status) ? 1 : ((b.status > a.status) ? -1 : 0);} );
+      if(order=='status+asc'){
+        newItems = newItems.reverse();
+      }
+    }
+    this.setState({resource_bookings: newItems});
   }
 
   handleInputFilterChange(event) {
