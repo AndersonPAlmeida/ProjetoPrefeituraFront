@@ -41,7 +41,7 @@ class getSchedulesReport extends Component {
     this.getSituations = this.getSituations.bind(this)
     this.updateFilters = this.updateFilters.bind(this)
     this.clearFields = this.clearFields.bind(this)
-
+    this.arrangeData = this.arrangeData.bind(this)
     this.confirmFilters = this.confirmFilters.bind(this)
   }
 
@@ -255,6 +255,7 @@ class getSchedulesReport extends Component {
 
     this.setState({"requestState":1})
   }
+
   arrangeData(){
     var protoRows = []
     var i
@@ -320,7 +321,7 @@ render() {
           <Button style={{marginRight:"1rem"}} onClick={this.clearFields}>Limpar Campos</Button>
           {this.state.requestState == "0"
             ?(<Button onClick={this.confirmFilters}>Confirmar filtros</Button>)
-            :(<ReportPDF h1="Relatório de Profissionais" h2="" cols={this.state.cols} rows={this.state.rows} filename="relatorio_profissionais.pdf" o='l'/>)
+            :(<ReportPDF h1="Relatório de Agendamentos" h2="" cols={this.state.cols} rows={this.state.rows} filename="relatorio_agendamentoss.pdf" o='l'/>)
           }
       </div>
     )
