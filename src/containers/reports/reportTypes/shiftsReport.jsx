@@ -16,28 +16,28 @@ class getShiftsReport extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      shiftsList: []
+      shiftsList: [],
+      shiftIndex: [],
+      requestState:0,
+      filterServicePlace:-1,
+      filterShiftType:-1,
+      filterProfessional:-1
     }
-    this.getShiftsList = this.getShiftsList.bind(this)
-    this.returnShiftsList = this.returnShiftsList.bind(this)
+    this.getShiftIndex = this.getShiftIndex.bind(this)
+    this.updateFilters = this.updateFilters.bind(this)
     this.formatDateTime = this.formatDateTime.bind(this)
+    this.clearFields = this.clearFields.bind(this)
+    this.confirmFilters = this.confirmFilters.bind(this)
+
   }
 
-  componentDidMount(){
-    this.getShiftsList()
+  componentWillMount(){
+    this.getShiftIndex()
   }
 
-returnShiftsList(){
-    if(this.state.shiftsList.length == 0){
-      this.getShiftsList()
-    }
-    console.log(this.state.shiftsList)
-    return(this.state.shiftsList)
-}
-
-getShiftsList(){
-  const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `shifts`;
+getShiftIndex(){
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `forms/shift_index`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -45,7 +45,8 @@ getShiftsList(){
         "Content-Type": "application/json" },
         method: "get"
     }).then(parseResponse).then(resp => {
-      this.setState({"shiftsList":resp}, () => console.log(this.state))
+      console.log(resp)
+      this.setState({"shiftIndex":resp}, () => console.log(this.state))
     }).catch(({errors}) => {
       if(errors) {
         let full_error_msg = "";
@@ -56,30 +57,61 @@ getShiftsList(){
       }
     )
 }
+confirmFilters(){
+    var filters = ''
+    if(this.state.filterServicePlace != -1){
+      filters = filters + `&q[service_place]=${this.state.filterServicePlace}`
+      console.log("place")
+    }
+    if(this.state.filterProfessional != -1){
+      filters = filters + `&q[professional]=${this.state.filterProfessional}`
+      console.log("prof")
+    }
+    if(this.state.filterShiftType != -1){
+      filters = filters + `&q[service_type]=${this.state.filterShiftType}`
+      console.log("type")
+    }
+
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `shifts`;
+    const params = `permission=${this.props.user.current_role}${filters}`
+    console.log(params)
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get"
+    }).then(parseResponse).then(resp => {
+      this.setState({"shiftsList":resp}, () => this.arrangeData())
+    }).catch(({errors}) => {
+      if(errors) {
+        let full_error_msg = "";
+        errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+        Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+        throw errors;
+        }
+      }
+    )
+
+  this.setState({"requestState":1})
+}
+
+arrangeData(){
+  console.log(this.state.shiftsList)
+  var protoRows = []
+  var i
+  var current
+  for(i = 0; i< this.state.shiftsList.num_entries; i++){
+    current = this.state.shiftsList.entries[i]
+     protoRows.push([current.id, current.service_type_description,  current.service_place_name, current.professional_performer_name, this.formatDateTime(current.execution_start_time)])
+        }
+  this.setState({"cols":["ID", "Tipo de Serviço", "Local do serviço", "Nome do profissional", "Data de Início"]})
+  this.setState({"rows":protoRows})
+}
+
 
   formatDate(date){
     return(date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3])
-  }
-
-  printPDF(){
-        var pdf = new jsPDF('p', 'pt', "a4");
-        pdf.setFont("helvetica");
-        pdf.setFontSize(1);
-      var source = $('#divtoPDF')[0];
-      var specialElementHandlers = {
-        '#bypassme': function(element, renderer) {
-          return true
-        }
-      };
-
-      var margins = { top: 50,left: 10,right:10, width: 650};
-
-      pdf.fromHTML (
-        source, margins.left, margins.top,  {'width': margins.width, 'elementHandlers': specialElementHandlers},
-        function (dispose) {
-          pdf.save('relatorio_cidadaos.pdf');
-        }
-      )
   }
 
   formatDateTime(dateTime){
@@ -98,18 +130,49 @@ getShiftsList(){
   }
 
   getShiftPlaces(){
-    return(["A","B","C","D","E"])
+    if(this.state.shiftIndex.service_places == null){
+      return([])
+    }else{
+      return(this.state.shiftIndex.service_places)
+    }
   }
 
   getProfessionals(){
-    return(["A","B","C","D","E"])
+    if(this.state.shiftIndex.professionals == null){
+      return([])
+    }else{
+      return(this.state.shiftIndex.professionals)
+    }
   }
   getShiftTypes(){
-    return(["A","B","C","D","E"])
+    if(this.state.shiftIndex.service_types == null){
+      return([])
+    }else{
+      return(this.state.shiftIndex.service_types)
+    }
+  }
+  clearFields(){
+    this.setState({"filterServicePlace":-1})
+    this.setState({"filterProfessional":-1})
+    this.setState({"filterServiceType":-1})
   }
 
-  getSituations(){
-    return(["A","B","C","D","E"])
+  updateFilters(e){
+    switch(e.target.id){
+      case "filter0":
+        this.setState({"filterServicePlace":e.target.value})
+        break;
+      case "filter1":
+        this.setState({"filterProfessional":e.target.value})
+        break;
+      case "filter2":
+        this.setState({"filterServiceType":e.target.value})
+        break;
+      default:
+        break;
+        console.log(this.state)
+    }
+    console.log(this.state)
   }
 
   render() {
@@ -119,48 +182,36 @@ getShiftsList(){
           <div>
             <br/>
             <Row>
-            <Input s={4} label="Local do Atendimento" type="select" default="0">
+            <Input id="filter0" s={4} label="Local do Atendimento" type="select" default="-1" value={this.state.filterServicePlace} onChange={this.updateFilters}>
+              <option value="-1">Nenhum</option>
               {this.getShiftPlaces().map(function(element,i){
-                return(<option key={i} value={i}>{element}</option>)
+                return(<option key={i} value={element.id}>{element.name}</option>)
               })}
             </Input>
 
-            <Input s={4} name='on' type='date' label="Data de Início" onChange={function(e, value) {}} />
-            <Input s={4} name='on' type='date' label="Data de Fim" onChange={function(e, value) {}} />
-          </Row>
-
-          <Row>
-            <Input s={4} label="Profissional" type="select" default="0">
+            <Input id="filter1" s={4} label="Profissional" type="select" default="-1" value={this.state.filterProfessional} onChange={this.updateFilters}>
+              <option value="-1">Nenhum</option>
               {this.getProfessionals().map(function(element,i){
-                return(<option key={i} value={i}>{element}</option>)
+                return(<option key={i} value={element.id}>{element.name}</option>)
               })}
             </Input>
 
-            <Input s={4} label="Tipo de atendimento" type="select" default="0">
+            <Input id="filter2" s={4} label="Tipo de atendimento" type="select" default="-1" value={this.state.filterServiceType} onChange={this.updateFilters}>
+              <option value="-1">Nenhum</option>
               {this.getShiftTypes().map(function(element,i){
-                return(<option key={i} value={i}>{element}</option>)
+                return(<option key={i} value={element.id}>{element.description}</option>)
               })}
             </Input>
 
-            <Input s={4} label="Situação" type="select" default="0">
-              {this.getSituations().map(function(element,i){
-                return(<option key={i} value={i}>{element}</option>)
-              })}
-            </Input>
           </Row>
 
-          <Row>
-            <Input s={4} label="Ordernar por" type="select" default="0">
-              <option value="0">Nome do cidadão</option>
-              <option value="1">Situação</option>
-              <option value="2">Número do agendamento</option>
-            </Input>
-            <Input s={4} name='on' type='date' label="CPF" onChange={function(e, value) {}} />
-            <Input s={4} name='on' type='date' label="Nome do Cidadão" onChange={function(e, value) {}} />
-          </Row>
+
           </div>
-          <Button style={{marginRight:"1rem"}}>Limpar Campos</Button>
-          <ReportPDF h1="Relatório de Agendamentos" h2="" cols={[]} rows={[]} filename="relatorio_agendamentos.pdf" />
+          <Button style={{marginRight:"1rem"}} onClick={this.clearFields}>Limpar Campos</Button>
+          {this.state.requestState == "0"
+            ?(<Button onClick={this.confirmFilters}>Confirmar filtros</Button>)
+            :(<ReportPDF h1="Relatório de Serviços" h2="" cols={this.state.cols} rows={this.state.rows} filename="relatorio_servicos.pdf" o='p'/>)
+          }
       </div>
     )
   }
