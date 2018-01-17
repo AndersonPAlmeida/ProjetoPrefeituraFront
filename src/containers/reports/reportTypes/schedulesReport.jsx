@@ -197,7 +197,6 @@ class getSchedulesReport extends Component {
     }
     console.log(this.state)
   }
-
   confirmFilters(){
       var filters = ''
       if(this.state.filterOrder != null){
@@ -256,20 +255,16 @@ class getSchedulesReport extends Component {
 
     this.setState({"requestState":1})
   }
-
   arrangeData(){
-    console.log(this.state.schedulesList)
     var protoRows = []
     var i
     var current
     for(i = 0; i< this.state.schedulesList.num_entries; i++){
       current = this.state.schedulesList.entries[i]
-      console.log(current)
        protoRows.push([current.id, current.service_type,  current.situation_description, current.professional_name, current.professional_performer_id, this.formatDateTime(current.service_start_time), this.formatDateTime(current.service_end_time) ,current.citizen_name, current.citizen_cpf ])
           }
     this.setState({"cols":["ID", "Tipo de Serviço", "Situação", "Nome do profissional", "ID Profissional", "Horário de Início", "Horário de Fim", "Nome do cidadão", "CPF do cidadão"]})
     this.setState({"rows":protoRows})
-
   }
 
 render() {
