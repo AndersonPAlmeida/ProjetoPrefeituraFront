@@ -21,10 +21,10 @@ class getProfessionalsReport extends Component {
       professionalsIndex:[],
       requestState:0,
 
-      filterOccupation:null,
-      filterServicePlace:null,
-      filterPermission:null,
-      filterOrder:null,
+      filterOccupation:-1,
+      filterServicePlace:-1,
+      filterPermission:-1,
+      filterOrder:-1,
       rows:[],
       cols:[]
     }
@@ -36,6 +36,7 @@ class getProfessionalsReport extends Component {
     this.getPermission = this.getPermission.bind(this)
     this.updateFilters = this.updateFilters.bind(this)
     this.arrangeData = this.arrangeData.bind(this)
+
   }
 
   componentWillMount(){
@@ -161,12 +162,14 @@ class getProfessionalsReport extends Component {
   }
 
   clearFields(){
-    this.setState({"requestState":0,
-      filterOrder:null,
-      filterOccupation:null,
-      filterPermission:null,
-      filterServicePlace:null
+    this.setState({
+      requestState:0,
+      filterOrder:-1,
+      filterOccupation:-1,
+      filterPermission:-1,
+      filterServicePlace:-1
     })
+    console.log("clear")
   }
 
   updateFilters(e){
@@ -197,21 +200,21 @@ class getProfessionalsReport extends Component {
           <div>
             <br/>
             <Row>
-            <Input id="filter0" s={4} label="Cargo" type="select" default="0" onChange={this.updateFilters}>
-              <option value={[]}>Nenhum</option>
+            <Input id="filter0" s={4} label="Cargo" type="select" default="-1" value={this.state.filterOccupation} onChange={this.updateFilters}>
+              <option value="-1">Nenhum</option>
               {this.getJobs().map(function(element,i){
                 return(<option key={i} value={element.id}>{element.name}</option>)
               })}
             </Input>
-            <Input id="filter1" s={4} label="Local do Atendimento" type="select" default="0" onChange={this.updateFilters}>
-              <option value={[]}>Nenhum</option>
+            <Input id="filter1" s={4} label="Local do Atendimento" type="select" default="-1" value={this.state.filterServicePlace} onChange={this.updateFilters}>
+              <option value="-1">Nenhum</option>
               {this.getShiftPlaces().map(function(element,i){
                 return(<option key={i} value={element.id}>{element.name}</option>)
               })}
             </Input>
 
-            <Input id="filter2" s={4} label="Permissão" type="select" default="0" onChange={this.updateFilters}>
-              <option value={[]}>Nenhum</option>
+            <Input id="filter2" s={4} label="Permissão" type="select" default="-1" value={this.state.filterPermission} onChange={this.updateFilters}>
+              <option value="-1">Nenhum</option>
               {this.getPermission().map(function(element,i){
                 return(<option key={i} value={element.role}>{element.name}</option>)
               })}
@@ -219,8 +222,8 @@ class getProfessionalsReport extends Component {
           </Row>
 
           <Row>
-            <Input id="filter3" s={6} label="Ordernar por" type="select" default="0" onChange={this.updateFilters}>
-              <option value={[]}>Nenhum</option>
+            <Input id="filter3" s={6} label="Ordernar por" type="select" default="-1"  value={this.state.filterOrder} onChange={this.updateFilters}>
+              <option value="-1">Nenhum</option>
               <option value="name">Nome</option>
               <option value="occupation_name">Ocupação</option>
             </Input>
