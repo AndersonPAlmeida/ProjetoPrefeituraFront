@@ -115,6 +115,7 @@ class getResourceTypeList extends Component {
             <td key={Math.random()} >
               <a className='back-bt waves-effect btn-flat' 
                 href='#' 
+                id="iconTable"
                 onClick={ () => 
                   browserHistory.push(`/resource_types/${resourceType.id}/edit`) 
                 }>
@@ -122,6 +123,16 @@ class getResourceTypeList extends Component {
                     edit
                 </i>
               </a> 
+              <a className='back-bt waves-effect btn-flat' 
+                id="iconTable"
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/resource_types/${resourceType.id}`) 
+                }>
+                <i className="waves-effect material-icons tooltipped">
+                    visibility
+                </i>
+              </a>
             </td>
           </tr>
         );
