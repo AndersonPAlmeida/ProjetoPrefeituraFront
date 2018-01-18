@@ -18,7 +18,11 @@ class getShiftsReport extends Component {
     this.state = {
       shiftsList: [],
       shiftIndex: [],
+      rows:[],
+      cols:[],
       requestState:0,
+
+      filterSort:-1,
       filterServicePlace:-1,
       filterShiftType:-1,
       filterProfessional:-1
@@ -28,7 +32,7 @@ class getShiftsReport extends Component {
     this.formatDateTime = this.formatDateTime.bind(this)
     this.clearFields = this.clearFields.bind(this)
     this.confirmFilters = this.confirmFilters.bind(this)
-
+    this.arrangeData = this.arrangeData.bind(this)
   }
 
   componentWillMount(){
@@ -60,7 +64,7 @@ getShiftIndex(){
 confirmFilters(){
     var filters = ''
     if(this.state.filterServicePlace != -1){
-      filters = filters + `&q[service_place]=${this.state.filterServicePlace}`
+      filters = filters + `&q[service_place_id]=${this.state.filterServicePlace}`
       console.log("place")
     }
     if(this.state.filterProfessional != -1){
@@ -68,8 +72,12 @@ confirmFilters(){
       console.log("prof")
     }
     if(this.state.filterShiftType != -1){
-      filters = filters + `&q[service_type]=${this.state.filterShiftType}`
+      filters = filters + `&q[service_type_id]=${this.state.filterShiftType}`
       console.log("type")
+    }
+    if(this.state.filterSort != -1){
+      filters = filters + `&q[s]=${this.state.filterSort}+sort`
+      console.log("sort")
     }
 
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
@@ -101,12 +109,12 @@ arrangeData(){
   var protoRows = []
   var i
   var current
-  for(i = 0; i< this.state.shiftsList.num_entries; i++){
+  for(i = 0; i < this.state.shiftsList.num_entries; i++){
     current = this.state.shiftsList.entries[i]
-     protoRows.push([current.id, current.service_type_description,  current.service_place_name, current.professional_performer_name, this.formatDateTime(current.execution_start_time)])
-        }
-  this.setState({"cols":["ID", "Tipo de Serviço", "Local do serviço", "Nome do profissional", "Data de Início"]})
-  this.setState({"rows":protoRows})
+    protoRows.push([current.id, current.service_type_description,  current.service_place_name, current.professional_performer_name, this.formatDateTime(current.execution_start_time)])
+   }
+  this.setState({ cols: ["ID", "Tipo de Serviço", "Local do serviço", "Nome do profissional", "Data de Início"] })
+  this.setState({rows:protoRows})
 }
 
 
@@ -155,6 +163,11 @@ arrangeData(){
     this.setState({"filterServicePlace":-1})
     this.setState({"filterProfessional":-1})
     this.setState({"filterServiceType":-1})
+    this.setState({"filterSort":-1})
+    this.setState({requestState:0})
+    this.setState({"shiftsList":[]})
+    this.setState({"cols":[]})
+    this.setState({"rows":[]})
   }
 
   updateFilters(e){
@@ -168,11 +181,14 @@ arrangeData(){
       case "filter2":
         this.setState({"filterServiceType":e.target.value})
         break;
+      case "filter3":
+        this.setState({"filterSort":e.target.value})
+        break;
       default:
         break;
         console.log(this.state)
     }
-    console.log(this.state)
+    this.setState({requestState:0})
   }
 
   render() {
@@ -183,26 +199,33 @@ arrangeData(){
             <br/>
             <Row>
             <Input id="filter0" s={4} label="Local do Atendimento" type="select" default="-1" value={this.state.filterServicePlace} onChange={this.updateFilters}>
-              <option value="-1">Nenhum</option>
+              <option value="-1">Nenhum filtro</option>
               {this.getShiftPlaces().map(function(element,i){
                 return(<option key={i} value={element.id}>{element.name}</option>)
               })}
             </Input>
 
             <Input id="filter1" s={4} label="Profissional" type="select" default="-1" value={this.state.filterProfessional} onChange={this.updateFilters}>
-              <option value="-1">Nenhum</option>
+              <option value="-1">Nenhum filtro</option>
               {this.getProfessionals().map(function(element,i){
                 return(<option key={i} value={element.id}>{element.name}</option>)
               })}
             </Input>
 
             <Input id="filter2" s={4} label="Tipo de atendimento" type="select" default="-1" value={this.state.filterServiceType} onChange={this.updateFilters}>
-              <option value="-1">Nenhum</option>
+              <option value="-1">Nenhum filtro</option>
               {this.getShiftTypes().map(function(element,i){
                 return(<option key={i} value={element.id}>{element.description}</option>)
               })}
             </Input>
-
+          </Row>
+          <Row>
+            <Input id="filter3" s={4} label="Ordenar Por" type="select" default="-1" value={this.state.filterSort} onChange={this.updateFilters}>
+              <option value="-1">Nenhum</option>
+              <option value="service_type_description"> Descrição</option>
+              <option value="service_place_name"> Local de Atendimento</option>
+              <option value="execution_start_time"> Horário de Inicio</option>
+            </Input>
           </Row>
 
 
@@ -210,7 +233,7 @@ arrangeData(){
           <Button style={{marginRight:"1rem"}} onClick={this.clearFields}>Limpar Campos</Button>
           {this.state.requestState == "0"
             ?(<Button onClick={this.confirmFilters}>Confirmar filtros</Button>)
-            :(<ReportPDF h1="Relatório de Serviços" h2="" cols={this.state.cols} rows={this.state.rows} filename="relatorio_servicos.pdf" o='p'/>)
+            :(<ReportPDF h1="Relatório de Escalas" h2="" cols={this.state.cols} rows={this.state.rows} filename="relatorio_escalas.pdf" o='l'/>)
           }
       </div>
     )
