@@ -10,7 +10,6 @@ import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
-import html2canvas from 'html2canvas';
 import styles from './styles/Reports.css';
 import { LogoImage } from '../images'
 var jsPDF
