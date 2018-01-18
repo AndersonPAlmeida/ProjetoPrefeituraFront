@@ -31,7 +31,6 @@ class getSchedulesReport extends Component {
       filterCPF:"",
       filterName:""
     }
-    this.getSchedulesList = this.getSchedulesList.bind(this)
     this.formatDateTime = this.formatDateTime.bind(this)
     this.getSchedulesIndex = this.getSchedulesIndex.bind(this)
 
@@ -51,28 +50,7 @@ class getSchedulesReport extends Component {
     })
   }
 
-  getSchedulesList(){
-  const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `schedules`;
-    const params = `permission=${this.props.user.current_role}`
-    fetch(`${apiUrl}/${collection}?${params}`, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get"
-    }).then(parseResponse).then(resp => {
 
-      this.setState({"schedulesList":resp}, () => console.log(this.state))
-    }).catch(({errors}) => {
-      if(errors) {
-        let full_error_msg = "";
-        errors.forEach(function(elem){ full_error_msg += elem + '\n' });
-        Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
-        throw errors;
-        }
-      }
-    )
-}
 
   formatDate(date){
     return(date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3])
@@ -81,7 +59,7 @@ class getSchedulesReport extends Component {
   formatDateTime(dateTime){
     var dateText = new Date(dateTime)
     var returnText = this.addZeroBefore(dateText.getHours()) + ":" + this.addZeroBefore(dateText.getMinutes()) + " - " + dateText.getDate() + "/" + (dateText.getMonth() + 1) + "/" + dateText.getFullYear()
-    console.log(returnText)
+
     return(returnText)
   }
 
@@ -103,8 +81,8 @@ class getSchedulesReport extends Component {
           "Content-Type": "application/json" },
           method: "get"
       }).then(parseResponse).then(resp => {
-        console.log(resp)
-        this.setState({"schedulesIndex":resp}, () => console.log(this.state))
+
+        this.setState({"schedulesIndex":resp})
       }).catch(({errors}) => {
         if(errors) {
           let full_error_msg = "";
@@ -157,9 +135,10 @@ class getSchedulesReport extends Component {
     this.setState({"filterProfessional":-1})
     this.setState({"filterServiceType":-1})
     this.setState({"filterSituation":-1})
-    this.setState({"filterSort":0})
+    this.setState({"filterSort":-1})
     this.setState({"filterCPF":""})
     this.setState({"filterName":""})
+
     this.setState({"requestState":0})
   }
   updateFilters(e){
@@ -193,49 +172,48 @@ class getSchedulesReport extends Component {
         break;
       default:
         break;
-        console.log(this.state)
     }
-    console.log(this.state)
+    this.setState({"requestState":0})
   }
   confirmFilters(){
       var filters = ''
       if(this.state.filterOrder != null){
         filters = filters + `&q[s]=${this.state.filterOrder}+asc`
-        console.log("ord")
+
       }
       if(this.state.filterProfessional != -1){
         filters = filters + `&q[professional]=${this.state.filterProfessional}`
-        console.log("perm")
+
       }
       if(this.state.filterCPF != ""){
         filters = filters + `&q[cpf]=${this.state.filterCPF}`
-        console.log("occup")
+
       }
       if(this.state.filterServicePlace != -1){
         filters = filters + `&q[service_places]=${this.state.filterServicePlace}`
-        console.log("place")
+
       }
       if(this.state.filterServiceType != -1){
         filters = filters + `&q[service_type]=${this.state.filterServiceType}+asc`
-        console.log("ord")
+
       }
       if(this.state.filterStartDate != ""){
-        filters = filters + `&q[start_date]=${this.state.filterStartDate}`
-        console.log("perm")
+        filters = filters + `&q[start_time]=${this.state.filterStartDate}`
+
       }
       if(this.state.filterEndDate != ""){
-        filters = filters + `&q[end_date]=${this.state.filterEndDate}`
-        console.log("occup")
+        filters = filters + `&q[end_time]=${this.state.filterEndDate}`
+
       }
       if(this.state.filterName != ""){
         filters = filters + `&q[name]=${this.state.filterName}`
-        console.log("place")
+
       }
 
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = `schedules`;
       const params = `permission=${this.props.user.current_role}${filters}`
-      console.log(params)
+
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -309,10 +287,15 @@ render() {
           </Row>
 
           <Row>
-            <Input id="filter6" s={4} label="Ordernar por" type="select" default="0" value={this.state.filterSort} onChange={this.updateFilters}>
-              <option value="0">Nome do cidadão</option>
-              <option value="1">Situação</option>
-              <option value="2">Número do agendamento</option>
+            <Input id="filter6" s={4} label="Ordernar por" type="select" default="-1" value={this.state.filterSort} onChange={this.updateFilters}>
+                <option value="-1">Nenhum</option>
+                <option value="citizen_name">Nome do cidadão  </option>
+                <option value="citizen_cpf">CPF</option>
+                <option value="service_start_time">Horário de inicio</option>
+                <option value="service_place_name">Local de atendimento</option>
+                <option value="shift_service_type_name">Tipo de atendimento</option>
+                <option value="situation_description">Situação</option>
+
             </Input>
             <Input id="filter7" s={4} name='on' label="CPF" value={this.state.filterCPF} onChange={this.updateFilters} />
             <Input id="filter8" s={4} name='on' label="Nome do Cidadão" value={this.state.filterName} onChange={this.updateFilters} />
