@@ -76,7 +76,7 @@ confirmFilters(){
       console.log("type")
     }
     if(this.state.filterSort != -1){
-      filters = filters + `&q[s]=${this.state.filterSort}+sort`
+      filters = filters + `&q[s]=${this.state.filterSort}+asc`
       console.log("sort")
     }
 
