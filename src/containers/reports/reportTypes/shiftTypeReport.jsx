@@ -10,21 +10,22 @@ import { findDOMNode } from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
 import styles from './styles/shiftTypeReport.css'
-var jsPDF
+import ReportPDF from '../reportPDF'
 
 
 class getshiftTypeReport extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      shiftTypeList: []
+      shiftTypeList: [],
+      shiftTypeIndex: [],
+      requestState:0
     }
     this.getShiftTypeList = this.getShiftTypeList.bind(this)
     this.returnShiftTypeList = this.returnShiftTypeList.bind(this)
   }
 
   componentDidMount(){
-    jsPDF = require('jspdf')
     this.getShiftTypeList()
   }
 
@@ -92,32 +93,49 @@ getShiftTypeList(){
 render() {
     return (
       <div className="contentWrapper">
-        <div id="divtoPDF">
-          <Table className="bordered striped" style={{fontSize:"70%"}}>
-            <thead>
-              <tr>
-                <th>Nome do profissional</th>
-                <th>CPF</th>
-                <th>Registro</th>
-                <th>Papéis</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.returnShiftTypeList().map(function(element,i){
-                    return(
-                      <tr key={i}>
-                        <td>{element.name}</td>
-                        <td>{element.cpf}</td>
-                        <td>{element.registration}</td>
-                        <td>{this.arrangeList(element.roles_names)}</td>
-                      </tr>
-                  );
-                },this)}
-            </tbody>
-          </Table>
-          <Button onClick={this.printPDF}>Relatório em PDF</Button>
-        </div>
+        <h5>Filtros do relatório</h5>
+          <div>
+            <br/>
+            <Row>
+            <Input id="filter0" s={4} label="Local do Atendimento" type="select" default="-1" value={this.state.filterServicePlace} onChange={this.updateFilters}>
+              <option value="-1">Nenhum</option>
 
+            </Input>
+            <Input id="filter1" s={4} name='on' type='date' label="Data de Início" value={this.state.filterStartDate} onChange={this.updateFilters} />
+            <Input id="filter2" s={4} name='on' type='date' label="Data de Fim" value={this.state.filterEndDate} onChange={this.updateFilters}/>
+          </Row>
+          <Row>
+
+            <Input id="filter3" s={4} label="Profissional" type="select" default="-1" value={this.state.filterProfessional} onChange={this.updateFilters}>
+              <option value="-1">Nenhum</option>
+
+              </Input>
+
+            <Input id="filter4" s={4} label="Tipo de atendimento" type="select" default="-1" value={this.state.filterServiceType} onChange={this.updateFilters}>
+              <option value="-1" >Nenhum</option>
+
+            </Input>
+
+            <Input id="filter5" s={4} label="Situação" type="select" default="-1" value={this.state.filterSituation} onChange={this.updateFilters}>
+              <option value="-1">Nenhum</option>
+
+            </Input>
+          </Row>
+
+          <Row>
+            <Input id="filter6" s={4} label="Ordernar por" type="select" default="-1" value={this.state.filterSort} onChange={this.updateFilters}>
+                <option value="-1">Nenhum</option>
+
+            </Input>
+            <Input id="filter7" s={4} name='on' label="CPF" value={this.state.filterCPF} onChange={this.updateFilters} />
+            <Input id="filter8" s={4} name='on' label="Nome do Cidadão" value={this.state.filterName} onChange={this.updateFilters} />
+          </Row>
+          </div>
+          <Button style={{marginRight:"1rem"}} onClick={this.clearFields}>Limpar Campos</Button>
+          {this.state.requestState == "0"
+            ?(<Button onClick={this.confirmFilters}>Confirmar filtros</Button>)
+            :(<ReportPDF h1="Relatório de Agendamentos" h2="" cols={this.state.cols} rows={this.state.rows} filename="relatorio_agendamentoss.pdf" o='l'/>)
+          }
       </div>
     )
   }
