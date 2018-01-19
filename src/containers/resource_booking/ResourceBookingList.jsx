@@ -202,6 +202,11 @@ class getResourceList extends Component {
 
 
   tableList() {
+    console.log(this.props);
+    if(this.props.user.current_role != 'citizen)'){
+      var role = this.props.user.current_role;
+      var permissionInfo = this.props.user.roles.find(r => role === r.id);
+    }
     const data = (
       this.state.resource_bookings.map((resource_booking) => {
         let timer = this.resolveTimeReminder(resource_booking);
@@ -242,17 +247,20 @@ class getResourceList extends Component {
             </td> 
 
             <td key={Math.random()} >
-            
-              <a className='back-bt waves-effect btn-flat' 
-                id="iconTable"
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/resource_bookings/${resource_booking.id}/edit`) 
-                }>
-                <i className="waves-effect material-icons tooltipped">
-                    edit
-                </i>
-              </a>
+              {this.props.user.current_role != 'citizen' && (permissionInfo.role == 'adm_c3sl'||  permissionInfo.role == 'adm_prefeitura' || permissionInfo.role == 'adm_local')?
+                <a className='back-bt waves-effect btn-flat' 
+                  id="iconTable"
+                  href='#' 
+                  onClick={ () => 
+                    browserHistory.push(`/resource_bookings/${resource_booking.id}/edit`) 
+                  }>
+                  <i className="waves-effect material-icons tooltipped">
+                      edit
+                  </i>
+                </a>
+                :
+                <a/>
+              }
 
               <a className='back-bt waves-effect btn-flat' 
                 id="iconTable"

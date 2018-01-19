@@ -309,7 +309,7 @@ class getResourceForm extends Component {
           method: this.props.fetch_method,
           body: JSON.stringify(fetch_body)
         }).then(parseResponse).then(resp => {
-          Materialize.toast('Escala de recurso editado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
+          Materialize.toast('Reserva de recurso editado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
           browserHistory.push(this.props.submit_url);
         }).catch(({errors}) => {
           if(errors) {
@@ -329,7 +329,7 @@ class getResourceForm extends Component {
           body: JSON.stringify(fetch_body)
         }).then(parseResponse).then(resp => {
           this.updateShift(Number(this.state.selected_shift));          
-          Materialize.toast('Tipo de recurso criado com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
+          Materialize.toast('Reserva de recurso criada com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
           browserHistory.push(this.props.submit_url);
         }).catch(({errors}) => {
           if(errors) {
