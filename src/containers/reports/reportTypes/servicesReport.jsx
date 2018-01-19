@@ -9,36 +9,36 @@ import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
-import styles from './styles/scalesReport.css'
+import styles from './styles/servicesReport.css'
 var jsPDF
 
 
-class getScalesReport extends Component {
+class getservicesReport extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      scalesList: []
+      servicesList: []
     }
-    this.getScalesList = this.getScalesList.bind(this)
-    this.returnScalesList = this.returnScalesList.bind(this)
+    this.getservicesList = this.getservicesList.bind(this)
+    this.returnservicesList = this.returnservicesList.bind(this)
   }
 
   componentDidMount(){
     jsPDF = require('jspdf')
-    this.getScalesList()
+    this.getservicesList()
   }
 
-returnScalesList(){
-    if(this.state.scalesList.length == 0){
-      this.getScalesList()
+returnservicesList(){
+    if(this.state.servicesList.length == 0){
+      this.getservicesList()
     }
-    console.log(this.state.scalesList)
-    return(this.state.scalesList)
+    console.log(this.state.servicesList)
+    return(this.state.servicesList)
 }
 
-getScalesList(){
+getservicesList(){
   const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `scales`;
+    const collection = `services`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -46,7 +46,7 @@ getScalesList(){
         "Content-Type": "application/json" },
         method: "get"
     }).then(parseResponse).then(resp => {
-      this.setState({"scalesList":resp}, () => console.log(this.state))
+      this.setState({"servicesList":resp}, () => console.log(this.state))
     }).catch(({errors}) => {
       if(errors) {
         let full_error_msg = "";
@@ -103,7 +103,7 @@ render() {
               </tr>
             </thead>
             <tbody>
-              {this.returnScalesList().map(function(element,i){
+              {this.returnservicesList().map(function(element,i){
                     return(
                       <tr key={i}>
                         <td>{element.name}</td>
@@ -130,8 +130,8 @@ const mapStateToProps = (state) => {
     user
   }
 }
-const scalesReport = connect(
+const servicesReport = connect(
   mapStateToProps
-)(getScalesReport)
+)(getservicesReport)
 
-export default scalesReport
+export default servicesReport

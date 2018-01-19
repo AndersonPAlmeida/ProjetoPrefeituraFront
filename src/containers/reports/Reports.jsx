@@ -68,7 +68,7 @@ render() {
       browserHistory.push(`/reports/schedules_report`)
         break
       case "1":
-      browserHistory.push(`/reports/scales_report`)
+      browserHistory.push(`/reports/services_report`)
         break
       case "2":
         browserHistory.push(`/reports/citizen_report`)
