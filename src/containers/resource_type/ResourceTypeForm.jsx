@@ -187,8 +187,8 @@ class getResourceTypeForm extends Component {
   render() {    
     return (
       <main>
-      	<Row>
-	        <Col s={12}>
+        <Row>
+          <Col s={12}>
             <div className='card'>
               <div className='card-content'>
                 {this.props.is_edit ?
@@ -196,19 +196,22 @@ class getResourceTypeForm extends Component {
                   :
                   <h2 className="card-title">Cadastrar tipo de recurso</h2> 
                 }
-                <Row className='first-line'>
-                  <Col s={12} m={12} l={12}>
-                    <div className="field-input" >
-                      <h6>Prefeitura:</h6>
+                
+                <Row>
+                  <Col s={12} l={6}>                  
+                    <div id='resource-type-size'>
+                      <h6 >Prefeitura:</h6>
                       <div>
                         {this.pickCityHall()}
                       </div>
                     </div>
+                  </Col>
 
-                    <div className="field-input" >
+                  <Col s={12} l={6}>
+                    <div id='resource-type-size'>
                       <h6>Recurso Móvel*:</h6>
                       <div>
-                        <Input s={6} m={32} l={12} 
+                        <Input
                           type='select'
                           name='mobile'
                           value={this.state.resource_type.mobile}
@@ -219,11 +222,16 @@ class getResourceTypeForm extends Component {
                         </Input>
                       </div>
                     </div>
+                  </Col>
+                </Row>
 
-                    <div className="field-input" >
+
+                <Row>
+                  <Col s={12} l={6}>
+                    <div id='resource-type-size'>
                       <h6>Situação:</h6>
                       <div>
-                        <Input s={6} m={32} l={12} 
+                        <Input 
                           type='select'
                           name='situation'
                           value={this.state.resource_type.situation}
@@ -234,11 +242,13 @@ class getResourceTypeForm extends Component {
                         </Input>
                       </div>
                     </div>
+                  </Col>
 
-                    <div className="field-input" >
+                  <Col s={12} l={6}>
+                    <div id='resource-type-size-text'>
                       <h6>Nome*:</h6>
                       <label>
-                        <input 
+                        <Input 
                           type="text" 
                           className='input-field' 
                           name="name" 
@@ -247,7 +257,11 @@ class getResourceTypeForm extends Component {
                         />
                       </label>
                     </div>
-                   
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col s={12} l={6} offset={'l3'}>
                     <div>
                       <h6>Descrição*:</h6>
                       <label>
@@ -261,9 +275,10 @@ class getResourceTypeForm extends Component {
                       </label>
                     </div>
                     
-                    <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
                   </Col>
                 </Row>
+                <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
+
                 {this.confirmButton()}
               </div>
             </div>

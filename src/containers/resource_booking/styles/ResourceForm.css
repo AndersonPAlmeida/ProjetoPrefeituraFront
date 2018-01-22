@@ -83,3 +83,11 @@ input {
 #padding-to-textarea{
   padding-bottom: 20px;
 }
+
+#resource-type-size > div > div{
+  width: 100%;
+}
+#resource-type-size-text > label > div{
+  margin-top: 0;
+  width: 100%;
+}
