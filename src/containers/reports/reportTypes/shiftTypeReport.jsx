@@ -17,37 +17,90 @@ class getshiftTypeReport extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      shiftTypeList: [],
-      shiftTypeIndex: [],
-      requestState:0
+      serviceTypeList: [],
+      cityHalls:[],
+      requestState:0,
+      filterStartDate:'',
+      filterEndDate:'',
+      filterCityHall:-1,
     }
-    this.getShiftTypeList = this.getShiftTypeList.bind(this)
     this.returnShiftTypeList = this.returnShiftTypeList.bind(this)
-  }
-
-  componentDidMount(){
-    this.getShiftTypeList()
+    this.clearFields = this.clearFields.bind(this)
+    this.updateFilters = this.updateFilters.bind(this)
+    this.arrangeData = this.arrangeData.bind(this)
+    this.confirmFilters = this.confirmFilters.bind(this)
   }
 
 returnShiftTypeList(){
     if(this.state.shiftTypeList.length == 0){
       this.getShiftTypeList()
     }
-    console.log(this.state.shiftTypeList)
     return(this.state.shiftTypeList)
 }
 
-getShiftTypeList(){
-  const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `professionals`;
-    const params = `permission=${this.props.user.current_role}`
+
+  arrangeList(list){
+    var i
+    var returnText = list[0]
+    for(i = 1; i < list.length; i++){
+      returnText = returnText + ", " + list[i]
+    }
+    return(returnText)
+  }
+
+
+clearFields(){
+  this.setState({
+    filterStartDate:'',
+    filterEndDate:'',
+    filterCityHall:-1
+  })
+  this.setState({requestState:0})
+}
+
+updateFilters(e){
+  switch(e.target.id){
+    case "filter0":
+      this.setState({"filterStartDate":e.target.value})
+      break;
+    case "filter1":
+      this.setState({"filterEndDate":e.target.value})
+      break;
+    case "filter2":
+        this.setState({"filterCityHall":e.target.value})
+        break;
+    default:
+      break;
+  }
+}
+
+confirmFilters(){
+    var filters = ''
+    if(this.state.filterStartDate != ''){
+      filters = filters + `&start_time="${this.state.filterStartDate}"`
+    }
+    if(this.state.filterEndDate != ''){
+      filters = filters + `&end_time="${this.state.filterEndDate}"`
+
+    }
+    if(this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl'){
+      if(this.state.filterCityHall != -1){
+
+        filters = filters + `&city_hall_id=${this.state.filterCityHall}`
+      }
+    }
+
+    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `schedule_per_type_report`;
+    const params = `permission=${this.props.user.current_role}${filters}`
+
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json" },
         method: "get"
     }).then(parseResponse).then(resp => {
-      this.setState({"shiftTypeList":resp}, () => console.log(this.state))
+      this.setState({"serviceTypeList":resp}, () => this.arrangeData())
     }).catch(({errors}) => {
       if(errors) {
         let full_error_msg = "";
@@ -57,37 +110,57 @@ getShiftTypeList(){
         }
       }
     )
+  this.setState({"requestState":1})
 }
 
-  printPDF(){
-        var pdf = new jsPDF('p', 'pt', "a4");
-        pdf.setFont("helvetica");
-        pdf.setFontSize(1);
-      var source = $('#divtoPDF')[0];
-      var specialElementHandlers = {
-        '#bypassme': function(element, renderer) {
-          return true
-        }
-      };
+arrangeData(){
 
-      var margins = { top: 50,left: 10,right:10, width: 650};
-
-      pdf.fromHTML (
-        source, margins.left, margins.top,  {'width': margins.width, 'elementHandlers': specialElementHandlers},
-        function (dispose) {
-          pdf.save('relatorio_cidadaos.pdf');
-        }
-      )
-  }
-
-  arrangeList(list){
-    var i
-    console.log(list)
-    var returnText = list[0]
-    for(i = 1; i < list.length; i++){
-      returnText = returnText + ", " + list[i]
+  var protoRows = []
+  var i
+  var current
+  for(i = 0; i< this.state.serviceTypeList.length; i++){
+    current = this.state.serviceTypeList[i]
+    var j
+    for(j = 0; j < current.service_types.length; j++){
+      var serviceType = current.service_types[j]
+      var k
+      for(k = 0; k < serviceType.schedules.length; k++ ){
+        protoRows.push([current.service_place_name, serviceType.description, current.professionals[k].name, serviceType.schedules[k]])
+      }
     }
-    return(returnText)
+  }
+  this.setState({"cols":["Local", "Tipo de Serviço", "Profissional", "Quantidade de atendimentos"]})
+  this.setState({"rows":protoRows})
+}
+
+  getCityHall(){
+    if(this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl'){
+      if(this.state.cityHalls == 0){
+        const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+        const collection = `city_halls`;
+        const params = `permission=${this.props.user.current_role}`
+        fetch(`${apiUrl}/${collection}?${params}`, {
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json" },
+            method: "get"
+        }).then(parseResponse).then(resp => {
+           this.setState({"cityHalls":resp.entries})
+        }).catch(({errors}) => {
+          if(errors) {
+            let full_error_msg = "";
+            errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+            Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+            throw errors;
+            }
+          }
+        )
+        return(this.state.cityHalls)
+      }else{
+        return(this.state.cityHalls)
+      }
+    }
+
   }
 
 render() {
@@ -97,38 +170,17 @@ render() {
           <div>
             <br/>
             <Row>
-            <Input id="filter0" s={4} label="Local do Atendimento" type="select" default="-1" value={this.state.filterServicePlace} onChange={this.updateFilters}>
-              <option value="-1">Nenhum</option>
-
-            </Input>
-            <Input id="filter1" s={4} name='on' type='date' label="Data de Início" value={this.state.filterStartDate} onChange={this.updateFilters} />
-            <Input id="filter2" s={4} name='on' type='date' label="Data de Fim" value={this.state.filterEndDate} onChange={this.updateFilters}/>
-          </Row>
-          <Row>
-
-            <Input id="filter3" s={4} label="Profissional" type="select" default="-1" value={this.state.filterProfessional} onChange={this.updateFilters}>
-              <option value="-1">Nenhum</option>
-
-              </Input>
-
-            <Input id="filter4" s={4} label="Tipo de atendimento" type="select" default="-1" value={this.state.filterServiceType} onChange={this.updateFilters}>
-              <option value="-1" >Nenhum</option>
-
-            </Input>
-
-            <Input id="filter5" s={4} label="Situação" type="select" default="-1" value={this.state.filterSituation} onChange={this.updateFilters}>
-              <option value="-1">Nenhum</option>
-
-            </Input>
-          </Row>
-
-          <Row>
-            <Input id="filter6" s={4} label="Ordernar por" type="select" default="-1" value={this.state.filterSort} onChange={this.updateFilters}>
-                <option value="-1">Nenhum</option>
-
-            </Input>
-            <Input id="filter7" s={4} name='on' label="CPF" value={this.state.filterCPF} onChange={this.updateFilters} />
-            <Input id="filter8" s={4} name='on' label="Nome do Cidadão" value={this.state.filterName} onChange={this.updateFilters} />
+            <Input id="filter0" s={4} name='on' type='date' label="Data de Início" value={this.state.filterStartDate} onChange={this.updateFilters} />
+            <Input id="filter1" s={4} name='on' type='date' label="Data de Fim" value={this.state.filterEndDate} onChange={this.updateFilters}/>
+            {this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl'
+               &&(<Input id="filter2" s={4} label="Cidade" type="select" default="-1" value={this.state.filterCityHall} onChange={this.updateFilters}>
+                    <option value="-1">Sem filtro</option>
+                    {this.getCityHall().map(function(element,i){
+                      return(<option value={element.id} key={i}>{element.name}</option>)
+                    })}
+                  </Input>
+             )
+          }
           </Row>
           </div>
           <Button style={{marginRight:"1rem"}} onClick={this.clearFields}>Limpar Campos</Button>
