@@ -47,8 +47,10 @@ render() {
   getReportTypeList(){
     var list = [
       {"value":0,"name":"Agendamentos"},
+      {"value":1,"name":"Atendimentos"},
       {"value":2,"name":"Cidadãos"},
       {"value":3,"name":"Escalas"},
+      {"value":4,"name":"Número de atendimentos por tipo"},
       {"value":5,"name":"Profissionais"}
     ]
     return(list)
@@ -66,7 +68,7 @@ render() {
       browserHistory.push(`/reports/schedules_report`)
         break
       case "1":
-    //  browserHistory.push(`/reports/services_report`)
+      browserHistory.push(`/reports/services_report`)
         break
       case "2":
         browserHistory.push(`/reports/citizen_report`)
@@ -76,7 +78,7 @@ render() {
 
         break
       case "4":
-      //  browserHistory.push(`/reports/shift_type_report`)
+        browserHistory.push(`/reports/shift_type_report`)
         break
       case "5":
         browserHistory.push(`/reports/professionals_report`)
