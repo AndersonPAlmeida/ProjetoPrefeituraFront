@@ -29,7 +29,7 @@ class getProfessionalUserList extends Component {
       };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const params = `permission=${this.props.user.current_role}`
@@ -409,15 +409,15 @@ class getProfessionalUserList extends Component {
       </button>
 		)
 	}
-  
+
   newCitizenListButton() {
     return (
       <button
         onClick={() =>
-          browserHistory.push({pathname: `/professionals/users/new`})
+          browserHistory.push({pathname: `/professionals/users/upload`})
         }
         className="btn waves-effect btn button-green new-user-button"
-        name="Novo"
+        name="upload"
         type="submit">
           INSERIR LISTA DE CIDADÃOS
       </button>

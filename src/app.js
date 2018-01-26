@@ -11,9 +11,9 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
          ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
          ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, ProfessionalIndex,
          ProfessionalList, ProfessionalEdit, ProfessionalShow, ProfessionalCreate,
-         ProfessionalSearch, ProfessionalSchedule, ProfessionalUserList, 
-         ProfessionalUserEdit, ProfessionalUserCreate, ProfessionalUserShow,
-         ProfessionalUserDependantEdit, ProfessionalUserDependantCreate, 
+         ProfessionalSearch, ProfessionalSchedule, ProfessionalUserList,
+         ProfessionalUserEdit, ProfessionalUserCreate, ProfessionalUserShow, ProfessionalUserUpload,
+         ProfessionalUserDependantEdit, ProfessionalUserDependantCreate,
          ProfessionalUserDependantShow, ShiftShow, ShiftEdit, ShiftCreate,
          ShiftList, OccupationCreate,OccupationList,OccupationEdit,OccupationShow
        } from './containers';
@@ -113,6 +113,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="professionals/users/:citizen_id/dependants/:dependant_id" component={UserIsAuthenticated(ProfessionalUserDependantShow)} />
         <Route path="professionals/users" component={UserIsAuthenticated(ProfessionalUserList)} />
         <Route path="professionals/users/new" component={UserIsAuthenticated(ProfessionalUserCreate)} />
+        <Route path="professionals/users/upload" component={UserIsAuthenticated(ProfessionalUserUpload)} />
         <Route path="professionals/users/:citizen_id/edit" component={UserIsAuthenticated(ProfessionalUserEdit)} />
         <Route path="professionals/users/:citizen_id" component={UserIsAuthenticated(ProfessionalUserShow)} />
         <Route path="professionals/shifts" component={UserIsAuthenticated(ProfessionalIndex)} />
