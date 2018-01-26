@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { browserHistory } from 'react-router'
 import { port, apiHost, apiPort, apiVer } from '../../../../config/env'
 import {parseResponse} from "../../../redux-auth/utils/handle-fetch-response"
-import {Row, Col, Table, Input, Button} from 'react-materialize'
+import {Row, Col, Table, Input, Button, Card} from 'react-materialize'
 import {fetch} from "../../../redux-auth";
 import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
@@ -94,6 +94,7 @@ handleDecisionChange(e){
 render() {
     return (
       <div className="contentWrapper">
+      <Card>
         <h5>Opções do relatório</h5>
         <Row>
           <Input s={6} type='select' defaultValue='0' onChange={this.handleDecisionChange}>
@@ -104,7 +105,8 @@ render() {
 
         </Row>
         <ReportPDF h1="Relatório de cidadãos" h2="" rows={this.state.rows} cols={this.state.cols} filename="relatorio_cidadaos.pdf"/>
-      </div>
+        </Card>
+    </div>
     )
   }
 }

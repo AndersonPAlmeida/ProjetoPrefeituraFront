@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { browserHistory } from 'react-router'
 import { port, apiHost, apiPort, apiVer } from '../../../../config/env'
 import {parseResponse} from "../../../redux-auth/utils/handle-fetch-response"
-import {Row, Col, Table, Input, Button} from 'react-materialize'
+import {Row, Col, Table, Input, Button, Card} from 'react-materialize'
 import {fetch} from "../../../redux-auth";
 import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
@@ -194,6 +194,7 @@ arrangeData(){
   render() {
     return (
       <div className="contentWrapper">
+        <Card>
         <h5>Filtros do relatório</h5>
           <div>
             <br/>
@@ -235,6 +236,7 @@ arrangeData(){
             ?(<Button onClick={this.confirmFilters}>Confirmar filtros</Button>)
             :(<ReportPDF h1="Relatório de Escalas" h2="" cols={this.state.cols} rows={this.state.rows} filename="relatorio_escalas.pdf" o='l'/>)
           }
+        </Card>
       </div>
     )
   }
