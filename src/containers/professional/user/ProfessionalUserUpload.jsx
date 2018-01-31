@@ -33,13 +33,7 @@ class getProfessionalUserUpload extends Component {
               <ul>{this.state.files.map(f => <li key={f.name}>{f.name} - {f.size} bytes</li>)}</ul>
             </aside>
           </section>
-          {/* <h2 className='card-title h2-title-home'> Cidadãos</h2>
-          {this.filterCitizen()}
-          {this.state.citizens.length > 0 ? this.tableList() : 'Nenhum cidadão encontrado'} */}
         </div>
-        {/* <div className="card-action">
-          {this.newCitizenButton()}
-        </div> */}
       </div>
       )
   }
@@ -48,19 +42,27 @@ class getProfessionalUserUpload extends Component {
   onDrop(file) {
     const reader = new FileReader();
     reader.onload = () => {
+      // var firstLine = reader.result.split('\n').shift();
+      console.log("Começo: " + Date());
+      var secondLine = reader.result.split('\n')[1];
+      const regex = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}.[0-9]{5}-[0-9]{3}/g;
 
-      var text = reader.result;                 // the entire file
-      var firstLine = text.split('\n').shift(); // first line
-      console.log("linha: " + firstLine);
-      parse(reader.result, {delimiter: '|'}, (err, data) => {
+      var result = regex.exec(secondLine.toString())[0];
 
-        console.log("teste" + data[0][1]);
-        console.log((data[0]).length);
+      if (result == null){
+        console.log("error: NULL: ");
+      }else{
+        var delimiter = result[10];
+      }
+
+      parse(reader.result,{delimiter: delimiter}, (err,data) =>{
+
+        console.log("Final: " + Date());
         this.setState({lines:data});
-        });
+      });
     };
 
-    reader.readAsText(file, 'UTF-8');
+    reader.readAsBinaryString(file[0]);
 }
 
 
