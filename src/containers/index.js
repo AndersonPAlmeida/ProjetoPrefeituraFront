@@ -38,6 +38,25 @@ export ServiceTypeEdit from './service_type/ServiceTypeEdit';
 export ServiceTypeShow from './service_type/ServiceTypeShow';
 export ServiceTypeCreate from './service_type/ServiceTypeCreate';
 
+export ResourceTypeList from './resource_type/ResourceTypeList';
+export ResourceTypeShow from './resource_type/ResourceTypeShow';
+export ResourceTypeCreate from './resource_type/ResourceTypeCreate'
+export ResourceTypeEdit from './resource_type/ResourceTypeEdit'
+
+export ResourceList from './resource/ResourceList';
+export ResourceShow from './resource/ResourceShow';
+export ResourceEdit from './resource/ResourceEdit';
+export ResourceCreate from './resource/ResourceCreate';
+
+export ResourceShiftList from './resource_shift/ResourceShiftList';
+export ResourceShiftShow from './resource_shift/ResourceShiftShow';
+export ResourceShiftEdit from './resource_shift/ResourceShiftEdit';
+export ResourceShiftCreate from './resource_shift/ResourceShiftCreate';
+
+export ResourceBookingList from './resource_booking/ResourceBookingList';
+export ResourceBookingShow from './resource_booking/ResourceBookingShow';
+export ResourceBookingEdit from './resource_booking/ResourceBookingEdit';
+export ResourceBookingCreate from './resource_booking/ResourceBookingCreate';
 export ProfessionalIndex from './professional/ProfessionalIndex';
 export ProfessionalList from './professional/ProfessionalList';
 export ProfessionalEdit from './professional/ProfessionalEdit';

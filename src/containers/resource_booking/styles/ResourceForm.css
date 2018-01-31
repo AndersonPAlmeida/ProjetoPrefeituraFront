@@ -1,0 +1,93 @@
+.sector-select {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+}
+
+.sector-select .input-field {
+  margin-top: 0 !important;
+}
+
+.select-field {
+  font-size: 13px;
+  font-family: 'Roboto', 'Arial';
+}
+
+.file-input {
+  overflow: auto;
+  margin-bottom: 20px;
+}
+
+.field-input {
+  width: 300px !important;
+  height: 115px !important;
+}
+
+input {
+   color: black;
+ }
+
+.check-input {
+  margin-bottom: 5px;
+  overflow: auto;
+}
+
+
+#number-input{
+  width: 65px;
+  text-align: center;
+}
+
+#unitTime{
+  color: black;
+  margin-left: 15px;
+}
+.dropdown-content li>a, .dropdown-content li>span{
+  color: black;
+}
+
+
+#no-padding > div{
+  padding: 0;
+  width: 295px;
+}
+
+#field-textarea {
+  width: 300px ;
+
+}
+#time-shift{
+  margin-top: 50px;
+}
+
+#time-select{
+  width: 80px;
+  text-align: end;
+}
+.collection{
+  border-color: #b7b7b7;
+}
+#select-citizen > div > div >  ul{
+  max-height: 300px;
+}
+#select-citizen > div{
+  padding: 0;
+  width: 295px;
+}
+
+#select-resource-booking-cit > div{
+  width: 100%;
+}
+#text-area-size {
+  width: 100%;
+}
+#padding-to-textarea{
+  padding-bottom: 20px;
+}
+
+#resource-type-size > div > div{
+  width: 100%;
+}
+#resource-type-size-text > label > div{
+  margin-top: 0;
+  width: 100%;
+}
