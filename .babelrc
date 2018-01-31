@@ -6,6 +6,7 @@
   ],
   "plugins": [
     "transform-runtime",
+    "transform-react-jsx",
   ],
   "env": {
     "production": {

@@ -8,6 +8,9 @@ import {fetch} from '../../redux-auth';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import strftime from 'strftime';
+import MapWithUserLocation from './MapWithUserLocation';
+
+const nominatimURL = 'https://nominatim.openstreetmap.org/search?';
 
 class getResourceShiftShow extends Component {
   constructor(props) {
@@ -22,6 +25,7 @@ class getResourceShiftShow extends Component {
       professional_name:''
     };
     this.resolveTime = this.resolveTime.bind(this);
+    this.getLatLng = this.getLatLng.bind(this);
 
   }
 
@@ -79,7 +83,28 @@ class getResourceShiftShow extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ service_place: resp.service_place });
+      self.setState({ service_place: resp.service_place }); 
+      console.log('---------------------------------');  
+      console.log(resp);  
+      console.log(this.state);  
+      console.log('---------------------------------');  
+      this.getLatLng(resp.service_place.address_street + ',' + resp.service_place.address_number +' ' + resp.service_place.neighborhood);
+    });
+  }
+
+  getLatLng(street){
+    var query = street.replace(/\s/g,'+');
+    console.log(`${nominatimURL}q=${query}&format=json`);
+    fetch(`${nominatimURL}q=${query}&format=json`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' },
+      method: 'get',
+    }).then(parseResponse).then(resp => {
+      console.log(resp);
+      this.setState({nominatimData: resp });
+    }).catch(error => {
+      console.log(error);
     });
   }
 
@@ -196,15 +221,9 @@ class getResourceShiftShow extends Component {
                   <b>Situação: </b>
                   {this.state.resource_booking.active == 1 ? 'Ativo' : 'Inativo'}                  
                 </p> 
-
-
                 <p>
                   <b></b>
                 </p>
-
-
-
-
               </Card>  
             </Col>    
             <Col s={12} m={6}>
@@ -225,7 +244,12 @@ class getResourceShiftShow extends Component {
                 </p> 
               </Card>              
             </Col>             
-          </Row>    
+          </Row>   
+          <Row>
+            <Col s={12}>
+              <MapWithUserLocation address={this.state.service_place.address_street} nominatimData={this.state.nominatimData}/>
+            </Col>
+          </Row> 
         </div>
         {this.editButton()}
       </div>
