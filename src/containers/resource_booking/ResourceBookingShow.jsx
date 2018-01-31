@@ -84,24 +84,18 @@ class getResourceShiftShow extends Component {
       method: 'get',
     }).then(parseResponse).then(resp => {
       self.setState({ service_place: resp.service_place }); 
-      console.log('---------------------------------');  
-      console.log(resp);  
-      console.log(this.state);  
-      console.log('---------------------------------');  
       this.getLatLng(resp.service_place.address_street + ',' + resp.service_place.address_number +' ' + resp.service_place.neighborhood);
     });
   }
 
   getLatLng(street){
     var query = street.replace(/\s/g,'+');
-    console.log(`${nominatimURL}q=${query}&format=json`);
     fetch(`${nominatimURL}q=${query}&format=json`, {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      console.log(resp);
       this.setState({nominatimData: resp });
     }).catch(error => {
       console.log(error);
@@ -250,6 +244,9 @@ class getResourceShiftShow extends Component {
               <MapWithUserLocation address={this.state.service_place.address_street} nominatimData={this.state.nominatimData}/>
             </Col>
           </Row> 
+          <Row>
+            <p><b>Nota:</b> A localização fornecida apenas indica onde a rua está e não a localização precisa do recurso</p>
+          </Row>
         </div>
         {this.editButton()}
       </div>
@@ -298,12 +295,20 @@ class getResourceShiftShow extends Component {
   }  
 
   editButton() {
-    return (
-      <div className="card-action">
-        <a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
-        <button id={'editResource'} className="waves-effect btn right" name="commit" onClick={this.editResource.bind(this)} type="submit">Editar</button>
-      </div>
-    );
+    if(this.state.current_permission)
+      return (
+        <div className="card-action">
+          <a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
+          <button id={'editResource'} className="waves-effect btn right" name="commit" onClick={this.editResource.bind(this)} type="submit">Editar</button>
+        </div>
+      );
+    else
+      return (
+        <div className="card-action">
+          <a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
+        </div>
+      );
+
   }
 
   render() {
