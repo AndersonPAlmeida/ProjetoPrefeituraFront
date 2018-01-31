@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import {Row, Col} from 'react-materialize';
 import { browserHistory } from 'react-router';
+import Modal from 'react-modal';
 import parse from 'csv-parse';
 import Dropzone from 'react-dropzone'
-import UserForm from '../../utils/UserForm'
 
 class getProfessionalUserUpload extends Component {
   constructor(props) {
@@ -34,9 +34,29 @@ class getProfessionalUserUpload extends Component {
             </aside>
           </section>
         </div>
+          {this.ModalButton()}
+
+          <Modal
+            header='Modal Header'
+            trigger={<button>MODAL</button>}>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+          </Modal>
+
       </div>
+
       )
   }
+
+  ModalButton() {
+		return (
+      <Modal
+        header='Modal Header'
+        trigger={<button>MODAL</button>}>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+      </Modal>
+		)
+	}
+
 
 
   onDrop(file) {
