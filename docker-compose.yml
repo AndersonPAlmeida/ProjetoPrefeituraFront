@@ -1,0 +1,7 @@
+agendador-fronted:
+  build: .
+  # volumes:
+  #   - src1:/app/src/
+  ports:
+    - '3001:3001'
+    - '3002:3002'
