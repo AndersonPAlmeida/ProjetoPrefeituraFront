@@ -5,6 +5,25 @@ O aplicativo Agendador foi desenvolvido para viabilizar a automatização do age
 
 Informações
 -----------
+## Docker
+Instale o [docker-ce](https://docs.docker.com/install/) e configure o dns em `/etc/docker/daemon.json`
+```
+{
+   "dns": [ "200.17.202.3"]
+}
+```
+
+```
+Aviso
+
+Este Dockerfile deve ser apenas usado em development
+
+```
+```bash
+  $ git clone git@gitlab.c3sl.ufpr.br:agendador/Back-end-server.git
+  $ sudo docker-compose up
+```
+
 
 * Versão node: v5.x
 * Versão npm: latest
