@@ -1,4 +1,4 @@
-agendador-fronted:
+agendador-frontend:
   build: .
   # volumes:
   #   - src1:/app/src/
