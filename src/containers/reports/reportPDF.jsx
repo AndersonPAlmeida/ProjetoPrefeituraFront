@@ -9,6 +9,7 @@ class ReportPDF extends Component{
   constructor(props) {
     super(props)
     this.pdfToHTML=this.pdfToHTML.bind(this);
+    this.typeofButton=this.typeofButton.bind(this)
   }
 
    convertImgToDataURLviaCanvas(url, callback, outputFormat) {
@@ -85,12 +86,30 @@ class ReportPDF extends Component{
     doc.save(filename);
   }
 
+  typeofButton(icon=null){
+      //If you want another icon you need to specif them here
+      if(icon === "print"){
+          return (
+              <a className='back-bt waves-effect btn-flat' onClick={() => {this.pdfToHTML(this.props.h1, this.props.h2, this.props.cols, this.props.rows, this.props.filename, this.props.o)}}>
+                  <i className="waves-effect material-icons tooltipped">
+                    print
+                  </i>
+              </a>
+          );
+      }else {
+          return (
+            <Button onClick={() => {this.pdfToHTML(this.props.h1, this.props.h2, this.props.cols, this.props.rows, this.props.filename, this.props.o)}}>
+            Relatório em PDF
+          </Button>
+      );
+      }
+
+  }
+
   render(){
     return(
-    <Button onClick={() => {this.pdfToHTML(this.props.h1, this.props.h2, this.props.cols, this.props.rows, this.props.filename, this.props.o)}}>
-      Relatório em PDF
-    </Button>
-      )
+        this.typeofButton(this.props.icon)
+    );
   }
 
 }
