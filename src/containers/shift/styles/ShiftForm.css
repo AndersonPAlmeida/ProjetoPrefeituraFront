@@ -26,7 +26,58 @@ input {
    color: black;
  }
 
+ label {
+   color: black;
+ }
+
 .check-input {
   margin-bottom: 5px;
   overflow: auto;
+}
+
+.checkbox{
+  color: black;
+}
+
+.calendar-panel {
+	margin: .75rem;
+	padding: 0 !important;
+}
+
+.legend-item{
+  width: 17px;
+  display: inline-block;
+  height: 17px;
+  border: 1px solid #BBB;
+  text-align: center;
+  line-height: 16px;
+  border-radius: 50%;
+}
+
+
+[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after{
+  border-color: #92BF23;
+}
+
+.legend-invalid-date{
+  background-color: #ddd;
+}
+
+.legend-available{
+  background-color: #92BF23;
+}
+
+.legend-conflict{
+  background-color: #F0D156;
+}
+
+.legend-text{
+  display: inline-block;
+  padding-left: 5px;
+  margin-bottom: 5px;
+  line-height: 18px;
+}
+
+.red-text{
+  color: red; 
 }
