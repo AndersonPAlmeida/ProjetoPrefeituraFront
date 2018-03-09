@@ -18,8 +18,10 @@
 }
 
 .field-input {
-  width: 300px !important;
+  /*width: 300px !important;
   height: 115px !important;
+
+  */font-family: 'Roboto', 'Arial';
 }
 
 input {
@@ -79,5 +81,17 @@ input {
 }
 
 .red-text{
-  color: red; 
+  color: red;
+}
+
+.page-header{
+  margin-bottom: 5px;
+}
+
+.row .col{
+  padding-left: 0px;
+}
+
+.input-description{
+  vertical-align: text-bottom;
 }

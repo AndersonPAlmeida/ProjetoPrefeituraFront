@@ -244,12 +244,15 @@ class getShiftForm extends Component {
     const min = 0;
     const max_hour = 23;
     const max_min = 59;
+    const col_small_input = 12;
+    const col_large_input = 7;
+    const col_medium_input = 10;
     return (
       <Row s={12}>
         <div className='card'>
           <div className='card-content'>
             <Row className='first-line'>
-              <Col s={12}>
+              <Col s={12} className='page-header'>
                 {this.props.is_edit ?
                   <h2 className="card-title">Alterar escala</h2>
                   :
@@ -257,11 +260,9 @@ class getShiftForm extends Component {
                 }
               </Col>
 
-              <Row></Row>
-
-              <h6>Prefeitura:</h6>
               <Row>
-                <Col s={12} l={6}>
+                <h6>Prefeitura:</h6>
+                <Col s={col_small_input} m={col_medium_input} l={col_large_input} >
                   <div>
                     {this.pickCityHall()}
                   </div>
@@ -270,62 +271,71 @@ class getShiftForm extends Component {
 
               <Row>
                 <h6>Local de Atendimento*:</h6>
-                  <Col s={12}>
+                  <Col s={col_small_input} m={col_medium_input} l={col_large_input}>
                     <div>
                       {this.pickServicePlace()}
                     </div>
                   </Col>
                 </Row>
 
-                <div className="field-input">
+                <Row>
                   <h6>Profissional*:</h6>
-                  <div>
-                    {this.pickProfessional()}
-                  </div>
-                </div>
-                <div className="field-input">
+                  <Col s={col_small_input} m={col_medium_input} l={col_large_input}>
+                    <div>
+                      {this.pickProfessional()}
+                    </div>
+                  </Col>
+                </Row>
+
+                <Row>
                   <h6>Tipo de Atendimento*:</h6>
+                  <Col s={col_small_input} m={col_medium_input} l={col_large_input}>
                     <div>
                       {this.pickServiceType()}
                     </div>
-                </div>
-                <div>
-                  <h6>Duração:</h6>
-                </div>
-                <Row>
-                  <Col s={1}>
-                    <h6 >De:</h6>
-                  </Col>
-                  <Col s={4}>
-                    <input  type='number'  min={min} max={max_hour}/>
-                  </Col>
-                  <Col s={1}>
-                    <h6>h</h6>
-                  </Col>
-                  <Col s={4}>
-                    <input  type='number' min={min} max={max_min}/>
-                  </Col>
-                  <Col s={2}>
-                    <h6>min</h6>
                   </Col>
                 </Row>
+
                 <Row>
-                  <Col s={1}>
-                    <h6 >Até:</h6>
-                  </Col>
-                  <Col s={4}>
-                    <input  type='number'  min={min} max={max_hour}/>
-                  </Col>
-                  <Col s={1}>
-                    <h6>h</h6>
-                  </Col>
-                  <Col s={4}>
-                    <input  type='number' min={min} max={max_min}/>
-                  </Col>
-                  <Col s={2}>
-                    <h6>min</h6>
-                  </Col>
+                  <div>
+                    <h6>Duração:</h6>
+                  </div>
+                  <Row>
+                    <Col s={1}>
+                      <h6 className='input-description'>De:</h6>
+                    </Col>
+                    <Col s={2}>
+                      <input  type='number'  min={min} max={max_hour} className='check-input'/>
+                    </Col>
+                    <Col s={1}>
+                      <h6 className='input-description'>h</h6>
+                    </Col>
+                    <Col s={2}>
+                      <input  type='number' min={min} max={max_min}/>
+                    </Col>
+                    <Col s={2}>
+                      <h6 className='input-description'>min</h6>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col s={1}>
+                      <h6 >Até:</h6>
+                    </Col>
+                    <Col s={2}>
+                      <input  type='number'  min={min} max={max_hour}/>
+                    </Col>
+                    <Col s={1}>
+                      <h6>h</h6>
+                    </Col>
+                    <Col s={2}>
+                      <input  type='number' min={min} max={max_min}/>
+                    </Col>
+                    <Col s={2}>
+                      <h6>min</h6>
+                    </Col>
+                  </Row>
                 </Row>
+
 
                 <Row>
                   <div s={6}>
@@ -427,13 +437,13 @@ class getShiftForm extends Component {
                         <Input name='group1' type='radio'
                            value='green' label='Número de atendimentos:'
                            className='with-gap' checked='true'/>
-                        <Input type='number' />
+                         <Input type='number' min={1}/>
                       </div>
                     </Row>
                     <Row>
                       <Input name='group1' type='radio'
                          value='green' label='Tempo de atendimento (minutos):' className='with-gap'/>
-                      <Input type='number' />
+                       <Input type='number' />
                   </Row>
                   </div>
                 </Row>
