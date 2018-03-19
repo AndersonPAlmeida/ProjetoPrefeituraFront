@@ -58,11 +58,16 @@ function updateAuthCredentials(resp) {
 
     // set header key + val for each key in `tokenFormat` config
     for (var key in getTokenFormat()) {
+      console.log(key,resp.headers.get(key));
       newHeaders[key] = resp.headers.get(key);
 
       if (newHeaders[key]) {
         blankHeaders = false;
       }
+    }
+
+    if ((!newHeaders['access-token']) || (!newHeaders['client']) || (!newHeaders['uid'])) {
+      blankHeaders = true;
     }
 
     // persist headers for next request
