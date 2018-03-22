@@ -12,10 +12,6 @@
   font-family: 'Roboto', 'Arial';
 }
 
-.teste-input{
-  width: 500px;
-}
-
 .file-input {
   overflow: auto;
   margin-bottom: 20px;
@@ -57,9 +53,18 @@ input {
   border-radius: 50%;
 }
 
+.radio{
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+}
 
-[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after{
-  border-color: #92BF23;
+.radio-white{
+  background-color: #FFFFFF;
+}
+.radio-green{
+  background-color: #92BF23;
+  border: 2px solid #92BF23;
 }
 
 .legend-invalid-date{

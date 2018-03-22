@@ -218,12 +218,36 @@ class getShiftForm extends Component {
     const target = event.target;
     const name = target.name;
     const value = target.value;
-    if(target.validity.valid) {
+    if(target.validity.valid){
+      console.log('antes do update');
+      console.log(this.state.isTimeDivision);
+      this.setState({
+        isTimeDivision: value
+      }, function (){
+        console.log('valor do click:');
+        console.log(value);
+        console.log('depois do update');
+        console.log(this.state.isTimeDivision);
+      });
+
+      /*if(false === value){
+        console.log('entrei no if');
         this.setState({
-          isTimeDivision: value
+          isTimeDivision: false
         });
+      }else{
+        console.log('entrei no else');
+        this.setState({
+          isTimeDivision: true
+        }, function (){
+          console.log('valor do click:');
+          console.log(value);
+          console.log('depois do update');
+          console.log(this.state.isTimeDivision);
+        });
+      }
+      */
     }
-    console.log('alo alo');
   }
 
   pickProfessional(){
@@ -642,30 +666,14 @@ class getShiftForm extends Component {
                   <div >
                     <h6>Atendimentos*:</h6>
                     <Row>
-                      <div >
-                        <Input name='group1' type='radio'
-                           label='Número de atendimentos:'
-                           value={false}
-                           onChange={this.handleInputCheckBoxChange.bind(this)}
-                           className='with-gap' checked='true'/>
-                         {
-                          this.state.isTimeDivision ?
-                          <Input type='number' disabled/> :
-                          <Input type='number' min={1}/>
-                         }
-                      </div>
+
+                      <Input name='group1' type='radio' className='with-gap' label='False'
+                        checked={!this.state.isTimeDivision} onChange={this.handleInputCheckBoxChange.bind(this)} value={false}/>
+
+                      <Input name='group1' type='radio'className='with-gap' label='true'
+                        checked={this.state.isTimeDivision} onChange={this.handleInputCheckBoxChange.bind(this)} value={true}/>
                   </Row>
-                  <Row>
-                      <Input name='group1' type='radio'
-                        onChange={this.handleInputCheckBoxChange.bind(this)}
-                        value={true}
-                        label='Tempo de atendimento (minutos):' className='with-gap'/>
-                       {
-                        this.state.isTimeDivision ?
-                        <Input type='number'/> :
-                          <Input type='number' disabled/>
-                       }
-                </Row>
+
                   </div>
               </Row>
                 <p className="red-text">Campos com (*) são de preenchimento obrigatório.</p>
