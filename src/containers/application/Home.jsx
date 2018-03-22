@@ -9,7 +9,6 @@ export default class Home extends React.Component {
         <div>
           {this.props.showHeader ? <Header /> : <div />}
           {this.props.showMenu ? <Menu /> : <div />}
-          <div style={ { clear: 'left' } }>{this.props.navHistory}</div>
           {this.props.children}
           <Footer footerItems={this.props.footerItems} />
         </div>

@@ -65,6 +65,13 @@ function updateAuthCredentials(resp) {
       }
     }
 
+    // When backend does not return a accessToken the headers can't be update
+    // if the accessToken was not returned, neither client nor uid will be returned
+    // just putting this conditions to make sure :)
+    if ((!newHeaders['access-token']) || (!newHeaders['client']) || (!newHeaders['uid'])) {
+      blankHeaders = true;
+    }
+
     // persist headers for next request
     if (!blankHeaders) {
       persistData(C.SAVED_CREDS_KEY, newHeaders);

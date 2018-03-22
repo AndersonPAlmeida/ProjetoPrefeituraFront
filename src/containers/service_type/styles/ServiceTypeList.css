@@ -1,15 +1,5 @@
-.service_type-select {
-	width: 100% !important;
-	margin-bottom: 0 !important;
-}
-
-.service_type-select .input-field {
-	margin-top: 0 !important;
-}
-
-.select-field {
-	font-size: 13px;
-	font-family: 'Roboto', 'Arial';
+.div-table {
+  overflow-x: scroll;
 }
 
 .table-list th {
@@ -22,6 +12,7 @@
 	font-family: 'Roboto', 'Arial';
 	font-size: 13px;
 	border-radius: 3px;
+  overflow: hidden;
 }
 
 .table-list tbody tr:nth-child(odd) {
@@ -32,27 +23,11 @@
 	text-align: center;
 }
 
-.description-column {
-  width: 30%
-}
-
 .button-color {
 	background-color: #92bf23;
 	color: black;
 }
 
-.record-count {
-	display: none;
-}
-
-.filter-container {
-	width: 300px;
-}
-
-.header-row {
-	float: left;
-}
-
-.clear-filter {
-	display: none;
+input[type=text] {
+  margin-top: 15px;
 }

@@ -12,6 +12,10 @@ export default class Default extends React.Component {
           <title>Agendador</title>
           <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons" />
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css" />
+  
+          <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"/>
+          <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.0/leaflet.css"/>
+
           {/* production */}
           {
           Object.keys(assets.styles).map((style, key) =>
@@ -27,7 +31,6 @@ export default class Default extends React.Component {
           { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/Login.css')._style }} /> : null }
           { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/SignIn.css')._style }} /> : null }
           { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/SignUp.css')._style }} /> : null }
-          { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{ __html: require('../containers/account/styles/SignUpForm.css')._style }} /> : null }
           <script
             dangerouslySetInnerHTML={{ __html: `window.__API_URL__='${apiUrl}'` }}
             charSet="UTF-8"

@@ -1,0 +1,83 @@
+.sector-select {
+	width: 100% !important;
+	margin-bottom: 0 !important;
+}
+
+.sector-select .input-field {
+	margin-top: 0 !important;
+}
+
+.select-field {
+	font-size: 13px;
+	font-family: 'Roboto', 'Arial';
+}
+
+.table-size{
+	overflow-x: scroll;
+	overflow-y: scroll;
+	max-height: 550px; 
+	margin-top: 60px;
+}
+
+.table-list th {
+	text-align: center;
+}
+
+.table-list thead {
+	background-color: #92bf23;
+	border-bottom: 1px solid #d0d0d0;
+	font-family: 'Roboto', 'Arial';
+	font-size: 13px;
+	border-radius: 3px;
+}
+
+.table-list tbody tr:nth-child(odd) {
+	background-color: #f2f2f2;
+}
+
+.table-list td {
+	text-align: center;
+}
+
+.description-column {
+  width: 30%
+}
+
+.button-color {
+	background-color: #92bf23;
+	color: black;
+}
+
+.record-count {
+	display: none;
+}
+
+.filter-container {
+	width: 300px;
+}
+
+.header-row {
+	float: left;
+}
+
+.clear-filter {
+	display: none;
+}
+#filterBtn{
+	margin-bottom: 20px
+}
+
+#iconTable{
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+#createResourceBookingButton{
+	margin-left: 35px;
+}
+@media screen and (max-width: 620px) {
+	#createResourceBookingButton{
+		margin-left: 35px;
+		margin-bottom: 15px;
+	}
+}
