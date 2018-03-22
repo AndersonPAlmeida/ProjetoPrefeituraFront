@@ -1,0 +1,15 @@
+#divToPrint .secondary-content {
+  color:#000;
+}
+
+#divToPrint{
+  /*backgroundColor: #f5f5f5;
+width: 210mm;
+minHeight: 297mm;
+marginLeft: auto;
+marginRight: auto;*/
+}
+
+.dataContainer{
+  margin:0px 10rem 0px 15rem;
+}
