@@ -1,4 +1,4 @@
-import {Component} from 'react';
+import React, {Component} from 'react';
 import { Link } from 'react-router';
 import { Button, Card, Row, Col, Input, Collection, CollectionItem } from 'react-materialize';
 import styles from './styles/ResourceForm.css';
@@ -28,7 +28,7 @@ class getResourceForm extends Component {
       resource: '',
       pickable_resource:[],
       current_resource:{},
-      resource_types_id:'', 
+      resource_types_id:'',
       service_place_with_professional:{},
       service_place_and_professionals:[],
       service_place:{},
@@ -38,8 +38,8 @@ class getResourceForm extends Component {
       selected_shift:0
     };
     this.save_days = this.save_days.bind(this);
-    this.getResourceType = this.getResourceType.bind(this); 
-    this.getResource = this.getResource.bind(this); 
+    this.getResourceType = this.getResourceType.bind(this);
+    this.getResource = this.getResource.bind(this);
     this.getCityHall = this.getCityHall.bind(this);
     this.getServicePlaceWithProfessional = this.getServicePlaceWithProfessional.bind(this);
   }
@@ -55,10 +55,10 @@ class getResourceForm extends Component {
     if(this.props.current_role.role != 'adm_local'){
       this.getCityHall(role);
     }
-    
+
     this.getServicePlaceWithProfessional(role);
 
-    if (this.props.is_edit)  {  
+    if (this.props.is_edit)  {
       var previous_data = {
         situation:Boolean(this.props.data.active),
         borrowed:Boolean(this.props.data.borrowed),
@@ -78,7 +78,7 @@ class getResourceForm extends Component {
     else {
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'forms/service_type_index';
-      const params = this.props.fetch_params; 
+      const params = this.props.fetch_params;
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           'Accept': 'application/json',
@@ -91,7 +91,7 @@ class getResourceForm extends Component {
             dates:[new Date(previous_data.execution_start_time)],
             time_start: time.begin_time,
             time_end: time.end_time
-          });          
+          });
         }
         self.setState({ city_halls: resp.city_halls });
       });
@@ -146,7 +146,7 @@ class getResourceForm extends Component {
       let resource = fetch_response.resource;
       this.getProfessionalNameResource(Number(resource.professional_responsible_id),role);
       this.getDetails(resource.id, role);
-      self.setState({ 
+      self.setState({
         resource_bookings_details: fetch_response,
         resource: fetch_response.resource
       });
@@ -164,8 +164,8 @@ class getResourceForm extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ 
-        service_place_with_professional:resp, 
+      self.setState({
+        service_place_with_professional:resp,
         professionals:resp.professionals,
         service_place:resp.service_places
       });
@@ -186,7 +186,7 @@ class getResourceForm extends Component {
       self.setState({ resource_types: resp });
     });
   }
-  
+
   getResource(role) {
     var self = this;
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
@@ -218,7 +218,7 @@ class getResourceForm extends Component {
       self.setState({ city_halls: resp.entries });
     });
   }
-  
+
   getCitizens(role) {
     const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'citizens/';
@@ -253,13 +253,13 @@ class getResourceForm extends Component {
     const name = target.name;
 
     if (name == 'resource_types_id' || name == 'current_resource'){
-      this.setState({[name]: value}); 
+      this.setState({[name]: value});
       if (name == 'current_resource'){
         let service_place = this.state.resource.find(r => Number(value)=== r.id ).service_place_id;
         this.setState({current_service_place: `${service_place}`});
         this.getShifts(value);
       }
-    }   
+    }
     if(name == 'time_end' || name == 'time_start' || name == 'selected_citizen' || name =='selected_shift' || name == 'status'){
       this.setState({[name]: value});
     }
@@ -271,18 +271,18 @@ class getResourceForm extends Component {
 
     if(name=='resource_types_id'){
       this.changeResourceType(value);
-    }    
+    }
   }
 
   handleSubmit() {
     let errors = [];
     let formData = {};
-    
+
     if (this.props.is_edit){
       formData = this.state.resource_booking;
       formData['status'] = this.state.status;
     }
-    else{     
+    else{
       formData = this.buildBody();
     }
 
@@ -293,13 +293,13 @@ class getResourceForm extends Component {
     } else {
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
-      const params = this.props.fetch_params; 
+      const params = this.props.fetch_params;
       let fetch_body = {};
       if(this.props.is_edit) {
         fetch_body['resource_booking'] = formData;
       }
       else {
-        fetch_body['resource_booking'] = formData;       
+        fetch_body['resource_booking'] = formData;
       }
       if(this.props.is_edit){
         fetch(`${apiUrl}/${collection}?${params}`, {
@@ -328,7 +328,7 @@ class getResourceForm extends Component {
           method: this.props.fetch_method,
           body: JSON.stringify(fetch_body)
         }).then(parseResponse).then(resp => {
-          this.updateShift(Number(this.state.selected_shift));          
+          this.updateShift(Number(this.state.selected_shift));
           Materialize.toast('Reserva de recurso criada com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
           browserHistory.push(this.props.submit_url);
         }).catch(({errors}) => {
@@ -380,7 +380,7 @@ class getResourceForm extends Component {
     final_message['service_place_id'] = Number(this.state.current_service_place);
     final_message['booking_start_time'] = new Date(shift.execution_start_time);
     final_message['booking_end_time'] = new Date(shift.execution_end_time);
-    
+
     final_message['booking_reason'] = this.state.resource_booking.booking_reason;
     final_message['status'] = 'Reservado';
     final_message['situation_id'] = 1;
@@ -402,21 +402,21 @@ class getResourceForm extends Component {
 
   pickShift(){
     if(this.state.resource_shifts){
-      var resource_shifts = this.state.resource_shifts.sort(function(a,b) {return (a.execution_start_time > b.execution_start_time) ? 1 : ((b.execution_start_time > a.execution_start_time) ? -1 : 0);} );  
+      var resource_shifts = this.state.resource_shifts.sort(function(a,b) {return (a.execution_start_time > b.execution_start_time) ? 1 : ((b.execution_start_time > a.execution_start_time) ? -1 : 0);} );
       const shiftList = (
         resource_shifts.map((rs) => {
           return (
             <option key={Math.random()} value={rs ? rs.id : 0}>
-              {`[ #${rs.id} ] ${this.formatTime(new Date(rs.execution_start_time))}`} 
+              {`[ #${rs.id} ] ${this.formatTime(new Date(rs.execution_start_time))}`}
             </option>
           );
         })
       );
-    
+
       return (
-        <Input 
-          name="selected_shift"   
-          type='select' 
+        <Input
+          name="selected_shift"
+          type='select'
           value={this.state.selected_shift}
           onChange={
             (event) => {
@@ -432,9 +432,9 @@ class getResourceForm extends Component {
       );
     }
     return (
-      <Input 
-        name="selected_shift"   
-        type='select' 
+      <Input
+        name="selected_shift"
+        type='select'
         value={this.state.selected_shift}
         onChange={
           (event) => {
@@ -456,15 +456,15 @@ class getResourceForm extends Component {
       available_status.map((as) => {
         return (
           <option key={Math.random()} value={as}>
-            {`${as}`} 
+            {`${as}`}
           </option>
         );
       })
     );
     return (
-      <Input 
-        name="status"   
-        type='select' 
+      <Input
+        name="status"
+        type='select'
         value={this.state.status}
         onChange={
           (event) => {
@@ -478,23 +478,23 @@ class getResourceForm extends Component {
         {statusList}
       </Input>
     );
-  
+
   }
   pickCitizen(){
-    var citizens = this.state.citizens.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} );  
+    var citizens = this.state.citizens.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} );
     const citizensList = (
       citizens.map((c) => {
         return (
           <option key={Math.random()} value={c ? c.id : 0}>
-            {`${c.name} (${this.formatCPF(c.cpf)})`} 
+            {`${c.name} (${this.formatCPF(c.cpf)})`}
           </option>
         );
       })
     );
     return (
-      <Input 
-        name="selected_citizen"   
-        type='select' 
+      <Input
+        name="selected_citizen"
+        type='select'
         value={this.state.selected_citizen}
         onChange={
           (event) => {
@@ -536,9 +536,9 @@ class getResourceForm extends Component {
     }
     if(!this.props.is_edit) {
       return (
-        <Input 
-          name="resource_types_id" 
-          type='select' 
+        <Input
+          name="resource_types_id"
+          type='select'
           value={this.state.resource_types_id}
           onChange={
             (event) => {
@@ -553,13 +553,13 @@ class getResourceForm extends Component {
         </Input>
       );
     }
-    else{      
+    else{
       var resource = this.state.resource.find(r => Number(this.state.resource_booking.resource_id)=== r.id );
 
       return (
-        <Input 
-          name="resource_types_id" 
-          type='select' 
+        <Input
+          name="resource_types_id"
+          type='select'
           value={!resource ? 0 : Number(resource.resource_types_id)}
           onChange={
             (event) => {
@@ -591,7 +591,7 @@ class getResourceForm extends Component {
               }
             }
             else{
-              final_name = `${r.label}`;          
+              final_name = `${r.label}`;
             }
           }
           else{
@@ -603,15 +603,15 @@ class getResourceForm extends Component {
         }
         return (
           <option key={Math.random()} value={r ? r.id : 0}>
-            {final_name}  
+            {final_name}
           </option>
         );
       })
     );
     return (
-      <Input 
-        name="current_resource" 
-        type='select' 
+      <Input
+        name="current_resource"
+        type='select'
         value={this.state.current_resource}
         onChange={
           (event) => {
@@ -632,9 +632,9 @@ class getResourceForm extends Component {
     let  service_place_and_professionals = this.state.service_place_and_professionals;
     if (service_place_and_professionals.length < 1){
       return (
-        <Input 
-          name="professional_responsible_id" 
-          type='select' 
+        <Input
+          name="professional_responsible_id"
+          type='select'
           value={this.state.resource_booking.professional_responsible_id}
           onChange={
             (event) => {
@@ -657,13 +657,13 @@ class getResourceForm extends Component {
           <option key={Math.random()} value={professional.professional_id}>
             {professional.professional_name}
           </option>
-        );       
+        );
       })
     );
     return (
-      <Input 
-        name="professional_responsible_id" 
-        type='select' 
+      <Input
+        name="professional_responsible_id"
+        type='select'
         value={this.state.resource_booking.professional_responsible_id}
         onChange={
           (event) => {
@@ -686,7 +686,7 @@ class getResourceForm extends Component {
         resource_types.push( this.state.resource[i] );
       }
     }
-    this.setState({ pickable_resource: resource_types });    
+    this.setState({ pickable_resource: resource_types });
   }
 
   save_days(dates){
@@ -705,7 +705,7 @@ class getResourceForm extends Component {
         }
       }
       else{
-        final_name = `${r.label}`;          
+        final_name = `${r.label}`;
       }
     }
     else{
@@ -717,12 +717,12 @@ class getResourceForm extends Component {
     var service_place_professional = [];
     var professionals = this.state.professionals;
     var service_place = this.state.service_place;
-    
+
     for(let i = 0; i < service_place.length; i++ ){
       let item = {service_place_id: service_place[i].id, service_place_name: service_place[i].name};
       var professional = [];
       for(let j = 0; j < professionals.length; j++){
-        for (let k = 0; k < professionals[j].service_place_ids.length; k++){          
+        for (let k = 0; k < professionals[j].service_place_ids.length; k++){
           if (Number(professionals[j].service_place_ids[k]) == Number(service_place[i].id)){
             professional.push({professional_id:professionals[j].id, professional_name:professionals[j].name});
           }
@@ -737,9 +737,9 @@ class getResourceForm extends Component {
     let professionals;
     if (service_place_and_professionals.length < 1){
       return (
-        <Input 
-          name="professional_responsible_id" 
-          type='select' 
+        <Input
+          name="professional_responsible_id"
+          type='select'
           value={this.state.resource_booking.professional_responsible_id}
           onChange={
             (event) => {
@@ -762,13 +762,13 @@ class getResourceForm extends Component {
           <option key={Math.random()} value={professional.professional_id}>
             {professional.professional_name}
           </option>
-        );       
+        );
       })
     );
     return (
-      <Input 
-        name="professional_responsible_id" 
-        type='select' 
+      <Input
+        name="professional_responsible_id"
+        type='select'
         value={this.state.resource_booking.professional_responsible_id}
         onChange={
           (event) => {
@@ -793,7 +793,7 @@ class getResourceForm extends Component {
       }
       else{
         if(time.length == 2){
-          return time;          
+          return time;
         }
         else{
           return time[0]+time[1];
@@ -808,7 +808,7 @@ class getResourceForm extends Component {
     var transfEnd_time = undefined;
     if(end_time){
       transfBegin_time = this.timeSizeFixer((new Date(begin_time).getHours()).toString()) + ':' + this.timeSizeFixer((new Date(begin_time).getMinutes()).toString());
-      transfEnd_time = this.timeSizeFixer((new Date(end_time).getHours()).toString()) + ':' + this.timeSizeFixer((new Date(end_time).getMinutes()).toString());    
+      transfEnd_time = this.timeSizeFixer((new Date(end_time).getHours()).toString()) + ':' + this.timeSizeFixer((new Date(end_time).getMinutes()).toString());
     }
     return({day: this.state.resource_booking.execution_start_time,begin_time:transfBegin_time,end_time:transfEnd_time});
   }
@@ -821,7 +821,7 @@ class getResourceForm extends Component {
             <h6>Cidadão*:</h6>
             {this.pickCitizen()}
           </div>
-      
+
           <div className="field-input" id="no-padding">
             <h6>Tipo de recurso*:</h6>
             {this.pickResourceType()}
@@ -835,26 +835,26 @@ class getResourceForm extends Component {
           <div className="field-input" id='select-citizen'>
             <h6>Horário*:</h6>
             {this.pickShift()}
-          </div>         
+          </div>
 
           <div id="field-textarea">
             <h6>Motivo da reserva:</h6>
             <label>
-              <textarea  
+              <textarea
                 className='input-field materialize-textarea black-text'
-                name="booking_reason" 
+                name="booking_reason"
                 placeholder="Explique o motivo para reservar este recurso"
-                value={this.state.resource_booking.booking_reason} 
-                onChange={this.handleInputResourceChange.bind(this)} 
+                value={this.state.resource_booking.booking_reason}
+                onChange={this.handleInputResourceChange.bind(this)}
               />
             </label>
           </div>
-      
+
           <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
         </Col>
       </Row>);
   }
-  renderFormEdit(){    
+  renderFormEdit(){
     console.log(this.props);
     console.log(this.state);
     return(
@@ -863,11 +863,11 @@ class getResourceForm extends Component {
           <div>
             <h6><b>Horário inicial:</b></h6>
             {this.formatTime(this.props.data.booking_start_time)}
-          </div> 
+          </div>
           <div>
             <h6><b>Horário final:</b></h6>
             {this.formatTime(this.props.data.booking_end_time)}
-          </div> 
+          </div>
           <div>
             <h6><b>Motivo:</b></h6>
             {this.props.data.booking_reason}
@@ -875,25 +875,25 @@ class getResourceForm extends Component {
           <div>
             <h6><b>Tipo de recurso:</b></h6>
             {this.state.resource_bookings_details ? this.state.resource_bookings_details.resource_type_name : ''}
-          </div> 
+          </div>
           <div>
             <h6><b>Recurso: </b></h6>
             {this.state.resource != '' ? this.formatResourceDisplay(this.state.resource) : ''}
-          </div> 
+          </div>
           <div>
             <h6><b>Solicitante:</b></h6>
             {this.state.resource_bookings_details ? this.state.resource_bookings_details.citizen_name : ''}
-          </div>  
+          </div>
           <div>
             <h6><b>Status Atual:</b></h6>
             {this.pickStatus()}
-          </div>  
-           
+          </div>
+
         </Col>
       </Row>
     );
   }
-  
+
   render() {
     return (
       <main>
@@ -902,13 +902,13 @@ class getResourceForm extends Component {
             <div className='card'>
               <div className='card-content'>
                 {this.props.is_edit ?
-                  <h2 className="card-title">Alterar agendamento: {this.props.data.id}</h2> 
+                  <h2 className="card-title">Alterar agendamento: {this.props.data.id}</h2>
                   :
-                  <h2 className="card-title">Novo agendamento</h2> 
+                  <h2 className="card-title">Novo agendamento</h2>
                 }
                 {this.props.is_edit ?
                   this.renderFormEdit() :
-                  this.renderFormCreate() 
+                  this.renderFormCreate()
                 }
                 {this.confirmButton()}
               </div>

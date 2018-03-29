@@ -1,4 +1,4 @@
-import {Component} from 'react';
+import React, {Component} from 'react';
 import { Link } from 'react-router';
 import { Button, Card, Row, Col, Dropdown, Input } from 'react-materialize';
 import styles from './styles/ResourceForm.css';
@@ -15,7 +15,7 @@ class getResourceForm extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      resource: { 
+      resource: {
         situation: true,
         brand: '',
         label: '',
@@ -36,9 +36,9 @@ class getResourceForm extends Component {
       service_place_of_professional:[],
       current_service_place_adm_local:[]
     };
-    this.getResourceType = this.getResourceType.bind(this); 
-    this.getServicePlace = this.getServicePlace.bind(this); 
-    this.getProfessional = this.getProfessional.bind(this); 
+    this.getResourceType = this.getResourceType.bind(this);
+    this.getServicePlace = this.getServicePlace.bind(this);
+    this.getProfessional = this.getProfessional.bind(this);
     this.getServicePlaceProfessional = this.getServicePlaceProfessional.bind(this);
   }
 
@@ -51,15 +51,15 @@ class getResourceForm extends Component {
       this.getServicePlace(role);
       this.getCityHall(role);
     }
-    
+
     this.getProfessional(role);
     this.getServicePlaceProfessional(role);
 
-    if (this.props.is_edit)    
+    if (this.props.is_edit)
       var previous_data = {
         situation: Boolean(this.props.data.active),
         brand: this.props.data.brand,
-        model: this.props.data.model,        
+        model: this.props.data.model,
         label: this.props.data.label,
         note: this.props.data.note,
         maximum_schedule_time: this.props.data.maximum_schedule_time,
@@ -75,7 +75,7 @@ class getResourceForm extends Component {
     else {
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'forms/service_type_index';
-      const params = this.props.fetch_params; 
+      const params = this.props.fetch_params;
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           'Accept': 'application/json',
@@ -130,10 +130,10 @@ class getResourceForm extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ service_place_professional: resp, 
+      self.setState({ service_place_professional: resp,
         current_service_place_adm_local: resp.service_places[0]});
 
-      
+
     });
   }
   getServicePlace(role) {
@@ -162,7 +162,7 @@ class getResourceForm extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(completeResp => {
-      let resp = completeResp.entries;      
+      let resp = completeResp.entries;
       self.setState({ professionals: resp });
     });
   }
@@ -194,7 +194,7 @@ class getResourceForm extends Component {
     } else {
       const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
-      const params = this.props.fetch_params; 
+      const params = this.props.fetch_params;
       let fetch_body = {}
       if(this.props.is_edit) {
         fetch_body['resource'] = formData;
@@ -259,11 +259,11 @@ class getResourceForm extends Component {
         })
       );
     }
-      
+
     return (
-      <Input 
-        name="resource_types_id" 
-        type='select' 
+      <Input
+        name="resource_types_id"
+        type='select'
         value={this.state.resource.resource_types_id}
         onChange={
           (event) => {
@@ -281,8 +281,8 @@ class getResourceForm extends Component {
 
   pickServicePlace() {
 
-    var sp = this.state.service_place_of_professional.length > 0 ? 
-      this.state.service_place_of_professional 
+    var sp = this.state.service_place_of_professional.length > 0 ?
+      this.state.service_place_of_professional
       :
       this.state.service_place;
 
@@ -296,9 +296,9 @@ class getResourceForm extends Component {
       })
     );
     return (
-      <Input 
-        name="service_place_id" 
-        type='select' 
+      <Input
+        name="service_place_id"
+        type='select'
         value={this.state.resource.service_place_id}
         onChange={
           (event) => {
@@ -325,9 +325,9 @@ class getResourceForm extends Component {
       })
     );
     return (
-      <Input 
-        name="professional_responsible_id" 
-        type='select' 
+      <Input
+        name="professional_responsible_id"
+        type='select'
         value={this.state.resource.professional_responsible_id}
         onChange={
           (event) => {
@@ -355,12 +355,12 @@ class getResourceForm extends Component {
           if(j-1 > professional.service_place_ids.length)
             break;
         }
-      } 
+      }
       this.setState({ service_place_of_professional: service_places });
     }
   }
 
-  render() {  
+  render() {
     return (
       <main>
         <Row>
@@ -368,13 +368,13 @@ class getResourceForm extends Component {
             <div className='card'>
               <div className='card-content'>
                 {this.props.is_edit ?
-                  <h2 className="card-title">Alterar recurso: {this.props.data.name}</h2> 
+                  <h2 className="card-title">Alterar recurso: {this.props.data.name}</h2>
                   :
-                  <h2 className="card-title">Cadastrar recurso</h2> 
+                  <h2 className="card-title">Cadastrar recurso</h2>
                 }
                 <Row className='first-line'>
                   <Col s={12} m={12} l={12}>
-                    
+
                     <div className="field-input" id="no-padding">
                       <h6>Tipo de recurso*:</h6>
                       {this.pickResourceType()}
@@ -383,12 +383,12 @@ class getResourceForm extends Component {
                     <div className="field-input" >
                       <h6>Marca:</h6>
                       <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="brand" 
-                          value={this.state.resource.brand} 
-                          onChange={this.handleInputResourceChange.bind(this)} 
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="brand"
+                          value={this.state.resource.brand}
+                          onChange={this.handleInputResourceChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -397,12 +397,12 @@ class getResourceForm extends Component {
                     <div className="field-input" >
                       <h6>Modelo:</h6>
                       <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="model" 
-                          value={this.state.resource.model} 
-                          onChange={this.handleInputResourceChange.bind(this)} 
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="model"
+                          value={this.state.resource.model}
+                          onChange={this.handleInputResourceChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -410,12 +410,12 @@ class getResourceForm extends Component {
                     <div className="field-input" >
                       <h6>Etiqueta:</h6>
                       <label>
-                        <input 
-                          type="text" 
-                          className='input-field' 
-                          name="label" 
-                          value={this.state.resource.label} 
-                          onChange={this.handleInputResourceChange.bind(this)} 
+                        <input
+                          type="text"
+                          className='input-field'
+                          name="label"
+                          value={this.state.resource.label}
+                          onChange={this.handleInputResourceChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -423,28 +423,28 @@ class getResourceForm extends Component {
                     <div id="field-textarea">
                       <h6>Nota:</h6>
                       <label>
-                        <textarea  
+                        <textarea
                           className='input-field materialize-textarea black-text'
-                          name="note" 
+                          name="note"
                           placeholder="Adicione uma anotação"
-                          value={this.state.resource.note} 
-                          onChange={this.handleInputResourceChange.bind(this)} 
+                          value={this.state.resource.note}
+                          onChange={this.handleInputResourceChange.bind(this)}
                         />
                       </label>
                     </div>
-                  
+
                     <div>
                       <h6>Tempo mínimo de escala*:</h6>
                       <label>
-                        <input 
-                          type="number" 
+                        <input
+                          type="number"
                           id="number-input"
                           step="0.5"
-                          min="0"                        
-                          className='input-field' 
-                          name="minimum_schedule_time" 
-                          value={this.state.resource.minimum_schedule_time} 
-                          onChange={this.handleInputResourceChange.bind(this)} 
+                          min="0"
+                          className='input-field'
+                          name="minimum_schedule_time"
+                          value={this.state.resource.minimum_schedule_time}
+                          onChange={this.handleInputResourceChange.bind(this)}
                         />
                         <span id="unitTime">h</span>
                       </label>
@@ -453,15 +453,15 @@ class getResourceForm extends Component {
                     <div>
                       <h6>Tempo máximo de escala*:</h6>
                       <label>
-                        <input 
-                          type="number" 
+                        <input
+                          type="number"
                           id="number-input"
-                          step="0.5"       
-                          min="0"                  
-                          className='input-field' 
-                          name="maximum_schedule_time" 
-                          value={this.state.resource.maximum_schedule_time} 
-                          onChange={this.handleInputResourceChange.bind(this)} 
+                          step="0.5"
+                          min="0"
+                          className='input-field'
+                          name="maximum_schedule_time"
+                          value={this.state.resource.maximum_schedule_time}
+                          onChange={this.handleInputResourceChange.bind(this)}
                         />
                         <span id="unitTime">h</span>
                       </label>
@@ -474,7 +474,7 @@ class getResourceForm extends Component {
 
 
                     {
-                      this.props.current_role.role != 'adm_local' ? 
+                      this.props.current_role.role != 'adm_local' ?
                         <div className="field-input" id="no-padding" >
                           <h6>Local de atendimento*:</h6>
                           {this.pickServicePlace()}
@@ -494,11 +494,11 @@ class getResourceForm extends Component {
                     <div className="field-input">
                       <h6>Situação:</h6>
                       <div>
-                        <Input s={6} m={32} l={12} 
+                        <Input s={6} m={32} l={12}
                           type='select'
                           name='situation'
                           value={this.state.resource.situation}
-                          onChange={this.handleInputResourceChange.bind(this)} 
+                          onChange={this.handleInputResourceChange.bind(this)}
                         >
                           <option key={0} value={true}>Ativo</option>
                           <option key={1} value={false}>Inativo</option>
@@ -506,7 +506,7 @@ class getResourceForm extends Component {
                       </div>
                     </div>
 
-                    
+
                     <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
                   </Col>
                 </Row>
