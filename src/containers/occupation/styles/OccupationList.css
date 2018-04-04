@@ -26,6 +26,7 @@
 	font-family: 'Roboto', 'Arial';
 	font-size: 13px;
 	border-radius: 3px;
+  overflow: hidden;
 }
 
 .table-list tbody tr:nth-child(odd) {
@@ -46,7 +47,7 @@
 }
 .search-button{
 	text-align: center;
-	width: 76.493 px;
+	/* width: 76.493 px; */
 	height: 36px;
 	padding-left: 16px;
 	padding-right: 16px;
@@ -58,14 +59,14 @@
 }
 .clean-button{
 	text-align: center;
-	width: 124.964 px;
+	/* width: 124.964 px; */
 	height: 36px;
 	padding-left: 16px;
 	padding-right: 16px;
 }
 .new-occupation-button{
 	text-align: center;
-	width: 151.835 px;
+	/* width: 151.835 px; */
 	height: 36px;
 	padding-left: 16px;
 	padding-right: 16px;
