@@ -38,6 +38,15 @@ export ServiceTypeEdit from './service_type/ServiceTypeEdit';
 export ServiceTypeShow from './service_type/ServiceTypeShow';
 export ServiceTypeCreate from './service_type/ServiceTypeCreate';
 
+export MyReport from './reports/myReport'
+export Reports from './reports/Reports'
+export citizenReport from './reports/reportTypes/citizenReport'
+export schedulesReport from './reports/reportTypes/schedulesReport'
+export shiftsReport from './reports/reportTypes/shiftsReport'
+export professionalsReport from './reports/reportTypes/professionalsReport'
+export servicesReport from './reports/reportTypes/servicesReport'
+export shiftTypeReport from './reports/reportTypes/shiftTypeReport'
+
 export ResourceTypeList from './resource_type/ResourceTypeList';
 export ResourceTypeShow from './resource_type/ResourceTypeShow';
 export ResourceTypeCreate from './resource_type/ResourceTypeCreate'

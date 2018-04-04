@@ -4,18 +4,23 @@ import { Provider } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
-import { App, ChooseRole, CitizenEdit, CitizenSchedule, DependantCreate, DependantEdit, DependantList,
-        DependantShow, Home, Login, NotFound, OccupationCreate, OccupationEdit, OccupationList, OccupationShow,
-        ProfessionalCreate, ProfessionalEdit, ProfessionalIndex, ProfessionalList, ProfessionalSchedule,
-        ProfessionalSearch, ProfessionalShow, ProfessionalUserCreate, ProfessionalUserDependantCreate,
-        ProfessionalUserDependantEdit, ProfessionalUserDependantShow, ProfessionalUserEdit,
-        ProfessionalUserList,ProfessionalUserShow, ProfessionalUserUpload, Register, RegisterCep,
-        ResourceBookingCreate,ResourceBookingEdit, ResourceBookingList, ResourceBookingShow, ResourceCreate,
-        ResourceEdit,ResourceList, ResourceShiftCreate, ResourceShiftEdit, ResourceShiftList, ResourceShiftShow,
-        ResourceShow, ResourceTypeCreate, ResourceTypeEdit, ResourceTypeList, ResourceTypeShow, ScheduleAgreement,
-        ScheduleChoose, ScheduleCitizen, ScheduleFinish, SectorCreate, SectorEdit, SectorList, SectorShow,
-        ServicePlaceCreate, ServicePlaceEdit, ServicePlaceList, ServicePlaceShow, ServiceTypeCreate,
-        ServiceTypeEdit, ServiceTypeList, ServiceTypeShow, ShiftCreate, ShiftEdit, ShiftList, ShiftShow
+import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
+  ChooseRole, ScheduleAgreement, ScheduleChoose, ScheduleCitizen, ScheduleFinish,
+  DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit,
+  SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
+  ServicePlaceCreate, ServicePlaceShow, ServicePlaceList, ServiceTypeEdit,
+  ServiceTypeCreate, ServiceTypeShow, ServiceTypeList, ResourceTypeList, ResourceTypeShow,
+  ResourceTypeCreate, ResourceTypeEdit, ResourceList, ResourceShow, ResourceEdit, ResourceCreate,
+  ResourceShiftList, ResourceShiftShow, ResourceShiftCreate, ResourceShiftEdit,
+  ResourceBookingList, ResourceBookingShow, ResourceBookingCreate, ResourceBookingEdit, ProfessionalIndex,
+  ProfessionalList, ProfessionalEdit, ProfessionalShow, ProfessionalCreate,
+  ProfessionalSearch, ProfessionalSchedule, ProfessionalUserList,
+  ProfessionalUserEdit, ProfessionalUserCreate, ProfessionalUserShow,
+  ProfessionalUserDependantEdit, ProfessionalUserDependantCreate,
+  ProfessionalUserDependantShow, ShiftShow, ShiftEdit, ShiftCreate,
+  ShiftList, OccupationCreate,OccupationList,OccupationEdit,OccupationShow, MyReport, Reports,
+  citizenReport, schedulesReport, shiftsReport, professionalsReport,
+  servicesReport, shiftTypeReport
 } from './containers';
 
 import { configure } from './redux-auth';
@@ -83,32 +88,47 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="signup" component={UserIsNotAuthenticated(RegisterCep)} />
         <Route path="signup2" component={UserIsNotAuthenticated(Register)} />
         <Route path="choose_role" component={UserIsAuthenticated(ChooseRole)} />
+
         <Route path="citizens/schedules/history" component={UserIsAuthenticated(CitizenSchedule)} />
         <Route path="citizens/edit" component={UserIsAuthenticated(CitizenEdit)} />
+        <Route path="citizens/my_report" component={UserIsAuthenticated(MyReport)} />
         <Route path="citizens/schedules/agreement" component={UserIsAuthenticated(ScheduleAgreement)} />
         <Route path="citizens/schedules/choose" component={UserIsAuthenticated(ScheduleChoose)} />
         <Route path="citizens/:citizen_id/schedules/schedule" component={UserIsAuthenticated(ScheduleCitizen)} />
         <Route path="citizens/:citizen_id/schedules/:schedule_id/finish" component={UserIsAuthenticated(ScheduleFinish)} />
+
         <Route path="dependants" component={UserIsAuthenticated(DependantList)} />
         <Route path="dependants/:dependant_id/edit" component={UserIsAuthenticated(DependantEdit)} />
         <Route path="dependants/new" component={UserIsAuthenticated(DependantCreate)} />
         <Route path="dependants/:dependant_id" component={UserIsAuthenticated(DependantShow)} />
+
         <Route path="sectors" component={UserIsAuthenticated(SectorList)} />
         <Route path="sectors/:sector_id/edit" component={UserIsAuthenticated(SectorEdit)} />
         <Route path="sectors/new" component={UserIsAuthenticated(SectorCreate)} />
         <Route path="sectors/:sector_id" component={UserIsAuthenticated(SectorShow)} />
+
         <Route path="occupations" component={UserIsAuthenticated(OccupationList)}/>
         <Route path="occupations/:occupation_id/edit" component={UserIsAuthenticated(OccupationEdit)} />
         <Route path="occupations/new" component={UserIsAuthenticated(OccupationCreate)} />
         <Route path="occupations/:occupation_id" component={UserIsAuthenticated(OccupationShow)} />
+
         <Route path="service_places" component={UserIsAuthenticated(ServicePlaceList)} />
         <Route path="service_places/:service_place_id/edit" component={UserIsAuthenticated(ServicePlaceEdit)} />
         <Route path="service_places/new" component={UserIsAuthenticated(ServicePlaceCreate)} />
         <Route path="service_places/:service_place_id" component={UserIsAuthenticated(ServicePlaceShow)} />
+
         <Route path="service_types" component={UserIsAuthenticated(ServiceTypeList)} />
         <Route path="service_types/:service_type_id/edit" component={UserIsAuthenticated(ServiceTypeEdit)} />
         <Route path="service_types/new" component={UserIsAuthenticated(ServiceTypeCreate)} />
         <Route path="service_types/:service_type_id" component={UserIsAuthenticated(ServiceTypeShow)} />
+
+        <Route path="reports" component={UserIsAuthenticated(Reports)}/>
+        <Route path="reports/citizen_report" component={UserIsAuthenticated(citizenReport)} />
+        <Route path="reports/schedules_report" component={UserIsAuthenticated(schedulesReport)} />
+        <Route path="reports/shifts_report" component={UserIsAuthenticated(shiftsReport)} />
+        <Route path="reports/professionals_report" component={UserIsAuthenticated(professionalsReport)} />
+        <Route path="reports/services_report" component={UserIsAuthenticated(servicesReport)} />
+        <Route path="reports/shift_type_report" component={UserIsAuthenticated(shiftTypeReport)}/>
 
         <Route path="resource_types" component={UserIsAuthenticated(ResourceTypeList)} />
         <Route path="resource_types/:resource_type_id/edit" component={UserIsAuthenticated(ResourceTypeEdit)} />
@@ -131,6 +151,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="resource_bookings/:resource_booking_id" component={UserIsAuthenticated(ResourceBookingShow)} />
 
         <Route path="schedules" component={UserIsAuthenticated(ProfessionalSchedule)} />
+
         <Route path="professionals/users/:citizen_id/dependants/new" component={UserIsAuthenticated(ProfessionalUserDependantCreate)} />
         <Route path="professionals/users/:citizen_id/dependants/:dependant_id/edit" component={UserIsAuthenticated(ProfessionalUserDependantEdit)} />
         <Route path="professionals/users/:citizen_id/dependants/:dependant_id" component={UserIsAuthenticated(ProfessionalUserDependantShow)} />
@@ -139,12 +160,14 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="professionals/users/upload" component={UserIsAuthenticated(ProfessionalUserUpload)} />
         <Route path="professionals/users/:citizen_id/edit" component={UserIsAuthenticated(ProfessionalUserEdit)} />
         <Route path="professionals/users/:citizen_id" component={UserIsAuthenticated(ProfessionalUserShow)} />
+
         <Route path="professionals/shifts" component={UserIsAuthenticated(ProfessionalIndex)} />
         <Route path="professionals" component={UserIsAuthenticated(ProfessionalList)} />
         <Route path="professionals/new" component={UserIsAuthenticated(ProfessionalCreate)} />
         <Route path="professionals/search" component={UserIsAuthenticated(ProfessionalSearch)} />
         <Route path="professionals/:professional_id" component={UserIsAuthenticated(ProfessionalShow)} />
         <Route path="professionals/:professional_id/edit" component={UserIsAuthenticated(ProfessionalEdit)} />
+
         <Route path="shifts" component={UserIsAuthenticated(ShiftList)} />
         <Route path="shifts/:shift_id/edit" component={UserIsAuthenticated(ShiftEdit)} />
         <Route path="shifts/new" component={UserIsAuthenticated(ShiftCreate)} />
