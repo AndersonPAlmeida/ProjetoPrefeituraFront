@@ -23,68 +23,11 @@
 	text-align: center;
 }
 
-.button-green {
+.button-color {
 	background-color: #92bf23;
-	color: #1A1A1A;
-}
-
-.button-white{
-	background-color: #ECEEF1;
-	color: #1A1A1A;
-}
-
-.button-blue{
-	background-color: #549FD7;
-	color: #1A1A1A;
-}
-.clean-button{
-	text-align: center;
-	/* width: 124.964px; */
-	height: 36px;
-	padding-left: 16px;
-	padding-right: 16px;
-}
-
-.search-button{
-	text-align: center;
-	/* width: 76.493px; */
-	height: 36px;
-	padding-left: 16px;
-	padding-right: 16px;
-}
-
-.new-user-button{
-	text-align: center;
-	height: 36px;
-	padding-left: 16px;
-	padding-right: 16px;
-}
-
-
-.user-report-button{
-	text-align: center;
-	height: 36px;
-  /* width: 135px; */
-	padding-left: 16px;
-	padding-right: 16px;
+	color: black;
 }
 
 input[type=text] {
   margin-top: 15px;
-}
-
-.card-user {
-	margin-top: 45px;
-}
-
-a {
-  color: #1A1A1A;
-  text-decoration: none;
-}
-
-a:hover
-{
-  color:#1A1A1A;
-  text-decoration:none;
-  cursor:pointer;
 }

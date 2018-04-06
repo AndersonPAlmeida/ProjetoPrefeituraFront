@@ -157,7 +157,6 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="professionals/users/:citizen_id/dependants/:dependant_id" component={UserIsAuthenticated(ProfessionalUserDependantShow)} />
         <Route path="professionals/users" component={UserIsAuthenticated(ProfessionalUserList)} />
         <Route path="professionals/users/new" component={UserIsAuthenticated(ProfessionalUserCreate)} />
-        <Route path="professionals/users/upload" component={UserIsAuthenticated(ProfessionalUserUpload)} />
         <Route path="professionals/users/:citizen_id/edit" component={UserIsAuthenticated(ProfessionalUserEdit)} />
         <Route path="professionals/users/:citizen_id" component={UserIsAuthenticated(ProfessionalUserShow)} />
 
