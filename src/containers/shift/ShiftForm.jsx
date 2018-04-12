@@ -8,21 +8,23 @@ import DayPickerInput from 'react-day-picker/DayPickerInput';
 import update from 'react-addons-update';
 import { Button, Card, Row, Col, Dropdown, Input, CardPanel } from 'react-materialize'
 import styles from './styles/ShiftForm.css'
+import { browserHistory } from 'react-router';
 
 
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const WEEKDAYS_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
 
-function addZeroBefore(n) {
-  return (n < 10 ? '0' : '') + n;
-}
 
 var updating_inputs = false;
 
+
+//TODO: comentar as funções handleInput*Change com os campos aos quais elas estão relacionadas.
+
+
 class getShiftForm extends Component {
 
- constructor(props) {
+  constructor(props) {
     super(props)
     var today = new Date();
     this.state = {
@@ -63,20 +65,30 @@ class getShiftForm extends Component {
         start_hour: 0,
         start_min: 0,
         end_hour: 0,
-        end_min: 0
+        end_min: 0,
+        remaining_text: 140
       },
       input_content:{
         isTimeDivision: 'number_schedules',
         number_schedules: 0,
-        duration_schedule_min: 0
+        duration_schedule_min: 10
       },
       start_month: today,
       disabled_days: [today, { after: today, before: today }],
       selected_days: []
     };
+    this.handleHourChange = this.handleHourChange.bind(this);
+    this.handleTextInputChange = this.handleTextInputChange.bind(this);
+    this.handleDayClick = this.handleDayClick.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.checkErrors = this.checkErrors.bind(this);
+    this.generateBody = this.generateBody.bind(this);
+    this.handleDateInputChange = this.handleDateInputChange.bind(this);
+    this.handleInputDivisonChange = this.handleInputDivisonChange.bind(this);
   }
 
   filter_input_lists(filter_location_id){
+    console.log('Filter Input Lists');
     let filtered_professionals_list = [];
     let filtered_types_list = [];
     for(let i = 0; i < this.state.forms.professionals.length; ++i){
@@ -94,21 +106,11 @@ class getShiftForm extends Component {
       }
     }
 
-
-    this.setState({
-      aux: update(this.state.aux,{
-        ['filtered_professionals'] : {$set : filtered_professionals_list},
-        ['filtered_service_types'] : {$set : filtered_types_list}
-      }
-    )}, function(){
-      console.log(filtered_professionals_list);
-      console.log(filtered_types_list);
-    });
-    return;
+    return {'filtered_professionals': filtered_professionals_list,
+      'filtered_service_types': filtered_types_list};
   }
 
   componentDidMount() {
-      console.log('componentDidMount ShitForm.jsx');
       var self = this;
       var data = this.props.is_edit ? this.props.data : this.state.shift
 
@@ -126,11 +128,7 @@ class getShiftForm extends Component {
         }).then(parseResponse).then(resp => {
             self.setState({ forms: resp },
             function(){
-              console.log('Executou a request');
-              console.log(this.state.forms);
-
               if(this.props.is_edit){
-                //converter os dados do shift que veio para edição de forma a montar as listas.
 
                 this.setState({
                   shift: update(this.state.shift, {
@@ -147,53 +145,132 @@ class getShiftForm extends Component {
                   })
 
                 }, function(){
+
+                  console.log('shift');
+                  console.log(this.state.shift);
                   //get duration time
                   let start_date = new Date(data.execution_start_time);
                   let end_date = new Date(data.execution_end_time);
                   let selected_service_place, selected_professional, selected_service_type;
                   let selected_dates = [];
-                  console.log(this.state.form);
+
+                  //* --------------------------------------------------------------------*/
+                  // Loading data for Dropdown selectors.
+
                   for(let i = 0; i < this.state.forms.service_places.length; ++i){
                     if(this.state.forms.service_places[i].name === data.service_place_name){
-                      selected_service_place = i;
+                      //because the view is not 0 based, it's necessary to add 1 (one).
+                      //(the view has a placeholder/hint)
+                      selected_service_place = i+1;
+                      break;
                     }
                   }
 
-                  //montar lista de profissionais filtrados e
+                  //and here we have to subtract 1 because the list is 0 based.
+                  let filtered_lists = this.filter_input_lists(this.state.forms.service_places[selected_service_place - 1].id);
 
-                  this.filter_input_lists(selected_service_place);
+                  let filtered_professionals = filtered_lists['filtered_professionals'];
+
+                  let filtered_service_types = filtered_lists['filtered_service_types'];
 
                   // 'i+1' because the input list has the placeholder in it.
-                  for(let i = 0; i < this.state.aux.filtered_professionals.length; ++i){
-                    if(this.state.aux.filtered_professionals[i] === data.professional_performer_name){
+                  for(let i = 0; i < filtered_professionals.length; ++i){
+                    if(filtered_professionals[i].name === data.professional_performer_name){
                       selected_professional = i+1;
                       break;
                     }
                   }
-                  for(let i = 0; i < this.state.aux.filtered_service_types.length; ++i){
-                    if(this.state.aux.filtered_service_types[i] === data.service_type_description){
+                  for(let i = 0; i < filtered_service_types.length; ++i){
+                    if(filtered_service_types[i].description === data.service_type_description){
                       selected_service_type = i+1;
                       break;
                     }
                   }
 
-                  console.log('alo alo alo');
-                  console.log(this.state);
+                  //* --------------------------------------------------------------------*/
+                  //Loading data related to (hour) duration of shift
+                  let startHour, startMinute;
+                  let endHour, endMinutes;
+
+                  startHour = start_date.getHours();
+                  startMinute = start_date.getMinutes();
+
+                  endHour = end_date.getHours();
+                  endMinutes = end_date.getMinutes();
+
+                  //* --------------------------------------------------------------------*/
+                  //Loading data related to (date) duration of shift
+                  let startDay, startMonth, startYear;
+                  let endDay, endMonth, endYear;
+
+                  startDay = start_date.getDate();
+                  startMonth = start_date.getMonth() + 1;
+                  startYear = start_date.getFullYear();
+
+                  endDay = end_date.getDate();
+                  endMonth = end_date.getMonth() + 1;
+                  endYear = end_date.getFullYear();
+
+                  //* --------------------------------------------------------------------*/
+                  //Update state
+                  let yearStartId = new Date().getFullYear() - 2;
+
+                  let selectedDate = new Date();
+                  selectedDate.setDate(start_date.getDate());
+                  selectedDate.setMonth(start_date.getMonth());
+                  selectedDate.setFullYear(start_date.getFullYear());
+
+                  //necessary for the comparison when user clicks on the calendar
+                  selectedDate.setHours(0);
+                  selectedDate.setMinutes(0);
+                  selectedDate.setSeconds(0);
+                  selectedDate.setMilliseconds(0);
+
+                  console.log(start_date);
+                  console.log(selectedDate);
+
+
+
                   this.setState({
                     aux: update(this.state.aux, {
+                      ['filtered_service_types'] : {$set: filtered_service_types},
+                      ['filtered_professionals'] : {$set: filtered_professionals},
+                      ['selected_service_place'] : {$set: selected_service_place},
                       ['selected_professional'] : {$set: selected_professional},
-                      ['selected_service_type'] : {$set: selected_service_type}
-                    })
+                      ['selected_service_type'] : {$set: selected_service_type},
+                      ['start_hour'] : {$set: startHour},
+                      ['start_min'] : {$set: startMinute},
+                      ['end_hour'] : {$set: endHour},
+                      ['end_min'] : {$set: endMinutes},
+                      ['end_year_id'] : {$set: (endYear - yearStartId)},
+                      ['start_year_id'] : {$set: (startYear - yearStartId)},
+                      ['start_year'] : {$set: startYear},
+                      ['end_year'] : {$set: endYear},
+                      ['start_month'] : {$set: startMonth},
+                      ['end_month'] : {$set: endMonth},
+                      ['start_day'] : {$set: startDay},
+                      ['end_day'] : {$set: endDay}
+                    }),
+                    input_content: update(this.state.input_content, {
+                        ['number_schedules']: {$set:  data.service_amount}
+                    }),
+                    shift: update(this.state.shift, {
+                      ['service_place_id'] : {$set : this.state.forms.service_places[selected_service_place - 1].id},
+                      ['service_type_id'] : {$set : filtered_service_types[selected_service_type - 1].id},
+                      ['professional_performer_id'] : {$set: filtered_professionals[selected_professional - 1].id}
+                    }),
+                    disabled_days :  [{ after: start_date, before: start_date }],
+                    start_month: start_date,
+                    selected_days:  [selectedDate]
+                  }, function(){
+                    console.log('Depois de atualizar o state com os dados da escala');
+                    console.log(this.state);
                   });
                 });
               }
 
             })
         });
-
-
-
-
 
       if(this.props.current_role && this.props.current_role.role == 'adm_c3sl') {
         collection = 'forms/shift_index';
@@ -210,7 +287,6 @@ class getShiftForm extends Component {
             data['city_hall_id'] = this.props.current_role.city_hall_id
 
 
-      console.log(data);
     }
 
   handleDayClick = (day, modifiers) => {
@@ -235,10 +311,7 @@ class getShiftForm extends Component {
           if(i == selectedDays.length && !removed){
             selectedDays.push(day);
           }
-  	      this.setState({ selected_days: selectedDays},
-          function(){
-            console.log(this.state.selected_days);
-          });
+  	      this.setState({ selected_days: selectedDays});
   	  };
 
   calendarComponent() {
@@ -252,7 +325,7 @@ class getShiftForm extends Component {
     								        months={MONTHS}
     								        weekdaysLong={WEEKDAYS_LONG}
     								        weekdaysShort={WEEKDAYS_SHORT}
-                            onDayClick={this.handleDayClick.bind(this)}
+                            onDayClick={this.handleDayClick}
                             disabledDays={this.state.disabled_days}
                             month={this.state.start_month}
     					          		/>
@@ -301,7 +374,7 @@ class getShiftForm extends Component {
     return (
       <div className="card-action">
         <a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
-        <button className="waves-effect btn right button-color"  name="commit"  onClick={this.handleSubmit.bind(this)}
+        <button className="waves-effect btn right button-color"  name="commit"  onClick={this.handleSubmit}
           type="submit">{this.props.is_edit ? "Atualizar" : "Criar"}</button>
       </div>
     )
@@ -391,8 +464,6 @@ class getShiftForm extends Component {
       */
       if(this.state.input_content.isTimeDivision === 'number_schedules' && this.state.input_content.number_schedules === 0){
         errors.push('A escala deve ter pelo menos 1 (um) atendimento por dia');
-      }else if(this.state.input_content.isTimeDivision === 'time_division' && this.state.input_content.duration_schedule_min === 0){
-          errors.push('O atendimento deve durar pelo menos 1 (um) minuto');
       }
 
 
@@ -413,7 +484,7 @@ class getShiftForm extends Component {
     let formData = this.state.data;
     let auxData = this.state.data;
 
-    let errors = this.checkErrors.bind(this)();
+    let errors = this.checkErrors();
 
     if(errors.length > 0){
       //show errors
@@ -422,12 +493,10 @@ class getShiftForm extends Component {
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
 
     }else{
-      //send data to server & register new shift => go to shift list screen.
-
-        let fetch_body = this.generateBody.bind(this)();
-        const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
-        const collection = this.props.fetch_collection;
-        var params = this.props.fetch_params;
+      let fetch_body = this.generateBody();
+      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const collection = this.props.fetch_collection;
+      var params = this.props.fetch_params;
 
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
@@ -436,16 +505,16 @@ class getShiftForm extends Component {
         method: this.props.fetch_method,
         body: JSON.stringify(fetch_body)
       }).then(parseResponse).then(resp => {
-        if(this.props.is_edit)
+        if(this.props.is_edit){
           Materialize.toast('Escala editada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
-        else
-          Materialize.toast('Escala editada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
-        browserHistory.push(this.props.submit_url)
-      }).catch(({errors}) => { // // TODO: UPDATE ERRORS ARRAY ACCORDING TO API
+        }
+        else{
+          Materialize.toast('Escala criada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+        }
+        browserHistory.push(this.props.submit_url);
+      }).catch(({errors}) => { // TODO: UPDATE ERRORS ARRAY ACCORDING TO API
         if(errors) {
           let full_error_msg = "";
-          console.log('errors')
-          console.log(errors);
           errors.forEach(function(elem){ full_error_msg += elem + '\n' });
           Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
           throw errors;
@@ -457,7 +526,6 @@ class getShiftForm extends Component {
   }
 
   generateBody() {
-
     var final_shift_items = [];
     let formData = this.state.shift;
     var dates = this.state.selected_days;
@@ -472,38 +540,60 @@ class getShiftForm extends Component {
     let aux = {};
     let service_amount_day;
 
+
     if(this.state.input_content.isTimeDivision === 'number_schedules'){
       service_amount_day = this.state.input_content.number_schedules;
     }else{
       service_amount_day = (hour_end - hour_begin)/this.state.input_content.duration_schedule_min;
     }
 
-    for(let i = 0; i < number_of_shifts; i++){
+    if(this.props.is_edit){
+      aux['id'] = this.state.shift.id;
       aux['service_type_id'] = Number(this.state.shift.service_type_id);
       aux['professional_performer_id'] = Number(formData.professional_performer_id);
       aux['professional_responsible_id'] = Number(this.props.current_role.professional_id);
-      aux['execution_start_time'] = new Date(dates[i].setHours(Number(hour_begin), Number(minute_begin)));
-      aux['execution_end_time'] = new Date(dates[i].setHours(Number(hour_end), Number(minute_end)));
+      aux['execution_start_time'] = new Date(dates[0].setHours(Number(hour_begin), Number(minute_begin)));
+      aux['execution_end_time'] = new Date(dates[0].setHours(Number(hour_end), Number(minute_end)));
       aux['service_amount'] = service_amount_day;
       aux['service_place_id'] = Number(this.state.shift.service_place_id);
-      aux['notes'] = formData.note;
-
+      aux['notes'] = formData.notes;
       final_shift_items.push(aux);
+    }else{
+      for(let i = 0; i < number_of_shifts; i++){
+        aux['service_type_id'] = Number(this.state.shift.service_type_id);
+        aux['professional_performer_id'] = Number(formData.professional_performer_id);
+        aux['professional_responsible_id'] = Number(this.props.current_role.professional_id);
+        aux['execution_start_time'] = new Date(dates[i].setHours(Number(hour_begin), Number(minute_begin)));
+        aux['execution_end_time'] = new Date(dates[i].setHours(Number(hour_end), Number(minute_end)));
+        aux['service_amount'] = service_amount_day;
+        aux['service_place_id'] = Number(this.state.shift.service_place_id);
+        aux['notes'] = formData.notes;
 
-      aux = {};
+        final_shift_items.push(aux);
+
+        aux = {};
+      }
+
     }
     this.setState({shift: final_shift_items});
 
     /* adaptate fetch object info to api request */
-    let fetch_body = {'shift': []};
-    fetch_body['shift'] = final_shift_items;
+    let fetch_body = {'shifts': []};
+    fetch_body['shifts'] = final_shift_items;
 
-    console.log(JSON.stringify(fetch_body));
 
-    return fetch_body;
+    return this.props.is_edit ? aux : fetch_body;
 
   }
 
+
+  /*
+    Handle changes to fields:
+    - start_hour
+    - start_min
+    - end_hour
+    - end_min
+  */
   handleHourChange(event){
     const target = event.target;
     const name = target.name;
@@ -525,9 +615,6 @@ class getShiftForm extends Component {
       this.setState({
         aux: update(this.state.aux, { [name]: {$set: updateValue} })
       });
-
-      console.log('handleHourChange');
-
     }
   }
 
@@ -542,8 +629,6 @@ class getShiftForm extends Component {
       let start_year = this.state.aux.start_year;
       let yearStart = new Date();
       yearStart = yearStart.getFullYear() - 1;
-      //verificar se a data de início foi selecioanda por completo, e liberar o calendario.
-      //fazer o mesmo para a data fim.
 
       if(name === 'end_year_id'){
           end_year =  parseInt(value)+parseInt(yearStart-1);
@@ -580,7 +665,6 @@ class getShiftForm extends Component {
             new_disabled_days.push({after: today, before: today});
           }
 
-
           this.setState({
             disabled_days: new_disabled_days,
             start_month: start_month
@@ -590,7 +674,29 @@ class getShiftForm extends Component {
     }
   }
 
-  handleInputChange(event) {
+  handleTextInputChange(event) {
+    const target = event.target;
+    const name = target.name;
+    const value = target.value;
+    if(target.validity.valid) {
+      //if user is adding text and there is space
+      if(value.length > this.state.shift.notes.length && this.state.aux.remaining_text > 0){
+
+        this.setState({
+          shift: update(this.state.shift, {[name]: {$set: value}}),
+          aux: update(this.state.aux, {['remaining_text']: {$set: 140 - value.length}})
+        })
+      }else if(value.length < this.state.shift.notes.length && value.length >= 0){
+        this.setState({
+          shift: update(this.state.shift, {[name]: {$set: value}}),
+          aux: update(this.state.aux, {['remaining_text']: {$set: (140 - value.length) }})
+        })
+      }
+
+    }
+  }
+
+  handleSelectorInputChange(event) {
 
     /*
     since the size of these lists will not get too big (probably less than 100 places for each professional, or
@@ -601,22 +707,19 @@ class getShiftForm extends Component {
     const value = target.value;
     if(target.validity.valid) {
 
-        let filtered_professionals_list = [];
-        let filtered_types_list = [];
-
         if(name === 'selected_service_place'){
-          filter_input_lists(value);
+          let filtered_lists = this.filter_input_lists(this.state.forms.service_places[value-1].id);
+
           this.setState({
             aux: update(this.state.aux,{
+              ['filtered_professionals'] : {$set: filtered_lists['filtered_professionals']},
+              ['filtered_service_types'] : {$set: filtered_lists['filtered_service_types']},
               [name] : {$set : value}
             }),
             shift: update(this.state.shift, {
               ['service_place_id'] : {$set : this.state.forms.service_places[value - 1].id}
             })
-          }, function(){
-          console.log('handleInputChange1')
-          console.log(this.state);
-      });
+          });
       }else{
         let professional_id =  this.state.shift.professional_performer_id;
         let service_type_id = this.state.shift.service_type_id;
@@ -634,9 +737,6 @@ class getShiftForm extends Component {
             ['professional_performer_id'] : {$set : professional_id},
             ['service_type_id'] : {$set : service_type_id}
           })
-        }, function() {
-            console.log('handleInputChange2')
-            console.log(this.state);
         });
       }
 
@@ -644,7 +744,7 @@ class getShiftForm extends Component {
     }
   }
 
-  handleInputContentChange(event){
+  handleInputDivisonChange(event){
     const target = event.target;
     const name = target.name;
     const value = target.value;
@@ -656,7 +756,7 @@ class getShiftForm extends Component {
             this.setState({
               input_content: update(this.state.input_content, {['number_schedules']: {$set: 0}})
             }, function(){
-              this.setState({input_content: update(this.state.input_content, {['duration_schedule_min']: {$set: 0}})});
+              this.setState({input_content: update(this.state.input_content, {['duration_schedule_min']: {$set: 10}})});
             });
           }
       });
@@ -680,7 +780,7 @@ class getShiftForm extends Component {
               onChange={
                 (event) => {
                   if(event.target.value != this.state.aux.selected_service_place) {
-                    this.handleInputChange(event);
+                    this.handleSelectorInputChange(event);
                   }
                 }
               }>
@@ -710,7 +810,7 @@ class getShiftForm extends Component {
               onChange={
                 (event) => {
                   if(event.target.value != this.state.aux.selected_professional) {
-                      this.handleInputChange(event);
+                      this.handleSelectorInputChange(event);
                   }
                 }
               }>
@@ -740,7 +840,7 @@ class getShiftForm extends Component {
               onChange={
                 (event) => {
                   if(event.target.value != this.state.aux.selected_service_type) {
-                    this.handleInputChange(event);
+                    this.handleSelectorInputChange(event);
                   }
                 }
               }>
@@ -773,6 +873,8 @@ class getShiftForm extends Component {
       optionsYears.push(<option key={0} value="" disabled>Ano</option>);
       var year = new Date().getFullYear();
       var yearStart = year - 1;
+      //generate list of years like:
+      // {last year, year, next year}
       for(var i = yearStart; i < (year + 2); i++){
         optionsYears.push(
           <option key={i - (yearStart - 1)} value={i - (yearStart - 1)}>{i}</option>
@@ -784,7 +886,7 @@ class getShiftForm extends Component {
             type='select'
             name='start_day'
             value={this.state.aux.start_day}
-            onChange={this.handleDateInputChange.bind(this)}
+            onChange={this.handleDateInputChange}
           >
             {optionsDays}
           </Input>
@@ -793,7 +895,7 @@ class getShiftForm extends Component {
             type='select'
             name='start_month'
             value={this.state.aux.start_month}
-            onChange={this.handleDateInputChange.bind(this)}
+            onChange={this.handleDateInputChange}
           >
             {optionsMonths}
           </Input>
@@ -802,7 +904,7 @@ class getShiftForm extends Component {
             type='select'
             name='start_year_id'
             value={this.state.aux.start_year_id}
-            onChange={(event) => {this.handleDateInputChange.bind(this)(event)}}>
+            onChange={(event) => {this.handleDateInputChange(event)}}>
             {optionsYears}
           </Input>
         </div>
@@ -840,7 +942,7 @@ class getShiftForm extends Component {
             type='select'
             name='end_day'
             value={this.state.aux.end_day}
-            onChange={this.handleDateInputChange.bind(this)}
+            onChange={this.handleDateInputChange}
           >
             {optionsDays}
           </Input>
@@ -849,7 +951,7 @@ class getShiftForm extends Component {
             type='select'
             name='end_month'
             value={this.state.aux.end_month}
-            onChange={this.handleDateInputChange.bind(this)}
+            onChange={this.handleDateInputChange}
           >
             {optionsMonths}
           </Input>
@@ -858,7 +960,7 @@ class getShiftForm extends Component {
             type='select'
             name='end_year_id'
             value={this.state.aux.end_year_id}
-            onChange={ (event) => {this.handleDateInputChange.bind(this)(event)}}>
+            onChange={ (event) => {this.handleDateInputChange(event)}}>
             {optionsYears}
           </Input>
         </div>
@@ -871,7 +973,6 @@ class getShiftForm extends Component {
     const col_small_input = 12;
     const col_large_input = 7;
     const col_medium_input = 10;
-    var firstSelected = true;
     return (
       <Row s={12}>
         <div className='card'>
@@ -931,14 +1032,14 @@ class getShiftForm extends Component {
                     </Col>
                     <Col s={2}>
                       <input  type='number'   name='start_hour' className='check-input'
-                        value={this.state.aux.start_hour} onChange={this.handleHourChange.bind(this)}/>
+                        value={this.state.aux.start_hour} onChange={this.handleHourChange}/>
                     </Col>
                     <Col s={1}>
                       <h6 className='input-description'>h</h6>
                     </Col>
                     <Col s={2}>
                       <input  type='number' name='start_min'
-                        value={this.state.aux.start_min} onChange={this.handleHourChange.bind(this)}/>
+                        value={this.state.aux.start_min} onChange={this.handleHourChange}/>
                     </Col>
                     <Col s={2}>
                       <h6 className='input-description'>min</h6>
@@ -950,14 +1051,14 @@ class getShiftForm extends Component {
                     </Col>
                     <Col s={2}>
                       <input  type='number'  name='end_hour'
-                        value={this.state.aux.end_hour} onChange={this.handleHourChange.bind(this)}/>
+                        value={this.state.aux.end_hour} onChange={this.handleHourChange}/>
                     </Col>
                     <Col s={1}>
                       <h6>h</h6>
                     </Col>
                     <Col s={2}>
                       <input  type='number' name='end_min'
-                        value={this.state.aux.end_min} onChange={this.handleHourChange.bind(this)}/>
+                        value={this.state.aux.end_min} onChange={this.handleHourChange}/>
                     </Col>
                     <Col s={2}>
                       <h6>min</h6>
@@ -977,87 +1078,101 @@ class getShiftForm extends Component {
                       {this.selectEndDate()}
                   </div>
               </Row>
-              <Row>
+              {
+                this.props.is_edit ?
+                  <div></div>
+                  :
+                  <div>
+                    <Row>
+                      <Col s={12} m={8} l={6}>
+                        <h6>Pré-visualização:</h6>
+                        <div>
+                          {this.calendarComponent()}
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col s={12} m={8} l={6}>
+                        <div className='card'>
+                          <div className='card-content'>
+                            <h6>Legenda:</h6>
+                            <Row>
+                              <div className='legend-item'/>
+                              <h6 className='legend-text'>
+                                Datas disponíveis para escolha
+                              </h6>
+                            </Row>
+                            <Row>
+                              <div className='legend-item legend-invalid-date'/>
+                              <h6 className='legend-text'>
+                                Datas indisponíveis
+                              </h6>
+                            </Row>
+                            <Row>
+                              <div className='legend-item legend-available'/>
+                              <h6 className='legend-text'>
+                                Datas selecionadas e disponíveis
+                              </h6>
+                            </Row>
+                            <Row>
+                              <div className='legend-item legend-conflict'/>
+                              <h6 className='legend-text'>
+                                Datas conflitantes com outras escalas
+                              </h6>
+                            </Row>
+                          </div>
+                        </div>
+                      </Col>
+                    </Row>
+              </div>
+                }
 
-                  <Col s={12} m={8} l={6}>
-                    <h6>Pré-visualização:</h6>
-                    <div>
-                      {this.calendarComponent()}
-                    </div>
-                  </Col>
-              </Row>
-              <Row>
-                  <Col s={12} m={8} l={6}>
-                    <div className='card'>
-                      <div className='card-content'>
-                        <h6>Legenda:</h6>
-                        <Row>
-                          <div className='legend-item'/>
-                          <h6 className='legend-text'>
-                            Datas disponíveis para escolha
-                          </h6>
-                        </Row>
-                        <Row>
-                          <div className='legend-item legend-invalid-date'/>
-                          <h6 className='legend-text'>
-                            Datas indisponíveis
-                          </h6>
-                        </Row>
-                        <Row>
-                          <div className='legend-item legend-available'/>
-                          <h6 className='legend-text'>
-                            Datas selecionadas e disponíveis
-                          </h6>
-                        </Row>
-                        <Row>
-                          <div className='legend-item legend-conflict'/>
-                          <h6 className='legend-text'>
-                            Datas conflitantes com outras escalas
-                          </h6>
-                        </Row>
-                      </div>
-                    </div>
-                  </Col>
-
-              </Row>
               <Row>
                     <h6>Observações</h6>
               </Row>
               <Row>
                   <Col s={12} m={8} l={6}>
-                    <Input type='text'/>
+                    <Input type='text' name='notes'
+                      value={this.state.shift.notes} onChange={this.handleTextInputChange}/>
                   </Col>
               </Row>
               <Row>
-                  <p>Caracteres restantes:140</p>
+                  <p>Caracteres restantes:{this.state.aux.remaining_text}</p>
               </Row>
 
-              <Row>
-                  <div >
-                    <h6>Atendimentos*:</h6>
+
                     <Row>
-                      <Col s={12}>
-                        <Input name='isTimeDivision' type='radio' className='with-gap'  label='Número de atendimentos:'
-                          checked={this.state.input_content.isTimeDivision === 'number_schedules'} onChange={this.handleInputContentChange.bind(this)} value={'number_schedules'}/>
+                      <div >
+                        <h6>Quantidade de atendimentos*:</h6>
+                        <Row>
+                          <Col s={12}>
+                            <Input name='isTimeDivision' type='radio' className='with-gap'  label='Número de atendimentos:'
+                              checked={this.state.input_content.isTimeDivision === 'number_schedules'} onChange={this.handleInputDivisonChange} value={'number_schedules'}/>
 
-                        <Input name='number_schedules' type='number' min={min} disabled={this.state.input_content.isTimeDivision !== 'number_schedules'}
-                            value={this.state.input_content.number_schedules} onChange={this.handleInputContentChange.bind(this)}/>
+                            <Input name='number_schedules' type='number' min={min} disabled={this.state.input_content.isTimeDivision !== 'number_schedules'}
+                              value={this.state.input_content.number_schedules} onChange={this.handleInputDivisonChange}/>
 
-                      </Col>
-                      <Col s={12}>
+                          </Col>
+                          <Col s={12}>
 
-                        <Input name='isTimeDivision' type='radio'className='with-gap'  label='Tempo de atendimento (minutos):'
-                          checked={this.state.input_content.isTimeDivision === 'time_division'} onChange={this.handleInputContentChange.bind(this)} value={'time_division'}/>
+                            <Input name='isTimeDivision' type='radio'className='with-gap'  label='Tempo de atendimento(minutos):'
+                              checked={this.state.input_content.isTimeDivision === 'time_division'} onChange={this.handleInputDivisonChange} value={'time_division'}/>
 
-                        <Input name='duration_schedule_min' type='number' min={min} disabled={this.state.input_content.isTimeDivision !== 'time_division'}
-                            value={this.state.input_content.duration_schedule_min} onChange={this.handleInputContentChange.bind(this)}/>
+                            <Input name='duration_schedule_min' type='select' disabled={this.state.input_content.isTimeDivision !== 'time_division'}
+                              value={this.state.input_content.duration_schedule_min} onChange={this.handleInputDivisonChange}>
+                                <option value={10}>10</option>
+                                <option value={15}>15</option>
+                                <option value={30}>30</option>
+                                <option value={45}>45</option>
+                                <option value={60}>60</option>
+                            </Input>
 
-                      </Col>
-              </Row>
+                          </Col>
+                        </Row>
+                      </div>
+                    </Row>
 
-                  </div>
-              </Row>
-                <p className="red-text">Campos com (*) são de preenchimento obrigatório.</p>
+              <p className="red-text">Campos com (*) são de preenchimento obrigatório.</p>
             </Row>
             {this.confirmButton()}
           </div>
