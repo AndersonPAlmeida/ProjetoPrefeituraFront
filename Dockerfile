@@ -1,5 +1,5 @@
 FROM node:8.9.4
-MAINTAINER horstmannmat <mch15@inf.ufpr.br>
+LABEL maintainer="horstmannmat <mch15@inf.ufpr.br>"
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG C.UTF-8

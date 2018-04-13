@@ -20,7 +20,7 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
   ProfessionalUserDependantShow, ShiftShow, ShiftEdit, ShiftCreate,
   ShiftList, OccupationCreate,OccupationList,OccupationEdit,OccupationShow, MyReport, Reports,
   citizenReport, schedulesReport, shiftsReport, professionalsReport,
-  servicesReport, shiftTypeReport
+  servicesReport, shiftTypeReport,ServiceEdit,ServiceList
 } from './containers';
 
 import { configure } from './redux-auth';
@@ -149,6 +149,10 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="resource_bookings/:resource_booking_id/edit" component={UserIsAuthenticated(ResourceBookingEdit)} />
         <Route path="resource_bookings/new" component={UserIsAuthenticated(ResourceBookingCreate)} />
         <Route path="resource_bookings/:resource_booking_id" component={UserIsAuthenticated(ResourceBookingShow)} />
+
+        <Route path="schedules/service/:schedule_id/edit" component={UserIsAuthenticated(ServiceEdit)} />
+        <Route path="schedules/service" component={UserIsAuthenticated(ServiceList)} />
+
 
         <Route path="schedules" component={UserIsAuthenticated(ProfessionalSchedule)} />
 
