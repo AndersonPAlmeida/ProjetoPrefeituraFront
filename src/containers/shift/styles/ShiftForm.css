@@ -1,3 +1,6 @@
+.input-field{
+  margin-top: 0px;
+}
 .shift-select {
   width: 100% !important;
   margin-bottom: 0 !important;
@@ -7,25 +10,45 @@
   margin-top: 0 !important;
 }
 
-.select-field {
-  font-size: 13px;
-  font-family: 'Roboto', 'Arial';
-}
-
-.file-input {
-  overflow: auto;
-  margin-bottom: 20px;
+div.row.calendar{
+  margin-left: 0px !important;
 }
 
 .field-input {
   font-family: 'Roboto', 'Arial';
 }
 
+input.fixed-size-hundred[type=number] {
+  height: 2rem;
+}
+
+input.fixed-size-hundred[type=text]{
+  margin: 5px 0 5px 0;
+  height: 2rem;
+}
+
+.margin-bottom-five{
+  margin-bottom: 5px;
+}
+
+.select-wrapper input.select-dropdown{
+    height: 2rem;
+}
+
+.fixed-size-hundred{
+  width: 100px !important;
+}
+
+.fixed-size-three{
+  width: 300px !important;
+}
+
 input {
    color: black;
+   text-overflow: ellipsis;
  }
 
- label {
+label {
    color: black;
  }
 
@@ -43,6 +66,14 @@ input {
 	padding: 0 !important;
 }
 
+[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after{
+  border:2px solid #92BF23;
+}
+
+[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:after{
+  background-color: #92BF23;
+}
+
 .legend-item{
   width: 17px;
   display: inline-block;
@@ -51,16 +82,15 @@ input {
   text-align: center;
   line-height: 16px;
   border-radius: 50%;
+  float:left;
 }
 
-
-[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after{
-  border:2px solid #92BF23;
-}
-
-
-[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:after{
-    background-color: #92BF23;
+.legend-text{
+  display: inline-block;
+  padding-left: 5px;
+  margin-bottom: 5px;
+  line-height: 18px;
+  float: left;
 }
 
 .legend-invalid-date{
@@ -75,13 +105,6 @@ input {
   background-color: #F0D156;
 }
 
-.legend-text{
-  display: inline-block;
-  padding-left: 5px;
-  margin-bottom: 5px;
-  line-height: 18px;
-}
-
 .red-text{
   color: red;
 }
@@ -93,7 +116,6 @@ input {
 .row .col{
   padding-left: 0px;
 }
-
 
 .DayPicker-Day {
 	height: 39px;

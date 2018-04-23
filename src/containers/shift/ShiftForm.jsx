@@ -16,12 +16,6 @@ const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sext
 const WEEKDAYS_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
 
 
-var updating_inputs = false;
-
-
-//TODO: comentar as funções handleInput*Change com os campos aos quais elas estão relacionadas.
-
-
 class getShiftForm extends Component {
 
   constructor(props) {
@@ -52,6 +46,7 @@ class getShiftForm extends Component {
         selected_professional: 0,
         selected_service_type: 0,
         selected_city_hall: 0,
+        filtered_service_places: [],
         filtered_professionals: [],
         filtered_service_types: [],
         end_year_id: '',
@@ -87,21 +82,25 @@ class getShiftForm extends Component {
     this.handleInputDivisonChange = this.handleInputDivisonChange.bind(this);
   }
 
-  filter_input_lists(filter_location_id){
-    console.log('Filter Input Lists');
+  filter_input_lists(filter_location_id, data = null){
     let filtered_professionals_list = [];
     let filtered_types_list = [];
-    for(let i = 0; i < this.state.forms.professionals.length; ++i){
-      for(let j = 0; j < this.state.forms.professionals[i].service_place_ids.length; ++j){
-        if(Number(this.state.forms.professionals[i].service_place_ids[j]) === Number(filter_location_id)){
-          filtered_professionals_list.push(this.state.forms.professionals[i]);
+
+    if(data == null){
+      data = this.state;
+    }
+
+    for(let i = 0; i < data.forms.professionals.length; ++i){
+      for(let j = 0; j < data.forms.professionals[i].service_place_ids.length; ++j){
+        if(Number(data.forms.professionals[i].service_place_ids[j]) === Number(filter_location_id)){
+          filtered_professionals_list.push(data.forms.professionals[i]);
         }
       }
     }
-    for(let i = 0; i < this.state.forms.service_types.length; ++i){
-      for(let j = 0; j < this.state.forms.service_types[i].service_place_ids.length; ++j){
-        if(Number(this.state.forms.service_types[i].service_place_ids[j]) === Number(filter_location_id)){
-          filtered_types_list.push(this.state.forms.service_types[i]);
+    for(let i = 0; i < data.forms.service_types.length; ++i){
+      for(let j = 0; j < data.forms.service_types[i].service_place_ids.length; ++j){
+        if(Number(data.forms.service_types[i].service_place_ids[j]) === Number(filter_location_id)){
+          filtered_types_list.push(data.forms.service_types[i]);
         }
       }
     }
@@ -126,12 +125,23 @@ class getShiftForm extends Component {
             "Content-Type": "application/json" },
             method: "get",
         }).then(parseResponse).then(resp => {
-            self.setState({ forms: resp },
-            function(){
+              let tempState = this.state;
+              tempState = update(tempState, {
+                forms: {$set: resp}
+              });
+
+              if(this.props.current_role.role !== 'adm_c3sl'){
+                tempState = update(tempState, {
+                    aux: {
+                      ['filtered_service_places']:  {$set: tempState.forms.service_places}
+                    }
+                });
+              }
+
               if(this.props.is_edit){
 
-                this.setState({
-                  shift: update(this.state.shift, {
+                tempState =  update(tempState, {
+                  shift: {
                     ['execution_end_time'] : {$set : data.execution_end_time},
                     ['execution_start_time'] : {$set : data.execution_start_time},
                     ['id'] : {$set : data.id},
@@ -142,12 +152,9 @@ class getShiftForm extends Component {
                     ['service_amount'] : {$set : data.service_amount},
                     ['service_place_name'] : {$set : data.service_place_name},
                     ['service_type_description'] : {$set : data.service_type_description}
-                  })
+                  }
+                });
 
-                }, function(){
-
-                  console.log('shift');
-                  console.log(this.state.shift);
                   //get duration time
                   let start_date = new Date(data.execution_start_time);
                   let end_date = new Date(data.execution_end_time);
@@ -157,8 +164,8 @@ class getShiftForm extends Component {
                   //* --------------------------------------------------------------------*/
                   // Loading data for Dropdown selectors.
 
-                  for(let i = 0; i < this.state.forms.service_places.length; ++i){
-                    if(this.state.forms.service_places[i].name === data.service_place_name){
+                  for(let i = 0; i < tempState.forms.service_places.length; ++i){
+                    if(tempState.forms.service_places[i].name === data.service_place_name){
                       //because the view is not 0 based, it's necessary to add 1 (one).
                       //(the view has a placeholder/hint)
                       selected_service_place = i+1;
@@ -167,7 +174,7 @@ class getShiftForm extends Component {
                   }
 
                   //and here we have to subtract 1 because the list is 0 based.
-                  let filtered_lists = this.filter_input_lists(this.state.forms.service_places[selected_service_place - 1].id);
+                  let filtered_lists = this.filter_input_lists(tempState.forms.service_places[selected_service_place - 1].id, tempState);
 
                   let filtered_professionals = filtered_lists['filtered_professionals'];
 
@@ -225,67 +232,62 @@ class getShiftForm extends Component {
                   selectedDate.setMinutes(0);
                   selectedDate.setSeconds(0);
                   selectedDate.setMilliseconds(0);
-
-                  console.log(start_date);
-                  console.log(selectedDate);
-
-
-
-                  this.setState({
-                    aux: update(this.state.aux, {
-                      ['filtered_service_types'] : {$set: filtered_service_types},
-                      ['filtered_professionals'] : {$set: filtered_professionals},
-                      ['selected_service_place'] : {$set: selected_service_place},
-                      ['selected_professional'] : {$set: selected_professional},
-                      ['selected_service_type'] : {$set: selected_service_type},
-                      ['start_hour'] : {$set: startHour},
-                      ['start_min'] : {$set: startMinute},
-                      ['end_hour'] : {$set: endHour},
-                      ['end_min'] : {$set: endMinutes},
-                      ['end_year_id'] : {$set: (endYear - yearStartId)},
-                      ['start_year_id'] : {$set: (startYear - yearStartId)},
-                      ['start_year'] : {$set: startYear},
-                      ['end_year'] : {$set: endYear},
-                      ['start_month'] : {$set: startMonth},
-                      ['end_month'] : {$set: endMonth},
-                      ['start_day'] : {$set: startDay},
-                      ['end_day'] : {$set: endDay}
-                    }),
-                    input_content: update(this.state.input_content, {
+                  tempState =  update(tempState, {
+                      aux: {
+                        ['filtered_service_places'] : {$set: tempState.forms.service_places},
+                        ['filtered_service_types'] : {$set: filtered_service_types},
+                        ['filtered_professionals'] : {$set: filtered_professionals},
+                        ['selected_service_place'] : {$set: selected_service_place},
+                        ['selected_professional'] : {$set: selected_professional},
+                        ['selected_service_type'] : {$set: selected_service_type},
+                        ['start_hour'] : {$set: startHour},
+                        ['start_min'] : {$set: startMinute},
+                        ['end_hour'] : {$set: endHour},
+                        ['end_min'] : {$set: endMinutes},
+                        ['end_year_id'] : {$set: (endYear - yearStartId)},
+                        ['start_year_id'] : {$set: (startYear - yearStartId)},
+                        ['start_year'] : {$set: startYear},
+                        ['end_year'] : {$set: endYear},
+                        ['start_month'] : {$set: startMonth},
+                        ['end_month'] : {$set: endMonth},
+                        ['start_day'] : {$set: startDay},
+                        ['end_day'] : {$set: endDay}
+                      },
+                    input_content: {
                         ['number_schedules']: {$set:  data.service_amount}
-                    }),
-                    shift: update(this.state.shift, {
-                      ['service_place_id'] : {$set : this.state.forms.service_places[selected_service_place - 1].id},
+                    },
+                    shift:{
+                      ['service_place_id'] : {$set : tempState.forms.service_places[selected_service_place - 1].id},
                       ['service_type_id'] : {$set : filtered_service_types[selected_service_type - 1].id},
                       ['professional_performer_id'] : {$set: filtered_professionals[selected_professional - 1].id}
-                    }),
-                    disabled_days :  [{ after: start_date, before: start_date }],
-                    start_month: start_date,
-                    selected_days:  [selectedDate]
-                  }, function(){
-                    console.log('Depois de atualizar o state com os dados da escala');
-                    console.log(this.state);
+                    },
+                    disabled_days : {
+                        $set : [{ after: start_date, before: start_date }]
+                    },
+                    start_month: {$set: start_date},
+                    selected_days: {$set : [selectedDate]}
                   });
-                });
+
               }
+              this.setState(tempState, function(){
+                if(this.props.current_role && this.props.current_role.role == 'adm_c3sl' && !this.props.is_edit) {
+                  collection = 'forms/shift_index';
+                  fetch(`${apiUrl}/${collection}?${params}`, {
+                    headers: {
+                      "Accept": "application/json",
+                      "Content-Type": "application/json" },
+                      method: "get",
+                    }).then(parseResponse).then(resp => {
+                      this.setState({ city_halls: resp.city_halls })
+                    });
+                  }
+                  else
+                  data['city_hall_id'] = this.props.current_role.city_hall_id
 
-            })
-        });
+              });
 
-      if(this.props.current_role && this.props.current_role.role == 'adm_c3sl') {
-        collection = 'forms/shift_index';
-        fetch(`${apiUrl}/${collection}?${params}`, {
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json" },
-            method: "get",
-            }).then(parseResponse).then(resp => {
-              self.setState({ city_halls: resp.city_halls })
+
             });
-          }
-          else
-            data['city_hall_id'] = this.props.current_role.city_hall_id
-
 
     }
 
@@ -343,30 +345,129 @@ class getShiftForm extends Component {
         />
       )
     }
-    const cityHallsList = (
-      this.state.city_halls.map((city_hall) => {
+    else{
+      const cityHallsList = (
+        this.state.city_halls.map((city_hall) => {
+          return (
+            <option value={city_hall.id}>{city_hall.name}</option>
+          )
+        })
+      )
+
+      return (
+
+        <div className='select-field'>
+          <div>
+            <Row className='shift-select'>
+              <Input s={12}
+                name="city_hall_id"
+                type='select'
+                value={this.state.aux.selected_city_hall}
+                onChange={
+                  (event) => {
+                    if(event.target.value != this.state.aux.selected_city_hall) {
+                      this.handleSelectorInputChange(event);
+                    }
+                  }
+                }
+                >
+                <option value='0' disabled>Escolha a prefeitura</option>
+                {cityHallsList}
+              </Input>
+            </Row>
+          </div>
+        </div>
+      )
+    }
+  }
+
+  pickServicePlace() {
+    let servicePlaceList = this.state.aux.filtered_service_places == null ? [] : (
+      this.state.aux.filtered_service_places.map((service_place, idx) => {
         return (
-          <option value={city_hall.id}>{city_hall.name}</option>
+          <option key={service_place.id} value={idx+1}>{service_place.name}</option>
         )
       })
     )
 
     return (
-      <Input
-        name="city_hall_id"
-        type='select'
-        value={this.state.aux.city_hall_id}
-        onChange={
-          (event) => {
-            if(event.target.value != this.state.aux.selected_city_hall) {
-                this.handleInputServiceTypeChange(event);
-            }
-          }
-        }
-      >
-        <option value='0' disabled>Escolha a prefeitura</option>
-        {cityHallsList}
-      </Input>
+      <div className='select-field'>
+        <div>
+          <Row className='shift-select'>
+            <Input s={12} name="selected_service_place" value={this.state.aux.selected_service_place} type='select'
+              onChange={
+                (event) => {
+                  if(event.target.value != this.state.aux.selected_service_place) {
+                    this.handleSelectorInputChange(event);
+                  }
+                }
+              }>
+              <option value='0' disabled>Escolha o local de atendimento</option>
+              {servicePlaceList}
+            </Input>
+          </Row>
+        </div>
+      </div>
+    )
+  }
+
+  pickProfessional(){
+    let professionalList = this.state.aux.filtered_professionals == null ? [] : (
+      this.state.aux.filtered_professionals.map((professional, idx) => {
+        return (
+          <option key={professional.id} value={idx+1}>{professional.name}</option>
+        )
+      })
+    )
+
+    return (
+      <div className='select-field'>
+        <div>
+          <Row className='shift-select'>
+            <Input s={12} name="selected_professional" value={this.state.aux.selected_professional} type='select'
+              onChange={
+                (event) => {
+                  if(event.target.value != this.state.aux.selected_professional) {
+                    this.handleSelectorInputChange(event);
+                  }
+                }
+              }>
+              <option value='0' disabled>Escolha o profissional</option>
+              {professionalList}
+            </Input>
+          </Row>
+        </div>
+      </div>
+    )
+  }
+
+  pickServiceType(){
+    let serviceTypeList = this.state.aux.filtered_service_types == null ? [] : (
+      this.state.aux.filtered_service_types.map((service_type, idx) => {
+        return (
+          <option key={service_type.id} value={idx+1}>{service_type.description}</option>
+        )
+      })
+    )
+
+    return (
+      <div className='select-field'>
+        <div>
+          <Row className='shift-select'>
+            <Input s={12} name="selected_service_type" value={this.state.aux.selected_service_type} type='select'
+              onChange={
+                (event) => {
+                  if(event.target.value != this.state.aux.selected_service_type) {
+                    this.handleSelectorInputChange(event);
+                  }
+                }
+              }>
+              <option value='0' disabled>Escolha o tipo de atendimento</option>
+              {serviceTypeList}
+            </Input>
+          </Row>
+        </div>
+      </div>
     )
   }
 
@@ -586,7 +687,6 @@ class getShiftForm extends Component {
 
   }
 
-
   /*
     Handle changes to fields:
     - start_hour
@@ -618,7 +718,14 @@ class getShiftForm extends Component {
     }
   }
 
-  // TODO: check if startDate and endDate are valid dates (31 February)
+  /*
+    Handle changes to fields:
+    - start_year_id
+    - start_month
+    - end_year_id
+    - end_day
+    - end_month
+  */
   handleDateInputChange(event) {
     const target = event.target;
     const name = target.name;
@@ -674,6 +781,10 @@ class getShiftForm extends Component {
     }
   }
 
+  /*
+    Handle changes to field:
+    - notes
+  */
   handleTextInputChange(event) {
     const target = event.target;
     const name = target.name;
@@ -696,8 +807,14 @@ class getShiftForm extends Component {
     }
   }
 
+  /*
+  Handle changes to fields:
+  - selected_service_place
+  - selected_professional
+  - selected_service_type
+  - city_hall_id
+  */
   handleSelectorInputChange(event) {
-
     /*
     since the size of these lists will not get too big (probably less than 100 places for each professional, or
     100 types for a location) the list is done every time the selector is clicked, rather than once, when the page is loaded.
@@ -706,20 +823,38 @@ class getShiftForm extends Component {
     const name = target.name;
     const value = target.value;
     if(target.validity.valid) {
+      if(name === 'city_hall_id'){
+        let filtered_places = [];
+        for(let i = 0; i < this.state.forms.service_places.length; ++i){
+            if(Number(this.state.forms.service_places[i].city_hall_id) === Number(this.state.city_halls[value - 1].id)){
+              filtered_places.push(this.state.forms.service_places[i]);
+            }
+        }
+        this.setState({
+          aux: update(this.state.aux, {
+            ['filtered_service_places']: {$set: filtered_places},
+            ['selected_city_hall']: {$set: value},
+            ['selected_service_place']: {$set: 0},
+            ['selected_professional'] : {$set: 0},
+            ['selected_service_type'] : {$set: 0}
+          })
+        });
+      }
+      else if(name === 'selected_service_place'){
+        let filtered_lists = this.filter_input_lists(this.state.forms.service_places[value-1].id);
 
-        if(name === 'selected_service_place'){
-          let filtered_lists = this.filter_input_lists(this.state.forms.service_places[value-1].id);
-
-          this.setState({
-            aux: update(this.state.aux,{
-              ['filtered_professionals'] : {$set: filtered_lists['filtered_professionals']},
-              ['filtered_service_types'] : {$set: filtered_lists['filtered_service_types']},
-              [name] : {$set : value}
-            }),
-            shift: update(this.state.shift, {
-              ['service_place_id'] : {$set : this.state.forms.service_places[value - 1].id}
-            })
-          });
+        this.setState({
+          aux: update(this.state.aux,{
+            ['filtered_professionals'] : {$set: filtered_lists['filtered_professionals']},
+            ['filtered_service_types'] : {$set: filtered_lists['filtered_service_types']},
+            ['selected_professional'] : {$set: 0},
+            ['selected_service_type'] : {$set: 0},
+            [name] : {$set : value}
+          }),
+          shift: update(this.state.shift, {
+            ['service_place_id'] : {$set : this.state.forms.service_places[value - 1].id}
+          })
+        });
       }else{
         let professional_id =  this.state.shift.professional_performer_id;
         let service_type_id = this.state.shift.service_type_id;
@@ -740,10 +875,15 @@ class getShiftForm extends Component {
         });
       }
 
-
     }
   }
 
+  /*
+  Handle changes to fields:
+  - isTimeDivision
+  - number_schedules
+  - duration_schedule_min
+  */
   handleInputDivisonChange(event){
     const target = event.target;
     const name = target.name;
@@ -761,96 +901,6 @@ class getShiftForm extends Component {
           }
       });
     }
-  }
-
-  pickServicePlace() {
-    let servicePlaceList = this.state.forms.service_places == null ? [] : (
-      this.state.forms.service_places.map((service_place, idx) => {
-        return (
-          <option key={service_place.id} value={idx+1}>{service_place.name}</option>
-        )
-      })
-    )
-
-    return (
-      <div className='select-field'>
-        <div>
-          <Row className='shift-select'>
-            <Input s={12} name="selected_service_place" value={this.state.aux.selected_service_place} type='select'
-              onChange={
-                (event) => {
-                  if(event.target.value != this.state.aux.selected_service_place) {
-                    this.handleSelectorInputChange(event);
-                  }
-                }
-              }>
-              <option value='0' disabled>Escolha o local de atendimento</option>
-              {servicePlaceList}
-            </Input>
-          </Row>
-        </div>
-      </div>
-    )
-  }
-
-  pickProfessional(){
-    let professionalList = this.state.aux.filtered_professionals == null ? [] : (
-      this.state.aux.filtered_professionals.map((professional, idx) => {
-        return (
-          <option key={professional.id} value={idx+1}>{professional.name}</option>
-        )
-      })
-    )
-
-		return (
-			<div className='select-field'>
-				<div>
-					<Row className='shift-select'>
-            <Input s={12} name="selected_professional" value={this.state.aux.selected_professional} type='select'
-              onChange={
-                (event) => {
-                  if(event.target.value != this.state.aux.selected_professional) {
-                      this.handleSelectorInputChange(event);
-                  }
-                }
-              }>
-              <option value='0' disabled>Escolha o profissional</option>
-              {professionalList}
-					  </Input>
-					</Row>
-				</div>
-	        </div>
-	    )
-  }
-
-  pickServiceType(){
-    let serviceTypeList = this.state.aux.filtered_service_types == null ? [] : (
-      this.state.aux.filtered_service_types.map((service_type, idx) => {
-        return (
-          <option key={service_type.id} value={idx+1}>{service_type.description}</option>
-        )
-      })
-    )
-
-    return (
-      <div className='select-field'>
-        <div>
-          <Row className='shift-select'>
-            <Input s={12} name="selected_service_type" value={this.state.aux.selected_service_type} type='select'
-              onChange={
-                (event) => {
-                  if(event.target.value != this.state.aux.selected_service_type) {
-                    this.handleSelectorInputChange(event);
-                  }
-                }
-              }>
-              <option value='0' disabled>Escolha o tipo de atendimento</option>
-              {serviceTypeList}
-            </Input>
-          </Row>
-        </div>
-      </div>
-    )
   }
 
   selectStartDate(){
@@ -987,12 +1037,20 @@ class getShiftForm extends Component {
               </Col>
 
               <Row>
-                <h6>Prefeitura:</h6>
-                <Col s={col_small_input} m={col_medium_input} l={col_large_input} >
+                {
+                  this.props.is_edit ?
+                  <div/>
+                  :
                   <div>
-                    {this.pickCityHall()}
+                    <h6>Prefeitura:</h6>
+                    <Col s={col_small_input} m={col_medium_input} l={col_large_input} >
+                      <div>
+                        {this.pickCityHall()}
+                      </div>
+                    </Col>
                   </div>
-                </Col>
+                }
+
               </Row>
 
               <Row>
@@ -1021,7 +1079,6 @@ class getShiftForm extends Component {
                     </div>
                   </Col>
               </Row>
-
               <Row>
                   <div>
                     <h6>Duração (intervalo do dia)*:</h6>
@@ -1083,7 +1140,7 @@ class getShiftForm extends Component {
                   <div></div>
                   :
                   <div>
-                    <Row>
+                    <Row className='calendar'>
                       <Col s={12} m={8} l={6}>
                         <h6>Pré-visualização:</h6>
                         <div>
@@ -1097,10 +1154,10 @@ class getShiftForm extends Component {
                           <div className='card-content'>
                             <h6>Legenda:</h6>
                             <Row>
-                              <div className='legend-item'/>
-                              <h6 className='legend-text'>
-                                Datas disponíveis para escolha
-                              </h6>
+                                <div className='legend-item'/>
+                                <h6 className='legend-text'>
+                                  Datas disponíveis para escolha
+                                </h6>
                             </Row>
                             <Row>
                               <div className='legend-item legend-invalid-date'/>
@@ -1127,12 +1184,12 @@ class getShiftForm extends Component {
               </div>
                 }
 
-              <Row>
-                    <h6>Observações</h6>
+              <Row className='margin-bottom-five'>
+                    <h6>Observações:</h6>
               </Row>
               <Row>
                   <Col s={12} m={8} l={6}>
-                    <Input type='text' name='notes'
+                    <Input type='text' name='notes' className='fixed-size-three'
                       value={this.state.shift.notes} onChange={this.handleTextInputChange}/>
                   </Col>
               </Row>
@@ -1145,28 +1202,34 @@ class getShiftForm extends Component {
                       <div >
                         <h6>Quantidade de atendimentos*:</h6>
                         <Row>
-                          <Col s={12}>
+                          <Col s={12} >
+
                             <Input name='isTimeDivision' type='radio' className='with-gap'  label='Número de atendimentos:'
                               checked={this.state.input_content.isTimeDivision === 'number_schedules'} onChange={this.handleInputDivisonChange} value={'number_schedules'}/>
 
-                            <Input name='number_schedules' type='number' min={min} disabled={this.state.input_content.isTimeDivision !== 'number_schedules'}
+                            <Input name='number_schedules' type='number' className='fixed-size-hundred' min={min} disabled={this.state.input_content.isTimeDivision !== 'number_schedules'}
                               value={this.state.input_content.number_schedules} onChange={this.handleInputDivisonChange}/>
+
 
                           </Col>
                           <Col s={12}>
-
                             <Input name='isTimeDivision' type='radio'className='with-gap'  label='Tempo de atendimento(minutos):'
                               checked={this.state.input_content.isTimeDivision === 'time_division'} onChange={this.handleInputDivisonChange} value={'time_division'}/>
 
-                            <Input name='duration_schedule_min' type='select' disabled={this.state.input_content.isTimeDivision !== 'time_division'}
+                            <Input name='duration_schedule_min' type='select' className='fixed-size-hundred' disabled={this.state.input_content.isTimeDivision !== 'time_division'}
                               value={this.state.input_content.duration_schedule_min} onChange={this.handleInputDivisonChange}>
-                                <option value={10}>10</option>
-                                <option value={15}>15</option>
-                                <option value={30}>30</option>
-                                <option value={45}>45</option>
-                                <option value={60}>60</option>
-                            </Input>
-
+                                <option key={0} value={5}>5</option>
+                                <option key={1} value={10}>10</option>
+                                <option key={2} value={15}>15</option>
+                                <option key={3} value={20}>20</option>
+                                <option key={4} value={25}>25</option>
+                                <option key={5} value={30}>30</option>
+                                <option key={6} value={35}>35</option>
+                                <option key={7} value={40}>40</option>
+                                <option key={8} value={45}>45</option>
+                                <option key={9} value={50}>50</option>
+                                <option key={10} value={55}>55</option>
+                          </Input>
                           </Col>
                         </Row>
                       </div>
@@ -1184,32 +1247,3 @@ class getShiftForm extends Component {
 
 const ShiftForm = connect()(getShiftForm)
 export default ShiftForm
-
-/*
-Checkbox to select 'every' day of a kind ( like every monday inside the interval)
-<h6>Incluir:</h6>
-<Row>
-<Col s={12} m={4} l={2}>
-<Input name='day1' type='checkbox' className="filled-in checkbox" value='Dom' label='Dom' />
-</Col>
-<Col s={12} m={4} l={2}>
-<Input name='day2' type='checkbox' className="filled-in checkbox" value='Seg' label='Seg' />
-</Col>
-<Col s={12} m={4} l={2}>
-<Input name='day3' type='checkbox' className="filled-in checkbox" value='Ter' label='Ter' />
-</Col>
-<Col s={12} m={4} l={2}>
-<Input name='day4' type='checkbox' className="filled-in" value='Qua' label='Qua' />
-</Col>
-<Col s={12} m={4} l={2}>
-<Input name='day5' type='checkbox' className="filled-in" value='Qui' label='Qui' />
-</Col>
-<Col s={12} m={4} l={2}>
-<Input name='day6' type='checkbox' className="filled-in" value='Sex' label='Sex' />
-</Col>
-<Col s={12} m={4} l={2}>
-<Input name='day7' type='checkbox' className="filled-in" value='Sab' label='Sab' />
-</Col>
-</Row>
-
-*/
