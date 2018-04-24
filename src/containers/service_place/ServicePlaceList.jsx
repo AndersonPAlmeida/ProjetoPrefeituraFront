@@ -32,7 +32,7 @@ class getServicePlaceList extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     var collection = `service_places`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -373,7 +373,7 @@ class getServicePlaceList extends Component {
     }
     name = name.replace(/\s/g,'+')
     neighborhood = neighborhood.replace(/\s/g,'+')
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `service_places`;
     const params = `permission=${this.props.user.current_role}`
                   +`&q[name]=${name}`

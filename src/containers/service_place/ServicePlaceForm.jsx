@@ -96,7 +96,7 @@ class getServicePlaceForm extends Component {
   }
 
   updateAddress(cep) {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'forms/create_service_place';
     const params = `${this.props.fetch_params}&cep=${cep}`
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -181,7 +181,7 @@ class getServicePlaceForm extends Component {
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
       let fetch_body = this.generateBody.bind(this)(formData)
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
       fetch(`${apiUrl}/${collection}?${params}`, {

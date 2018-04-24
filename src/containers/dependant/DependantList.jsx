@@ -25,7 +25,7 @@ class getDependantList extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `citizens/${this.props.user.citizen.id}/dependants`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -249,7 +249,7 @@ class getDependantList extends Component {
       name = this.state.filter_name
     }
     name = name.replace(/\s/g,'+')
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `citizens/${this.props.user.citizen.id}/dependants`;
     const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[s]=${this.state.filter_s}`
     current_page = sort_only ? this.state.current_page : 1

@@ -31,7 +31,7 @@ class getOccupationList extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     var collection = `occupations`;
     const params = `permission=${this.props.user.current_role}`
 
@@ -326,7 +326,7 @@ class getOccupationList extends Component {
       'filter_name': '',
     })
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `occupations`;
     const params = `permission=${this.props.user.current_role}`
 
@@ -357,7 +357,7 @@ class getOccupationList extends Component {
     name = name.replace(/\s/g,'+')
     description = description.replace(/\s/g,'+')
 
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `occupations`;
     const params = `permission=${this.props.user.current_role}`
                     +`&q[name]=${name}`

@@ -30,7 +30,7 @@ class getServiceTypeList extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     var collection = `service_types`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -338,7 +338,7 @@ class getServiceTypeList extends Component {
       city_hall = this.state.filter_city_hall
     }
     description = description.replace(/\s/g,'+')
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `service_types`;
     const params = `permission=${this.props.user.current_role}`
                     +`&q[description]=${description}`

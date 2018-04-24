@@ -19,7 +19,7 @@ class getDependantEdit extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     var collection = `citizens/${this.props.user.citizen.id}/dependants/${this.props.params.dependant_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {

@@ -46,7 +46,7 @@ class getProfessionalsReport extends Component {
   }
 
   getProfessionalsIndex(){
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = `forms/professional_index`;
       const params = `permission=${this.props.user.current_role}`
       fetch(`${apiUrl}/${collection}?${params}`, {
@@ -137,7 +137,7 @@ class getProfessionalsReport extends Component {
         console.log("place")
       }
 
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = `professionals`;
       const params = `permission=${this.props.user.current_role}${filters}`
       console.log(params)

@@ -11,7 +11,7 @@ import { initialize } from '../src/app';
 import qs from 'query-string';
 import { loadOnServer } from 'redux-connect';
 global.__CLIENT__ = false;
-const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
 const app = express();
 const server = http.Server(app);
 /* Set ../public as default static files path (not used at the moment) */

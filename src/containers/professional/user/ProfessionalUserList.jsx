@@ -31,7 +31,7 @@ class getProfessionalUserList extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const params = `permission=${this.props.user.current_role}`
     var collection = `citizens`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -359,7 +359,7 @@ class getProfessionalUserList extends Component {
     }
     cpf = cpf.replace(/(\.|-)/g,'');
     name = name.replace(/\s/g,'+')
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `/citizens`;
     const params = `permission=${this.props.user.current_role}`
                     +`&q[name]=${name}`

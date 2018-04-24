@@ -76,7 +76,7 @@ class getResourceForm extends Component {
         this.setState({ resource_booking: previous_data });
     }
     else {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'forms/service_type_index';
       const params = this.props.fetch_params;
       fetch(`${apiUrl}/${collection}?${params}`, {
@@ -101,7 +101,7 @@ class getResourceForm extends Component {
 
   getProfessionalNameResource(id, role) {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `resource_shift_professional_responsible/${id}`;
     const params = `permission=${role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -116,7 +116,7 @@ class getResourceForm extends Component {
 
   getDetails(id, role) {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `resource_details/${id}`;
     const params = `permission=${role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -131,7 +131,7 @@ class getResourceForm extends Component {
 
   getExtraDetails(role) {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_bookings_get_extra_info/';
     const params = `permission=${role}&view=${role != 'citizen' ? 'professional' : 'citizen'}`;
 
@@ -155,7 +155,7 @@ class getResourceForm extends Component {
 
   getServicePlaceWithProfessional(role) {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'forms/shift_index/';
     const params = `permission=${role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -174,7 +174,7 @@ class getResourceForm extends Component {
 
   getResourceType(role) {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_types/';
     const params = `permission=${role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -189,7 +189,7 @@ class getResourceForm extends Component {
 
   getResource(role) {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resources/';
     const params = `permission=${role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -206,7 +206,7 @@ class getResourceForm extends Component {
 
   getCityHall(role) {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'city_halls/';
     const params = `permission=${role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -220,7 +220,7 @@ class getResourceForm extends Component {
   }
 
   getCitizens(role) {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'citizens/';
     const params = `permission=${role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -234,7 +234,7 @@ class getResourceForm extends Component {
   }
 
   getShifts(value){
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_shifts/';
     const params = `permission=${this.props.current_role.id}&q[resource_id]=${Number(value)}&q[borrowed]=0&q[active]=1`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -291,7 +291,7 @@ class getResourceForm extends Component {
       errors.forEach(function(elem){ full_error_msg += elem + '\n'; });
       Materialize.toast(full_error_msg, 10000, 'red',function(){$('#toast-container').remove();});
     } else {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params;
       let fetch_body = {};
@@ -348,7 +348,7 @@ class getResourceForm extends Component {
   updateShift(id){
     var fetch_body = {resource_shift: {borrowed:1}};
 
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `resource_shifts/${id}`;
     const params = `permission=${this.props.current_role.id}`;
     fetch(`${apiUrl}/${collection}?${params}`, {

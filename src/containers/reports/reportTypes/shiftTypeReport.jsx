@@ -90,7 +90,7 @@ confirmFilters(){
       }
     }
 
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `schedule_per_type_report`;
     const params = `permission=${this.props.user.current_role}${filters}`
 
@@ -136,7 +136,7 @@ arrangeData(){
   getCityHall(){
     if(this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl'){
       if(this.state.cityHalls == 0){
-        const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+        const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
         const collection = `city_halls`;
         const params = `permission=${this.props.user.current_role}`
         fetch(`${apiUrl}/${collection}?${params}`, {

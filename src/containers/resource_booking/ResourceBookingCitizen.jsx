@@ -32,7 +32,7 @@ class getResourceBookingCitizen extends Component {
   }
   getShift() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_shifts/';
     const params = 'permission=citizen';
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -49,7 +49,7 @@ class getResourceBookingCitizen extends Component {
   }
   getResourceDetails(id) {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `resource_details/${id}`;
     const params = 'permission=citizen';
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -211,7 +211,7 @@ class getResourceBookingCitizen extends Component {
   updateShift(id){
     var fetch_body = {resource_shift: {borrowed:1}};
 
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `resource_shifts/${id}`;
     const params = 'permission=citizen';
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -234,7 +234,7 @@ class getResourceBookingCitizen extends Component {
       errors.forEach(function(elem){ full_error_msg += elem + '\n'; });
       Materialize.toast(full_error_msg, 10000, 'red',function(){$('#toast-container').remove();});
     } else {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
       let fetch_body = {};

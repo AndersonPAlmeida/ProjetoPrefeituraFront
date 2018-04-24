@@ -113,7 +113,7 @@ class getShiftForm extends Component {
       var self = this;
       var data = this.props.is_edit ? this.props.data : this.state.shift
 
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
 
       var collection = 'forms/create_shift';
 
@@ -594,7 +594,7 @@ class getShiftForm extends Component {
 
     }else{
       let fetch_body = this.generateBody();
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       var params = this.props.fetch_params;
 
