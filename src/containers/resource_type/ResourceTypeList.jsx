@@ -27,7 +27,7 @@ class getResourceTypeList extends Component {
 
   componentWillMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_types';
     const params = `permission=${this.props.user.current_role}`;
     this.getCityHallName();    
@@ -61,7 +61,7 @@ class getResourceTypeList extends Component {
     city_halls = this.state.city_hall;
     
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'city_halls/';
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -331,7 +331,7 @@ class getResourceTypeList extends Component {
     }
     name = name.replace(/\s/g,'+');
     description = description.replace(/\s/g,'+');
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_types';
     const params = `permission=${this.props.user.current_role}&q[name]=${name}&q[description]=${description}&q[s]=${this.state.filter_s}`;
     console.log(`${apiUrl}/${collection}?${params}`);

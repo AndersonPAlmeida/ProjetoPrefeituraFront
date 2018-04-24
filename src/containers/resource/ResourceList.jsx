@@ -61,7 +61,7 @@ class getResourceList extends Component {
     }
     this.setState({current_permission: current_permission});
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resources';
     const params = `permission=${this.props.user.current_role}`;
     this.getResourceType();
@@ -98,7 +98,7 @@ class getResourceList extends Component {
 
   getCityHallName() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'city_halls/';
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -112,7 +112,7 @@ class getResourceList extends Component {
   }
   getResourceType() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_types/';
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -127,7 +127,7 @@ class getResourceList extends Component {
   }
   getServicePlace() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'service_places/';
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -440,7 +440,7 @@ class getResourceList extends Component {
     }
     label = label.replace(/\s/g,'+');
     model = model.replace(/\s/g,'+');
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resources';
     const params = `permission=${this.props.user.current_role}&q[brand]=${brand}&q[label]=${label}&q[model]=${model}&q[s]=${this.state.filter_s}`;
 

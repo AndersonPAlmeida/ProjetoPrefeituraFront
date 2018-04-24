@@ -30,7 +30,7 @@ class getSectorList extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     var collection = `sectors`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -340,7 +340,7 @@ class getSectorList extends Component {
     }
     name = name.replace(/\s/g,'+')
     description = description.replace(/\s/g,'+')
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `sectors`;
     const params = `permission=${this.props.user.current_role}`
                     +`&q[name]=${name}`

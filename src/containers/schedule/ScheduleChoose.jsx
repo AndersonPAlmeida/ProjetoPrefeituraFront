@@ -33,7 +33,7 @@ class getScheduleChoose extends Component {
       })
     }
     else {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = `citizens/schedule_options`;
       const params = `permission=${this.props.user.current_role}&cpf=${this.props.user.citizen.cpf}`
       fetch(`${apiUrl}/${collection}?${params}`, {

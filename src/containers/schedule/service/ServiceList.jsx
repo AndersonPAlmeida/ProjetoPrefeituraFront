@@ -45,7 +45,7 @@ class getServiceList extends Component {
   }
 
   componentDidMount() {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `forms/schedule_index`;
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -77,7 +77,7 @@ class getServiceList extends Component {
   }
 
   getSchedules(role) {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'schedules';
     const params = `not_available=true&permission=${role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -291,7 +291,7 @@ class getServiceList extends Component {
     cpf = cpf.replace(/(\.|-)/g, '');
     name = name.replace(/\s/g, '+')
 
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `/schedules`;
     const params = `not_available=true`
                     + `&permission=${this.props.user.current_role}`

@@ -23,7 +23,7 @@ class getScheduleFinish extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `schedules/${this.props.params.schedule_id}/confirmation`;
     const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.params.citizen_id}`
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -46,7 +46,7 @@ class getScheduleFinish extends Component {
 
   componentDidUpdate() {
     if(this.state.confirm != 0) {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = `schedules/${this.props.params.schedule_id}/confirm`;
       const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.params.citizen_id}`
       fetch(`${apiUrl}/${collection}?${params}`, {

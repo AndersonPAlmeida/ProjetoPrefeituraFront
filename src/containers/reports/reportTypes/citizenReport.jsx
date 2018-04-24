@@ -46,7 +46,7 @@ getDatafromBackEnd(sortType){
     }else{
       sortValue = "birth_date"
     }
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `citizens`;
     const params = `permission=${this.props.user.current_role}&q[s]=${sortValue}+asc`
     fetch(`${apiUrl}/${collection}?${params}`, {
