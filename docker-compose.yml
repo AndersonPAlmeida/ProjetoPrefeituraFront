@@ -8,5 +8,4 @@ agendador-frontend:
     AGENDADOR_webpackPort: ${AGENDADOR_webpackPort}
 
   ports:
-    - '3001:3001'
     - '3002:3002'
