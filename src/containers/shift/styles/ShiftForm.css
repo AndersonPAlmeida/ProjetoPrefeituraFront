@@ -1,6 +1,5 @@
-.input-field{
-  margin-top: 0px;
-}
+
+
 .shift-select {
   width: 100% !important;
   margin-bottom: 0 !important;
@@ -29,10 +28,6 @@ input.fixed-size-hundred[type=text]{
 
 .margin-bottom-five{
   margin-bottom: 5px;
-}
-
-.select-wrapper input.select-dropdown{
-    height: 2rem;
 }
 
 .fixed-size-hundred{
