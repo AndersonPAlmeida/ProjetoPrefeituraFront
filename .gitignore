@@ -9,3 +9,5 @@ bundle.js
 webpack-assets.json
 public/assets
 package-lock.json
+.vscode
+.env

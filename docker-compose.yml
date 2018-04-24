@@ -2,6 +2,11 @@ agendador-frontend:
   build: .
   volumes:
     - ./src:/app/src/
+  environment:
+    AGENDADOR_apiHost: ${AGENDADOR_apiHost}
+    AGENDADOR_apiPort: ${AGENDADOR_apiPort}
+    AGENDADOR_webpackPort: ${AGENDADOR_webpackPort}
+
   ports:
     - '3001:3001'
     - '3002:3002'

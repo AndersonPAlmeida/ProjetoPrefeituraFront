@@ -1,0 +1,27 @@
+variables:
+    AGENDADOR_URL: 'marula.c3sl.ufpr.br:5000/c3sl/agendador-frontend'
+    GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+    - build
+    - deploy
+
+build:
+    stage: build
+    script:
+        - docker build -t ${AGENDADOR_URL}:${CI_COMMIT_REF_NAME} .
+    tags:
+        - docker
+        - build
+
+deploy:
+    stage: deploy
+    script:
+        - docker push ${AGENDADOR_URL}:${CI_COMMIT_REF_NAME}
+    tags:
+        - docker
+        - build
+    only:
+        - testing
+        - master
+        - develop
