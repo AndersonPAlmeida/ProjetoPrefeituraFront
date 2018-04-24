@@ -31,10 +31,6 @@ input.fixed-size-hundred[type=text]{
   margin-bottom: 5px;
 }
 
-.select-wrapper input.select-dropdown{
-    height: 2rem;
-}
-
 .fixed-size-hundred{
   width: 100px !important;
 }
