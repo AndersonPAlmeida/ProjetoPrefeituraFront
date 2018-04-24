@@ -284,11 +284,11 @@ class getShiftForm extends Component {
                   else
                   data['city_hall_id'] = this.props.current_role.city_hall_id
 
+                  console.log(this.state);
               });
 
 
             });
-
     }
 
   handleDayClick = (day, modifiers) => {
@@ -349,7 +349,7 @@ class getShiftForm extends Component {
       const cityHallsList = (
         this.state.city_halls.map((city_hall) => {
           return (
-            <option value={city_hall.id}>{city_hall.name}</option>
+            <option key={city_hall.id} value={city_hall.id}>{city_hall.name}</option>
           )
         })
       )
