@@ -284,7 +284,6 @@ class getShiftForm extends Component {
                   else
                   data['city_hall_id'] = this.props.current_role.city_hall_id
 
-                  console.log(this.state);
               });
 
 
