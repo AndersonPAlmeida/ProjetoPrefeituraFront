@@ -339,7 +339,7 @@ class getShiftForm extends Component {
         <input disabled
            name="selected_city_hall"
            type='text'
-           className='input-field'
+           className='input-field shift'
            value={this.props.current_role.city_hall_name}
         />
       )
