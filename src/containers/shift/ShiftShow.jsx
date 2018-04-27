@@ -30,7 +30,7 @@ class getShiftShow extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `shifts/${this.props.params.shift_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -58,28 +58,28 @@ class getShiftShow extends Component {
         d = new Date(schedule.service_end_time)
         var end_time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes())
         return (
-          <div>
-            <p> 
+          <div key={schedule.id}>
+            <p>
               <b>Horário de início: </b>
               {`${start_date} - ${start_time}`}
             </p>
-            <p> 
+            <p>
               <b>Horario de termino: </b>
               {`${end_date} - ${end_time}`}
             </p>
-            <p> 
+            <p>
               <b>Situação: </b>
               {schedule.situation_description}
             </p>
-            <p> 
+            <p>
               <b>Cidadão: </b>
               {schedule.citizen_name}
             </p>
-            <p> 
+            <p>
               <b>Local de atendimento: </b>
               {schedule.service_place_name}
             </p>
-            <p> 
+            <p>
               <b>Observações: </b>
               {schedule.note}
             </p>
@@ -113,11 +113,11 @@ class getShiftShow extends Component {
     <div className='card'>
           <div className='card-content'>
             <h2 className='card-title h2-title-home'> Informações da Escala: </h2>
-            <p> 
+            <p>
               <b>Horário de início: </b>
               {`${start_date} - ${start_time}`}
             </p>
-            <p> 
+            <p>
               <b>Horario de termino: </b>
               {`${end_date} - ${end_time}`}
             </p>
@@ -158,7 +158,7 @@ class getShiftShow extends Component {
 
   prev() {
     browserHistory.push(`shifts`)
-  }  
+  }
 
 	editButton() {
 		return (

@@ -1,3 +1,5 @@
+
+
 .shift-select {
   width: 100% !important;
   margin-bottom: 0 !important;
@@ -7,26 +9,157 @@
   margin-top: 0 !important;
 }
 
-.select-field {
-  font-size: 13px;
-  font-family: 'Roboto', 'Arial';
-}
-
-.file-input {
-  overflow: auto;
-  margin-bottom: 20px;
+.calendar{
+  margin-left: 0px !important;
 }
 
 .field-input {
+  font-family: 'Roboto', 'Arial';
+}
+
+input.fixed-size-hundred[type=number] {
+  height: 2rem;
+}
+
+input.fixed-size-hundred[type=text]{
+  margin: 5px 0 5px 0;
+  height: 2rem;
+}
+
+.margin-bottom-five{
+  margin-bottom: 5px;
+}
+
+.fixed-size-hundred{
+  width: 100px !important;
+}
+
+.fixed-size-three{
   width: 300px !important;
-  height: 115px !important;
 }
 
 input {
+   color: black;
+   text-overflow: ellipsis;
+ }
+
+label {
    color: black;
  }
 
 .check-input {
   margin-bottom: 5px;
   overflow: auto;
+}
+
+.checkbox{
+  color: black;
+}
+
+.calendar-panel {
+	margin: .75rem;
+	padding: 0 !important;
+}
+
+[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after{
+  border:2px solid #92BF23;
+}
+
+[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:after{
+  background-color: #92BF23;
+}
+
+.legend-item{
+  width: 17px;
+  display: inline-block;
+  height: 17px;
+  border: 1px solid #BBB;
+  text-align: center;
+  line-height: 16px;
+  border-radius: 50%;
+  float:left;
+}
+
+.legend-text{
+  display: inline-block;
+  padding-left: 5px;
+  margin-bottom: 5px;
+  line-height: 18px;
+  float: left;
+}
+
+.legend-invalid-date{
+  background-color: #ddd;
+}
+
+.legend-available{
+  background-color: #92BF23;
+}
+
+.legend-conflict{
+  background-color: #F0D156;
+}
+
+.red-text{
+  color: red;
+}
+
+.page-header{
+  margin-bottom: 5px;
+}
+
+.row .col{
+  padding-left: 0px;
+}
+
+.DayPicker-Day {
+	height: 39px;
+	width: 39px;
+  font-size: 15px;
+}
+
+.DayPicker-Day--listDays {
+	background-color: #92BF23;
+	border-radius: 50%;
+}
+
+.DayPicker-Day--disabled {
+	border-radius: 1px !important;
+	background-color: #eff1f1 !important;
+}
+
+.DayPicker-wrapper {
+	padding: 0 !important;
+}
+
+.DayPicker-Month {
+	margin: 0 !important;
+}
+
+.DayPicker-Weekdays {
+	background-color: #92BF23;
+}
+
+.DayPicker-Weekday {
+	color: white !important;
+}
+
+.DayPicker-Caption {
+	background-color: #92BF23;
+	color: white;
+	height: 69px !important;
+}
+
+.DayPicker-Caption div {
+	padding-top: 8%;
+	font-size: 15px;
+	font-family: 'Roboto', 'Arial';
+}
+
+.DayPicker-NavButton--next {
+	margin-top: 5px;
+}
+
+.DayPicker-NavButton--prev {
+	margin-top: 5px;
 }

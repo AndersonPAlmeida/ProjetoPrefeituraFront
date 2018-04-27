@@ -36,7 +36,7 @@ class getCitizenSchedule extends Component {
   componentDidMount() {
     var self = this;
     // GET /forms/schedule_history
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     var collection = `forms/schedule_history`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -341,7 +341,7 @@ class getCitizenSchedule extends Component {
     if(situation == 0)
       situation = ''
     // GET /schedules with filter params
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `schedules`;
     const params = `permission=${this.props.user.current_role}`
                     +`&q[sector_id]=${sector}`

@@ -72,7 +72,7 @@ class getservicesReport extends Component {
   }
 
   getSchedulesIndex(){
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = `forms/schedule_index`;
       const params = `permission=${this.props.user.current_role}`
       fetch(`${apiUrl}/${collection}?${params}`, {
@@ -210,7 +210,7 @@ class getservicesReport extends Component {
 
       }
 
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = `schedules`;
       const params = `permission=${this.props.user.current_role}${filters}&service=true`
 

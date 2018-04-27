@@ -34,7 +34,7 @@ class getProfessionalCheck extends Component {
   handleSubmit() {
     let cpf = this.state.cpf.replace(/(\.|-)/g,'');
     let errors = []
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `citizens/schedule_options`;
     const params = `permission=${this.props.user.current_role}&cpf=${cpf}`; 
     fetch(`${apiUrl}/${collection}?${params}`, {

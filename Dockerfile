@@ -1,5 +1,5 @@
 FROM node:8.9.4
-MAINTAINER horstmannmat <mch15@inf.ufpr.br>
+LABEL maintainer="horstmannmat <mch15@inf.ufpr.br>"
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG C.UTF-8
@@ -26,5 +26,6 @@ RUN npm install npm@latest -g && \
 # VOLUME ["$INSTALL_PATH/src"]
 
 EXPOSE 3002
-EXPOSE 3001
-CMD ["/usr/local/bin/npm","run","dev"]
+
+ENTRYPOINT ["/app/agendador-entrypoint.sh"]
+CMD ["PRODUCTION"]

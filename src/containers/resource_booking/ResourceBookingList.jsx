@@ -63,7 +63,7 @@ class getResourceList extends Component {
     }
     this.setState({current_permission: current_permission});
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_bookings';
     const params = `permission=${this.props.user.current_role}&view=${this.props.user.current_role != 'citizen' ? 'professional' : 'citizen'}`;
     
@@ -101,7 +101,7 @@ class getResourceList extends Component {
 
   getExtraDetails() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_bookings_get_extra_info/';
     const params = `permission=${this.props.user.current_role}&view=${this.props.user.current_role != 'citizen' ? 'professional' : 'citizen'}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -120,7 +120,7 @@ class getResourceList extends Component {
 
   getResourceWithDetails() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_more_info/';
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -139,7 +139,7 @@ class getResourceList extends Component {
   }
   getCityHallName() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'city_halls/';
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -499,7 +499,7 @@ class getResourceList extends Component {
       end_date = this.state.filter_end_date;
       start_date = this.state.filter_start_date;
     }
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_bookings';
     const params = `permission=${this.props.user.current_role}&view=${this.state.current_permission ? 'professional':'citizen'}&q[booking_start_time]=${start_date}&q[booking_end_time]=${end_date}&q[s]=${this.state.filter_s}`;
 

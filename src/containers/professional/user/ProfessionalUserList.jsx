@@ -29,9 +29,9 @@ class getProfessionalUserList extends Component {
       };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const params = `permission=${this.props.user.current_role}`
     var collection = `citizens`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -40,7 +40,7 @@ class getProfessionalUserList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({
+      self.setState({ 
                       citizens: resp.entries,
                       num_entries: resp.num_entries
                     })
@@ -54,7 +54,7 @@ class getProfessionalUserList extends Component {
           "Content-Type": "application/json" },
           method: "get",
       }).then(parseResponse).then(resp => {
-        self.setState({
+        self.setState({ 
                         city_halls: resp.city_halls
                       })
       });
@@ -63,9 +63,9 @@ class getProfessionalUserList extends Component {
 
   mainComponent() {
     return (
-      <div className='card card-user'>
+      <div className='card'>
         <div className='card-content'>
-          <h2 className='card-title h2-title-home'> Cidadãos</h2>
+          <h2 className='card-title h2-title-home'> Profissional </h2>
           {this.filterCitizen()}
           {this.state.citizens.length > 0 ? this.tableList() : 'Nenhum cidadão encontrado'}
         </div>
@@ -75,7 +75,7 @@ class getProfessionalUserList extends Component {
       </div>
       )
   }
-
+  
   formatCPF(n) {
     n = n.replace(/\D/g,"");
     n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
@@ -130,32 +130,32 @@ class getProfessionalUserList extends Component {
               {citizen.num_of_dependants}
             </td>
             <td>
-              <a className='back-bt waves-effect btn-flat'
-                href='#'
-                onClick={ () =>
-                  browserHistory.push(`/professionals/users/${citizen.id}`)
+              <a className='back-bt waves-effect btn-flat' 
+                href='#' 
+                onClick={ () => 
+                  browserHistory.push(`/professionals/users/${citizen.id}`) 
                 }>
 
                 <i className="waves-effect material-icons tooltipped">
                   visibility
                 </i>
-              </a>
+              </a> 
             </td>
             <td>
-              <a className='back-bt waves-effect btn-flat'
-                 href='#'
-                 onClick={(e) =>
+              <a className='back-bt waves-effect btn-flat' 
+                 href='#' 
+                 onClick={(e) => 
                    {
                      e.preventDefault()
                      browserHistory.push({
                        pathname: `/professionals/users/${citizen.id}/edit`
-                     })
+                     }) 
                    }
                  }>
                 <i className="waves-effect material-icons tooltipped">
                   edit
                 </i>
-              </a>
+              </a> 
             </td>
           </tr>
         )
@@ -182,8 +182,8 @@ class getProfessionalUserList extends Component {
         <p className={styles['description-column']}>
           Mostrando
           {
-            num_pages != 0
-              ?
+            num_pages != 0 
+              ? 
                 this.state.current_page == num_pages
                   ?
                     this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `
@@ -191,12 +191,12 @@ class getProfessionalUserList extends Component {
                     ` ${num_items_per_page} `
               :
                 ' 0 '
-
+              
           }
           de {this.state.num_entries} registros
         </p>
         <br />
-          <div className='div-table'>
+          <div className='div-table'> 
             <table className={styles['table-list']}>
               <thead>
                 {fields}
@@ -239,7 +239,7 @@ class getProfessionalUserList extends Component {
       })
     }
   }
-
+  
   pickName() {
     return (
       <Col s={12} m={3}>
@@ -325,21 +325,10 @@ class getProfessionalUserList extends Component {
         </Row>
         <Row>
           <Col>
-            <button className="waves-effect btn button-green search-button" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+            <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
           </Col>
           <Col>
-            <button className="waves-effect btn button-white clean-button" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
-          </Col>
-          <Col>
-            {this.generateCitizenReportButton()}
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            {this.newCitizenButton()}
-          </Col>
-          <Col>
-            {this.newCitizenListButton()}
+            <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
           </Col>
         </Row>
       </div>
@@ -370,7 +359,7 @@ class getProfessionalUserList extends Component {
     }
     cpf = cpf.replace(/(\.|-)/g,'');
     name = name.replace(/\s/g,'+')
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `/citizens`;
     const params = `permission=${this.props.user.current_role}`
                     +`&q[name]=${name}`
@@ -398,46 +387,17 @@ class getProfessionalUserList extends Component {
 
 	newCitizenButton() {
 		return (
-			<button
+			<button 
         onClick={() =>
-          browserHistory.push({pathname: `/professionals/users/new`})
+          browserHistory.push({pathname: `/professionals/users/new`}) 
         }
-        className="btn waves-effect btn button-green new-user-button"
-        name="Novo"
+        className="btn waves-effect btn button-color" 
+        name="anterior" 
         type="submit">
           CADASTRAR NOVO CIDADÃO
       </button>
 		)
 	}
-
-  newCitizenListButton() {
-    return (
-      <button
-        onClick={() =>
-          browserHistory.push({pathname: `/professionals/users/upload`})
-        }
-        className="btn waves-effect btn button-green new-user-button"
-        name="upload"
-        type="submit">
-          INSERIR LISTA DE CIDADÃOS
-      </button>
-    )
-  }
-
-  generateCitizenReportButton() {
-		return (
-			<button
-        onClick={() =>
-          browserHistory.push({pathname: `/professionals/users/new`})
-        }
-        className="btn waves-effect btn button-blue user-report-button"
-        name="Relatorio"
-        type="submit">
-          GERAR RELATÓRIO
-      </button>
-		)
-	}
-
 
   render() {
     return (

@@ -18,7 +18,7 @@ class getCitizenEdit extends Component {
 
   componentDidMount() {
     var self = this
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const params = `permission=${this.props.user.current_role}`
     const collection = `citizens/${this.props.user.citizen.id}/picture`
 

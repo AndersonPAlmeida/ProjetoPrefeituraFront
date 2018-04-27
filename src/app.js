@@ -20,7 +20,7 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
   ProfessionalUserDependantShow, ShiftShow, ShiftEdit, ShiftCreate,
   ShiftList, OccupationCreate,OccupationList,OccupationEdit,OccupationShow, MyReport, Reports,
   citizenReport, schedulesReport, shiftsReport, professionalsReport,
-  servicesReport, shiftTypeReport
+  servicesReport, shiftTypeReport,ServiceEdit,ServiceList
 } from './containers';
 
 import { configure } from './redux-auth';
@@ -150,6 +150,10 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="resource_bookings/new" component={UserIsAuthenticated(ResourceBookingCreate)} />
         <Route path="resource_bookings/:resource_booking_id" component={UserIsAuthenticated(ResourceBookingShow)} />
 
+        <Route path="schedules/service/:schedule_id/edit" component={UserIsAuthenticated(ServiceEdit)} />
+        <Route path="schedules/service" component={UserIsAuthenticated(ServiceList)} />
+
+
         <Route path="schedules" component={UserIsAuthenticated(ProfessionalSchedule)} />
 
         <Route path="professionals/users/:citizen_id/dependants/new" component={UserIsAuthenticated(ProfessionalUserDependantCreate)} />
@@ -157,7 +161,6 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="professionals/users/:citizen_id/dependants/:dependant_id" component={UserIsAuthenticated(ProfessionalUserDependantShow)} />
         <Route path="professionals/users" component={UserIsAuthenticated(ProfessionalUserList)} />
         <Route path="professionals/users/new" component={UserIsAuthenticated(ProfessionalUserCreate)} />
-        <Route path="professionals/users/upload" component={UserIsAuthenticated(ProfessionalUserUpload)} />
         <Route path="professionals/users/:citizen_id/edit" component={UserIsAuthenticated(ProfessionalUserEdit)} />
         <Route path="professionals/users/:citizen_id" component={UserIsAuthenticated(ProfessionalUserShow)} />
 

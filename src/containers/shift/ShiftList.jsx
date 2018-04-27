@@ -38,19 +38,21 @@ class getShiftList extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     var collection = `forms/shift_index`
     const params = `permission=${this.props.user.current_role}`
-    fetch(`${apiUrl}/${collection}?${params}`, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-        method: "get",
-    }).then(parseResponse).then(resp => {
-      self.setState({ 
-                      collections: resp
-                    })
-    });
+    if(this.props.current_role.role !== 'responsavel_atendimento'){
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "get",
+        }).then(parseResponse).then(resp => {
+          self.setState({
+            collections: resp
+          })
+        });
+    }
     collection = `shifts`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -58,10 +60,10 @@ class getShiftList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ 
-                      shifts: resp.entries,
-                      num_entries: resp.num_entries
-                    })
+      self.setState({
+        shifts: resp.entries,
+        num_entries: resp.num_entries
+      })
     });
   }
 
@@ -70,16 +72,25 @@ class getShiftList extends Component {
       <div className='card'>
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Escala </h2>
-          {this.filterShift()}
+          {
+            this.props.current_role.role !== 'responsavel_atendimento'?
+            this.filterShift() :
+            <div/>
+          }
           {this.state.shifts.length > 0 ? this.tableList() : '- Nenhuma escala encontrada'}
         </div>
-        <div className="card-action">
-          {this.newShiftButton()}
-        </div>
+        {
+          this.props.current_role.role !== 'responsavel_atendimento'?
+          <div className="card-action">
+            {this.newShiftButton()}
+          </div>
+          :
+          <div/>
+        }
       </div>
       )
   }
-  
+
   sortableColumn(title, name) {
     return (
       <a
@@ -115,16 +126,16 @@ class getShiftList extends Component {
   }
 
 	tableList() {
-    var date
-    var d
-    var time
+    var date;
+    var d;
+    var time;
     const data = (
       this.state.shifts.map((shift) => {
-        date = strftime.timezone('+0000')('%d/%m/%Y', new Date(shift.execution_start_time))
-        d = new Date(shift.execution_start_time)
-        time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes())
+        date = strftime.timezone('+0000')('%d/%m/%Y', new Date(shift.execution_start_time));
+        d = new Date(shift.execution_start_time);
+        time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes());
         return (
-          <tr>
+          <tr key={shift.id}>
             <td>
               {shift.professional_performer_name}
             </td>
@@ -138,32 +149,38 @@ class getShiftList extends Component {
               {`${date} - ${time}`}
             </td>
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/shifts/${shift.id}`) 
+              <a className='back-bt waves-effect btn-flat'
+                href='#'
+                onClick={ () =>
+                  browserHistory.push(`/shifts/${shift.id}`)
                 }>
                 <i className="waves-effect material-icons tooltipped">
                   visibility
                 </i>
-              </a> 
+              </a>
             </td>
-            <td>
-              <a className='back-bt waves-effect btn-flat' 
-                 href='#' 
-                 onClick={(e) => 
-                   {
-                     e.preventDefault()
-                     browserHistory.push({
-                       pathname: `/shifts/${shift.id}/edit`
-                     }) 
-                   }
-                 }>
-                <i className="waves-effect material-icons tooltipped">
-                  edit
-                </i>
-              </a> 
-            </td>
+            {
+             this.props.current_role.role !== 'responsavel_atendimento'?
+                <td>
+                  <a className='back-bt waves-effect btn-flat'
+                     href='#'
+                     onClick={(e) =>
+                       {
+                         e.preventDefault()
+                         browserHistory.push({
+                           pathname: `/shifts/${shift.id}/edit`
+                         })
+                       }
+                     }>
+                       <i className="waves-effect material-icons tooltipped">
+                         edit
+                       </i>
+                  </a>
+                </td>
+                :
+                <td/>
+
+          }
           </tr>
         )
       })
@@ -189,8 +206,8 @@ class getShiftList extends Component {
         <p className={styles['description-column']}>
           Mostrando
           {
-            num_pages != 0 
-              ? 
+            num_pages != 0
+              ?
                 this.state.current_page == num_pages
                   ?
                     this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `
@@ -198,7 +215,7 @@ class getShiftList extends Component {
                     ` ${num_items_per_page} `
               :
                 ' 0 '
-              
+
           }
           de {this.state.num_entries} registros
         </p>
@@ -251,7 +268,7 @@ class getShiftList extends Component {
     const professionalList = (
       this.state.collections.professionals.map((professional) => {
         return (
-          <option value={professional.id}>{professional.name}</option>
+          <option key={professional.id} value={professional.id}>{professional.name}</option>
         )
       })
     )
@@ -283,7 +300,7 @@ class getShiftList extends Component {
     const service_typeList = (
       this.state.collections.service_types.map((service_type) => {
         return (
-          <option value={service_type.id}>{service_type.description}</option>
+          <option key={service_type.id} value={service_type.id}>{service_type.description}</option>
         )
       })
     )
@@ -315,7 +332,7 @@ class getShiftList extends Component {
     const servicePlaceList = (
       this.state.collections.service_places.map((service_place) => {
         return (
-          <option value={service_place.id}>{service_place.name}</option>
+          <option key={service_place.id} value={service_place.id}>{service_place.name}</option>
         )
       })
     )
@@ -347,7 +364,7 @@ class getShiftList extends Component {
     const cityHallList = (
       this.state.collections.city_halls.map((city_hall) => {
         return (
-          <option value={city_hall.id}>{city_hall.name}</option>
+          <option key={city_hall.id} value={city_hall.id}>{city_hall.name}</option>
         )
       })
     )
@@ -428,7 +445,7 @@ class getShiftList extends Component {
       service_place = this.state.filter_service_place
       city_hall = this.state.filter_city_hall
     }
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `/shifts`;
     const params = `permission=${this.props.user.current_role}`
                     +`&q[professional]=${professional}`
@@ -458,12 +475,12 @@ class getShiftList extends Component {
 
 	newShiftButton() {
 		return (
-			<button 
+			<button
         onClick={() =>
-          browserHistory.push({pathname: `/shifts/new`}) 
+          browserHistory.push({pathname: `/shifts/new`})
         }
-        className="btn waves-effect btn button-color" 
-        name="anterior" 
+        className="btn waves-effect btn button-color"
+        name="anterior"
         type="submit">
           CADASTRAR NOVA ESCALA
       </button>
