@@ -1,33 +1,91 @@
+
+input[type=text] {
+  margin-top: 15px;
+}
+
 .div-table {
   overflow-x: scroll;
 }
 
 .table-list th {
-	text-align: center;
+    text-align: center;
 }
 
 .table-list thead {
-	background-color: #92bf23;
-	border-bottom: 1px solid #d0d0d0;
-	font-family: 'Roboto', 'Arial';
-	font-size: 13px;
-	border-radius: 3px;
+    background-color: #92bf23;
+    border-bottom: 1px solid #d0d0d0;
+    font-family: 'Roboto', 'Arial';
+    font-size: 13px;
+    border-radius: 3px;
   overflow: hidden;
 }
 
 .table-list tbody tr:nth-child(odd) {
-	background-color: #f2f2f2;
+    background-color: #f2f2f2;
 }
 
 .table-list td {
-	text-align: center;
+    text-align: center;
 }
 
-.button-color {
-	background-color: #92bf23;
-	color: black;
+.button-green {
+    background-color: #92bf23;
+    color: #1A1A1A;
 }
 
-input[type=text] {
-  margin-top: 15px;
+.button-white{
+    background-color: #ECEEF1;
+    color: #1A1A1A;
+}
+
+.button-blue{
+    background-color: #549FD7;
+    color: #1A1A1A;
+}
+.clean-button{
+    text-align: center;
+    /* width: 124.964px; */
+    height: 36px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.search-button{
+    text-align: center;
+    /* width: 76.493px; */
+    height: 36px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.new-user-button{
+    text-align: center;
+    height: 36px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+
+.user-report-button{
+    text-align: center;
+    height: 36px;
+  /* width: 135px; */
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.card-user {
+    margin-top: 45px;
+}
+
+a {
+  color: #1A1A1A;
+  text-decoration: none;
+}
+
+a:hover
+{
+  color:#1A1A1A;
+  text-decoration:none;
+  cursor:pointer;
 }
