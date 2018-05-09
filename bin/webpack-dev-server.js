@@ -4,7 +4,7 @@ const { host, port, webpackPort } = require('../config/env');
 const webpackConfig = require('../webpack/dev.config');
 const compiler = webpack(webpackConfig);
 const serverOptions = {
-  contentBase: 'http://${host}:${port}',
+  contentBase: '//${host}:${port}',
   quiet: true,
   noInfo: true,
   hot: true,
