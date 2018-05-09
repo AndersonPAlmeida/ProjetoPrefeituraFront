@@ -31,3 +31,17 @@
 input[type=text] {
   margin-top: 15px;
 }
+
+input[type=text].date{
+  margin: 0 0 20px 0;
+}
+
+.filter-row{
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.display-inline{
+  display: inline-block;
+  height: 2.2em;
+}

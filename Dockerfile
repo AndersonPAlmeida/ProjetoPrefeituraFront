@@ -29,4 +29,4 @@ EXPOSE 3002
 EXPOSE 3001
 
 ENTRYPOINT ["/app/agendador-entrypoint.sh"]
-CMD ["PRODUCTION"]
+CMD ["DEVELOPMENT"]
