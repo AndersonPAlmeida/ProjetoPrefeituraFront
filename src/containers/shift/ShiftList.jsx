@@ -32,7 +32,8 @@ class getShiftList extends Component {
           last_fetch_city_hall: '',
           filter_s: '',
           num_entries: 0,
-          current_page: 1
+          current_page: 1,
+          filter_date: ''
       };
   }
 
@@ -41,7 +42,6 @@ class getShiftList extends Component {
     const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     var collection = `forms/shift_index`
     const params = `permission=${this.props.user.current_role}`
-    if(this.props.current_role.role !== 'responsavel_atendimento'){
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -52,7 +52,7 @@ class getShiftList extends Component {
             collections: resp
           })
         });
-    }
+
     collection = `shifts`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -72,11 +72,7 @@ class getShiftList extends Component {
       <div className='card'>
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Escala </h2>
-          {
-            this.props.current_role.role !== 'responsavel_atendimento'?
-            this.filterShift() :
-            <div/>
-          }
+            {this.filterShift()}
           {this.state.shifts.length > 0 ? this.tableList() : '- Nenhuma escala encontrada'}
         </div>
         {
@@ -89,6 +85,44 @@ class getShiftList extends Component {
         }
       </div>
       )
+  }
+
+  pickDate(){
+    /*
+      Date selector
+    <Input name="filter_date" type='date' value={this.state.filter_date} className='date'
+      onChange={
+        (event) => {
+          var selected_service_type = event.target.value
+          /*if(this.state.filter_service_type != selected_service_type) {
+          this.setState({
+          filter_service_type: selected_service_type,
+          });
+          }
+        }
+
+      }
+      >
+    </Input>
+    */
+    return (
+      <Col s={12} m={4}>
+        <div>
+          <h6 className='display-inline'>A partir de:</h6>
+            <input name="filter_date" type='text' value={this.state.filter_date} className='date'
+              onChange={
+                (event) => {
+                  var selected_date = event.target.value
+                  if(this.state.filter_date != selected_date) {
+                    this.setState({
+                      filter_date:  selected_date
+                    });
+                }
+              }}>
+            </input>
+        </div>
+      </Col>
+    )
   }
 
   sortableColumn(title, name) {
@@ -275,7 +309,7 @@ class getShiftList extends Component {
     return (
       <Col s={12} m={3}>
         <div>
-          <h6>Profissional:</h6>
+          <h6 className='display-inline'>Profissional:</h6>
           <Input name="filter_professional" type='select' value={this.state.filter_professional}
             onChange={
               (event) => {
@@ -305,9 +339,9 @@ class getShiftList extends Component {
       })
     )
     return (
-      <Col s={12} m={3}>
+      <Col s={12} m={ this.props.current_role.role === 'responsavel_atendimento' ? 4 : 3}>
         <div>
-          <h6>Tipo de Atendimento:</h6>
+          <h6 className='display-inline'>Tipo de Atendimento:</h6>
           <Input name="filter_service_type" type='select' value={this.state.filter_service_type}
             onChange={
               (event) => {
@@ -339,7 +373,7 @@ class getShiftList extends Component {
     return (
       <Col s={12} m={3}>
         <div>
-          <h6>Local de Atendimento:</h6>
+          <h6 className='display-inline'>Local de Atendimento:</h6>
           <Input name="filter_service_place" type='select' value={this.state.filter_service_place}
             onChange={
               (event) => {
@@ -393,30 +427,50 @@ class getShiftList extends Component {
   }
 
   filterShift() {
-    return (
-      <div>
-        <Row></Row>
-        <Row s={12}>
-          {
-            this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
-            this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
-              this.pickCityHall() :
-              null
-          }
-          {this.pickProfessional()}
-          {this.pickServiceType()}
-          {this.pickServicePlace()}
-        </Row>
-        <Row s={12}>
-          <Col>
-            <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
-          </Col>
-          <Col>
-            <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
-          </Col>
-        </Row>
-      </div>
-    )
+    if(this.props.current_role.role === 'responsavel_atendimento'){
+      return(
+        <div>
+          <Row s={12} className='filter-row' >
+            {this.pickServiceType()}
+            {this.pickDate()}
+          </Row>
+          <Row s={12}>
+              <Col>
+                <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+              </Col>
+              <Col>
+                <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+              </Col>
+            </Row>
+        </div>
+      )
+    }
+    else
+      return (
+        <div>
+          <Row></Row>
+          <Row s={12}>
+            {
+              this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
+              this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+                this.pickCityHall() :
+                null
+            }
+
+            {this.pickProfessional()}
+            {this.pickServiceType()}
+            {this.pickServicePlace()}
+          </Row>
+          <Row s={12}>
+            <Col>
+              <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+            </Col>
+            <Col>
+              <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+            </Col>
+          </Row>
+        </div>
+      )
   }
 
   cleanFilter() {
@@ -447,13 +501,21 @@ class getShiftList extends Component {
     }
     const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `/shifts`;
-    const params = `permission=${this.props.user.current_role}`
-                    +`&q[professional]=${professional}`
-                    +`&q[service_type_id]=${service_type}`
-                    +`&q[service_place_id]=${service_place}`
-                    +`&q[city_hall]=${city_hall}`
-                    +`&q[s]=${this.state.filter_s}`
-                    +`&page=${this.state.current_page}`
+    let params = `permission=${this.props.user.current_role}`
+                  +`&page=${this.state.current_page}`;
+
+    this.state.filter_s == '' ? params : params += `&q[s]=${this.state.filter_s}`
+    professional == '' ? params = params : params += `&q[professional]=${professional}`;
+    service_type == '' ? params = params : params += +`&q[service_type_id]=${service_type}`;
+    service_place == '' ? params = params : params += `&q[service_place_id]=${service_place}`;
+    ((this.props.current_role.role !== 'adm_c3sl') || (city_hall == null)) ?
+    params = params : params += `&q[city_hall]=${city_hall}`;
+    console.log(params);
+    console.log(professional);
+    console.log(service_type);
+    console.log(service_place);
+
+
     current_page = sort_only ? this.state.current_page : 1
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
