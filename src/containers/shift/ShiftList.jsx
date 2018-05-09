@@ -39,7 +39,7 @@ class getShiftList extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     var collection = `forms/shift_index`
     const params = `permission=${this.props.user.current_role}`
       fetch(`${apiUrl}/${collection}?${params}`, {
@@ -499,8 +499,7 @@ class getShiftList extends Component {
       service_place = this.state.filter_service_place
       city_hall = this.state.filter_city_hall
     }
-
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `/shifts`;
     let params = `permission=${this.props.user.current_role}`
                   +`&page=${this.state.current_page}`;

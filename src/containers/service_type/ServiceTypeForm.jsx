@@ -33,7 +33,7 @@ class getServiceTypeForm extends Component {
     var self = this;
     var data = this.props.is_edit ? this.props.data : this.state.service_type
 
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     var collection = 'forms/create_service_type';
     const params = this.props.fetch_params;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -64,7 +64,7 @@ class getServiceTypeForm extends Component {
 
   componentDidUpdate() {
     if(this.state.update_service_types != 0) {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'forms/create_service_type';
       const params = this.props.fetch_params;
       fetch(`${apiUrl}/${collection}?${params}`, {
@@ -100,7 +100,7 @@ class getServiceTypeForm extends Component {
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
       let fetch_body = {}

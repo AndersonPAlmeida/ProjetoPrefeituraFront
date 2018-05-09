@@ -24,7 +24,7 @@ class getServiceEdit extends Component {
 
 
   componentDidMount() {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `schedules/${this.props.params.schedule_id}`;
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -39,7 +39,7 @@ class getServiceEdit extends Component {
   }
 
   getSituations(role) {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `forms/schedule_index`;
     const params = `permission=${role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -86,7 +86,7 @@ class getServiceEdit extends Component {
   }
 
   handleSubmit() {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `schedules/${this.props.params.schedule_id}`;
     const params = `permission=${this.props.user.current_role}`;
     let fetch_body = {}

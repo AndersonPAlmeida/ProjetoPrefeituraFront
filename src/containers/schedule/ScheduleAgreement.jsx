@@ -19,7 +19,7 @@ class getScheduleAgreement extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'sectors';
     const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.user.citizen.id}&schedule=true`
     fetch(`${apiUrl}/${collection}?${params}`, {

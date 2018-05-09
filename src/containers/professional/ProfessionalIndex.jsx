@@ -32,7 +32,7 @@ class getProfessionalIndex extends Component {
 
   componentDidMount() {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     var collection = `forms/shift_index`
     var params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -311,7 +311,7 @@ class getProfessionalIndex extends Component {
     } else {
       service_type = this.state.filter_service_type
     }
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `/shifts`;
     const params = `permission=${this.props.user.current_role}`
                     //+`&q[professional]=${this.props.current_role.professional_id}`

@@ -40,7 +40,7 @@ class getShiftsReport extends Component {
   }
 
 getShiftIndex(){
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `forms/shift_index`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -80,7 +80,7 @@ confirmFilters(){
       console.log("sort")
     }
 
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `shifts`;
     const params = `permission=${this.props.user.current_role}${filters}`
     console.log(params)

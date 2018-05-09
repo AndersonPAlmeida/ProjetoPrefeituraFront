@@ -31,7 +31,7 @@ class SignUpCep extends Component {
     var formData = {};
     formData["cep"] = {};
     formData["cep"]["number"] = this.state.cep.replace(/(\.|-)/g,'');
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'validate_cep';
     fetch(`${apiUrl}/${collection}`, {
       headers: {

@@ -119,7 +119,7 @@ class getUserForm extends Component {
       }
     }
     if(this.props.user_class == `professional`) {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = `forms/create_professional`
       fetch(`${apiUrl}/${collection}?${this.props.fetch_params}`, {
         headers: {
@@ -269,7 +269,7 @@ class getUserForm extends Component {
   }
 
   updateAddress(cep) {
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'validate_cep';
     var formData = {};
     formData["cep"] = {};
@@ -430,7 +430,7 @@ class getUserForm extends Component {
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
       let fetch_body = this.generateBody.bind(this)(formData,auxData,send_password)
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       var params = this.props.fetch_params; 
       if(this.props.user_class == `professional` && (!this.props.is_edit))

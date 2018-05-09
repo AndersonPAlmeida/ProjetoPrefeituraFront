@@ -41,7 +41,7 @@ class getResourceTypeForm extends Component {
       };
     if(this.props.current_role.role != 'adm_c3sl') {
 
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = `/city_halls/${this.props.current_role.city_hall_id}`;
       const params = this.props.fetch_params; 
       fetch(`${apiUrl}/${collection}?${params}`, {
@@ -61,7 +61,7 @@ class getResourceTypeForm extends Component {
       });
     }
     else {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'forms/service_type_index';
       const params = this.props.fetch_params; 
       fetch(`${apiUrl}/${collection}?${params}`, {
@@ -102,7 +102,7 @@ class getResourceTypeForm extends Component {
       errors.forEach(function(elem){ full_error_msg += elem + '\n'; });
       Materialize.toast(full_error_msg, 10000, 'red',function(){$('#toast-container').remove();});
     } else {
-      const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       const params = this.props.fetch_params; 
       let fetch_body = {};

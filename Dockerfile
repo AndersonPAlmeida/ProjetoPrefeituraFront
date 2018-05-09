@@ -26,7 +26,6 @@ RUN npm install npm@latest -g && \
 # VOLUME ["$INSTALL_PATH/src"]
 
 EXPOSE 3002
-EXPOSE 3001
 
 ENTRYPOINT ["/app/agendador-entrypoint.sh"]
 CMD ["DEVELOPMENT"]

@@ -52,7 +52,7 @@ class getResourceShiftShow extends Component {
     this.setState({current_permission: current_permission});
 
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `resource_shifts/${this.props.params.resource_shift_id}`;
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -69,7 +69,7 @@ class getResourceShiftShow extends Component {
   }
   getDetails(id) {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `resource_details/${id}`;
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -86,7 +86,7 @@ class getResourceShiftShow extends Component {
   }
   getProfessionalName(id) {
     var self = this;
-    const apiUrl = `http://${apiHost}:${apiPort}/${apiVer}`;
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `resource_shift_professional_responsible/${id}`;
     const params = `permission=${this.props.user.current_role}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
