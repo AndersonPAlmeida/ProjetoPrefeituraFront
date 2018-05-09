@@ -74,7 +74,6 @@ module.exports = {
       __DEVTOOLS__: false,
     }),
     new webpack.IgnorePlugin(/\.\/dev/, /\/config$/),
-    new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {

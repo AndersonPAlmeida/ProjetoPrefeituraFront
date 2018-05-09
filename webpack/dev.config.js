@@ -13,7 +13,7 @@ module.exports = {
   /* files that will be bundled and will have their require()s solved */
   entry: {
     main: [
-      `webpack-hot-middleware/client?path=http://${webpackHost}:${webpackPort}/__webpack_hmr`,
+      `webpack-hot-middleware/client?path=//${webpackHost}:${webpackPort}/__webpack_hmr`,
       './src/index.js',
     ],
   },
@@ -22,7 +22,7 @@ module.exports = {
     path: assetsPath,
     filename: '[name]-[hash].js',
     chunkFilename: '[name]-[chunkhash].js',
-    publicPath: `http://${webpackHost}:${webpackPort}/assets/`,
+    publicPath: `//${webpackHost}:${webpackPort}/assets/`,
   },
   /* allows you to require other extensions in javascript */
   module: {
