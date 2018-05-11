@@ -9,3 +9,4 @@ agendador-frontend:
 
   ports:
     - '3002:3002'
+    - '3001:3001'
