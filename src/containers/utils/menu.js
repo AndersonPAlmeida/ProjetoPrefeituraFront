@@ -24,29 +24,30 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': 'Prefeituras', 'link': '/city_halls', 'separator': false },
                   { 'name': 'Setores', 'link': '/sectors', 'separator': false },
                   { 'name': 'Cargos', 'link': '/occupations', 'separator': false },
-                  { 'name': 'Profissionais', 'link': '/professionals', 'separator': true },
+                  { 'name': 'Profissionais', 'link': '/professionals', 'separator': false },
+                  { 'name': 'Cidadãos', 'link': '/professionals/users', 'separator': true },
                   { 'name': 'Relatórios', 'link': '/reports', 'separator': false },
                   { 'name': 'Solicitações', 'link': '/solicitations', 'separator': false }
                 ]
         },
+        { 'name': 'Escalas', 'rolldown': false, 'link': '/shifts' },
+        { 'name': 'Atendimentos', 'rolldown': false, 'link': '/schedules/service' },
         { 'name': 'Recursos',
           'rolldown': true,
           'fields':
               [
-                { 'name': 'Tipo de recurso', 'link': '/resource_types', 'separator': true },
+                { 'name': 'Agendar', 'link': '/resource_bookings', 'separator': true },
+                { 'name': 'Tipo de recurso', 'link': '/resource_types', 'separator': false },
                 { 'name': 'Recurso', 'link': '/resources', 'separator': false },
-                { 'name': 'Escala de recurso', 'link': '/resource_shifts', 'separator': false },
-                { 'name': 'Agendamento', 'link': '/resource_bookings', 'separator': false }
+                { 'name': 'Escala de recurso', 'link': '/resource_shifts', 'separator': false }
               ]
         },
-        { 'name': 'Atendimentos', 'rolldown': false, 'link': '/schedules/service' },
-        { 'name': 'Escalas', 'rolldown': false, 'link': '/shifts' },
-        { 'name': 'Agendamentos',
+        { 'name': 'Serviços',
           'rolldown': true,
           'fields':
                 [
-                  { 'name': 'Agendamentos', 'link': '/schedules', 'separator': false },
-                  { 'name': 'Cadastro de Cidadãos', 'link': '/professionals/users', 'separator': false }
+                  { 'name': 'Agendar', 'link': '/schedules', 'separator': true },
+                  { 'name': 'Cadastrar Cidadão', 'link': '/professionals/users/new', 'separator': false }
                 ]
         }
       ]
@@ -70,33 +71,35 @@ export const getOptions = (user_permission,user_name) =>
           'rolldown': true,
           'fields':
                 [
-                  { 'name': 'Tipos de Atendimento', 'link': '/service_types', 'separator': false },
-                  { 'name': 'Locais de Atendimento', 'link': '/service_places', 'separator': true },
-                  { 'name': 'Prefeituras', 'link': '/city_halls', 'separator': false },
-                  { 'name': 'Setores', 'link': '/sectors', 'separator': false },
-                  { 'name': 'Cargos', 'link': '/occupations', 'separator': false },
-                  { 'name': 'Profissionais', 'link': '/professionals', 'separator': true },
-                  { 'name': 'Relatórios', 'link': '/reports', 'separator': false }
+                    { 'name': 'Tipos de Atendimento', 'link': '/service_types', 'separator': false },
+                    { 'name': 'Locais de Atendimento', 'link': '/service_places', 'separator': true },
+                    { 'name': 'Prefeitura', 'link': '/city_halls', 'separator': false },
+                    { 'name': 'Setores', 'link': '/sectors', 'separator': false },
+                    { 'name': 'Cargos', 'link': '/occupations', 'separator': false },
+                    { 'name': 'Profissionais', 'link': '/professionals', 'separator': false },
+                    { 'name': 'Cidadãos', 'link': '/professionals/users', 'separator': true },
+                    { 'name': 'Relatórios', 'link': '/reports', 'separator': false },
                 ]
         },
+
+        { 'name': 'Escalas', 'rolldown': false, 'link': '/shifts' },
+        { 'name': 'Atendimentos', 'rolldown': false, 'link': '/schedules/service' },
         { 'name': 'Recursos',
           'rolldown': true,
           'fields':
                 [
-                  { 'name': 'Tipo de recurso', 'link': '/resource_types', 'separator': true },
+                  { 'name': 'Agendar', 'link': '/resource_bookings', 'separator': true },
+                  { 'name': 'Tipo de recurso', 'link': '/resource_types', 'separator': false },
                   { 'name': 'Recurso', 'link': '/resources', 'separator': false },
                   { 'name': 'Escala de recurso', 'link': '/resource_shifts', 'separator': false },
-                  { 'name': 'Agendamento', 'link': '/resource_bookings', 'separator': false }
                 ]
         },
-        { 'name': 'Escalas', 'rolldown': false, 'link': '/shifts' },
-        { 'name': 'Atendimentos', 'rolldown': false, 'link': '/schedules/service' },
-        { 'name': 'Agendamentos',
+        { 'name': 'Serviços',
           'rolldown': true,
           'fields':
                 [
-                  { 'name': 'Agendamentos', 'link': '/schedules', 'separator': false },
-                  { 'name': 'Cadastro de Cidadãos', 'link': '/professionals/users', 'separator': false }
+                  { 'name': 'Agendar', 'link': '/schedules', 'separator': true },
+                  { 'name': 'Cadastrar Cidadão', 'link': '/professionals/users/new', 'separator': false }
                 ]
         }
       ]
@@ -122,26 +125,27 @@ export const getOptions = (user_permission,user_name) =>
           'fields':
                 [
                   { 'name': 'Profissionais', 'link': '/professionals', 'separator': true },
+                  { 'name': 'Cidadãos', 'link': '/professionals/users', 'separator': false },
                   { 'name': 'Relatórios', 'link': '/reports', 'separator': false }
                 ]
         },
+        { 'name': 'Escalas', 'rolldown': false, 'link': '/shifts' },
+        { 'name': 'Atendimentos', 'rolldown': false, 'link': '/schedules/service' },
         { 'name': 'Recursos',
           'rolldown': true,
           'fields':
               [
+                { 'name': 'Agendar', 'link': '/resource_bookings', 'separator': true },
                 { 'name': 'Recurso', 'link': '/resources', 'separator': false },
-                { 'name': 'Escala de recurso', 'link': '/resource_shifts', 'separator': false },
-                { 'name': 'Agendamento', 'link': '/resource_bookings', 'separator': false }
+                { 'name': 'Escala de recurso', 'link': '/resource_shifts', 'separator': false }
               ]
         },
-        { 'name': 'Escalas', 'rolldown': false, 'link': '/shifts' },
-        { 'name': 'Atendimentos', 'rolldown': false, 'link': '/schedules/service' },
-        { 'name': 'Agendamentos',
+        { 'name': 'Serviços',
           'rolldown': true,
           'fields':
                 [
-                  { 'name': 'Agendamentos', 'link': '/schedules', 'separator': false },
-                  { 'name': 'Cadastro de Cidadãos', 'link': '/professionals/users', 'separator': false }
+                  { 'name': 'Agendar', 'link': '/schedules', 'separator': true },
+                  { 'name': 'Cadastrar Cidadão', 'link': '/professionals/users/new', 'separator': false }
                 ]
         }
       ]
@@ -152,6 +156,7 @@ export const getOptions = (user_permission,user_name) =>
       [
         { 'name': user_name,
           'rolldown': true,
+          'img': true,
           'fields':
                 [
                   { 'name': 'Atendente Local', 'link': '/choose_role', 'separator': true },
@@ -160,22 +165,28 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': 'Imprimir Cadastro', 'link': '/citizens/my_report/report.pdf', 'separator': true },
                 ]
         },
+        { 'name': 'Sistema',
+          'rolldown': true,
+          'fields':
+                [
+                  { 'name': 'Cidadãos', 'link': '/professionals/users', 'separator': false },
+                ]
+        },
+        { 'name': 'Escalas', 'rolldown': false, 'link': '/shifts' },
+        { 'name': 'Atendimentos', 'rolldown': false, 'link': '/schedules/service' },
         { 'name': 'Recursos',
           'rolldown': true,
           'fields':
               [
-                { 'name': 'Agendamento', 'link': '/resource_bookings', 'separator': false }
+                { 'name': 'Agendar', 'link': '/resource_bookings', 'separator': false }
               ]
         },
-        { 'name': 'Escalas', 'rolldown': false, 'link': '/shifts' },
-        { 'name': 'Atendimentos', 'rolldown': false, 'link': '/schedules/service' },
-        { 'name': 'Agendamentos',
+        { 'name': 'Serviços',
           'rolldown': true,
-          'img': true,
           'fields':
                 [
-                  { 'name': 'Agendamentos', 'link': '/schedules', 'separator': false },
-                  { 'name': 'Cadastro de Cidadãos', 'link': '/professionals/users', 'separator': false }
+                  { 'name': 'Agendar', 'link': '/schedules', 'separator': true },
+                  { 'name': 'Cadastrar Cidadão', 'link': '/professionals/users/new', 'separator': false }
                 ]
         }
       ]
@@ -200,10 +211,10 @@ export const getOptions = (user_permission,user_name) =>
           'rolldown': true,
           'fields':
               [
-                { 'name': 'Agendamento', 'link': '/resource_bookings', 'separator': false }
+                { 'name': 'Agendar', 'link': '/resource_bookings', 'separator': false }
               ]
         },
-        { 'name': 'Escalas', 'rolldown': false, 'link': '/shifts' },
+        { 'name': 'Escala', 'rolldown': false, 'link': '/shifts' },
         { 'name': 'Atendimentos', 'rolldown': false, 'link': '/schedules/service' }
       ]
     );
@@ -225,14 +236,14 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': 'Imprimir Cadastro', 'link': '/citizens/my_report/report.pdf', 'separator': true },
                 ]
         },
+        { 'name': 'Histórico', 'rolldown': false, 'link': '/citizens/schedules/history' },
         { 'name': 'Recursos',
           'rolldown': true,
           'fields':
               [
-                { 'name': 'Agendamento', 'link': '/resource_bookings', 'separator': false }
+                { 'name': 'Agendar', 'link': '/resource_bookings', 'separator': false }
               ]
         },
-        { 'name': 'Histórico', 'rolldown': false, 'link': '/citizens/schedules/history' },
         { 'name': 'Efetuar Agendamento', 'rolldown': false, 'link': '/citizens/schedules/agreement' }
       ]
     );
