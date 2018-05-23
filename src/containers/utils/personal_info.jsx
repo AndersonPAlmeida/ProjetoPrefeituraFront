@@ -79,14 +79,15 @@ export default function () {
       <div className="field-input">
         <h6>CPF{this.props.user_class == `dependant` ? '' : '*'}:</h6>
         <label>
-          <MaskedInput
-            type="text"
-            className='input-field'
-            mask="111.111.111-11"
-            name="cpf"
-            value={this.state.user.cpf}
-            onChange={this.handleInputUserChange.bind(this)}
-          />
+            <MaskedInput
+              type="text"
+              className='input-field'
+              mask="111.111.111-11"
+              name="cpf"
+              disabled={this.props.is_edit}
+              value={this.state.user.cpf}
+              onChange={this.handleInputUserChange.bind(this)}
+            />
         </label>
       </div>
 
