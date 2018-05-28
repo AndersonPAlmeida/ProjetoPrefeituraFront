@@ -1,0 +1,62 @@
+.city-hall-first-row.row:first-child{
+  width: 100%;
+}
+
+.city-hall-content.row:first-child{
+  width: 80%;
+}
+
+.row .col{
+  padding-left: 0px;
+}
+
+.col.input-field{
+  margin-top: 0px;
+}
+
+.div.col.input-field.city_hall{
+  margin-top: 0px;
+}
+
+input.city-hall{
+  margin-top: 0px;
+  width: 100%;
+}
+
+.switch label input[type=checkbox]:checked+.lever{
+  background-color: #92bf23;
+}
+
+.switch label input[type=checkbox]:checked+.lever:after{
+  background-color: #92bf23;
+}
+
+.margin-bt{
+  margin-bottom: 5px;
+}
+
+.clear{
+  clear: both;
+}
+
+h6{
+  margin: 0px 0px 0px 0px;
+}
+
+.file-input {
+  float: left;
+  margin-right: 5px;
+}
+
+input[type=text]:disabled.file-name{
+  margin-top: 0px;
+  float: right;
+}
+
+div.switch > label{
+  font-size: 1em;
+}
+
+div.switch{
+  margin-top: 10px;
+}

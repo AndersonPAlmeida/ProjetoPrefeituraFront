@@ -92,4 +92,5 @@ export ShiftCreate from './shift/ShiftCreate';
 export ServiceList from './schedule/service/ServiceList';
 export ServiceEdit from './schedule/service/ServiceEdit';
 
-export CityHall from './city_hall/CityHall';
+export CityHallList from './city_hall/CityHallList';
+export CityHallEdit from './city_hall/CityHallEdit';
