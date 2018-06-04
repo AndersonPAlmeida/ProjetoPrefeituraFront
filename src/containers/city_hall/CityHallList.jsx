@@ -61,11 +61,39 @@ class getCityHallList extends Component {
     //TODO:
   }
 
+
+  newCityHallButton(){
+    return(<button
+      onClick={() =>
+        browserHistory.push({ pathname: '/city_hall/new'})
+      }
+      className="btn waves-effect btn button-color"
+      name="anterior"
+      type="submit">
+        CADASTRAR NOVA PREFEITURA
+    </button>
+  );
+  }
+
+
   render() {
     return (
-      <main>
-        //TODO:
-      </main>
+        <main>
+            <Row>
+              <Col s={12}>
+                <div className='card'>
+                  <div className='card-content'>
+
+
+
+                  </div>
+                  <div className="card-action">
+                      {this.newCityHallButton()}
+                  </div>
+                </div>
+              </Col>
+          </Row>
+        </main>
     )
   }
 }

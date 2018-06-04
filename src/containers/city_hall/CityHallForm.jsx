@@ -12,6 +12,14 @@ import { Button, Card, Row, Col, Dropdown, Input, CardPanel } from 'react-materi
 function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
 
+/*
+  TODO:
+  - what does the 'block_text' field means?
+  - Show logo preview on image upload.
+  - Check back-end filter( & error msg) for file type on image upload.
+  - Mensagem de que city hall já existe pra cidade.
+*/
+
 class editCityHall extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +30,7 @@ class editCityHall extends Component {
         logo_has_changed: 0
       },
       city_hall: {
+        id: 0,
         name: "",
         cep: "",
         state: "",
@@ -31,10 +40,11 @@ class editCityHall extends Component {
         phone1: "",
         support_email: "",
         choose_professional: true,
+        city_name: "",
         web_singup: true,
-        name: "",
         district_name: "",
         address_number: 0,
+        complement: "",
         schedule_days_interval: 0,
         email: "",
         site: "",
@@ -50,21 +60,113 @@ class editCityHall extends Component {
     this.handleFile = this.handleFile.bind(this);
     this.checkErrors = this.checkErrors.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-
+    this.onSuccesfulOperation = this.onSuccesfulOperation.bind(this);
+    this.updateAddress = this.updateAddress.bind(this);
     this.setButtonFile = element =>{
       this.fileUpload = element;
     };
 
   }
 
+  componentDidMount() {
+    if(this.props.is_edit){
+      this.setState({
+        name: this.props.data.name,
+        city_hall: update(this.state.city_hall,{
+          id: {$set: this.props.data.id},
+          active: {$set: this.props.data.active},
+          name: {$set: this.props.data.name},
+          cep: {$set: (this.props.data.address.zipcode != null ? this.props.data.address.zipcode : "")},
+          district_name: {$set: (this.props.data.address.neighborhood != null ? this.props.data.address.neighborhood : "" )},
+          state: {$set: (this.props.data.state.name != null ? this.props.data.state.name : "")},
+          city_name : {$set: this.props.data.city.name},
+          address: {$set: (this.props.data.address.address != null ? this.props.data.address.address : "")},
+          address_number: {$set: (this.props.data.address_number != null ? this.props.data.address_number : 0)},
+          complement: {$set: (this.props.data.address_complement != null ? this.props.data.address_complement : "" )},
+          schedule_days_interval: {$set: ( this.props.data.schedule_period != null ? this.props.data.schedule_period : 0)},
+          phone2: {$set: (this.props.data.phone2 != null ? this.props.data.phone2 : "")},
+          phone1: {$set: (this.props.data.phone1 != null ? this.props.data.phone1 : "")},
+          support_email: {$set: (this.props.data.support_email != null ? this.props.data.support_email : "")},
+          email: {$set: (this.props.data.email != null ? this.props.data.email : "")},
+          site: {$set: (this.props.data.url != null ? this.props.data.url : "")},
+          description: {$set: (this.props.data.description != null ? this.props.data.description : "")},
+          choose_professional: {$set: (this.props.data.show_professional != null ? this.props.data.show_professional : "")},
+          web_singup: {$set: (this.props.data.citizen_register != null ? this.props.data.citizen_register : false)},
+          allow_web: {$set: (this.props.data.citizen_access != null ? this.props.data.citizen_access : false)}
+        })
+      });
+
+      /*
+      ----- Code snippet to load logo preview, if/when a image component is added to the html.
+
+
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
+      let params = this.props.fetch_params;
+
+      fetch(`${apiUrl}/city_halls/${this.props.data.id}/picture?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+        method: 'get'
+      }).then(resp => {
+        var contentType = resp.headers.get("content-type");
+        if(resp.status == 200 && contentType && contentType.indexOf("image") !== -1) {
+          resp.blob().then(photo => {
+            console.log(photo);
+            this.setState({ photo: URL.createObjectURL(photo), fetching: false });
+          })
+        }
+
+      }).catch(e => {});
+
+      */
+
+    }
+  }
+
+  updateAddress() {
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
+    const collection = 'validate_cep';
+    var formData = {};
+    let cep = this.state.city_hall.cep.replace(/(\.|-|_)/g,'');
+    formData["cep"] = {};
+    formData["cep"]["number"] = cep;
+    fetch(`${apiUrl}/${collection}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+      method: "post",
+      body: JSON.stringify(formData)
+    }).then(parseResponse).then(resp => {
+      this.setState({
+        city_hall: update(this.state.city_hall,{
+          address: {$set: resp.address},
+          district_name: {$set: resp.neighborhood},
+          city_name: {$set: resp.city_name},
+          state: {$set: resp.state_name}
+        })
+      });
+    }).catch(() => {
+      Materialize.toast('CEP inválido.', 10000, "red",function(){$("#toast-container").remove()});
+    })
+  }
+
   handleCityHallInputChange(event){
     const target = event.target;
     const name = target.name;
-    const value = target.value
+    let value = target.value
     if(target.validity.valid) {
+      if(target.type === "checkbox"){
+        value = !this.state.city_hall[name];
+      }
       this.setState({
         city_hall: update(this.state.city_hall, { [name]: {$set: value} })
-      })
+      },
+        function(){
+          if(name === 'cep' && value.replace(/(\.|-|_)/g,'').length >= 8){
+            this.updateAddress();
+          }
+        })
     }
   }
 
@@ -77,7 +179,6 @@ class editCityHall extends Component {
     const name = target.name;
     var value = target.files[0];
     var reader = new FileReader();
-    console.log(value.name);
     if(value != undefined){
       const onLoad = function(e) {
         var dataURL = reader.result;
@@ -89,16 +190,12 @@ class editCityHall extends Component {
               logo_has_changed: {$set: 1}
             }
           )
-        },
-        function(){
-          console.log(this.state);
         })
       };
       reader.onload = onLoad.bind(this);
       reader.readAsDataURL(value);
     }
   }
-
 
   checkErrors(){
     let errors = []
@@ -143,23 +240,64 @@ class editCityHall extends Component {
 
     //email e email de suporte
     let re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(!re.test(data.email)){
+    if(data.email.length > 0 && !re.test(data.email)){
       errors.push('Digite um email válido para a prefeitura');
     }
 
-    if(!re.test(data.support_email)){
+    if(data.support_email.length > 0 && !re.test(data.support_email)){
       errors.push('Digite um email válido para o suporte');
     }
 
     return errors;
   }
 
+  onSuccesfulOperation(){
+    $("#toast-container").remove();
+    if(this.props.is_edit){
+      Materialize.toast('Prefeitura editada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+    }
+    else{
+      Materialize.toast('Prefeitura criada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+    }
+    browserHistory.push(this.props.submit_url);
+  }
+
+  showErrors(errors){
+    let full_error_msg = "";
+    errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+    $("#toast-container").remove();
+    Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+    throw errors;
+  }
+
+  updateLogo(id){
+    let data = {};
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
+    var params = this.props.fetch_params;
+    let image = {};
+    image['content'] = this.state.aux.logo_obj.split(',')[1];
+    image['content_type'] = this.state.aux.logo_obj.split(",")[0].split(":")[1].split(";")[0];
+    image['filename'] = this.state.aux.logo;
+    data['avatar'] = image;
+    fetch(`${apiUrl}/city_halls/${id}/picture?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+      method: 'post',
+      body: JSON.stringify(data)
+    }).then(parseResponse).then(resp => {
+      this.onSuccesfulOperation();
+    }).catch(({errors}) => { // TODO: UPDATE ERRORS ARRAY ACCORDING TO API
+      if(errors) {
+        this.showErrors(errors);
+      }
+    });
+
+  }
+
   handleSubmit(){
-    //validar
-    //receber dados (generateBody)
-    //enviar dados para o servidor
+
     let errors = this.checkErrors();
-    console.log(this.props);
 
     if(errors.length > 0){
       //show errors
@@ -168,12 +306,10 @@ class editCityHall extends Component {
       $("#toast-container").remove();
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     }else{
-      //send data to server.
       let fetch_body = this.generateBody();
       const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
-      const collection = 'city_halls/1?permission=1';
-      var params = '';
-
+      const collection = this.props.fetch_collection;
+      let params = this.props.fetch_params;
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -181,54 +317,51 @@ class editCityHall extends Component {
         method: this.props.fetch_method,
         body: JSON.stringify(fetch_body)
       }).then(parseResponse).then(resp => {
-        if(this.props.is_edit){
-          $("#toast-container").remove();
-          Materialize.toast('Escala editada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+
+        if(this.state.aux.logo_has_changed){
+          this.updateLogo(resp.id).bind(this);
+        }else{
+          this.onSuccesfulOperation();
         }
-        else{
-          $("#toast-container").remove();
-          Materialize.toast('Escala criada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
-        }
-        browserHistory.push(this.props.submit_url);
+
       }).catch(({errors}) => { // TODO: UPDATE ERRORS ARRAY ACCORDING TO API
+
         if(errors) {
-          let full_error_msg = "";
-          errors.forEach(function(elem){ full_error_msg += elem + '\n' });
-          Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
-          throw errors;
+          this.showErrors(errors);
         }
       });
-
-
-
-
     }
 
   }
 
-  generateBody(formData){
-
-    if(this.props.is_edit)
-      data['city_hall_id'] = this.state.city_hall.id;
-
+  generateBody(){
     let data = {};
-    data['name'] = this.state.city_hall.name;
-    data['cep'] = this.state.city_hall.cep;
-    data['active'] = this.state.city_hall.active;
-    data['phone1'] = this.state.city_hall.phone1;
-    data['phone2'] = this.state.city_hall.phone2;
-    data['address_number'] = this.state.city_hall.address_number;
+    let formData = {};
 
-    if(this.state.aux.photo_has_changed) {
-
-      let image = {};
-      image['content'] = this.state.aux.photo_obj.split(',')[1];
-      image['content_type'] = this.state.aux.photo_obj.split(",")[0].split(":")[1].split(";")[0];
-      image['filename'] = this.state.aux.photo;;
-      formData['image'] = image;
+    if(this.props.is_edit){
+      data['id'] = this.state.city_hall.id;
+      data['active'] = this.state.city_hall.active;
     }
 
+    data['name'] = this.state.city_hall.name;
+    data['cep'] = this.state.city_hall.cep;
+
+    data['phone1'] = this.state.city_hall.phone1.replace(/(\.|-|_)/g,'');
+    data['phone2'] = this.state.city_hall.phone2.replace(/(\.|-|_)/g,'');
+    data['address_number'] = this.state.city_hall.address_number;
+    //data['block_text'] = this.state.city_hall.description;
+    data['citizen_access'] = this.state.city_hall.allow_web;
+    data['citizen_register'] = this.state.city_hall.web_singup;
+    data['schedule_period'] = this.state.city_hall.schedule_days_interval;
+    data['address_complement'] = this.state.city_hall.complement;
+    data['description'] = this.state.city_hall.description;
+    data['email'] = this.state.city_hall.email;
+    data['support_email'] = this.state.city_hall.support_email;
+    data['url']  = this.state.city_hall.site;
+    data['show_professional'] = this.state.city_hall.choose_professional;
+
     formData['city_hall'] = data;
+    return formData;
   }
 
   render(){
@@ -286,7 +419,7 @@ class editCityHall extends Component {
                           <h6>Endereço da sede*:</h6>
                         </Col>
                         <Col s={12}>
-                          <Input name="address" type='text' value={this.state.city_hall.address}
+                          <Input name="address" type='text' disabled value={this.state.city_hall.address}
                             className='city-hall' onChange={this.handleCityHallInputChange}/>
                         </Col>
                       </Row>
@@ -299,15 +432,7 @@ class editCityHall extends Component {
                             className='city-hall' onChange={this.handleCityHallInputChange}/>
                         </Col>
                       </Row>
-                      <Row>
-                        <Col s={12}>
-                          <h6>Antecedência para enviar email avisando de um agendamento (horas)*: </h6>
-                        </Col>
-                        <Col s={12}>
-                          <Input name="email_hours" type='number' value={this.state.city_hall.email_hours}
-                            min={0} className='city-hall' onChange={this.handleCityHallInputChange}/>
-                        </Col>
-                      </Row>
+
                       <Row>
                         <Col s={12}>
                           <h6>Telefone 2:</h6>
@@ -353,12 +478,17 @@ class editCityHall extends Component {
                       </Row>
                       <Row>
                         <Col s={12}>
-                          <Input name="choose_professional" className='city-hall' value={this.state.city_hall.choose_professional}
+                          <Input name="choose_professional" className='city-hall' checked={this.state.city_hall.choose_professional}
                              type='switch' offLabel=' ' onLabel='Escolher profissional ao fazer agendamento' onChange={this.handleCityHallInputChange}/>
                         </Col>
                         <Col s={12}>
-                          <Input name="web_singup" className='city-hall' value={this.state.city_hall.web_singup}
+                          <Input name="web_singup" className='city-hall' checked={this.state.city_hall.web_singup}
                             type='switch' offLabel=' ' onLabel='Permitir que o cidadão se cadastre pela internet' onChange={this.handleCityHallInputChange}/>
+                        </Col>
+                        <Col s={12}>
+                          <Input type='switch' name="allow_web" className='city-hall' checked={this.state.city_hall.allow_web}
+                            className='city-hall' offLabel=' '
+                            onLabel='Permitir que utilize o agendador pela internet' onChange={this.handleCityHallInputChange}/>
                         </Col>
                       </Row>
                     </Col>
@@ -377,7 +507,7 @@ class editCityHall extends Component {
                           <h6>Bairro*:</h6>
                         </Col>
                         <Col s={12}>
-                         <Input name="district_name" type='text' value={this.state.city_hall.district_name}
+                         <Input name="district_name" type='text' disabled value={this.state.city_hall.district_name}
                            className='city-hall' onChange={this.handleCityHallInputChange}/>
                         </Col>
                       </Row>
@@ -445,18 +575,11 @@ class editCityHall extends Component {
                       </Row>
                       <Row>
                         <Col s={12}>
-                          <h6>Descrição*:</h6>
+                          <h6>Descrição:</h6>
                         </Col>
                         <Col s={12}>
-                          <Input name="description" type='text' value={this.state.city_hall.description}
+                          <Input name="description" type='textarea' value={this.state.city_hall.description}
                             className='city-hall' onChange={this.handleCityHallInputChange}/>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col s={12}>
-                          <Input type='switch' name="allow_web" className='city-hall' value={this.state.city_hall.allow_web}
-                            className='city-hall' offLabel=' '
-                            onLabel='Permitir que utilize o agendador pela internet' onChange={this.handleCityHallInputChange}/>
                         </Col>
                       </Row>
                     </Col>
@@ -474,13 +597,13 @@ class editCityHall extends Component {
     );
   }
 
-
   confirmButton() {
 
     return (
       <div className="card-action">
+        <a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
         <button className="waves-effect btn right button-color auto-size"  name="commit"  onClick={this.handleSubmit}
-          type="submit">Atualizar prefeitura</button>
+          type="submit"> {this.props.is_edit ? "Atualizar prefeitura" : "Criar prefeitura"}</button>
         <div className="clear"></div>
       </div>
     )
