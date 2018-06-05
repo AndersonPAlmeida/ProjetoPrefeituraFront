@@ -17,7 +17,7 @@ function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
   - what does the 'block_text' field means?
   - Show logo preview on image upload.
   - Check back-end filter( & error msg) for file type on image upload.
-  - Mensagem de que city hall já existe pra cidade.
+
 */
 
 class editCityHall extends Component {
@@ -601,7 +601,12 @@ class editCityHall extends Component {
 
     return (
       <div className="card-action">
-        <a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
+        {
+          this.props.current_role === "adm_c3sl" ?
+          <a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
+          :
+          <div/>
+        }
         <button className="waves-effect btn right button-color auto-size"  name="commit"  onClick={this.handleSubmit}
           type="submit"> {this.props.is_edit ? "Atualizar prefeitura" : "Criar prefeitura"}</button>
         <div className="clear"></div>

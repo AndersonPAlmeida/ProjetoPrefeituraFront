@@ -63,16 +63,17 @@ class getCityHallList extends Component {
 
 
   newCityHallButton(){
-    return(<button
-      onClick={() =>
-        browserHistory.push({ pathname: '/city_hall/new'})
-      }
-      className="btn waves-effect btn button-color"
-      name="anterior"
-      type="submit">
-        CADASTRAR NOVA PREFEITURA
-    </button>
-  );
+    return(
+      <button
+        onClick={() =>
+          browserHistory.push({ pathname: '/city_hall/new'})
+        }
+        className="btn waves-effect btn button-color"
+        name="anterior"
+        type="submit">
+          CADASTRAR NOVA PREFEITURA
+      </button>
+    );
   }
 
 
