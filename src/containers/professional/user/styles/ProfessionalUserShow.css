@@ -11,3 +11,11 @@
 #obs_agendamento {
 	width: 300px;
 }
+
+.spacing{
+  margin-right: 5px;
+}
+
+.btn-color{
+  color: #92bf23;
+}

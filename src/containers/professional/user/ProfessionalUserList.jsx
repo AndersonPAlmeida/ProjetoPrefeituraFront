@@ -112,11 +112,11 @@ class getProfessionalUserList extends Component {
     )
   }
 
-    tableList() {
+  tableList() {
     const data = (
       this.state.citizens.map((citizen) => {
         return (
-          <tr>
+          <tr key={citizen.id}>
             <td>
               {citizen.name}
             </td>
@@ -330,6 +330,9 @@ class getProfessionalUserList extends Component {
           <Col>
             <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
           </Col>
+          <Col>
+            {this.newCitizenButton()}
+          </Col>
         </Row>
       </div>
     )
@@ -385,7 +388,7 @@ class getProfessionalUserList extends Component {
     });
   }
 
-    newCitizenButton() {
+  newCitizenButton() {
         return (
             <button
         onClick={() =>

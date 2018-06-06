@@ -468,6 +468,10 @@ class getShiftList extends Component {
             <Col>
               <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
             </Col>
+            <Col>
+              {this.newShiftButton()}
+            </Col>
+            
           </Row>
         </div>
       )
