@@ -69,7 +69,7 @@ class getProfessionalIndex extends Component {
             <div className='div-component-home'>
               { this.props.current_role ?
                 <p>Você está acessando o Sistema Agendador como <b>{role_name[this.props.current_role.role]}</b>, no local <b>{this.props.current_role.service_place}</b>, situado em <b>{this.props.current_role.city_hall_name}</b>.
-                 Para mais informações sobre como usar o Sistema Agendador de Serviços Públicos 
+                 Para mais informações sobre como usar o Sistema Agendador de Serviços Públicos
                 visite o Manual de Utilização ou a seção de Perguntas Frequentes.</p>
                 : null
               }
@@ -78,7 +78,7 @@ class getProfessionalIndex extends Component {
 		    </div>
 			</div>
 		)
-	}	
+	}
 
 	secondComponent() {
 		return (
@@ -94,7 +94,7 @@ class getProfessionalIndex extends Component {
 		    </div>
 			</div>
 		)
-	}	
+	}
 
   sortableColumn(title, name) {
     return (
@@ -140,7 +140,7 @@ class getProfessionalIndex extends Component {
         d = new Date(shift.execution_start_time)
         time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes())
         return (
-          <tr>
+          <tr key={shift.id}>
             <td>
               {shift.professional_performer_name}
             </td>
@@ -336,7 +336,7 @@ class getProfessionalIndex extends Component {
 
   render() {
     return (
-      <div> 
+      <div>
 	      <main>
 	      	<Row>
 		        <Col s={12}>
@@ -365,4 +365,3 @@ const ProfessionalIndex = connect(
   mapStateToProps
 )(getProfessionalIndex)
 export default ProfessionalIndex
-

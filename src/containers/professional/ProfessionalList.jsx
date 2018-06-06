@@ -64,7 +64,7 @@ class getProfessionalList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ 
+      self.setState({
                       collections: resp
                     })
     });
@@ -75,7 +75,7 @@ class getProfessionalList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ 
+      self.setState({
                       professionals: resp.entries,
                       num_entries: resp.num_entries
                     })
@@ -96,7 +96,7 @@ class getProfessionalList extends Component {
       </div>
       )
   }
-  
+
   formatCPF(n) {
     n = n.replace(/\D/g,"");
     n = n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})$/,"$1.$2.$3-$4");
@@ -146,7 +146,7 @@ class getProfessionalList extends Component {
     const data = (
       this.state.professionals.map((professional) => {
         return (
-          <tr>
+          <tr key={professional.id}>
             <td>
               {professional.name}
             </td>
@@ -172,31 +172,31 @@ class getProfessionalList extends Component {
               {professional.active ? 'Ativo' : 'Inativo'}
             </td>
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/professionals/${professional.id}`) 
+              <a className='back-bt waves-effect btn-flat'
+                href='#'
+                onClick={ () =>
+                  browserHistory.push(`/professionals/${professional.id}`)
                 }>
                 <i className="waves-effect material-icons tooltipped">
                   visibility
                 </i>
-              </a> 
+              </a>
             </td>
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                 href='#' 
-                 onClick={(e) => 
+              <a className='back-bt waves-effect btn-flat'
+                 href='#'
+                 onClick={(e) =>
                    {
                      e.preventDefault()
                      browserHistory.push({
                        pathname: `/professionals/${professional.id}/edit`
-                     }) 
+                     })
                    }
                  }>
                 <i className="waves-effect material-icons tooltipped">
                   edit
                 </i>
-              </a> 
+              </a>
             </td>
           </tr>
         )
@@ -227,8 +227,8 @@ class getProfessionalList extends Component {
         <p className={styles['description-column']}>
           Mostrando
           {
-            num_pages != 0 
-              ? 
+            num_pages != 0
+              ?
                 this.state.current_page == num_pages
                   ?
                     this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `
@@ -236,7 +236,7 @@ class getProfessionalList extends Component {
                     ` ${num_items_per_page} `
               :
                 ' 0 '
-              
+
           }
           de {this.state.num_entries} registros
         </p>
@@ -284,7 +284,7 @@ class getProfessionalList extends Component {
       })
     }
   }
-  
+
   pickName() {
     return (
       <Col s={12} m={3}>
@@ -524,6 +524,9 @@ class getProfessionalList extends Component {
           <Col>
             <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
           </Col>
+          <Col>
+            	{this.newProfessionalButton()}
+          </Col>
         </Row>
       </div>
     )
@@ -611,14 +614,14 @@ class getProfessionalList extends Component {
 
 	newProfessionalButton() {
 		return (
-			<button 
+			<button
         onClick={() =>
-          browserHistory.push({pathname: `/professionals/search`}) 
+          browserHistory.push({pathname: `/professionals/search`})
         }
-        className="btn waves-effect btn button-color" 
-        name="anterior" 
+        className="btn waves-effect btn button-color"
+        name="anterior"
         type="submit">
-          CADASTRAR NOVO PROFISSIONAL 
+          CADASTRAR NOVO PROFISSIONAL
       </button>
 		)
 	}

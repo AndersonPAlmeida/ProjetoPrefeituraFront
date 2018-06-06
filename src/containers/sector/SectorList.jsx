@@ -39,7 +39,7 @@ class getSectorList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ 
+      self.setState({
                       sectors: resp.entries,
                       num_entries: resp.num_entries
                     })
@@ -71,14 +71,14 @@ class getSectorList extends Component {
       </div>
       )
   }
-  
+
   sortableColumn(title, name) {
     return (
       <a
         href='#'
         onClick={
           () => {
-            this.setState({ 
+            this.setState({
               ['filter_s']: this.state.filter_s == `${name}+asc` ? `${name}+desc` : `${name}+asc`
             }, this.handleFilterSubmit.bind(this,true))
           }
@@ -106,7 +106,7 @@ class getSectorList extends Component {
     const data = (
       this.state.sectors.map((sector) => {
         return (
-          <tr>
+          <tr key={sector.id}>
             <td>
               {sector.name}
             </td>
@@ -130,10 +130,10 @@ class getSectorList extends Component {
             }
 
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/sectors/${sector.id}`) 
+              <a className='back-bt waves-effect btn-flat'
+                href='#'
+                onClick={ () =>
+                  browserHistory.push(`/sectors/${sector.id}`)
                 }>
                   <i className="waves-effect material-icons tooltipped">
                     visibility
@@ -141,15 +141,15 @@ class getSectorList extends Component {
               </a>
             </td>
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                 href='#' 
-                 onClick={ () => 
-                 browserHistory.push(`/sectors/${sector.id}/edit`) 
+              <a className='back-bt waves-effect btn-flat'
+                 href='#'
+                 onClick={ () =>
+                 browserHistory.push(`/sectors/${sector.id}/edit`)
                 }>
                   <i className="waves-effect material-icons tooltipped">
                     edit
                   </i>
-              </a> 
+              </a>
             </td>
           </tr>
         )
@@ -177,20 +177,20 @@ class getSectorList extends Component {
     var num_items_per_page = 25
     var num_pages = Math.ceil(this.state.num_entries/num_items_per_page)
     return (
-      <div> 
+      <div>
         <p className={styles['description-column']}>
-          Mostrando  
-          { 
+          Mostrando
+          {
             num_pages != 0
               ?
-                this.state.current_page == num_pages 
-                  ? 
-                    this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `  
+                this.state.current_page == num_pages
+                  ?
+                    this.state.num_entries % num_items_per_page == 0 ? ` ${num_items_per_page} ` : ` ${this.state.num_entries % num_items_per_page} `
                   :
                     ` ${num_items_per_page} `
               :
                 ' 0 '
-          } 
+          }
           de {this.state.num_entries} registros
         </p>
         <br />
@@ -208,7 +208,7 @@ class getSectorList extends Component {
         <Pagination
           value={this.state.current_page}
           onSelect={ (val) =>
-            { 
+            {
               this.setState(
                 {
                   current_page: val
@@ -218,7 +218,7 @@ class getSectorList extends Component {
             }
           }
           className={styles['pagination']}
-          items={Math.ceil(this.state.num_entries/num_items_per_page)} 
+          items={Math.ceil(this.state.num_entries/num_items_per_page)}
           activePage={this.state.current_page}
           maxButtons={8}
         />
@@ -311,6 +311,9 @@ class getSectorList extends Component {
           <Col>
             <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
           </Col>
+          <Col>
+            {this.newSectorButton()}
+          </Col>
         </Row>
       </div>
     )
@@ -368,12 +371,12 @@ class getSectorList extends Component {
 
 	newSectorButton() {
 		return (
-			<button 
+			<button
         onClick={() =>
-          browserHistory.push({ pathname: `/sectors/new`}) 
+          browserHistory.push({ pathname: `/sectors/new`})
         }
-        className="btn waves-effect btn button-color" 
-        name="anterior" 
+        className="btn waves-effect btn button-color"
+        name="anterior"
         type="submit">
           CADASTRAR NOVO SETOR
       </button>

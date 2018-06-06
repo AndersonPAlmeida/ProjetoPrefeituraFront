@@ -24,7 +24,7 @@ class getServiceTypeList extends Component {
           last_fetch_city_hall: '',
           filter_s: '',
           num_entries: 0,
-          current_page: 1 
+          current_page: 1
       };
   }
 
@@ -39,7 +39,7 @@ class getServiceTypeList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ 
+      self.setState({
                       service_types: resp.entries,
                       num_entries: resp.num_entries
                     })
@@ -104,12 +104,12 @@ class getServiceTypeList extends Component {
       </a>
     )
   }
-  
+
 	tableList() {
     const data = (
       this.state.service_types.map((service_type) => {
         return (
-          <tr>
+          <tr key={service_type.id}>
             <td>
               {service_type.description}
             </td>
@@ -129,26 +129,26 @@ class getServiceTypeList extends Component {
                 null
             }
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/service_types/${service_type.id}`) 
+              <a className='back-bt waves-effect btn-flat'
+                href='#'
+                onClick={ () =>
+                  browserHistory.push(`/service_types/${service_type.id}`)
                 }>
                   <i className="waves-effect material-icons tooltipped">
                     visibility
                   </i>
-              </a> 
+              </a>
             </td>
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                 href='#' 
-                 onClick={ () => 
-                 browserHistory.push(`/service_types/${service_type.id}/edit`) 
+              <a className='back-bt waves-effect btn-flat'
+                 href='#'
+                 onClick={ () =>
+                 browserHistory.push(`/service_types/${service_type.id}/edit`)
                 }>
                   <i className="waves-effect material-icons tooltipped">
                     edit
                   </i>
-              </a> 
+              </a>
             </td>
           </tr>
         )
@@ -310,6 +310,9 @@ class getServiceTypeList extends Component {
           <Col>
             <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
           </Col>
+          <Col>
+              	{this.newServiceTypeButton()}
+          </Col>
         </Row>
       </div>
     )
@@ -366,12 +369,12 @@ class getServiceTypeList extends Component {
 
 	newServiceTypeButton() {
 		return (
-			<button 
+			<button
         onClick={() =>
-          browserHistory.push({ pathname: `/service_types/new`}) 
+          browserHistory.push({ pathname: `/service_types/new`})
         }
-        className="btn waves-effect btn button-color" 
-        name="anterior" 
+        className="btn waves-effect btn button-color"
+        name="anterior"
         type="submit">
           CADASTRAR NOVO TIPO DE ATENDIMENTO
       </button>
