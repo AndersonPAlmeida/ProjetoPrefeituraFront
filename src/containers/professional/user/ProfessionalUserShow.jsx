@@ -68,9 +68,9 @@ class getProfessionalUserShow extends Component {
     const dependantsList = (
       this.state.dependants.map((dependant) => {
         return (
-          <p>
+          <p key={dependant.id}>
             <b>Dependentes: </b>
-            <a className='back-bt waves-effect btn-flat'
+            <a className='back-bt waves-effect btn-flat btn-color'
               href='#'
               onClick={ () =>
                 browserHistory.push(`/professionals/users/${this.props.params.citizen_id}/dependants/${dependant.id}`)
@@ -99,52 +99,52 @@ class getProfessionalUserShow extends Component {
             height='230'
             src={this.state.photo}
           />
-          <p> 
+          <p>
             <b>Nome: </b>
             {this.state.citizen.name}
           </p>
-          <p> 
+          <p>
             <b>CPF: </b>
             {this.state.citizen.cpf}
           </p>
-          <p> 
+          <p>
             <b>RG: </b>
             {this.state.citizen.rg}
           </p>
-          <p> 
+          <p>
             <b>Data de Nascimento: </b>
             {this.state.citizen.birth_date}
           </p>
-          <p> 
+          <p>
             <b>Telefone 1: </b>
             {this.state.citizen.phone1}
           </p>
-          <p> 
+          <p>
             <b>Telefone 2: </b>
             {this.state.citizen.phone2}
           </p>
-          <p> 
+          <p>
             <b>E-mail: </b>
             {this.state.citizen.email}
           </p>
-          <p> 
+          <p>
             <b>CEP: </b>
             {this.state.citizen.cep}
           </p>
-          <p> 
+          <p>
             <b>Bairro: </b>
             {this.state.citizen.neighborhood}
           </p>
-          <p> 
+          <p>
             <b>Endereço: </b>
             {this.state.citizen.address_street}
           </p>
-          <p> 
+          <p>
             <b>Complemento do endereço: </b>
             {this.state.citizen.address_complement}
           </p>
           {this.showDependants.bind(this)()}
-          <p> 
+          <p>
             <b>Observações: </b>
             {this.state.citizen.note}
           </p>
@@ -164,14 +164,14 @@ class getProfessionalUserShow extends Component {
 
   prev() {
     browserHistory.push(`professionals/users`)
-  }  
+  }
 
 	editButton() {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
 				<button className="waves-effect btn right" name="commit" onClick={this.createDependant.bind(this)} type="submit">Novo dependente</button>
-				<button className="waves-effect btn right" name="commit" onClick={this.editCitizen.bind(this)} type="submit">Editar</button>
+				<button className="waves-effect btn right spacing" name="commit" onClick={this.editCitizen.bind(this)} type="submit">Editar</button>
       </div>
 		)
 	}

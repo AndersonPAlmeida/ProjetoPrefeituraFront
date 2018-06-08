@@ -69,6 +69,9 @@ class getOccupationList extends Component {
           {this.filterOccupation()}
           {this.tableList()}
         </div>
+        <div className='card-action'>
+            {this.newOccupationButton()}
+        </div>
       </div>
       )
   }

@@ -41,7 +41,7 @@ class getServicePlaceList extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ 
+      self.setState({
                       service_places: resp.entries,
                       num_entries: resp.num_entries
                     })
@@ -103,12 +103,12 @@ class getServicePlaceList extends Component {
       </a>
     )
   }
-  
+
 	tableList() {
     const data = (
       this.state.service_places.map((service_place) => {
         return (
-          <tr>
+          <tr key={service_place.id}>
             <td>
               {service_place.name}
             </td>
@@ -140,26 +140,26 @@ class getServicePlaceList extends Component {
                 null
             }
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/service_places/${service_place.id}`) 
+              <a className='back-bt waves-effect btn-flat'
+                href='#'
+                onClick={ () =>
+                  browserHistory.push(`/service_places/${service_place.id}`)
                 }>
                   <i className="waves-effect material-icons tooltipped">
                     visibility
                   </i>
-              </a> 
+              </a>
             </td>
             <td>
-              <a className='back-bt waves-effect btn-flat' 
-                 href='#' 
-                 onClick={ () => 
-                 browserHistory.push(`/service_places/${service_place.id}/edit`) 
+              <a className='back-bt waves-effect btn-flat'
+                 href='#'
+                 onClick={ () =>
+                 browserHistory.push(`/service_places/${service_place.id}/edit`)
                 }>
                   <i className="waves-effect material-icons tooltipped">
                     edit
                   </i>
-              </a> 
+              </a>
             </td>
           </tr>
         )
@@ -340,6 +340,9 @@ class getServicePlaceList extends Component {
           <Col>
             <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
           </Col>
+          <Col>
+            {this.newServicePlaceButton()}
+          </Col>
         </Row>
       </div>
     )
@@ -402,12 +405,12 @@ class getServicePlaceList extends Component {
 
 	newServicePlaceButton() {
 		return (
-			<button 
+			<button
         onClick={() =>
-          browserHistory.push({ pathname: `/service_places/new`}) 
+          browserHistory.push({ pathname: `/service_places/new`})
         }
-        className="btn waves-effect btn button-color" 
-        name="anterior" 
+        className="btn waves-effect btn button-color"
+        name="anterior"
         type="submit">
           CADASTRAR NOVO LOCAL DE ATENDIMENTO
       </button>
