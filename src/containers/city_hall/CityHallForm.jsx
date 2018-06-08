@@ -50,7 +50,8 @@ class editCityHall extends Component {
         site: "",
         description: "",
         allow_web: true,
-        active: true
+        active: true,
+        block_text: ""
       },
       name:""
     };
@@ -131,6 +132,7 @@ class editCityHall extends Component {
     let cep = this.state.city_hall.cep.replace(/(\.|-|_)/g,'');
     formData["cep"] = {};
     formData["cep"]["number"] = cep;
+    $("#toast-container").remove();
     fetch(`${apiUrl}/${collection}`, {
       headers: {
         "Accept": "application/json",
@@ -138,17 +140,42 @@ class editCityHall extends Component {
       method: "post",
       body: JSON.stringify(formData)
     }).then(parseResponse).then(resp => {
+      $("#toast-container").remove();
+      Materialize.toast('CEP inválido, deve ser de uma prefeitura não registrada.', 10000, "red",function(){$("#toast-container").remove()});
       this.setState({
         city_hall: update(this.state.city_hall,{
-          address: {$set: resp.address},
-          district_name: {$set: resp.neighborhood},
-          city_name: {$set: resp.city_name},
-          state: {$set: resp.state_name}
+          address: {$set: ""},
+          district_name: {$set: ""},
+          city_name: {$set: ""},
+          state: {$set: ""}
         })
       });
     }).catch(() => {
-      Materialize.toast('CEP inválido.', 10000, "red",function(){$("#toast-container").remove()});
+      formData["cep"]["only_registered"] = false;
+      fetch(`${apiUrl}/${collection}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "post",
+          body: JSON.stringify(formData)
+        }).then(parseResponse).then(resp => {
+          this.setState({
+            city_hall: update(this.state.city_hall,{
+              address: {$set: resp.address},
+              district_name: {$set: resp.neighborhood},
+              city_name: {$set: resp.city_name},
+              state: {$set: resp.state_name}
+            })
+          });
+        }).catch(() => {
+          $("#toast-container").remove();
+          Materialize.toast('CEP inválido.', 10000, "red",function(){$("#toast-container").remove()});
+        })
     })
+
+
+
+
   }
 
   handleCityHallInputChange(event){
@@ -165,6 +192,16 @@ class editCityHall extends Component {
         function(){
           if(name === 'cep' && value.replace(/(\.|-|_)/g,'').length >= 8){
             this.updateAddress();
+          }
+          else if(name === 'cep' && value.replace(/(\.|-|_)/g,'').length == 0){
+            this.setState({
+              city_hall: update(this.state.city_hall,{
+                address: {$set: ""},
+                district_name: {$set: ""},
+                city_name: {$set: ""},
+                state: {$set: ""}
+              })
+            });
           }
         })
     }
@@ -208,7 +245,7 @@ class editCityHall extends Component {
         errors.push('Nome é um campo obrigatório');
 
     //CEP
-    if(data.cep.length == 0)
+    if(data.cep.replace(/(\.|-|_)/g,'').length < 8)
         errors.push('CEP é um campo obrigatório');
 
     //address text
@@ -229,9 +266,9 @@ class editCityHall extends Component {
         errors.push('O número de horas para o email de aviso deve ser um número positivo');
 
     //periodo para contagem de agendamentos
-    if(!isNumber(data.schedule_days_interval) || data.schedule_days_interval < 0
+    if(!isNumber(data.schedule_days_interval) || data.schedule_days_interval <= 0
       || data.schedule_days_interval != Number(data.schedule_days_interval))
-        errors.push('O número de dias para o periodo de agendamento deve ser um número positivo');
+        errors.push('O número de dias para contagem de agendamentos deve ser um número positivo');
 
 
     //Telefone
@@ -344,10 +381,10 @@ class editCityHall extends Component {
     }
 
     data['name'] = this.state.city_hall.name;
-    data['cep'] = this.state.city_hall.cep;
+    data['cep'] = this.state.city_hall.cep.replace(/(\.|-|_)/g,'');
 
-    data['phone1'] = this.state.city_hall.phone1.replace(/(\.|-|_)/g,'');
-    data['phone2'] = this.state.city_hall.phone2.replace(/(\.|-|_)/g,'');
+    data['phone1'] = this.state.city_hall.phone1.replace(/[^0-9]+/g,'');
+    data['phone2'] = this.state.city_hall.phone2.replace(/[^0-9]+/g,'');
     data['address_number'] = this.state.city_hall.address_number;
     //data['block_text'] = this.state.city_hall.description;
     data['citizen_access'] = this.state.city_hall.allow_web;
@@ -490,6 +527,11 @@ class editCityHall extends Component {
                             className='city-hall' offLabel=' '
                             onLabel='Permitir que utilize o agendador pela internet' onChange={this.handleCityHallInputChange}/>
                         </Col>
+
+                        <Col s={12} style={this.state.city_hall.allow_web ? {display : 'none'} : {}}>
+                          <Input type="textarea" name="block_text" value={this.state.city_hall.block_text} />
+                        </Col>
+
                       </Row>
                     </Col>
                     <Col s={12} m={6}>
