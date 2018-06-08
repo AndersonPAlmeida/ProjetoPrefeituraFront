@@ -20,7 +20,7 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
   ProfessionalUserDependantShow, ShiftShow, ShiftEdit, ShiftCreate,
   ShiftList, OccupationCreate,OccupationList,OccupationEdit,OccupationShow, MyReport, Reports,
   citizenReport, schedulesReport, shiftsReport, professionalsReport,
-  servicesReport, shiftTypeReport,ServiceEdit,ServiceList
+  servicesReport, shiftTypeReport, ServiceEdit, ServiceList, CityHallList, CityHallEdit, CityHallCreate
 } from './containers';
 
 import { configure } from './redux-auth';
@@ -175,6 +175,11 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="shifts/:shift_id/edit" component={UserIsAuthenticated(ShiftEdit)} />
         <Route path="shifts/new" component={UserIsAuthenticated(ShiftCreate)} />
         <Route path="shifts/:shift_id" component={UserIsAuthenticated(ShiftShow)} />
+
+        <Route path="city_hall/list" component={UserIsAuthenticated(CityHallList)} />
+        <Route path="city_hall/edit" component={UserIsAuthenticated(CityHallEdit)} />
+        <Route path="city_hall/new" component={UserIsAuthenticated(CityHallCreate)} />
+
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>
