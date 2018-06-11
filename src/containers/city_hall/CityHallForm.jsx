@@ -29,6 +29,7 @@ class editCityHall extends Component {
         logo_obj: undefined,
         logo_has_changed: 0
       },
+      block_text_changed: false,
       city_hall: {
         id: 0,
         name: "",
@@ -51,7 +52,7 @@ class editCityHall extends Component {
         description: "",
         allow_web: true,
         active: true,
-        block_text: ""
+        block_text: "Para realizar seu agendamento, entre em contato com a prefeitura."
       },
       name:""
     };
@@ -93,7 +94,8 @@ class editCityHall extends Component {
           description: {$set: (this.props.data.description != null ? this.props.data.description : "")},
           choose_professional: {$set: (this.props.data.show_professional != null ? this.props.data.show_professional : "")},
           web_singup: {$set: (this.props.data.citizen_register != null ? this.props.data.citizen_register : false)},
-          allow_web: {$set: (this.props.data.citizen_access != null ? this.props.data.citizen_access : false)}
+          allow_web: {$set: (this.props.data.citizen_access != null ? this.props.data.citizen_access : false)},
+          block_text: {$set: this.props.data.block_text}
         })
       });
 
@@ -152,6 +154,7 @@ class editCityHall extends Component {
       });
     }).catch(() => {
       formData["cep"]["only_registered"] = false;
+      console.log(formData);
       fetch(`${apiUrl}/${collection}`, {
         headers: {
           "Accept": "application/json",
@@ -169,7 +172,7 @@ class editCityHall extends Component {
           });
         }).catch(() => {
           $("#toast-container").remove();
-          Materialize.toast('CEP inválido.', 10000, "red",function(){$("#toast-container").remove()});
+          Materialize.toast('CEP inválido, não encontramos o endereço.', 10000, "red",function(){$("#toast-container").remove()});
         })
     })
 
@@ -181,7 +184,7 @@ class editCityHall extends Component {
   handleCityHallInputChange(event){
     const target = event.target;
     const name = target.name;
-    let value = target.value
+    let value = target.value;
     if(target.validity.valid) {
       if(target.type === "checkbox"){
         value = !this.state.city_hall[name];
@@ -265,17 +268,16 @@ class editCityHall extends Component {
     if(!isNumber(data.email_hours) || data.email_hours < 0 || data.email_hours != Number(data.email_hours))
         errors.push('O número de horas para o email de aviso deve ser um número positivo');
 
-    //periodo para contagem de agendamentos
+    //schedule_days_interval
     if(!isNumber(data.schedule_days_interval) || data.schedule_days_interval <= 0
       || data.schedule_days_interval != Number(data.schedule_days_interval))
         errors.push('O número de dias para contagem de agendamentos deve ser um número positivo');
 
-
-    //Telefone
+    //phone
     if(data.phone1.length == 0)
         errors.push('O Telefone 1 é um campo obrigatório');
 
-    //email e email de suporte
+    //email & support_email
     let re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if(data.email.length > 0 && !re.test(data.email)){
       errors.push('Digite um email válido para a prefeitura');
@@ -283,6 +285,11 @@ class editCityHall extends Component {
 
     if(data.support_email.length > 0 && !re.test(data.support_email)){
       errors.push('Digite um email válido para o suporte');
+    }
+
+    //allow_web
+    if(!this.state.city_hall.allow_web && this.state.block_text === undefined){
+      errors.push('Digite uma mensagem que justifica porque o cidadão não pode acessar o Agendador');
     }
 
     return errors;
@@ -396,6 +403,10 @@ class editCityHall extends Component {
     data['support_email'] = this.state.city_hall.support_email;
     data['url']  = this.state.city_hall.site;
     data['show_professional'] = this.state.city_hall.choose_professional;
+    if(!this.props.is_edit || !this.state.city_hall.allow_web){
+      data['block_text'] = this.state.city_hall.block_text;
+    }
+
 
     formData['city_hall'] = data;
     return formData;
@@ -510,7 +521,6 @@ class editCityHall extends Component {
                             Logotipo
                           </Button>
                           <Input  s={6} type="text" disabled value={this.state.aux.logo} className="file-name"/>
-
                         </Col>
                       </Row>
                       <Row>
@@ -527,9 +537,11 @@ class editCityHall extends Component {
                             className='city-hall' offLabel=' '
                             onLabel='Permitir que utilize o agendador pela internet' onChange={this.handleCityHallInputChange}/>
                         </Col>
-
+                        <Col s={12}>
+                          <h6 className="allow-web-header" style={(this.state.city_hall.allow_web ? {display : 'none'} : {})}>Mensagem que justifica porque o cidadão não pode acessar o Agendador*:</h6>
+                        </Col>
                         <Col s={12} style={this.state.city_hall.allow_web ? {display : 'none'} : {}}>
-                          <Input type="textarea" name="block_text" value={this.state.city_hall.block_text} />
+                          <Input type="textarea" name="block_text" value={this.state.city_hall.block_text} onChange={this.handleCityHallInputChange}/>
                         </Col>
 
                       </Row>
