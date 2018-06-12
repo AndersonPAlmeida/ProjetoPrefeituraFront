@@ -402,8 +402,12 @@ class editCityHall extends Component {
     data['url']  = this.state.city_hall.site;
     data['show_professional'] = this.state.city_hall.choose_professional;
 
-    if(!this.props.is_edit || !this.state.city_hall.allow_web){
+    if(!this.props.is_edit && this.state.city_hall.allow_web){
+      data['block_text'] = "Para realizar seu agendamento, entre em contato com a prefeitura.";
+
+    } else if(!this.props.is_edit || !this.state.city_hall.allow_web){
       data['block_text'] = this.state.city_hall.block_text;
+
     }
 
 
