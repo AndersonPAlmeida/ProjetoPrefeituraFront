@@ -176,7 +176,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="shifts/new" component={UserIsAuthenticated(ShiftCreate)} />
         <Route path="shifts/:shift_id" component={UserIsAuthenticated(ShiftShow)} />
 
-        <Route path="city_hall/list" component={UserIsAuthenticated(CityHallList)} />
+        <Route path="city_hall" component={UserIsAuthenticated(CityHallList)} />
         <Route path="city_hall/edit" component={UserIsAuthenticated(CityHallEdit)} />
         <Route path="city_hall/new" component={UserIsAuthenticated(CityHallCreate)} />
 

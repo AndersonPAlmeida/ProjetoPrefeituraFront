@@ -38,7 +38,7 @@ class getCityHallEdit extends Component {
   }
 
   prev() {
-    browserHistory.push(`/city_hall/edit`);
+    browserHistory.push(`/city_hall`);
   }
 
   render() {
@@ -54,7 +54,12 @@ class getCityHallEdit extends Component {
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'put'}
               current_role={this.props.user.roles[this.props.user.current_role_idx]}
-              submit_url={`/professionals/shifts?home=true`}
+              submit_url={
+                this.props.user.roles[this.props.user.current_role_idx] === 'adm_c3sl' ?
+                '/city_hall'
+                :
+                `/professionals/shifts?home=true`
+              }
             />
         }
       </div>

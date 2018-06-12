@@ -153,7 +153,6 @@ class editCityHall extends Component {
       });
     }).catch(() => {
       formData["cep"]["only_registered"] = false;
-      console.log(formData);
       fetch(`${apiUrl}/${collection}`, {
         headers: {
           "Accept": "application/json",
@@ -655,11 +654,10 @@ class editCityHall extends Component {
   }
 
   confirmButton() {
-
     return (
       <div className="card-action">
         {
-          this.props.current_role === "adm_c3sl" ?
+          this.props.current_role.role === "adm_c3sl" ?
           <a className='back-bt waves-effect btn-flat' href='#' onClick={this.props.prev}> Voltar </a>
           :
           <div/>

@@ -4,9 +4,8 @@ import { port, apiHost, apiPort, apiVer } from '../../../config/env';
 import {parseResponse} from "../../redux-auth/utils/handle-fetch-response";
 import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux';
-import UserForm from '../utils/UserForm';
-import { browserHistory } from 'react-router';
 import CityHallForm from './CityHallForm';
+import { browserHistory } from 'react-router';
 
 class getCityHallCreate extends Component {
   constructor(props) {
@@ -16,9 +15,8 @@ class getCityHallCreate extends Component {
     };
   }
 
-
   prev() {
-    browserHistory.push(`/city_hall/new`);
+    browserHistory.push(`/city_hall`);
   }
 
   render() {
@@ -32,7 +30,7 @@ class getCityHallCreate extends Component {
               fetch_collection={`city_halls`}
               fetch_params={`permission=${this.props.user.current_role}`}
               fetch_method={'post'}
-              submit_url={`/city_halls/`}
+              submit_url={`/city_hall`}
               current_role={this.props.user.roles[this.props.user.current_role_idx]}
             />
         }

@@ -10,9 +10,6 @@
   padding-left: 0px;
 }
 
-.col.input-field{
-  margin-top: 0px;
-}
 
 .div.col.input-field.city_hall{
   margin-top: 0px;
@@ -63,4 +60,5 @@ div.switch{
 
 .allow-web-header{
     margin-top: 10px;
+
 }
