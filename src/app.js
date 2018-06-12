@@ -15,7 +15,7 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
   ResourceBookingList, ResourceBookingShow, ResourceBookingCreate, ResourceBookingEdit, ProfessionalIndex,
   ProfessionalList, ProfessionalEdit, ProfessionalShow, ProfessionalCreate,
   ProfessionalSearch, ProfessionalSchedule, ProfessionalUserList,
-  ProfessionalUserEdit, ProfessionalUserCreate,ProfessionalUserUpload, ProfessionalUserShow,
+  ProfessionalUserEdit, ProfessionalUserCreate, ProfessionalUserShow,
   ProfessionalUserDependantEdit, ProfessionalUserDependantCreate,
   ProfessionalUserDependantShow, ShiftShow, ShiftEdit, ShiftCreate,
   ShiftList, OccupationCreate,OccupationList,OccupationEdit,OccupationShow, MyReport, Reports,
@@ -161,7 +161,6 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="professionals/users/:citizen_id/dependants/:dependant_id" component={UserIsAuthenticated(ProfessionalUserDependantShow)} />
         <Route path="professionals/users" component={UserIsAuthenticated(ProfessionalUserList)} />
         <Route path="professionals/users/new" component={UserIsAuthenticated(ProfessionalUserCreate)} />
-        <Route path="professionals/users/upload" component={UserIsAuthenticated(ProfessionalUserUpload)} />
         <Route path="professionals/users/:citizen_id/edit" component={UserIsAuthenticated(ProfessionalUserEdit)} />
         <Route path="professionals/users/:citizen_id" component={UserIsAuthenticated(ProfessionalUserShow)} />
 
