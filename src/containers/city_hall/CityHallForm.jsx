@@ -14,7 +14,6 @@ function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
 /*
   TODO:
-  - what does the 'block_text' field means?
   - Show logo preview on image upload.
   - Check back-end filter( & error msg) for file type on image upload.
 
@@ -393,7 +392,6 @@ class editCityHall extends Component {
     data['phone1'] = this.state.city_hall.phone1.replace(/[^0-9]+/g,'');
     data['phone2'] = this.state.city_hall.phone2.replace(/[^0-9]+/g,'');
     data['address_number'] = this.state.city_hall.address_number;
-    //data['block_text'] = this.state.city_hall.description;
     data['citizen_access'] = this.state.city_hall.allow_web;
     data['citizen_register'] = this.state.city_hall.web_singup;
     data['schedule_period'] = this.state.city_hall.schedule_days_interval;
@@ -403,6 +401,7 @@ class editCityHall extends Component {
     data['support_email'] = this.state.city_hall.support_email;
     data['url']  = this.state.city_hall.site;
     data['show_professional'] = this.state.city_hall.choose_professional;
+
     if(!this.props.is_edit || !this.state.city_hall.allow_web){
       data['block_text'] = this.state.city_hall.block_text;
     }
