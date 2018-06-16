@@ -55,7 +55,7 @@ class getCityHallEdit extends Component {
               fetch_method={'put'}
               current_role={this.props.user.roles[this.props.user.current_role_idx]}
               submit_url={
-                this.props.user.roles[this.props.user.current_role_idx] === 'adm_c3sl' ?
+                this.props.user.roles[this.props.user.current_role_idx].role === 'adm_c3sl' ?
                 '/city_hall'
                 :
                 `/professionals/shifts?home=true`

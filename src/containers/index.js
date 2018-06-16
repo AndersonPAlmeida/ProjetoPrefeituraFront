@@ -95,3 +95,4 @@ export ServiceEdit from './schedule/service/ServiceEdit';
 export CityHallList from './city_hall/CityHallList';
 export CityHallEdit from './city_hall/CityHallEdit';
 export CityHallCreate from './city_hall/CityHallCreate';
+export CityHallShow from './city_hall/CityHallShow';

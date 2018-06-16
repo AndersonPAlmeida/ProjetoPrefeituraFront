@@ -286,7 +286,7 @@ class editCityHall extends Component {
     }
 
     //allow_web
-    if(!this.state.city_hall.allow_web && this.state.block_text === undefined){
+    if(!this.state.city_hall.allow_web && this.state.city_hall.block_text.length == 0){
       errors.push('Digite uma mensagem que justifica porque o cidadão não pode acessar o Agendador');
     }
 
@@ -361,6 +361,7 @@ class editCityHall extends Component {
       }).then(parseResponse).then(resp => {
 
         if(this.state.aux.logo_has_changed){
+          data['active'] = this.state.city_hall.active;
           this.updateLogo(resp.id).bind(this);
         }else{
           this.onSuccesfulOperation();
@@ -382,7 +383,6 @@ class editCityHall extends Component {
 
     if(this.props.is_edit){
       data['id'] = this.state.city_hall.id;
-      data['active'] = this.state.city_hall.active;
     }
 
     data['name'] = this.state.city_hall.name;
@@ -432,6 +432,7 @@ class editCityHall extends Component {
                           <Input name='active' type='select' className='city-hall'
                             onChange={this.handleCityHallInputChange}
                             value={this.state.city_hall.active}
+                            disabled={this.props.current_role.role == 'adm_c3sl' ? false : true}
                             >
                               <option key={1} value={true}>Ativo</option>
                               <option key={0} value={false}>Inativo</option>

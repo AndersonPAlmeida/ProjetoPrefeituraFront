@@ -134,7 +134,17 @@ class getCityHallList extends Component {
             <td>
               {city_hall.active ? 'Ativo' : 'Inativo'}
             </td>
-
+            <td>
+              <a className='back-bt waves-effect btn-flat'
+                href='#'
+                onClick={ () =>
+                  browserHistory.push(`/city_hall/${city_hall.id}`)
+                }>
+                  <i className="waves-effect material-icons tooltipped">
+                    visibility
+                  </i>
+              </a>
+            </td>
             <td>
               <a className='back-bt waves-effect btn-flat'
                  href='#'
@@ -157,6 +167,7 @@ class getCityHallList extends Component {
         <th>{this.sortableColumn.bind(this)('Nome','name')}</th>
         <th>{this.sortableColumn.bind(this)('CEP','cep')}</th>
         <th>{this.sortableColumn.bind(this)('Situação','active')}</th>
+        <th></th>
         <th></th>
       </tr>
     )
@@ -195,14 +206,14 @@ class getCityHallList extends Component {
             <Pagination
               value={this.state.current_page}
               onSelect={ (val) =>
-                {
-                  this.setState(
-                    {
-                      current_page: val
-                    },
-                    () => {this.handleFilterSubmit.bind(this)(true)}
-                  )
-                }
+                  {
+                    this.setState(
+                      {
+                        current_page: val
+                      },
+                      () => {this.handleFilterSubmit.bind(this)(true)}
+                    )
+                  }
               }
               className={styles['pagination']}
               items={Math.ceil(this.state.num_entries/num_items_per_page)}
@@ -296,7 +307,45 @@ class getCityHallList extends Component {
 
 
   handleFilterSubmit(sort_only) {
-    //TODO:
+    var name;
+    var state;
+    var city;
+    var current_page;
+    if(sort_only) {
+      name = this.state.last_fetch_name;
+      state = this.state.last_fetch_state;
+      city = this.state.last_fetch_city;
+    } else {
+      name = this.state.filter_name
+      state = this.state.filter_state
+      city = this.state.filter_city
+    }
+    name = name.replace(/\s/g,'+');
+    state = state.replace(/\s/g,'+');
+    city = city.replace(/\s/g,'+');
+    const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
+    const collection = `city_halls`;
+    const params = `permission=${this.props.user.current_role}`
+                  +`&q[name]=${name}`
+                  +`&q[state]=${state}`
+                  +`&q[city]=${city}`
+                  +`&q[s]=${this.state.filter_s}`
+    current_page = sort_only ? this.state.current_page : 1
+    fetch(`${apiUrl}/${collection}?${params}`, {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json" },
+        method: "get",
+    }).then(parseResponse).then(resp => {
+      this.setState({
+        city_halls: resp.entries,
+        num_entries: resp.num_entries,
+        last_fetch_name: name,
+        last_fetch_state: state,
+        last_fetch_city: city,
+        current_page: current_page
+      })
+    });
   }
 
 
