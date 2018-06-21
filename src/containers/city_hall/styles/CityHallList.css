@@ -28,6 +28,6 @@
 	color: black;
 }
 
-input[type=text] {
+input[type=text].city-hall-list{
   margin-top: 15px;
 }

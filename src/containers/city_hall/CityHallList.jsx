@@ -257,6 +257,7 @@ class getCityHallList extends Component {
                 <input
                   type="text"
                   name="filter_name"
+                  className='city-hall-list'
                   value={this.state.filter_name} onChange={this.handleInputFilterChange}
                 />
               </label>
@@ -269,6 +270,7 @@ class getCityHallList extends Component {
                 <input
                   type="text"
                   name="filter_state"
+                  className='city-hall-list'
                   value={this.state.filter_state}
                   onChange={this.handleInputFilterChange}
                 />
@@ -282,6 +284,7 @@ class getCityHallList extends Component {
                 <input
                   type="text"
                   name="filter_city"
+                  className='city-hall-list'
                   value={this.state.filter_city}
                   onChange={this.handleInputFilterChange}
                 />

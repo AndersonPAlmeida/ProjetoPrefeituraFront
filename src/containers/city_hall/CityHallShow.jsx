@@ -13,7 +13,7 @@ class getCityHallShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      service_place: {
+      city_hall: {
         id: 0,
         name: '',
         cep: '',
@@ -26,8 +26,6 @@ class getCityHallShow extends Component {
         created_at: '',
         updated_at: '',
         city_hall_name: '',
-        service_types: [],
-        professionals: [],
         city: {},
         state: {},
         address: {}
@@ -38,7 +36,7 @@ class getCityHallShow extends Component {
   componentDidMount() {
     var self = this;
     const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
-    const collection = `service_places/${this.props.params.service_place_id}`;
+    const collection = `city_halls/${this.props.params.city_hall_id}`;
     const params = `permission=${this.props.user.current_role}`
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
@@ -46,13 +44,13 @@ class getCityHallShow extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ service_place: resp })
+      self.setState({ city_hall: resp })
     });
   }
 
   showProfessionals() {
     const professionalsList = (
-      this.state.service_place.professionals.map((professional) => {
+      this.state.city_hall.professionals.map((professional) => {
         return (
           <div>{professional.name}</div>
         )
@@ -67,7 +65,7 @@ class getCityHallShow extends Component {
 
   showServiceTypes() {
     const serviceTypesList = (
-      this.state.service_place.service_types.map((service_type) => {
+      this.state.city_hall.service_types.map((service_type) => {
         return (
           <div>{service_type.description}</div>
         )
@@ -85,11 +83,11 @@ class getCityHallShow extends Component {
   }
 
   mainComponent() {
-    var created_date = strftime.timezone('+0000')('%d/%m/%Y', new Date(this.state.service_place.created_at))
-    var d = new Date(this.state.service_place.created_at)
+    var created_date = strftime.timezone('+0000')('%d/%m/%Y', new Date(this.state.city_hall.created_at))
+    var d = new Date(this.state.city_hall.created_at)
     var created_time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes())
-    var updated_date = strftime.timezone('+0000')('%d/%m/%Y', new Date(this.state.service_place.updated_at))
-    d = new Date(this.state.service_place.updated_at)
+    var updated_date = strftime.timezone('+0000')('%d/%m/%Y', new Date(this.state.city_hall.updated_at))
+    d = new Date(this.state.city_hall.updated_at)
     var updated_time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes())
     return (
     <div className='card'>
@@ -97,59 +95,55 @@ class getCityHallShow extends Component {
             <h2 className='card-title h2-title-home'> Informações da Prefeitura: </h2>
             <p>
               <b>Situação: </b>
-              {this.state.service_place.active ? 'Ativo' : 'Inativo'}
+              {this.state.city_hall.active ? 'Ativo' : 'Inativo'}
             </p>
             <p>
               <b>Nome: </b>
-              {this.state.service_place.name}
-            </p>
-            <p>
-              <b>Prefeitura: </b>
-              {this.state.service_place.city_hall_name}
+              {this.state.city_hall.name}
             </p>
             <p>
               <b>CEP: </b>
-              {this.state.service_place.cep}
+              {this.state.city_hall.cep}
             </p>
             <p>
               <b>Bairro: </b>
-              {this.state.service_place.address.neighborhood}
+              {this.state.city_hall.address.neighborhood}
             </p>
             <p>
               <b>Endereço: </b>
-              {this.state.service_place.address.address}
+              {this.state.city_hall.address.address}
             </p>
             <p>
               <b>Número: </b>
-              {this.state.service_place.address_number}
+              {this.state.city_hall.address_number}
             </p>
             <p>
               <b>Complemento: </b>
-              {this.state.service_place.address_complement}
+              {this.state.city_hall.address_complement}
             </p>
             <p>
               <b>Telefone 1: </b>
-              {this.state.service_place.phone1}
+              {this.state.city_hall.phone1}
             </p>
             <p>
               <b>Telefone 2: </b>
-              {this.state.service_place.phone2}
+              {this.state.city_hall.phone2}
             </p>
             <p>
               <b>E-mail: </b>
-              {this.state.service_place.email}
+              {this.state.city_hall.email}
             </p>
             <p>
               <b>Site: </b>
-              {this.state.service_place.url}
+              {this.state.city_hall.url}
             </p>
             <p>
               <b>Estado: </b>
-              {this.state.service_place.state.name}
+              {this.state.city_hall.state.name}
             </p>
             <p>
               <b>Munícipio: </b>
-              {this.state.service_place.city.name}
+              {this.state.city_hall.city.name}
             </p>
             <p>
               <b>Serviços: </b>
@@ -171,21 +165,22 @@ class getCityHallShow extends Component {
           {this.editButton()}
       </div>
     )
+
   }
 
-  editServicePlace () {
-    browserHistory.push(`service_places/${this.props.params.service_place_id}/edit`)
+  editCityHall () {
+    //browserHistory.push(`city_halls/${this.props.params.city_hall_id}/edit`)
   }
 
   prev() {
-    browserHistory.push(`service_places`)
+    //browserHistory.push(`city_halls`)
   }
 
 	editButton() {
 		return (
 			<div className="card-action">
 				<a className='back-bt waves-effect btn-flat' onClick={this.prev.bind(this)} > Voltar </a>
-				<button className="waves-effect btn right" name="commit" onClick={this.editServicePlace.bind(this)} type="submit">Editar</button>
+				<button className="waves-effect btn right" name="commit" onClick={this.editCityHall} type="submit">Editar</button>
       </div>
 		)
 	}
