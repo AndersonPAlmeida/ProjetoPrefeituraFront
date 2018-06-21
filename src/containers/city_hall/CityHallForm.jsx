@@ -24,9 +24,11 @@ class editCityHall extends Component {
     super(props);
     this.state = {
       aux: {
-        logo: undefined,
-        logo_obj: undefined,
-        logo_has_changed: 0
+        logo: "",
+        logo_obj: "",
+        logo_has_changed: 0,
+        address_enable: true,
+        neighborhood_enable: true
       },
       block_text_changed: false,
       city_hall: {
@@ -131,27 +133,13 @@ class editCityHall extends Component {
     const collection = 'validate_cep';
     var formData = {};
     let cep = this.state.city_hall.cep.replace(/(\.|-|_)/g,'');
+    let address_enable, neighborhood_enable;
     formData["cep"] = {};
     formData["cep"]["number"] = cep;
     $("#toast-container").remove();
-    fetch(`${apiUrl}/${collection}`, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json" },
-      method: "post",
-      body: JSON.stringify(formData)
-    }).then(parseResponse).then(resp => {
-      $("#toast-container").remove();
-      Materialize.toast('CEP inválido, deve ser de uma prefeitura não registrada.', 10000, "red",function(){$("#toast-container").remove()});
-      this.setState({
-        city_hall: update(this.state.city_hall,{
-          address: {$set: ""},
-          district_name: {$set: ""},
-          city_name: {$set: ""},
-          state: {$set: ""}
-        })
-      });
-    }).catch(() => {
+
+    //flow for edit and flow for create!
+    if(this.props.is_edit){
       formData["cep"]["only_registered"] = false;
       fetch(`${apiUrl}/${collection}`, {
         headers: {
@@ -160,22 +148,87 @@ class editCityHall extends Component {
           method: "post",
           body: JSON.stringify(formData)
         }).then(parseResponse).then(resp => {
+          address_enable = true;
+          neighborhood_enable = true;
+
+          if(resp.address != ""){
+            address_enable = false;
+          }
+          if(resp.neighborhood != ""){
+            neighborhood_enable = false;
+          }
+
           this.setState({
             city_hall: update(this.state.city_hall,{
               address: {$set: resp.address},
               district_name: {$set: resp.neighborhood},
               city_name: {$set: resp.city_name},
               state: {$set: resp.state_name}
+            }),
+            aux: update(this.state.aux,{
+              address_enable: {$set: address_enable},
+              neighborhood_enable: {$set: neighborhood_enable}
             })
           });
-        }).catch(() => {
+        }).catch((error) => {
           $("#toast-container").remove();
           Materialize.toast('CEP inválido, não encontramos o endereço.', 10000, "red",function(){$("#toast-container").remove()});
         })
-    })
+    }else{
+      fetch(`${apiUrl}/${collection}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+          method: "post",
+          body: JSON.stringify(formData)
+        }).then(parseResponse).then(resp => {
+          $("#toast-container").remove();
+          Materialize.toast('CEP inválido, deve ser de uma prefeitura não registrada.', 10000, "red",function(){$("#toast-container").remove()});
+          this.setState({
+            city_hall: update(this.state.city_hall,{
+              address: {$set: ""},
+              district_name: {$set: ""},
+              city_name: {$set: ""},
+              state: {$set: ""}
+            })
+          });
+        }).catch(() => {
+          formData["cep"]["only_registered"] = false;
+          fetch(`${apiUrl}/${collection}`, {
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json" },
+              method: "post",
+              body: JSON.stringify(formData)
+            }).then(parseResponse).then(resp => {
+              address_enable = true;
+              neighborhood_enable = true;
 
+              if(resp.address != ""){
+                address_enable = false;
+              }
+              if(resp.neighborhood != ""){
+                neighborhood_enable = false;
+              }
 
-
+              this.setState({
+                city_hall: update(this.state.city_hall,{
+                  address: {$set: resp.address},
+                  district_name: {$set: resp.neighborhood},
+                  city_name: {$set: resp.city_name},
+                  state: {$set: resp.state_name}
+                }),
+                aux: update(this.state.aux,{
+                  address_enable: {$set: address_enable},
+                  neighborhood_enable: {$set: neighborhood_enable}
+                })
+              });
+            }).catch((error) => {
+              $("#toast-container").remove();
+              Materialize.toast('CEP inválido, não encontramos o endereço.', 10000, "red",function(){$("#toast-container").remove()});
+            })
+          })
+    }
 
   }
 
@@ -294,14 +347,41 @@ class editCityHall extends Component {
   }
 
   onSuccesfulOperation(){
-    $("#toast-container").remove();
-    if(this.props.is_edit){
-      Materialize.toast('Prefeitura editada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+    let active = this.state.city_hall.active;
+
+    if(typeof this.state.city_hall.active === 'string' || this.state.city_hall.active instanceof String){
+      active = (active === 'true');
     }
-    else{
-      Materialize.toast('Prefeitura criada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+    if(!active){
+      const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
+      const collection = this.props.fetch_collection;
+      let params = this.props.fetch_params;
+      fetch(`${apiUrl}/${collection}?${params}`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json" },
+        method: "delete"
+      }).then(parseResponse).then(resp => {
+        $("#toast-container").remove();
+        Materialize.toast('Prefeitura editada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+
+        browserHistory.push(this.props.submit_url);
+      }).catch(({errors}) => { // TODO: UPDATE ERRORS ARRAY ACCORDING TO API
+        if(errors) {
+          this.showErrors(errors);
+        }
+      });
+    }else{
+
+      $("#toast-container").remove();
+      if(this.props.is_edit){
+        Materialize.toast('Prefeitura editada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+      }
+      else{
+        Materialize.toast('Prefeitura criada com sucesso.', 10000, "green",function(){$("#toast-container").remove()});
+      }
+      browserHistory.push(this.props.submit_url);
     }
-    browserHistory.push(this.props.submit_url);
   }
 
   showErrors(errors){
@@ -361,7 +441,6 @@ class editCityHall extends Component {
       }).then(parseResponse).then(resp => {
 
         if(this.state.aux.logo_has_changed){
-          data['active'] = this.state.city_hall.active;
           this.updateLogo(resp.id).bind(this);
         }else{
           this.onSuccesfulOperation();
@@ -383,6 +462,9 @@ class editCityHall extends Component {
 
     if(this.props.is_edit){
       data['id'] = this.state.city_hall.id;
+      if(this.state.city_hall.active){
+        data['active'] = this.state.city_hall.active;
+      }
     }
 
     data['name'] = this.state.city_hall.name;
@@ -470,7 +552,8 @@ class editCityHall extends Component {
                           <h6>Endereço da sede*:</h6>
                         </Col>
                         <Col s={12}>
-                          <Input name="address" type='text' disabled value={this.state.city_hall.address}
+                          <Input name="address" type='text' disabled={!this.state.aux.address_enable}
+                            value={this.state.city_hall.address}
                             className='city-hall' onChange={this.handleCityHallInputChange}/>
                         </Col>
                       </Row>
@@ -564,7 +647,7 @@ class editCityHall extends Component {
                           <h6>Bairro*:</h6>
                         </Col>
                         <Col s={12}>
-                         <Input name="district_name" type='text' disabled value={this.state.city_hall.district_name}
+                         <Input name="district_name" type='text' disabled={!(this.state.aux.neighborhood_enable)} value={this.state.city_hall.district_name}
                            className='city-hall' onChange={this.handleCityHallInputChange}/>
                         </Col>
                       </Row>

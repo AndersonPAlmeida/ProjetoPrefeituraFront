@@ -181,8 +181,8 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="city_hall/edit" component={UserIsAuthenticated(CityHallEdit)} />
         <Route path="city_hall/:city_hall_id/edit" component={UserIsAuthenticated(CityHallEdit)} />
         <Route path="city_hall/new" component={UserIsAuthenticated(CityHallCreate)} />
-        <Route path="city_hall/:cty_hall_id" component={UserIsAuthenticated(CityHallShow)} />
-        
+        <Route path="city_hall/:city_hall_id" component={UserIsAuthenticated(CityHallShow)} />
+
         <Route path="*" component={NotFound} status={404} />
       </Route>
     </Router>

@@ -11,16 +11,6 @@ import { browserHistory } from 'react-router';
 import strftime from 'strftime';
 import MaskedInput from 'react-maskedinput';
 
-const role_name = {
-  'citizen': "Cidadão",
-  'responsavel_atendimento': "Responsável Atendimento",
-  'atendente_local': "Atendente Local",
-  'adm_local': "Administrador Local",
-  'adm_prefeitura': "Administrador Prefeitura",
-  'adm_c3sl': "Administrador C3SL"
-}
-
-//TODO: aplicar mascara para CEP na tabela, validar a troca de paginas, a ordenação, o editar.
 
 class getCityHallList extends Component {
   constructor(props) {
@@ -120,6 +110,19 @@ class getCityHallList extends Component {
     )
   }
 
+  /* To add "view city_hall"
+  <td>
+  <a className='back-bt waves-effect btn-flat'
+  href='#'
+  onClick={ () =>
+  browserHistory.push(`/city_hall/${city_hall.id}`)
+  }>
+  <i className="waves-effect material-icons tooltipped">
+  visibility
+  </i>
+  </a>
+  </td>
+  */
 	tableList() {
     const data = (
       this.state.city_halls.map((city_hall) => {
@@ -132,18 +135,13 @@ class getCityHallList extends Component {
               {city_hall.cep}
             </td>
             <td>
-              {city_hall.active ? 'Ativo' : 'Inativo'}
+              {city_hall.state_name}
             </td>
             <td>
-              <a className='back-bt waves-effect btn-flat'
-                href='#'
-                onClick={ () =>
-                  browserHistory.push(`/city_hall/${city_hall.id}`)
-                }>
-                  <i className="waves-effect material-icons tooltipped">
-                    visibility
-                  </i>
-              </a>
+              {city_hall.city.name}
+            </td>
+            <td>
+              {city_hall.active ? 'Ativo' : 'Inativo'}
             </td>
             <td>
               <a className='back-bt waves-effect btn-flat'
@@ -166,8 +164,9 @@ class getCityHallList extends Component {
       <tr>
         <th>{this.sortableColumn.bind(this)('Nome','name')}</th>
         <th>{this.sortableColumn.bind(this)('CEP','cep')}</th>
+        <th>{this.sortableColumn.bind(this)('Estado','city_state_name')}</th>
+        <th>{this.sortableColumn.bind(this)('Munícipio','city_name')}</th>
         <th>{this.sortableColumn.bind(this)('Situação','active')}</th>
-        <th></th>
         <th></th>
       </tr>
     )
@@ -330,6 +329,8 @@ class getCityHallList extends Component {
                   +`&q[state]=${state}`
                   +`&q[city]=${city}`
                   +`&q[s]=${this.state.filter_s}`
+
+
     current_page = sort_only ? this.state.current_page : 1
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
