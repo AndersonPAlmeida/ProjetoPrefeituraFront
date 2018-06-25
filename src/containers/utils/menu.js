@@ -20,7 +20,7 @@ export const getOptions = (user_permission,user_name) =>
           'fields':
                 [
                   { 'name': 'Locais de Atendimento', 'link': '/service_places', 'separator': true },
-                  { 'name': 'Prefeituras', 'link': '/city_halls', 'separator': false },
+                  { 'name': 'Prefeituras', 'link': '/city_hall', 'separator': false },
                   { 'name': 'Setores', 'link': '/sectors', 'separator': false },
                   { 'name': 'Cargos', 'link': '/occupations', 'separator': false },
                   { 'name': 'Profissionais', 'link': '/professionals', 'separator': false },
@@ -77,6 +77,7 @@ export const getOptions = (user_permission,user_name) =>
                     { 'name': 'Profissionais', 'link': '/professionals', 'separator': false },
                     { 'name': 'Cidadãos', 'link': '/professionals/users', 'separator': true },
                     { 'name': 'Relatórios', 'link': '/reports', 'separator': false },
+
                 ]
         },
 
