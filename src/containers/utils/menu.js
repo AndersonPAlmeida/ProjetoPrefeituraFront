@@ -25,8 +25,7 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': 'Cargos', 'link': '/occupations', 'separator': false },
                   { 'name': 'Profissionais', 'link': '/professionals', 'separator': false },
                   { 'name': 'Cidadãos', 'link': '/professionals/users', 'separator': true },
-                  { 'name': 'Relatórios', 'link': '/reports', 'separator': false },
-                  { 'name': 'Solicitações', 'link': '/solicitations', 'separator': false }
+                  { 'name': 'Relatórios', 'link': '/reports', 'separator': false }
                 ]
         },
         { 'name': 'Recursos',
