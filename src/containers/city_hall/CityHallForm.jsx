@@ -462,9 +462,9 @@ class editCityHall extends Component {
 
     if(this.props.is_edit){
       data['id'] = this.state.city_hall.id;
-      if(this.state.city_hall.active){
-        data['active'] = this.state.city_hall.active;
-      }
+    }
+    if(this.state.city_hall.active){
+      data['active'] = this.state.city_hall.active;
     }
 
     data['name'] = this.state.city_hall.name;
@@ -504,7 +504,12 @@ class editCityHall extends Component {
             <div className='card'>
               <div className='card-content'>
                 <Row className='city-hall-content' >
+                  {
+                    (this.props.is_edit)?
                     <h2 className="card-title">Alterar Prefeitura: {this.state.name}</h2>
+                    :
+                    <h2 className="card-title">Criar Prefeitura:</h2>
+                  }
                     <Col s={12} m={6}>
                       <Row className='city-hall-first-row'>
                         <Col s={12}>
@@ -514,7 +519,8 @@ class editCityHall extends Component {
                           <Input name='active' type='select' className='city-hall'
                             onChange={this.handleCityHallInputChange}
                             value={this.state.city_hall.active}
-                            disabled={this.props.current_role.role == 'adm_c3sl' ? false : true}
+                            disabled={(this.props.current_role.role !== 'adm_c3sl') || (this.props.current_role.role == 'adm_c3sl' &&
+                            this.props.is_edit)? false : true}
                             >
                               <option key={1} value={true}>Ativo</option>
                               <option key={0} value={false}>Inativo</option>
