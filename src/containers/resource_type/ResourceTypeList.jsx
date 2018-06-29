@@ -22,7 +22,7 @@ class getResourceTypeList extends Component {
       filter_s: '',
       city_hall:{}
     };
-    this.getCityHallName = this.getCityHallName.bind(this);      
+    this.getCityHallName = this.getCityHallName.bind(this);
   }
 
   componentWillMount() {
@@ -30,7 +30,11 @@ class getResourceTypeList extends Component {
     const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_types';
     const params = `permission=${this.props.user.current_role}`;
-    this.getCityHallName();    
+    const role = this.props.user.roles[this.props.user.current_role_idx].role;
+    if(role === 'adm_c3sl'){
+      this.getCityHallName();
+    }
+
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         'Accept': 'application/json',
@@ -59,11 +63,12 @@ class getResourceTypeList extends Component {
   getCityHallName() {
     var city_halls = {};
     city_halls = this.state.city_hall;
-    
+
     var self = this;
     const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'city_halls/';
     const params = `permission=${this.props.user.current_role}`;
+    console.log(this.props);
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         'Accept': 'application/json',
@@ -76,12 +81,13 @@ class getResourceTypeList extends Component {
   }
 
   tableList() {
+    let role =  this.props.user.roles[this.props.user.current_role_idx].role;
     var current_role = this.props.user.current_role;
     var user_roles = this.props.user.roles;
     var current_permission = undefined;
     for (let i = 0; i < user_roles.length; i++){
       if (user_roles[i].id === current_role){
-        current_permission = user_roles[i].role; 
+        current_permission = user_roles[i].role;
         break;
       }
     }
@@ -90,10 +96,10 @@ class getResourceTypeList extends Component {
         return (
           <tr>
             <td key={Math.random()} >
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/resource_types/${resourceType.id}`) 
+              <a className='back-bt waves-effect btn-flat'
+                href='#'
+                onClick={ () =>
+                  browserHistory.push(`/resource_types/${resourceType.id}`)
                 }>
                 {resourceType.name}
               </a>
@@ -107,27 +113,32 @@ class getResourceTypeList extends Component {
             <td key={Math.random()} >
               {resourceType.active ? 'Ativo' : 'Inativo'}
             </td>
-            <td key={Math.random()}>
-              {
-                this.state.city_hall[resourceType.city_hall_id-1].name 
-              }
-            </td>
+            {
+              role === 'adm_c3sl' ?
+              <td key={Math.random()}>
+
+                  this.state.city_hall[resourceType.city_hall_id-1].name
+
+              </td>
+              :
+              null
+            }
             <td key={Math.random()} >
-              <a className='back-bt waves-effect btn-flat' 
-                href='#' 
+              <a className='back-bt waves-effect btn-flat'
+                href='#'
                 id="iconTable"
-                onClick={ () => 
-                  browserHistory.push(`/resource_types/${resourceType.id}/edit`) 
+                onClick={ () =>
+                  browserHistory.push(`/resource_types/${resourceType.id}/edit`)
                 }>
                 <i className="waves-effect material-icons tooltipped">
                     edit
                 </i>
-              </a> 
-              <a className='back-bt waves-effect btn-flat' 
+              </a>
+              <a className='back-bt waves-effect btn-flat'
                 id="iconTable"
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/resource_types/${resourceType.id}`) 
+                href='#'
+                onClick={ () =>
+                  browserHistory.push(`/resource_types/${resourceType.id}`)
                 }>
                 <i className="waves-effect material-icons tooltipped">
                     visibility
@@ -143,20 +154,20 @@ class getResourceTypeList extends Component {
     const fields = (
       <tr>
         <th>
-          <a 
-            href='#' 
+          <a
+            href='#'
             className="grey-text text-darken-3 "
-            onClick={ 
-              () => { 
+            onClick={
+              () => {
                 if (this.state.filter_s == 'name+asc'){
                   document.getElementById('ascNameIcon').style.display = 'none';
-                  document.getElementById('descNameIcon').style.display = 'inline-block';                    
-                } 
+                  document.getElementById('descNameIcon').style.display = 'inline-block';
+                }
                 else{
-                  document.getElementById('descNameIcon').style.display = 'none';               
+                  document.getElementById('descNameIcon').style.display = 'none';
                   document.getElementById('ascNameIcon').style.display = 'inline-block';
                 }
-                  
+
                 this.setState({
                   ['filter_s']: this.state.filter_s == 'name+asc' ? 'name+desc' : 'name+asc'
                 }, this.handleFilterSubmit.bind(this,true));
@@ -175,20 +186,20 @@ class getResourceTypeList extends Component {
         <th>Descrição</th>
 
         <th>
-          <a 
-            href='#' 
+          <a
+            href='#'
             className="grey-text text-darken-3 "
-            onClick={ 
-              () => { 
+            onClick={
+              () => {
                 if (this.state.filter_s == 'mobile+asc'){
                   document.getElementById('ascMobileIcon').style.display = 'none';
-                  document.getElementById('descMobileIcon').style.display = 'inline-block';                    
-                } 
+                  document.getElementById('descMobileIcon').style.display = 'inline-block';
+                }
                 else{
-                  document.getElementById('descMobileIcon').style.display = 'none';               
+                  document.getElementById('descMobileIcon').style.display = 'none';
                   document.getElementById('ascMobileIcon').style.display = 'inline-block';
                 }
-                  
+
                 this.setState({
                   ['filter_s']: this.state.filter_s == 'mobile+asc' ? 'mobile+desc' : 'mobile+asc'
                 }, this.handleFilterSubmit.bind(this,true));
@@ -208,38 +219,43 @@ class getResourceTypeList extends Component {
 
         <th>Situação</th>
 
+        {
+          role === 'adm_c3sl' ?
+          (
+          <th>
+            <a
+              href='#'
+              className="grey-text text-darken-3 "
+              onClick={
+                () => {
+                  if (this.state.filter_s == 'city_hall_id+asc'){
+                    document.getElementById('ascCityHallIcon').style.display = 'none';
+                    document.getElementById('descCityHallIcon').style.display = 'inline-block';
+                  }
+                  else{
+                    document.getElementById('descCityHallIcon').style.display = 'none';
+                    document.getElementById('ascCityHallIcon').style.display = 'inline-block';
+                  }
 
-        <th>
-          <a 
-            href='#' 
-            className="grey-text text-darken-3 "
-            onClick={ 
-              () => { 
-                if (this.state.filter_s == 'city_hall_id+asc'){
-                  document.getElementById('ascCityHallIcon').style.display = 'none';
-                  document.getElementById('descCityHallIcon').style.display = 'inline-block';                    
-                } 
-                else{
-                  document.getElementById('descCityHallIcon').style.display = 'none';               
-                  document.getElementById('ascCityHallIcon').style.display = 'inline-block';
+                  this.setState({
+                    ['filter_s']: this.state.filter_s == 'city_hall_id+asc' ? 'city_hall_id+desc' : 'city_hall_id+asc'
+                  }, this.handleFilterSubmit.bind(this,true));
                 }
-                  
-                this.setState({
-                  ['filter_s']: this.state.filter_s == 'city_hall_id+asc' ? 'city_hall_id+desc' : 'city_hall_id+asc'
-                }, this.handleFilterSubmit.bind(this,true));
               }
-            }
-          >
-            Prefeitura
-            <i className="waves-effect material-icons tiny tooltipped" id="ascCityHallIcon" style={{display:'none'}}>
-              arrow_drop_down
-            </i>
-            <i className="waves-effect material-icons tiny tooltipped" id="descCityHallIcon" style={{display:'none'}}>
-              arrow_drop_up
-            </i>
-          </a>
-        </th>
-
+              >
+              Prefeitura
+              <i className="waves-effect material-icons tiny tooltipped" id="ascCityHallIcon" style={{display:'none'}}>
+                arrow_drop_down
+              </i>
+              <i className="waves-effect material-icons tiny tooltipped" id="descCityHallIcon" style={{display:'none'}}>
+                arrow_drop_up
+              </i>
+            </a>
+          </th>
+          )
+          :
+          null
+        }
 
         <th></th>
       </tr>
@@ -306,15 +322,15 @@ class getResourceTypeList extends Component {
           {this.newResourceTypeButton()}
         </div>
 
-        <button 
+        <button
           id="filterBtn"
-          className="waves-effect btn right button-color" 
-          onClick={this.handleFilterSubmit.bind(this,false)} 
-          name="commit" 
+          className="waves-effect btn right button-color"
+          onClick={this.handleFilterSubmit.bind(this,false)}
+          name="commit"
           type="submit">
             FILTRAR
         </button>
-        
+
       </div>
     );
   }
@@ -351,12 +367,12 @@ class getResourceTypeList extends Component {
 
   newResourceTypeButton() {
     return (
-      <button 
+      <button
         onClick={() =>
-          browserHistory.push({ pathname: '/resource_types/new'}) 
+          browserHistory.push({ pathname: '/resource_types/new'})
         }
-        className="btn waves-effect btn button-color" 
-        name="anterior" 
+        className="btn waves-effect btn button-color"
+        name="anterior"
         type="submit">
           CADASTRAR NOVO TIPO DE RECURSO
       </button>
