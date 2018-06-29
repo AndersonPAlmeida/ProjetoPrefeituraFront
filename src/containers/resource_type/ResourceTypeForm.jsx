@@ -17,12 +17,12 @@ class getResourceTypeForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      resource_type: { 
+      resource_type: {
         situation: true,
         mobile: true,
         description: '',
         name: '',
-        city_hall_id: 0 
+        city_hall_id: 0
       },
       previous_data: undefined,
       city_halls: []
@@ -31,7 +31,7 @@ class getResourceTypeForm extends Component {
 
   componentWillMount() {
     var self = this;
-    if (this.props.is_edit)    
+    if (this.props.is_edit)
       var previous_data = {
         situation: Boolean(this.props.data.active),
         mobile: this.props.data.mobile === 'false' ? false : true,
@@ -43,7 +43,7 @@ class getResourceTypeForm extends Component {
 
       const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = `/city_halls/${this.props.current_role.city_hall_id}`;
-      const params = this.props.fetch_params; 
+      const params = this.props.fetch_params;
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           'Accept': 'application/json',
@@ -53,17 +53,18 @@ class getResourceTypeForm extends Component {
         self.setState({ city_halls: resp });
         if (this.props.is_edit)
           this.setState({ resource_type: previous_data });
-      
+
       });
 
       this.setState({
-        resource_type: update(this.state.resource_type, { ['city_hall_id']: {$set: this.props.current_role.city_hall_id} })
+        resource_type: update(this.state.resource_type,
+          {['city_hall_id']: {$set: this.props.current_role.city_hall_id}})
       });
     }
     else {
       const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'forms/service_type_index';
-      const params = this.props.fetch_params; 
+      const params = this.props.fetch_params;
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           'Accept': 'application/json',
@@ -83,7 +84,7 @@ class getResourceTypeForm extends Component {
     const value = target.value;
     const name = target.name;
 
-    
+
 
     this.setState({
       resource_type: update(this.state.resource_type, { [name]: {$set: value} })
@@ -104,7 +105,7 @@ class getResourceTypeForm extends Component {
     } else {
       const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
-      const params = this.props.fetch_params; 
+      const params = this.props.fetch_params;
       let fetch_body = {};
       if(this.props.is_edit) {
         fetch_body['resource_type'] = formData;
@@ -145,30 +146,29 @@ class getResourceTypeForm extends Component {
   }
 
   pickCityHall() {
-    
+
     if(this.props.current_role.role != 'adm_c3sl') {
       return (
-        <Input disabled 
-          name="selected_city_hall" 
-          type='select' 
-          value={this.props.current_role.city_hall_id} 
-        >
-          <option value={this.props.current_role.city_hall_id}>{this.state.city_halls.name}</option>
-        </Input>
-      );
+        <input disabled
+           name="selected_city_hall"
+           type='text'
+           className='input-field'
+           value={this.props.current_role.city_hall_name}
+        />
+      )
     }
 
     const cityHallsList = (
       this.state.city_halls.map((city_hall) => {
         return (
-          <option value={city_hall.id}>{city_hall.name}</option>
+          <option key={city_hall.id} value={city_hall.id}>{city_hall.name}</option>
         );
       })
     );
     return (
-      <Input 
-        name="city_hall_id" 
-        type='select' 
+      <Input
+        name="city_hall_id"
+        type='select'
         value={this.state.resource_type.city_hall_id}
         onChange={
           (event) => {
@@ -177,14 +177,14 @@ class getResourceTypeForm extends Component {
             }
           }
         }
-      >
+        >
         <option value='0' disabled>Escolha a prefeitura</option>
         {cityHallsList}
       </Input>
     );
   }
 
-  render() {    
+  render() {
     return (
       <main>
         <Row>
@@ -192,13 +192,13 @@ class getResourceTypeForm extends Component {
             <div className='card'>
               <div className='card-content'>
                 {this.props.is_edit ?
-                  <h2 className="card-title">Alterar tipo de recurso: {this.props.data.name}</h2> 
+                  <h2 className="card-title">Alterar tipo de recurso: {this.props.data.name}</h2>
                   :
-                  <h2 className="card-title">Cadastrar tipo de recurso</h2> 
+                  <h2 className="card-title">Cadastrar tipo de recurso</h2>
                 }
-                
+
                 <Row>
-                  <Col s={12} l={6}>                  
+                  <Col s={12} l={6}>
                     <div id='resource-type-size'>
                       <h6 >Prefeitura:</h6>
                       <div>
@@ -215,7 +215,7 @@ class getResourceTypeForm extends Component {
                           type='select'
                           name='mobile'
                           value={this.state.resource_type.mobile}
-                          onChange={this.handleInputResourceTypeChange.bind(this)} 
+                          onChange={this.handleInputResourceTypeChange.bind(this)}
                         >
                           <option key={0} value={true}>Sim</option>
                           <option key={1} value={false}>Não</option>
@@ -231,11 +231,11 @@ class getResourceTypeForm extends Component {
                     <div id='resource-type-size'>
                       <h6>Situação:</h6>
                       <div>
-                        <Input 
+                        <Input
                           type='select'
                           name='situation'
                           value={this.state.resource_type.situation}
-                          onChange={this.handleInputResourceTypeChange.bind(this)} 
+                          onChange={this.handleInputResourceTypeChange.bind(this)}
                         >
                           <option key={0} value={true}>Ativo</option>
                           <option key={1} value={false}>Inativo</option>
@@ -248,12 +248,12 @@ class getResourceTypeForm extends Component {
                     <div id='resource-type-size-text'>
                       <h6>Nome*:</h6>
                       <label>
-                        <Input 
-                          type="text" 
-                          className='input-field' 
-                          name="name" 
-                          value={this.state.resource_type.name} 
-                          onChange={this.handleInputResourceTypeChange.bind(this)} 
+                        <Input
+                          type="text"
+                          className='input-field'
+                          name="name"
+                          value={this.state.resource_type.name}
+                          onChange={this.handleInputResourceTypeChange.bind(this)}
                         />
                       </label>
                     </div>
@@ -265,16 +265,16 @@ class getResourceTypeForm extends Component {
                     <div>
                       <h6>Descrição*:</h6>
                       <label>
-                        <textarea  
+                        <textarea
                           className='input-field materialize-textarea black-text'
-                          name="description" 
+                          name="description"
                           placeholder="Adicione uma descrição"
-                          value={this.state.resource_type.description} 
-                          onChange={this.handleInputResourceTypeChange.bind(this)} 
+                          value={this.state.resource_type.description}
+                          onChange={this.handleInputResourceTypeChange.bind(this)}
                         />
                       </label>
                     </div>
-                    
+
                   </Col>
                 </Row>
                 <p><font color="red"> Campos com (*) são de preenchimento obrigatório.</font></p>
