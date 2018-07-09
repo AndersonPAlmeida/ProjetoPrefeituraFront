@@ -29,4 +29,4 @@ RUN npm install npm@latest -g && \
 EXPOSE 3002
 
 ENTRYPOINT ["/app/agendador-entrypoint.sh"]
-CMD ["DEVELOPMENT"]
+CMD ["PRODUCTION"]
