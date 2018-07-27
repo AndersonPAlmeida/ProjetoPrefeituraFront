@@ -63,7 +63,7 @@ class getProfessionalUserList extends Component {
 
   mainComponent() {
     return (
-      <div className='card'>
+      <div className='card card-user'>
         <div className='card-content'>
           <h2 className='card-title h2-title-home'> Cidadãos </h2>
           {this.filterCitizen()}
@@ -112,11 +112,11 @@ class getProfessionalUserList extends Component {
     )
   }
 
-  tableList() {
+    tableList() {
     const data = (
       this.state.citizens.map((citizen) => {
         return (
-          <tr key={citizen.id}>
+            <tr key={citizen.id}>
             <td>
               {citizen.name}
             </td>
@@ -310,33 +310,38 @@ class getProfessionalUserList extends Component {
   }
 
   filterCitizen() {
-    return (
-      <div>
-        <Row s={12}></Row>
-        <Row s={12}>
-          {
-            this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
-            this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
-              this.pickCityHall() :
-              null
-          }
-          {this.pickName()}
-          {this.pickCPF()}
-        </Row>
-        <Row>
-          <Col>
-            <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
-          </Col>
-          <Col>
-            <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
-          </Col>
-          <Col>
-            {this.newCitizenButton()}
-          </Col>
-        </Row>
-      </div>
-    )
-  }
+   return (
+     <div>
+       <Row s={12}></Row>
+       <Row s={12}>
+         {
+           this.props.user && this.props.user.roles && this.props.user.roles[this.props.user.current_role_idx] &&
+           this.props.user.roles[this.props.user.current_role_idx].role == 'adm_c3sl' ?
+             this.pickCityHall() :
+             null
+         }
+         {this.pickName()}
+         {this.pickCPF()}
+       </Row>
+       <Row>
+         <Col>
+           <button className="waves-effect btn button-green search-button" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+         </Col>
+         <Col>
+           <button className="waves-effect btn button-white clean-button" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+         </Col>
+       </Row>
+       <Row>
+         <Col>
+           {this.newCitizenButton()}
+         </Col>
+         <Col>
+           {this.newCitizenListButton()}
+         </Col>
+       </Row>
+     </div>
+   )
+ }
 
   cleanFilter() {
     this.setState({
@@ -394,13 +399,43 @@ class getProfessionalUserList extends Component {
         onClick={() =>
           browserHistory.push({pathname: `/professionals/users/new`})
         }
-        className="btn waves-effect btn button-color"
-        name="anterior"
+        className="btn waves-effect btn button-green new-user-button"
+        name="Novo"
         type="submit">
           CADASTRAR NOVO CIDADÃO
       </button>
         )
     }
+
+    newCitizenListButton() {
+        return (
+            <button
+                onClick={() =>
+                browserHistory.push({pathname: `/professionals/users/upload`})
+      }
+      className="btn waves-effect btn button-green new-user-button"
+      name="upload"
+      type="submit">
+        INSERIR LISTA DE CIDADÃOS
+    </button>
+    )
+    }
+
+
+  generateCitizenReportButton() {
+      return (
+          <button
+      onClick={() =>
+        browserHistory.push({pathname: `/professionals/users/new`})
+      }
+      className="btn waves-effect btn button-blue user-report-button"
+      name="Relatorio"
+      type="submit">
+        GERAR RELATÓRIO
+    </button>
+      )
+  }
+
 
   render() {
     return (

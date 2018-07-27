@@ -1,0 +1,24 @@
+.div-table {
+  overflow-x: auto;
+}
+
+.table-list th {
+    text-align: center;
+}
+
+.table-list thead {
+    background-color: #92bf23;
+    border-bottom: 1px solid #d0d0d0;
+    font-family: 'Roboto', 'Arial';
+    font-size: 13px;
+    border-radius: 3px;
+  overflow: hidden;
+}
+
+.table-list tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+.table-list td {
+    text-align: center;
+}
