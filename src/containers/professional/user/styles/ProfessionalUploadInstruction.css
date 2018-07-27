@@ -1,0 +1,14 @@
+#green-header, .collapsible-green > .collapsible-header{
+    background-color: #92bf23;
+    color: #1A1A1A;
+    font-weight: 450;
+}
+
+#examples-collection{
+    border: 1px solid #e0e0e0;
+}
+
+.observations > p {
+    line-height:17px;
+    font-size:13px;
+}

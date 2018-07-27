@@ -7,3 +7,5 @@ export UserImg from '../../public/user.png';
 export LocalIcon from '../../public/place-mark.png';
 export CitizenIcon from '../../public/citizen1.png';
 export ProfessionalIcon from '../../public/professional1.png';
+export ExcelIcon from '../../public/excel_icon.png';
+export CalcIcon from '../../public/calc_icon.png';
