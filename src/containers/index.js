@@ -79,6 +79,8 @@ export ProfessionalUserList from './professional/user/ProfessionalUserList';
 export ProfessionalUserEdit from './professional/user/ProfessionalUserEdit';
 export ProfessionalUserShow from './professional/user/ProfessionalUserShow';
 export ProfessionalUserCreate from './professional/user/ProfessionalUserCreate';
+export ProfessionalUserUpload from './professional/user/ProfessionalUserUpload';
+export ProfessionalUploadinstruction from './professional/user/ProfessionalUploadInstruction';
 
 export ProfessionalUserDependantEdit from './professional/user/ProfessionalUserDependantEdit';
 export ProfessionalUserDependantShow from './professional/user/ProfessionalUserDependantShow';
