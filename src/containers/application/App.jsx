@@ -25,16 +25,17 @@ import { Link } from 'react-router';
 class getApp extends Component {
   render() {
     const footerItems = [
-                          { 'name': 'Perguntas e Respostas', 'link': '/agendador/faq' },
-                          { 'name': 'Contato', 'link': '/agendador/contact' },
-                          { 'name': 'Comunicar um erro', 'link': '/agendador/report' },
-                          { 'name': 'Manual', 'link': '/agendador/manual' }
+                          { 'name': 'Perguntas e Respostas', 'link': 'https://forum.c3sl.ufpr.br/c/cidades-digitais/agendador' },
+                          { 'name': 'Contato', 'link': 'https://www.c3sl.ufpr.br/contato/' },
+                          { 'name': 'Comunicar um erro', 'link': 'https://forum.c3sl.ufpr.br/c/cidades-digitais/agendador' },
+                          { 'name': 'Manual', 'link': 'https://agendador.c3sl.ufpr.br/agendador/manual' },
+                          { 'name': 'GitLab', 'link': 'https://gitlab.c3sl.ufpr.br/agendador' }
                         ]
     return (
       <div>
         <AuthGlobals />
         <Home 
-          footerItems={ this.props.is_authenticated ? footerItems : [ footerItems[3] ] }
+          footerItems={ this.props.is_authenticated ? footerItems : [ footerItems[3], footerItems[4] ] }
           showHeader={ this.props.is_authenticated ? false : true }
           showMenu={ this.props.is_authenticated ? true : false }
         >
