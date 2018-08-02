@@ -43,7 +43,7 @@ export const Footer = (props) =>
 {
   const items = props.footerItems;
   const listItems = items.map((item, idx) =>
-    <a key={idx} className='back-bt waves-effect btn-flat' onClick={() => browserHistory.push(item.link)} > {item.name} </a>
+    <a key={idx} className='back-bt waves-effect btn-flat' onClick={() => window.open(item.link,'_blank')} > {item.name} </a>
   );
   return  (
           <div className={styles['footer']}>
