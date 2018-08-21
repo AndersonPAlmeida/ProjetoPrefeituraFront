@@ -37,10 +37,10 @@ import {userSignIn} from '../../actions/user';
 
 class getUserForm extends Component {
 
- constructor(props) {
+  constructor(props) {
     super(props)
     this.state = {
-      user: { 
+      user: {
         address_complement: '',
         address_number: '',
         birth_date: '',
@@ -104,7 +104,7 @@ class getUserForm extends Component {
       self.setState({
         professional: this.props.professional_data,
         user: this.props.user_data,
-        aux: update(this.state.aux, 
+        aux: update(this.state.aux,
         {
           birth_day: {$set: parseInt(this.props.user_data.birth_date.substring(8,10))},
           birth_month: {$set: parseInt(this.props.user_data.birth_date.substring(5,7))},
@@ -114,7 +114,7 @@ class getUserForm extends Component {
           photo_obj: {$set: img}
         })
       })
-      this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,'')) 
+      this.updateAddress.bind(this)(this.props.user_data.cep.replace(/(\.|-|_)/g,''))
     }
     else {
       img = UserImg
@@ -128,7 +128,7 @@ class getUserForm extends Component {
         var cpf = query['cpf'] ? query['cpf'] : ""
         if(query['cep']) {
           cep = query['cep']
-          this.updateAddress.bind(this)(cep.replace(/(\.|-|_)/g,'')) 
+          this.updateAddress.bind(this)(cep.replace(/(\.|-|_)/g,''))
         }
         self.setState({
           user: update(this.state.user, { cep: {$set: cep}, cpf: {$set: cpf} })
@@ -209,8 +209,8 @@ class getUserForm extends Component {
       var dataURL = reader.result;
       this.setState({
         aux: update(
-          this.state.aux, { 
-                            [name]: {$set: value.name}, 
+          this.state.aux, {
+                            [name]: {$set: value.name},
                             photo_obj: {$set: dataURL},
                             photo_has_changed: {$set: 1}
                           }
@@ -221,8 +221,26 @@ class getUserForm extends Component {
     reader.readAsDataURL(value)
   }
 
-  selectDate(){ 
-      var optionsDays = []; 
+  password_change(){
+    return(
+      <div>
+        <div className='category-title'>
+          <p>Senha</p>
+        </div>
+        <div>
+          <a className='waves-effect btn password-button button-color' onClick={this.change_citizen_password.bind(this)}> recuperar senha </a>
+        </div>
+      </div>
+    )
+  }
+
+  change_citizen_password(e){
+    e.preventDefault();
+    browserHistory.push(`/citizens/${this.props.user_data.id}/edit/password`);
+  }
+
+  selectDate(){
+      var optionsDays = [];
       optionsDays.push(<option key={0} value="" disabled>Dia</option>);
       for(var i = 1; i <= 31; i++){
         optionsDays.push(
@@ -247,7 +265,7 @@ class getUserForm extends Component {
       }
       return (
         <div>
-          <Input s={12} l={3} 
+          <Input s={12} l={3}
             type='select'
             name='birth_day'
             value={this.state.aux.birth_day}
@@ -256,7 +274,7 @@ class getUserForm extends Component {
             {optionsDays}
           </Input>
 
-          <Input s={12} l={4} 
+          <Input s={12} l={4}
             type='select'
             name='birth_month'
             value={this.state.aux.birth_month}
@@ -265,13 +283,13 @@ class getUserForm extends Component {
             {optionsMonths}
           </Input>
 
-          <Input s={12} l={4} 
+          <Input s={12} l={4}
             type='select'
             name='birth_year_id'
             value={this.state.aux.birth_year_id}
             onChange={ (event) => {
-                this.handleChange.bind(this)(event) 
-                this.setState({aux: update(this.state.aux, 
+                this.handleChange.bind(this)(event)
+                this.setState({aux: update(this.state.aux,
                   {
                     birth_year: {$set: parseInt(this.state.aux.birth_year_id)+parseInt(1899)},
                   })
@@ -299,11 +317,11 @@ class getUserForm extends Component {
       body: JSON.stringify(formData)
     }).then(parseResponse).then(resp => {
       this.setState(
-      { aux: update(this.state.aux, 
+      { aux: update(this.state.aux,
         {
           address: {$set: resp.address},
           neighborhood: {$set: resp.neighborhood},
-          city_name: {$set: resp.city_name}, 
+          city_name: {$set: resp.city_name},
           state_abbreviation: {$set: resp.state_name}
         })
       });
@@ -347,8 +365,8 @@ class getUserForm extends Component {
   generateBody(formData, auxData, send_password) {
     const monthNames = [
       "Jan", "Feb", "Mar",
-      "Apr", "May", "Jun", 
-      "Jul", "Aug", "Sep", 
+      "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep",
       "Oct", "Nov", "Dec"
     ];
     if(!auxData['pcd_value']) {
@@ -372,10 +390,10 @@ class getUserForm extends Component {
     }
 
     if(send_password) {
-      formData['password'] = auxData['password'] 
-      formData['password_confirmation'] = auxData['password_confirmation'] 
+      formData['password'] = auxData['password']
+      formData['password_confirmation'] = auxData['password_confirmation']
       if(auxData['current_password'])
-        formData['current_password'] = auxData['current_password'] 
+        formData['current_password'] = auxData['current_password']
     }
 
     /* adaptate fetch object info to api request */
@@ -411,7 +429,6 @@ class getUserForm extends Component {
     }
     return fetch_body
   }
-
 
   successMessage() {
     let success_msg = ''
@@ -449,9 +466,9 @@ class getUserForm extends Component {
       let fetch_body = this.generateBody.bind(this)(formData,auxData,send_password)
       const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
-      var params = this.props.fetch_params; 
+      var params = this.props.fetch_params;
       if(this.props.user_class == `professional` && (!this.props.is_edit))
-        params += this.props.professional_only ? "&create_citizen=false" : "&create_citizen=true"  
+        params += this.props.professional_only ? "&create_citizen=false" : "&create_citizen=true"
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",
@@ -482,6 +499,20 @@ class getUserForm extends Component {
         <button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">{this.props.is_edit ? "Atualizar" : "Criar"}</button>
       </div>
     )
+  }
+
+  password_field() {
+
+      if(this.props.user_class != 'dependant'){
+        if(this.props.fetch_collection === 'auth'){
+          return password_info.bind(this)()
+        }else{
+          return this.password_change.bind(this)()
+        }
+      }
+      else{
+        return null;
+      }
   }
 
   render() {
@@ -522,17 +553,13 @@ class getUserForm extends Component {
                           {contact_info.bind(this)()}
                         </Col>
                         <Col s={12} m={6}>
-                          {
-                            this.props.user_class != `dependant` ?
-                              password_info.bind(this)() :
-                              null
-                          } 
+                           {this.password_field.bind(this)()}
                         </Col>
                       </Row>
                     </div>
                     : null
                 }
-                { 
+                {
                   (this.props.user_class == `professional` || this.props.current_professional) ?
                     <Row s={12}>
                       <Col s={12} m={6}>

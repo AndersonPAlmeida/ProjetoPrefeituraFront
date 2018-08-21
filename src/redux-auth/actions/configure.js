@@ -98,6 +98,7 @@ export function configure(endpoint={}, settings={}) {
       let tokenBridge = document.getElementById("token-bridge");
 
       if (tokenBridge) {
+
         let rawServerCreds = tokenBridge.innerHTML;
         if (rawServerCreds) {
           let serverCreds = JSON.parse(rawServerCreds);
@@ -142,10 +143,16 @@ export function configure(endpoint={}, settings={}) {
       promise = Promise.resolve(applyConfig({dispatch, endpoint, settings}));
     }
 
+
     return promise
       .then(user => {
-        dispatch(authenticateComplete(user));
-        dispatch(userSignIn(user));
+
+        if(user)
+          dispatch(authenticateComplete(user));
+
+        // block redirection to user screen when user is updating password
+        if(user && authRedirectPath != '/new_password')
+          dispatch(userSignIn(user));
 
         if (firstTimeLogin) {
           dispatch(showFirstTimeLoginSuccessModal());

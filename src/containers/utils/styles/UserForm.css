@@ -78,3 +78,13 @@ input {
   border-top: 0 !important;
 }
 
+.password-button{
+  margin: 0 auto;
+  font-size: 100%;
+  text-align: center;
+  align-self: center;
+  width: 300px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
