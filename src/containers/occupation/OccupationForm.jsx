@@ -40,7 +40,7 @@ class getOccupationForm extends Component {
         name: '',
         active: true,
         city_hall_name: '',
-        city_hall_id: 0
+        city_hall_id: null
 
       },
       city_halls: []
@@ -57,7 +57,6 @@ class getOccupationForm extends Component {
   // }
 
   componentDidMount() {
-    var self = this;
     var occupation = this.props.is_edit ? this.props.data : this.state.occupation;
 
     if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
@@ -72,11 +71,11 @@ class getOccupationForm extends Component {
           "Content-Type": "application/json" },
           method: "get",
       }).then(parseResponse).then(resp => {
-        self.setState({ city_halls: resp.city_halls })
+        this.setState({ city_halls: resp.city_halls })
       });
     }
 
-    self.setState({ occupation: occupation },() => console.log(this.state.occupation));
+    this.setState({ occupation: occupation });
   }
 
   handleInputOccupationChange(event) {
@@ -96,6 +95,8 @@ class getOccupationForm extends Component {
 
     if(!formData['name'])
       errors.push("Campo Nome é obrigatório.");
+    if(!formData['city_hall_id'])
+      errors.push("Campo Prefeitura é obrigatório.");
     if(!formData['description'])
       errors.push("Campo Descrição é obrigatório.");
     if(errors.length > 0) {
@@ -172,7 +173,7 @@ class getOccupationForm extends Component {
           onChange={
             (event) => {
               if(event.target.value != this.state.selected_city_hall) {
-                  this.handleInputSectorChange(event);
+                  this.handleInputOccupationChange(event);
               }
             }
           }
@@ -187,8 +188,8 @@ class getOccupationForm extends Component {
   render() {
     return (
       <main>
-      	<Row>
-	        <Col s={12}>
+          <Row>
+            <Col s={12}>
             <div className='card'>
               <div className='card-content'>
                 {this.props.is_edit ?
