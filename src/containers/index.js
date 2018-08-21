@@ -24,6 +24,9 @@ export Login from './account/Login';
 export Register from './account/Register';
 export RegisterCep from './account/RegisterCep';
 export ChooseRole from './application/ChooseRole';
+export PasswordRetrieval from './account/PasswordRetrieval';
+export PasswordChange from './account/PasswordChange';
+export InvalidToken from './account/InvalidToken';
 
 export ScheduleAgreement from './schedule/ScheduleAgreement';
 export ScheduleChoose from './schedule/ScheduleChoose';
@@ -114,3 +117,5 @@ export ServiceEdit from './schedule/service/ServiceEdit';
 export CityHallList from './city_hall/CityHallList';
 export CityHallEdit from './city_hall/CityHallEdit';
 export CityHallCreate from './city_hall/CityHallCreate';
+
+export CitizenEditPassword from './account/CitizenEditPassword';

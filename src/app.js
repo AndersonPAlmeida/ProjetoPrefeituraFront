@@ -21,7 +21,8 @@ import { Provider } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 import createHistory from 'react-router/lib/createMemoryHistory';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
-import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
+import { App, Home, NotFound, Login, Register, PasswordChange,
+  PasswordRetrieval, InvalidToken, RegisterCep, CitizenSchedule,
   ChooseRole, ScheduleAgreement, ScheduleChoose, ScheduleCitizen, ScheduleFinish,
   DependantList, DependantEdit, DependantShow, DependantCreate, CitizenEdit,
   SectorList, SectorEdit, SectorShow, SectorCreate, ServicePlaceEdit,
@@ -35,10 +36,10 @@ import { App, Home, NotFound, Login, Register, RegisterCep, CitizenSchedule,
   ProfessionalUserEdit, ProfessionalUserCreate, ProfessionalUserUpload,ProfessionalUploadinstruction,
   ProfessionalUserShow, ProfessionalUserDependantEdit, ProfessionalUserDependantCreate,
   ProfessionalUserDependantShow, ShiftShow, ShiftEdit, ShiftCreate,
-  ShiftList, OccupationCreate,OccupationList,OccupationEdit,OccupationShow, MyReport, Reports,
+  ShiftList, OccupationCreate,OccupationList, OccupationEdit,OccupationShow, MyReport, Reports,
   citizenReport, schedulesReport, shiftsReport, professionalsReport,
   servicesReport, shiftTypeReport, ServiceEdit, ServiceList,
-  CityHallList, CityHallEdit, CityHallCreate
+  CityHallList, CityHallEdit, CityHallCreate, CitizenEditPassword
 } from './containers';
 
 import { configure } from './redux-auth';
@@ -105,10 +106,15 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <IndexRoute component={UserIsNotAuthenticated(Login)} />
         <Route path="signup" component={UserIsNotAuthenticated(RegisterCep)} />
         <Route path="signup2" component={UserIsNotAuthenticated(Register)} />
-        <Route path="choose_role" component={UserIsAuthenticated(ChooseRole)} />
+        <Route path="password" component={UserIsNotAuthenticated(PasswordRetrieval)}/>
 
+        <Route path="new_password" component={UserIsNotAuthenticated(PasswordChange)}/>
+        <Route path="new_password/invalid" component={UserIsNotAuthenticated(InvalidToken)}/>
+
+        <Route path="choose_role" component={UserIsAuthenticated(ChooseRole)} />
         <Route path="citizens/schedules/history" component={UserIsAuthenticated(CitizenSchedule)} />
         <Route path="citizens/edit" component={UserIsAuthenticated(CitizenEdit)} />
+        <Route path="citizens/:id/edit/password" component={UserIsAuthenticated(CitizenEditPassword)}/>
         <Route path="citizens/my_report" component={UserIsAuthenticated(MyReport)} />
         <Route path="citizens/schedules/agreement" component={UserIsAuthenticated(ScheduleAgreement)} />
         <Route path="citizens/schedules/choose" component={UserIsAuthenticated(ScheduleChoose)} />
