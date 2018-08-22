@@ -1,49 +1,27 @@
-.div-table {
-  overflow-x: scroll;
+.picker__weekday-display, .picker__date-display,
+.picker__day--selected, .picker__day--selected:hover, .picker--focused .picker__day--selected{
+  background-color: #92bf23;
 }
 
-.table-list th {
-	text-align: center;
+.picker__day.picker__day--today, .picker__close, .picker__today{
+  color: #92bf23;
 }
 
-.table-list thead {
-	background-color: #92bf23;
-	border-bottom: 1px solid #d0d0d0;
-	font-family: 'Roboto', 'Arial';
-	font-size: 13px;
-	border-radius: 3px;
-  overflow: hidden;
+.picker__nav--prev:hover, .picker__nav--next:hover{
+  background-color: #ebfcc7;
 }
 
-.table-list tbody tr:nth-child(odd) {
-	background-color: #f2f2f2;
+button.picker__today:focus, button.picker__clear:focus, button.picker__close:focus{
+  background: #ebfcc7;
 }
 
-.table-list td {
-	text-align: center;
+.picker__year-display{
+  color: #f5f7ef;
 }
 
-.button-color {
-	background-color: #92bf23;
-	color: black;
-}
-
-input[type=text] {
-  margin-top: 15px;
-}
-
-input[type=text].date{
-  margin: 0 0 20px 0;
-}
-
-.filter-row{
-  margin-left: 0px;
-  margin-right: 0px;
-}
-
-.display-inline{
-  display: inline-block;
-  height: 2.2em;
+.picker__weekday-display{
+  color: #ffffff;
+  font-weight: 300;
 }
 
 th.picker__weekday::after{

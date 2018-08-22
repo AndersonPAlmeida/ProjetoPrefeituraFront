@@ -26,6 +26,7 @@ import {fetch} from '../../redux-auth';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import strftime from 'strftime';
+import { DatePicker } from '../components/AgendadorComponents'
 
 // {
 //   "id":3,
@@ -43,8 +44,8 @@ import strftime from 'strftime';
 //   "created_at":"2017-12-15T14:10:51.613-02:00",
 // }
 
-
 class getResourceList extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -64,8 +65,8 @@ class getResourceList extends Component {
       current_permission: '',
       resource_bookings_details:[]
     };
-    this.getCityHallName = this.getCityHallName.bind(this);      
-    this.getResourceWithDetails = this.getResourceWithDetails.bind(this);      
+    this.getCityHallName = this.getCityHallName.bind(this);
+    this.getResourceWithDetails = this.getResourceWithDetails.bind(this);
   }
 
   componentWillMount() {
@@ -74,7 +75,7 @@ class getResourceList extends Component {
     var current_permission = undefined;
     for (let i = 0; i < user_roles.length; i++){
       if (user_roles[i].id === current_role){
-        current_permission = user_roles[i].role; 
+        current_permission = user_roles[i].role;
         break;
       }
     }
@@ -83,12 +84,12 @@ class getResourceList extends Component {
     const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = 'resource_bookings';
     const params = `permission=${this.props.user.current_role}&view=${this.props.user.current_role != 'citizen' ? 'professional' : 'citizen'}`;
-    
+
     this.getResourceWithDetails();
     this.getExtraDetails();
 
     if(current_permission == 'adm_c3sl'){
-      this.getCityHallName();   
+      this.getCityHallName();
     }
 
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -97,7 +98,7 @@ class getResourceList extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ resource_bookings: resp });    
+      self.setState({ resource_bookings: resp });
     });
   }
 
@@ -127,8 +128,8 @@ class getResourceList extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ 
-        resource_bookings_details: resp, 
+      self.setState({
+        resource_bookings_details: resp,
       });
     }).catch(error =>{
       console.log(error);
@@ -146,14 +147,15 @@ class getResourceList extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      self.setState({ 
-        resources_with_details: resp, 
-        service_places:resp.service_place, 
-        resource_types:resp.resource_type, 
+      self.setState({
+        resources_with_details: resp,
+        service_places:resp.service_place,
+        resource_types:resp.resource_type,
         resources:resp.resource
       });
     });
   }
+
   getCityHallName() {
     var self = this;
     const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
@@ -179,7 +181,7 @@ class getResourceList extends Component {
       }
       else{
         if(time.length == 2){
-          return time;          
+          return time;
         }
         else{
           return time[0]+time[1];
@@ -195,15 +197,16 @@ class getResourceList extends Component {
     let hour_start = new Date(booking.booking_start_time).getHours().toString();
     let minute_start = new Date(booking.booking_start_time).getMinutes().toString();
     let time_start = this.timeSizeFixer(hour_start) + ':' + this.timeSizeFixer(minute_start);
-    
+
     // End time
-    let day_end = strftime.timezone('+0000')('%d/%m/%Y', new Date(booking.booking_end_time));      
+    let day_end = strftime.timezone('+0000')('%d/%m/%Y', new Date(booking.booking_end_time));
     let hour_end = new Date(booking.booking_end_time).getHours().toString();
     let minute_end = new Date(booking.booking_end_time).getMinutes().toString();
     let time_end = this.timeSizeFixer(hour_end) + ':' + this.timeSizeFixer(minute_end);
-    
+
     return ({day_start: day_start, time_start: time_start, day_end: day_end, time_end: time_end});
   }
+
   resource_solver(id){
     let resource_in_use = this.state.resources.find(r => id === r.id );
     if (!resource_in_use)
@@ -217,9 +220,7 @@ class getResourceList extends Component {
     });
   }
 
-
   tableList() {
-    console.log(this.props);
     if(this.props.user.current_role != 'citizen)'){
       var role = this.props.user.current_role;
       var permissionInfo = this.props.user.roles.find(r => role === r.id);
@@ -232,44 +233,44 @@ class getResourceList extends Component {
           <tr>
             <td key={Math.random()} >
               {resource_booking.id}
-            </td>        
-            
+            </td>
+
             <td key={Math.random()} >
               {resource_extra_info ? resource_extra_info.resource_type_name : ''}
-            </td> 
+            </td>
 
             <td key={Math.random()} >
               {resource_extra_info ? resource_extra_info.citizen_name : ''}
-            </td>    
+            </td>
 
             <td key={Math.random()} >
               {timer.day_start}
-            </td>      
+            </td>
             <td key={Math.random()} >
               {timer.time_start}
-            </td>   
+            </td>
 
             <td key={Math.random()} >
               {timer.day_end}
-            </td>      
+            </td>
             <td key={Math.random()} >
               {timer.time_end}
-            </td>     
-  
+            </td>
+
             <td key={Math.random()} >
               {resource_booking.active == 0 ? 'Inativo' : 'Ativo'}
-            </td> 
+            </td>
             <td key={Math.random()} >
               {resource_booking.status}
-            </td> 
+            </td>
 
             <td key={Math.random()} >
               {this.props.user.current_role != 'citizen' && (permissionInfo.role == 'adm_c3sl'||  permissionInfo.role == 'adm_prefeitura' || permissionInfo.role == 'adm_local')?
-                <a className='back-bt waves-effect btn-flat' 
+                <a className='back-bt waves-effect btn-flat'
                   id="iconTable"
-                  href='#' 
-                  onClick={ () => 
-                    browserHistory.push(`/resource_bookings/${resource_booking.id}/edit`) 
+                  href='#'
+                  onClick={ () =>
+                    browserHistory.push(`/resource_bookings/${resource_booking.id}/edit`)
                   }>
                   <i className="waves-effect material-icons tooltipped">
                       edit
@@ -279,11 +280,11 @@ class getResourceList extends Component {
                 <a/>
               }
 
-              <a className='back-bt waves-effect btn-flat' 
+              <a className='back-bt waves-effect btn-flat'
                 id="iconTable"
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/resource_bookings/${resource_booking.id}`) 
+                href='#'
+                onClick={ () =>
+                  browserHistory.push(`/resource_bookings/${resource_booking.id}`)
                 }>
                 <i className="waves-effect material-icons tooltipped">
                     visibility
@@ -297,28 +298,28 @@ class getResourceList extends Component {
 
     // Fields to show in the table, and what object properties in the data they bind to
     const fields = (
-      <tr>        
+      <tr>
         <th># Reserva</th>
-        
+
         <th>Tipo de Recurso</th>
 
         <th>Cidadão</th>
 
         <th>
-          <a 
-            href='#' 
+          <a
+            href='#'
             className="grey-text text-darken-3 "
-            onClick={ 
-              () => { 
+            onClick={
+              () => {
                 if (this.state.filter_s == 'day_start+asc'){
                   document.getElementById('ascDayStartIcon').style.display = 'none';
-                  document.getElementById('descDayStartIcon').style.display = 'inline-block';                    
-                } 
+                  document.getElementById('descDayStartIcon').style.display = 'inline-block';
+                }
                 else{
-                  document.getElementById('descDayStartIcon').style.display = 'none';               
+                  document.getElementById('descDayStartIcon').style.display = 'none';
                   document.getElementById('ascDayStartIcon').style.display = 'inline-block';
                 }
-                  
+
                 this.setState({
                   ['filter_s']: this.state.filter_s == 'day_start+asc' ? 'day_start+desc' : 'day_start+asc'
                 }, this.sortItems.bind(this,'day_start',this.state.filter_s));
@@ -337,20 +338,20 @@ class getResourceList extends Component {
         <th>Horário inicial de execução</th>
 
         <th>
-          <a 
-            href='#' 
+          <a
+            href='#'
             className="grey-text text-darken-3 "
-            onClick={ 
-              () => { 
+            onClick={
+              () => {
                 if (this.state.filter_s == 'day_end+asc'){
                   document.getElementById('ascDayEndIcon').style.display = 'none';
-                  document.getElementById('descDayEndIcon').style.display = 'inline-block';                    
-                } 
+                  document.getElementById('descDayEndIcon').style.display = 'inline-block';
+                }
                 else{
-                  document.getElementById('descDayEndIcon').style.display = 'none';               
+                  document.getElementById('descDayEndIcon').style.display = 'none';
                   document.getElementById('ascDayEndIcon').style.display = 'inline-block';
                 }
-                  
+
                 this.setState({
                   ['filter_s']: this.state.filter_s == 'day_end+asc' ? 'day_end+desc' : 'day_end+asc'
                 }, this.sortItems.bind(this,'day_end',this.state.filter_s));
@@ -371,20 +372,20 @@ class getResourceList extends Component {
         <th>Ativo</th>
 
         <th>
-          <a 
-            href='#' 
+          <a
+            href='#'
             className="grey-text text-darken-3 "
-            onClick={ 
-              () => { 
+            onClick={
+              () => {
                 if (this.state.filter_s == 'day_end+asc'){
                   document.getElementById('ascDayEndIcon').style.display = 'none';
-                  document.getElementById('descDayEndIcon').style.display = 'inline-block';                    
-                } 
+                  document.getElementById('descDayEndIcon').style.display = 'inline-block';
+                }
                 else{
-                  document.getElementById('descDayEndIcon').style.display = 'none';               
+                  document.getElementById('descDayEndIcon').style.display = 'none';
                   document.getElementById('ascDayEndIcon').style.display = 'inline-block';
                 }
-                  
+
                 this.setState({
                   ['filter_s']: this.state.filter_s == 'day_end+asc' ? 'day_end+desc' : 'day_end+asc'
                 }, this.sortItems.bind(this,'day_end',this.state.filter_s));
@@ -400,7 +401,7 @@ class getResourceList extends Component {
             </i>
           </a>
         </th>
-        
+
         <th></th>
 
       </tr>
@@ -408,7 +409,7 @@ class getResourceList extends Component {
 
     return (
       <div>
-        <h5>Agendamentos Realizados</h5>
+        <h5 className='title-color'>Agendamentos Realizados</h5>
         <div className={'table-size'}>
           <table className={ styles['table-list']}>
             <thead>
@@ -461,47 +462,46 @@ class getResourceList extends Component {
   filterResourceBooking() {
     return (
       <Row>
-        <Col s={12} m={6}>
+        <Col s={12} m={3}>
           <div >
             <h6>Dia Inicial:</h6>
             <label>
-              <input
-                type="date"
+              <DatePicker
                 name="filter_start_date"
+                format = 'yyyy/mm/dd'
                 value={this.state.filter_start_date}
                 onChange={this.handleInputFilterChange.bind(this)}
               />
             </label>
           </div>
         </Col>
-        <Col s={12} m={6}>
+        <Col s={12} m={3}>
           <div>
             <h6>Data Final:</h6>
             <label>
-              <input
-                type="date"
+              <DatePicker
                 name="filter_end_date"
+                format = 'yyyy/mm/dd'
                 value={this.state.filter_end_date}
                 onChange={this.handleInputFilterChange.bind(this)}
               />
             </label>
           </div>
         </Col>
-             
-        <div>
-          <div className='right' id='createResourceBookingButton'>
-            {this.newResourceBookingButton()}
-          </div>  
-          <button 
-            id="filterBtn"
-            className="waves-effect btn right button-color" 
-            onClick={this.handleFilterSubmit.bind(this,false)} 
-            name="commit" 
-            type="submit">
+        <Col s={12}>
+            <button
+              id="filterBtn"
+              className="waves-effect btn button-color"
+              onClick={this.handleFilterSubmit.bind(this,false)}
+              name="commit"
+              type="submit">
               FILTRAR
-          </button>
-          
-        </div>        
+            </button>
+            <div id='createResourceBookingButton'>
+              {this.newResourceBookingButton()}
+            </div>
+
+        </Col>
       </Row>
     );
   }
@@ -511,7 +511,7 @@ class getResourceList extends Component {
     var start_date;
     if(sort_only) {
       end_date = this.state.last_fetch_end_date;
-      start_date = this.state.last_fetch_start_date; 
+      start_date = this.state.last_fetch_start_date;
     } else {
       end_date = this.state.filter_end_date;
       start_date = this.state.filter_start_date;
@@ -537,12 +537,12 @@ class getResourceList extends Component {
 
   newResourceBookingButton() {
     return (
-      <button 
+      <button
         onClick={() =>
-          browserHistory.push({ pathname: '/resource_bookings/new'}) 
+          browserHistory.push({ pathname: '/resource_bookings/new'})
         }
-        className="btn waves-effect btn button-color" 
-        name="anterior" 
+        className="btn waves-effect btn button-color"
+        name="anterior"
         type="submit">
           NOVO AGENDAMENTO
       </button>

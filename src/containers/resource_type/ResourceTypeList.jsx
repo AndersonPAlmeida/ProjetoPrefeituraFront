@@ -334,19 +334,22 @@ class getResourceTypeList extends Component {
               </label>
             </div>
           </Col>
-        </Row>
-        <div className='right' id='createResourceTypeButton'>
-          {this.newResourceTypeButton()}
-        </div>
+          <Col s={12}>
+            <button
+              id="filterBtn"
+              className="waves-effect btn button-color"
+              onClick={this.handleFilterSubmit.bind(this,false)}
+              name="commit"
+              type="submit">
+              FILTRAR
+            </button>
 
-        <button
-          id="filterBtn"
-          className="waves-effect btn right button-color"
-          onClick={this.handleFilterSubmit.bind(this,false)}
-          name="commit"
-          type="submit">
-            FILTRAR
-        </button>
+            <div id='createResourceTypeButton'>
+              {this.newResourceTypeButton()}
+            </div>
+
+          </Col>
+        </Row>
 
       </div>
     );

@@ -48,7 +48,7 @@ export default function () {
           <input type="text" name="name" className='input-field' value={this.state.user.name} onChange={this.handleInputUserChange.bind(this)} />
         </label>
       </div>
-      <div className="field-input" >
+      <div className="field-input margin-top" >
         <h6>Data de nascimento*:</h6>
         {this.selectDate()}
       </div>
