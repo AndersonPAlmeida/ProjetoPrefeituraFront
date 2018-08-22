@@ -56,17 +56,18 @@
 .clear-filter {
 	display: none;
 }
+
 #filterBtn{
-	margin-bottom: 20px
+	margin-bottom: 20px;
+  float: left;
 }
+
 #createResourceTypeButton{
-	margin-left: 35px;
+	margin-left: 15px;
+  float: left;
 }
+
 @media screen and (max-width: 767px) {
-	#createResourceTypeButton{
-		margin-left: 35px;
-		margin-bottom: 15px;
-	}
 	#table-resource-type{
 		margin-top: 125px;
 	}

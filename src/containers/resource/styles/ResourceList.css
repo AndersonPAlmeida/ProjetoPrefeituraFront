@@ -57,7 +57,8 @@
 	display: none;
 }
 #filterBtn{
-	margin-bottom: 20px
+	margin-bottom: 20px;
+  float:left;
 }
 
 #iconTable{
@@ -68,19 +69,21 @@
 	margin: 0
 }
 #createResourceButton{
-	margin-left: 35px;
+	margin-left: 15px;
+  float:left;
 }
 @media screen and (max-width: 620px) {
 	#createResourceButton{
 		margin-left: 35px;
 		margin-bottom: 15px;
-	}
+  	}
 }
+
 .btn:hover{
 	background-color: #84ac1f
 }
 .btn:focus{
-	background-color: #597418	
+	background-color: #597418
 }
 input:not([type]):focus:not([readonly]), input[type=text]:focus:not([readonly]), input[type=password]:focus:not([readonly]), input[type=email]:focus:not([readonly]), input[type=url]:focus:not([readonly]), input[type=time]:focus:not([readonly]), input[type=date]:focus:not([readonly]), input[type=datetime]:focus:not([readonly]), input[type=datetime-local]:focus:not([readonly]), input[type=tel]:focus:not([readonly]), input[type=number]:focus:not([readonly]), input[type=search]:focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]){
 	border-bottom: 1px solid #92bf23;
