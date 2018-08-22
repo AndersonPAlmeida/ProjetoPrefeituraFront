@@ -329,6 +329,9 @@ class getUserForm extends Component {
       form_mandatory.push({ id: 'cep', name: 'CEP' })
       form_mandatory.push({ id: 'phone1', name: 'Telefone 1' })
     }
+    if(this.props.user_class == `professional`) {
+      form_mandatory.push({ id: 'occupation', name: 'Cargo' })
+    }
     errors = this.checkEmptyFields(formData, form_mandatory)
     if(send_password) {
       if(!auxData['password'])
