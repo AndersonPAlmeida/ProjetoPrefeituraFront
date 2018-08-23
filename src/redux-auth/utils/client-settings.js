@@ -113,7 +113,18 @@ export function applyConfig({dispatch, endpoint={}, settings={}, reset=false}={}
   if (getCurrentSettings().initialCredentials) {
     // skip initial headers check (i.e. check was already done server-side)
     let {user, headers} = getCurrentSettings().initialCredentials;
+    if(headers == null){
+      let credentials = getCurrentSettings().initialCredentials;
+      headers = {
+        'access-token': credentials['access-token'],
+        "token-type":"Bearer",
+        'client': credentials['client'],
+        'expiry': credentials['expiry'],
+        'uid': credentials['uid'],
+      }
+    }
     persistData(C.SAVED_CREDS_KEY, headers);
+
     return Promise.resolve(user);
   } else if (savedCreds) {
     // verify session credentials with API

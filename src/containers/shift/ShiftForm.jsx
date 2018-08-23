@@ -353,12 +353,16 @@ class getShiftForm extends Component {
   pickCityHall() {
     if(this.props.current_role && this.props.current_role.role != 'adm_c3sl') {
       return (
+        <div className='select-field'>
+          <div>
         <input disabled
            name="selected_city_hall"
            type='text'
            className='input-field shift'
            value={this.props.current_role.city_hall_name}
         />
+      </div>
+    </div>
       )
     }
     else{
@@ -614,7 +618,7 @@ class getShiftForm extends Component {
       const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
       var params = this.props.fetch_params;
-
+      console.log(fetch_body);
       fetch(`${apiUrl}/${collection}?${params}`, {
         headers: {
           "Accept": "application/json",

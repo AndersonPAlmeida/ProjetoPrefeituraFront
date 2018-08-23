@@ -34,10 +34,27 @@ import contact_info from './contact_info';
 import password_info from './password_info';
 import professional_info from './professional_info';
 import {userSignIn} from '../../actions/user';
+import { InputDate } from '../components/AgendadorComponents'
+
+function isValidDate(s) {
+  var bits = s.split('/');
+  var y = bits[0],
+    m = bits[1],
+    d = bits[2];
+  // Assume not leap year by default (note zero index for Jan)
+  var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  // If evenly divisible by 4 and not evenly divisible by 100,
+  // or is evenly divisible by 400, then a leap year
+  if ((!(y % 4) && y % 100) || !(y % 400)) {
+    daysInMonth[1] = 29;
+  }
+  return !(/\D/.test(String(d))) && d > 0 && d <= daysInMonth[--m]
+}
 
 class getUserForm extends Component {
 
- constructor(props) {
+  constructor(props) {
     super(props)
     this.state = {
       user: {
@@ -56,10 +73,7 @@ class getUserForm extends Component {
       },
       aux: {
         address: '',
-        birth_day: '',
-        birth_month: '',
-        birth_year: '',
-        birth_year_id: '',
+        birth_date: '',
         city_name: '',
         neighborhood: '',
         photo: '',
@@ -101,15 +115,15 @@ class getUserForm extends Component {
       else
         img = this.props.photo
       var year = parseInt(this.props.user_data.birth_date.substring(0,4))
+      let day = this.props.user_data.birth_date.slice(8,10);
+      let month = this.props.user_data.birth_date.slice(5,7);
+      let year = this.props.user_data.birth_date.slice(0,4);
       self.setState({
         professional: this.props.professional_data,
         user: this.props.user_data,
         aux: update(this.state.aux,
         {
-          birth_day: {$set: parseInt(this.props.user_data.birth_date.substring(8,10))},
-          birth_month: {$set: parseInt(this.props.user_data.birth_date.substring(5,7))},
-          birth_year: {$set: year},
-          birth_year_id: {$set: year-1899},
+          birth_date: {$set: `${day}/${month}/${year}`},
           pcd_value: {$set: is_pcd},
           photo_obj: {$set: img}
         })
@@ -222,6 +236,7 @@ class getUserForm extends Component {
   }
 
   selectDate(){
+<<<<<<< HEAD
       var optionsDays = [];
       optionsDays.push(<option key={0} value="" disabled>Dia</option>);
       for(var i = 1; i <= 31; i++){
@@ -282,7 +297,36 @@ class getUserForm extends Component {
             {optionsYears}
           </Input>
         </div>
+=======
+      return (
+        <Row s={12} l={3}>
+          <InputDate
+            name='birth_date'
+            value={this.state.aux.birth_date}
+            onChange={this.handleChange.bind(this)}
+            format='yyyy-mm-dd'
+          />
+        </Row>
+>>>>>>> develop
       )
+    }
+
+  password_change(){
+    return(
+      <div>
+        <div className='category-title'>
+          <p>Senha</p>
+        </div>
+        <div>
+          <a className='waves-effect btn password-button button-color' onClick={this.change_citizen_password.bind(this)}> recuperar senha </a>
+        </div>
+      </div>
+    )
+  }
+
+  change_citizen_password(e){
+    e.preventDefault();
+    browserHistory.push(`/citizens/${this.props.user_data.id}/edit/password`);
   }
 
   updateAddress(cep) {
@@ -350,20 +394,40 @@ class getUserForm extends Component {
       if(auxData['password_confirmation'] != auxData['password'])
         errors.push("A senha de confirmação não corresponde a senha atual.");
     }
+<<<<<<< HEAD
     if(!this.props.professional_only)
       if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
         errors.push("Campo Data de Nascimento é obrigatório.");
+=======
+    if(!this.props.professional_only){
+      if(!auxData['birth_date'])
+      errors.push("Campo Data de Nascimento é obrigatório.");
+
+      if(auxData['birth_date'].length < 10 || !isValidDate(auxData['birth_date'])){
+        errors.push('Digite uma data válida');
+      }
+    }
+
+>>>>>>> develop
 
     return errors;
   }
 
   generateBody(formData, auxData, send_password) {
+<<<<<<< HEAD
     const monthNames = [
       "Jan", "Feb", "Mar",
       "Apr", "May", "Jun",
       "Jul", "Aug", "Sep",
       "Oct", "Nov", "Dec"
     ];
+=======
+
+    let day = auxData['birth_date'].slice(0,2);
+    let month = auxData['birth_date'].slice(3,5);
+    let year = auxData['birth_date'].slice(6,10);
+
+>>>>>>> develop
     if(!auxData['pcd_value']) {
       formData['pcd'] = ''
     }
@@ -374,7 +438,7 @@ class getUserForm extends Component {
       formData['phone2'] = formData['phone2'].replace(/[()_\-\s]/gi, '');
     formData['cep'] = formData['cep'].replace(/(\.|-)/g,'');
     formData['rg'] = formData['rg'].replace(/(\.|-)/g,'');
-    formData['birth_date'] = `${monthNames[auxData['birth_month']-1]} ${auxData['birth_day']} ${auxData['birth_year']}`
+    formData['birth_date'] = `${year}-${month}-${day}`;
 
     if(this.state.aux.photo_has_changed) {
       var image = {};
@@ -425,7 +489,6 @@ class getUserForm extends Component {
     return fetch_body
   }
 
-
   successMessage() {
     let success_msg = ''
     switch(this.props.user_class) {
@@ -457,6 +520,7 @@ class getUserForm extends Component {
     if(errors.length > 0) {
       let full_error_msg = "";
       errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+      $("#toast-container").remove();
       Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
     } else {
       let fetch_body = this.generateBody.bind(this)(formData,auxData,send_password)
@@ -475,6 +539,7 @@ class getUserForm extends Component {
         if(this.props.is_edit && this.props.user_class == `citizen` && this.props.current_citizen) {
           this.props.dispatch(userSignIn(resp.data))
         }
+        $("#toast-container").remove();
         Materialize.toast(this.successMessage.bind(this)(), 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
     }).catch((errors_resp) => {
@@ -482,6 +547,7 @@ class getUserForm extends Component {
           let full_error_msg = "";
           if(errors_resp.errors.length > 0) {
             let full_error_msg = "";
+            $("#toast-container").remove();
             errors_resp.errors.forEach(function(elem){ full_error_msg += elem + '\n' });
             Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
           }
@@ -498,6 +564,20 @@ class getUserForm extends Component {
         <button className="waves-effect btn right button-color" onClick={this.handleSubmit.bind(this)} name="commit" type="submit">{this.props.is_edit ? "Atualizar" : "Criar"}</button>
       </div>
     )
+  }
+
+  password_field() {
+
+      if(this.props.user_class != 'dependant'){
+        if(this.props.fetch_collection === 'auth'){
+          return password_info.bind(this)()
+        }else{
+          return this.password_change.bind(this)()
+        }
+      }
+      else{
+        return null;
+      }
   }
 
   render() {
@@ -538,11 +618,15 @@ class getUserForm extends Component {
                           {contact_info.bind(this)()}
                         </Col>
                         <Col s={12} m={6}>
+<<<<<<< HEAD
                           {
                             this.props.user_class != `dependant` ?
                               password_info.bind(this)() :
                               null
                           }
+=======
+                           {this.password_field.bind(this)()}
+>>>>>>> develop
                         </Col>
                       </Row>
                     </div>
