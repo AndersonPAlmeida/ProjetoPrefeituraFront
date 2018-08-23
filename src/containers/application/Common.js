@@ -22,16 +22,16 @@ import { McImg, LogoImage } from '../images'
 import { browserHistory } from 'react-router';
 
 export const GovernmentBar = () => (
-        <div className="show-on-large-only government-bar"> 
+        <div className="show-on-large-only government-bar">
           <ul>
-              <li><a href="http://brasil.gov.br">Portal do Governo Brasileiro</a></li> 
+              <li><a href="http://brasil.gov.br">Portal do Governo Brasileiro</a></li>
               <li><a href="http://epwg.governoeletronico.gov.br/barra/atualize.html">Atualize sua Barra de Governo</a></li>
           </ul>
         </div>
 )
 export const Header = () => (
         <div>
-          <div className={styles['logo-content']}> 
+          <div className={styles['logo-content']}>
               <img
                 className={styles['logo-image']}
                 src={LogoImage} />
@@ -39,7 +39,7 @@ export const Header = () => (
           </div>
         </div>
 )
-export const Footer = (props) => 
+export const Footer = (props) =>
 {
   const items = props.footerItems;
   const listItems = items.map((item, idx) =>
@@ -56,12 +56,30 @@ export const Footer = (props) =>
                 </Col>
               </Row>
             </div>
-            <div>
-              <img
-                className={styles['mc-img']}
-                src={McImg}
-              />
-            </div>
+            <Row className='align-width'>
+              <Col s={12} m={12} l={12}>
+                <Col s={2} className='offset-s4'>
+                  <img
+                    className={styles['mc-img']}
+                    src={McImg}
+                    />
+                </Col>
+                <Col s={1}>
+                  <div style={{'marginBottom':'10px'}}>
+                    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/br/">
+                      <img className='license-img' alt="Licença Creative Commons" style={{'borderWidth':0}}
+                        src="https://i.creativecommons.org/l/by-sa/3.0/br/88x31.png" />
+                    </a>
+                  </div>
+                </Col>
+                <Col s={12} className='license-text'>
+                          <br />
+                          Este obra está licenciada com uma Licença <a rel="license"  style={{'color':'#4E6D00'}}
+                          href="http://creativecommons.org/licenses/by-sa/3.0/br/">
+                          Creative Commons Atribuição-CompartilhaIgual 3.0 Brasil</a>
+                </Col>
+              </Col>
+            </Row>
           </div>
   )
 }
