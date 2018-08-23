@@ -548,6 +548,11 @@ class getShiftList extends Component {
   }
 
 	newShiftButton() {
+
+     if(this.props.current_role.role === 'atendente_local'){
+       return(null);
+     }
+
 		return (
 			<button
         onClick={() =>
