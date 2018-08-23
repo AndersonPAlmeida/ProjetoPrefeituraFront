@@ -324,15 +324,24 @@ class getUserForm extends Component {
   checkErrors(formData, auxData, send_password) {
     let errors = []
     let form_mandatory = (!this.props.professional_only) ? [ { id: 'name', name: 'Nome' },{ id: 'address_number', name: 'Número' }] : []
-    if(this.props.user_class == `citizen`) {
+    if(this.props.user_class == `citizen` || this.props.user_class == `professional` ) {
       form_mandatory.push({ id: 'cpf', name: 'CPF' })
       form_mandatory.push({ id: 'cep', name: 'CEP' })
       form_mandatory.push({ id: 'phone1', name: 'Telefone 1' })
     }
-    if(this.props.user_class == `professional`) {
-      form_mandatory.push({ id: 'occupation', name: 'Cargo' })
-    }
     errors = this.checkEmptyFields(formData, form_mandatory)
+    if(this.props.user_class == `professional`) {
+        console.log(this.state.professional)
+        console.log(this.state.professional.occupation_id)
+        if(this.state.professional.occupation_id === 0)
+            errors.push('Campo Cargo é obrigatório`')
+    }
+    // let form_mandatory_aux =  []
+    //   form_mandatory_aux.push({ id: 'occupation_id', name: 'Cargo' })
+    // }
+    // console.log(this.state)
+    // errors = errors.concat(this.checkEmptyFields(this.state.professional, form_mandatory_aux))
+
     if(send_password) {
       if(!auxData['password'])
         errors.push("Campo senha não pode estar vazio.")
