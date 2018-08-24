@@ -304,9 +304,6 @@ class getUserForm extends Component {
   }
 
   checkErrors(formData, auxData, send_password) {
-    console.log(this.state);
-    console.log(auxData)
-
     let errors = []
     let form_mandatory = (!this.props.professional_only) ? [ { id: 'name', name: 'Nome' },{ id: 'address_number', name: 'Número' }] : []
     if(this.props.user_class == `citizen` || this.props.user_class == `professional` ) {
