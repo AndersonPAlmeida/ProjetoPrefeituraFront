@@ -38,9 +38,9 @@ import { InputDate } from '../components/AgendadorComponents'
 
 function isValidDate(s) {
   var bits = s.split('/');
-  var y = bits[0],
+  var y = bits[2],
     m = bits[1],
-    d = bits[2];
+    d = bits[0];
   // Assume not leap year by default (note zero index for Jan)
   var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
@@ -304,6 +304,9 @@ class getUserForm extends Component {
   }
 
   checkErrors(formData, auxData, send_password) {
+    console.log(this.state);
+    console.log(auxData)
+
     let errors = []
     let form_mandatory = (!this.props.professional_only) ? [ { id: 'name', name: 'Nome' },{ id: 'address_number', name: 'Número' }] : []
     if(this.props.user_class == `citizen` || this.props.user_class == `professional` ) {
@@ -324,15 +327,12 @@ class getUserForm extends Component {
       if(auxData['password_confirmation'] != auxData['password'])
         errors.push("A senha de confirmação não corresponde a senha atual.");
     }
-    if(!this.props.professional_only){
-      if(!auxData['birth_date'])
+
+    if(!auxData['birth_date'])
       errors.push("Campo Data de Nascimento é obrigatório.");
-      if(auxData['birth_date'].length < 8 || !isValidDate(auxData['birth_date'])){
+    if(auxData['birth_date'].length < 8 || !isValidDate(auxData['birth_date'])){
         errors.push('Digite uma data válida');
-      }
     }
-
-
 
     return errors;
   }
