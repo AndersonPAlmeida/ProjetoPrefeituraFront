@@ -27,7 +27,7 @@ import {fetch} from "../../redux-auth";
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 
-const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julia', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 const WEEKDAYS_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const WEEKDAYS_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
 
@@ -78,7 +78,7 @@ class getScheduleCitizen extends Component {
   }
 
   componentDidUpdate() {
-    if(this.state.update_service_types != 0) { 
+    if(this.state.update_service_types != 0) {
       const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'service_types';
       const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.params.citizen_id}&sector_id=${this.state.selected_sector}&schedule=true`
@@ -90,10 +90,10 @@ class getScheduleCitizen extends Component {
       }).then(parseResponse).then(resp => {
         this.setState({ service_types: resp })
         this.setState({ update_service_types: 0, schedule_id: null })
-      }); 
+      });
     }
 
-    if(this.state.update_service_places != 0) { 
+    if(this.state.update_service_places != 0) {
       const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = 'service_places';
       const params = `permission=${this.props.user.current_role}&citizen_id=${this.props.params.citizen_id}&service_type_id=${this.state.selected_service_type}&schedule=true`
@@ -105,10 +105,10 @@ class getScheduleCitizen extends Component {
       }).then(parseResponse).then(resp => {
         this.setState({ service_places: resp })
         this.setState({ update_service_places: 0, schedule_id: null })
-      }); 
+      });
     }
 
-    if(this.state.update_calendar != 0) { 
+    if(this.state.update_calendar != 0) {
       const schedules = (this.state.service_places[this.state.selected_service_place-1].schedules)
       this.state.available_days = {start_times: [], end_times: []}
       this.state.service_places[this.state.selected_service_place-1].schedules.map((schedule,idx) => {
@@ -118,7 +118,7 @@ class getScheduleCitizen extends Component {
       this.setState({ update_calendar: 0, schedule_id: null  })
     }
 
-    if(this.state.update_times != 0) { 
+    if(this.state.update_times != 0) {
       this.state.times = []
       if(this.state.selectedDay) {
         this.state.available_days.start_times.map((time, idx) => {
@@ -130,7 +130,7 @@ class getScheduleCitizen extends Component {
       this.setState({ update_times: 0, schedule_id: null })
     }
 
-    if(this.state.update_schedule != 0) { 
+    if(this.state.update_schedule != 0) {
       this.state.schedule_id = null
       const chosen_date = this.state.times[this.state.selected_time-1].getTime()
       var schedule_date
@@ -244,18 +244,18 @@ class getScheduleCitizen extends Component {
 				</span>
 				<div>
 					<Row className='sector-select'>
-					  <Input s={12} l={4} m={12} name="selected_sector" type='select' value={this.state.selected_sector} 
-              onChange={ 
-                (event) => { 
+					  <Input s={12} l={4} m={12} name="selected_sector" type='select' value={this.state.selected_sector}
+              onChange={
+                (event) => {
                   if(event.target.value != this.state.selected_sector) {
-                    this.handleInputChange(event); 
-                    this.setState({ 
+                    this.handleInputChange(event);
+                    this.setState({
                       update_service_types: 1,
                       selected_service_type: '0',
                       selected_service_place: '0',
-                      selectedDay: null,      
-                      times: [],       
-                      available_days: {start_times: [], end_times: []}    
+                      selectedDay: null,
+                      times: [],
+                      available_days: {start_times: [], end_times: []}
                     });
                   }
                 }
@@ -284,21 +284,21 @@ class getScheduleCitizen extends Component {
 				<br></br>
 				<div>
 					<Row className='sector-select'>
-					  <Input s={12} l={4} m={12} name="selected_service_type" type='select' value={this.state.selected_service_type} 
-              onChange= { 
-                (event) => { 
+					  <Input s={12} l={4} m={12} name="selected_service_type" type='select' value={this.state.selected_service_type}
+              onChange= {
+                (event) => {
                   if(this.state.selected_service_type != event.target.value) {
-                    this.handleInputChange(event); 
-                    this.setState({ 
-                      update_service_places: 1, 
+                    this.handleInputChange(event);
+                    this.setState({
+                      update_service_places: 1,
                       selected_service_place: '0',
-                      selectedDay: null, 
-                      times: [], 
-                      available_days: {start_times: [], end_times: []} 
-                    }); 
+                      selectedDay: null,
+                      times: [],
+                      available_days: {start_times: [], end_times: []}
+                    });
                   }
-                } 
-              } 
+                }
+              }
             >
               <option value='0' disabled>Escolha o tipo de atendimento</option>
               {serviceTypeList}
@@ -323,11 +323,11 @@ class getScheduleCitizen extends Component {
 				<br></br>
 				<div>
 					<Row className='sector-select'>
-            <Input s={12} l={4} m={12} name="selected_service_place" value={this.state.selected_service_place} onChange={ (event) => { this.handleInputChange(event); 
-              this.setState({ update_calendar: 1, 
-                              selectedDay: null, 
-                              times: [], 
-                            }); 
+            <Input s={12} l={4} m={12} name="selected_service_place" value={this.state.selected_service_place} onChange={ (event) => { this.handleInputChange(event);
+              this.setState({ update_calendar: 1,
+                              selectedDay: null,
+                              times: [],
+                            });
             } } s={12} l={4} m={12} type='select'>
               <option value='0' disabled>Escolha o local de atendimento</option>
               {servicePlaceList}
@@ -381,4 +381,4 @@ const mapStateToProps = (state) => {
 const ScheduleCitizen = connect(
   mapStateToProps
 )(getScheduleCitizen)
-export default ScheduleCitizen 
+export default ScheduleCitizen
