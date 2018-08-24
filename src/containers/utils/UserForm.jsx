@@ -236,68 +236,6 @@ class getUserForm extends Component {
   }
 
   selectDate(){
-<<<<<<< HEAD
-      var optionsDays = [];
-      optionsDays.push(<option key={0} value="" disabled>Dia</option>);
-      for(var i = 1; i <= 31; i++){
-        optionsDays.push(
-          <option key={i} value={i}>{i}</option>
-        );
-      }
-      var optionsMonths = []
-      optionsMonths.push(<option key={0} value="" disabled>Mês</option>);
-      var months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-      for(var i = 0; i < 12; i++){
-        optionsMonths.push(
-          <option key={i+1} value={i+1}>{months[i]}</option>
-        );
-      }
-      var optionsYears = []
-      optionsYears.push(<option key={0} value="" disabled>Ano</option>);
-      var year = new Date().getFullYear()
-      for(var i = 1900; i < year; i++){
-        optionsYears.push(
-          <option key={i-1899} value={i-1899}>{i}</option>
-        );
-      }
-      return (
-        <div>
-          <Input s={12} l={3}
-            type='select'
-            name='birth_day'
-            value={this.state.aux.birth_day}
-            onChange={this.handleChange.bind(this)}
-          >
-            {optionsDays}
-          </Input>
-
-          <Input s={12} l={4}
-            type='select'
-            name='birth_month'
-            value={this.state.aux.birth_month}
-            onChange={this.handleChange.bind(this)}
-          >
-            {optionsMonths}
-          </Input>
-
-          <Input s={12} l={4}
-            type='select'
-            name='birth_year_id'
-            value={this.state.aux.birth_year_id}
-            onChange={ (event) => {
-                this.handleChange.bind(this)(event)
-                this.setState({aux: update(this.state.aux,
-                  {
-                    birth_year: {$set: parseInt(this.state.aux.birth_year_id)+parseInt(1899)},
-                  })
-                })
-              }
-            }
-          >
-            {optionsYears}
-          </Input>
-        </div>
-=======
       return (
         <Row s={12} l={3}>
           <InputDate
@@ -307,7 +245,7 @@ class getUserForm extends Component {
             format='yyyy-mm-dd'
           />
         </Row>
->>>>>>> develop
+
       )
     }
 
@@ -375,17 +313,9 @@ class getUserForm extends Component {
     }
     errors = this.checkEmptyFields(formData, form_mandatory)
     if(this.props.user_class == `professional`) {
-        console.log(this.state.professional)
-        console.log(this.state.professional.occupation_id)
         if(this.state.professional.occupation_id === 0)
             errors.push('Campo Cargo é obrigatório`')
     }
-    // let form_mandatory_aux =  []
-    //   form_mandatory_aux.push({ id: 'occupation_id', name: 'Cargo' })
-    // }
-    // console.log(this.state)
-    // errors = errors.concat(this.checkEmptyFields(this.state.professional, form_mandatory_aux))
-
     if(send_password) {
       if(!auxData['password'])
         errors.push("Campo senha não pode estar vazio.")
@@ -394,40 +324,25 @@ class getUserForm extends Component {
       if(auxData['password_confirmation'] != auxData['password'])
         errors.push("A senha de confirmação não corresponde a senha atual.");
     }
-<<<<<<< HEAD
-    if(!this.props.professional_only)
-      if(!auxData['birth_day'] || !auxData['birth_month'] || !auxData['birth_year'])
-        errors.push("Campo Data de Nascimento é obrigatório.");
-=======
     if(!this.props.professional_only){
       if(!auxData['birth_date'])
       errors.push("Campo Data de Nascimento é obrigatório.");
-
-      if(auxData['birth_date'].length < 10 || !isValidDate(auxData['birth_date'])){
+      if(auxData['birth_date'].length < 8 || !isValidDate(auxData['birth_date'])){
         errors.push('Digite uma data válida');
       }
     }
 
->>>>>>> develop
+
 
     return errors;
   }
 
   generateBody(formData, auxData, send_password) {
-<<<<<<< HEAD
-    const monthNames = [
-      "Jan", "Feb", "Mar",
-      "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep",
-      "Oct", "Nov", "Dec"
-    ];
-=======
-
     let day = auxData['birth_date'].slice(0,2);
     let month = auxData['birth_date'].slice(3,5);
     let year = auxData['birth_date'].slice(6,10);
 
->>>>>>> develop
+
     if(!auxData['pcd_value']) {
       formData['pcd'] = ''
     }
@@ -618,15 +533,12 @@ class getUserForm extends Component {
                           {contact_info.bind(this)()}
                         </Col>
                         <Col s={12} m={6}>
-<<<<<<< HEAD
                           {
                             this.props.user_class != `dependant` ?
                               password_info.bind(this)() :
                               null
                           }
-=======
-                           {this.password_field.bind(this)()}
->>>>>>> develop
+
                         </Col>
                       </Row>
                     </div>
