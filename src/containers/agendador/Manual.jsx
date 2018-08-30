@@ -23,7 +23,7 @@ import { browserHistory } from 'react-router';
 
 class Manual extends Component {
     manual_file() {
-          browserHistory.push(`/manual/manual.pdf`)
+          window.location.href = '../manual/manual.pdf';
     }
 
     manualText(){
