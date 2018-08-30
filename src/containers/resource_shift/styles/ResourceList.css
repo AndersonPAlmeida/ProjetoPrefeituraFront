@@ -15,7 +15,7 @@
 .table-size{
 	overflow-x: scroll;
 	overflow-y: scroll;
-	max-height: 550px; 
+	max-height: 550px;
 	margin-top: 60px;
 }
 
@@ -63,8 +63,10 @@
 .clear-filter {
 	display: none;
 }
+
 #filterBtn{
-	margin-bottom: 20px
+	margin-bottom: 20px;
+  float: left;
 }
 
 #iconTable{
@@ -73,11 +75,6 @@
 }
 
 #createResourceShiftButton{
-	margin-left: 35px;
-}
-@media screen and (max-width: 620px) {
-	#createResourceShiftButton{
-		margin-left: 35px;
-		margin-bottom: 15px;
-	}
+  margin-left:15px;
+  float: left;
 }

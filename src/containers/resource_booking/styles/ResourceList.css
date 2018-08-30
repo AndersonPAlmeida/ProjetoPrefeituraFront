@@ -15,7 +15,7 @@
 .table-size{
 	overflow-x: scroll;
 	overflow-y: scroll;
-	max-height: 550px; 
+	max-height: 550px;
 	margin-top: 60px;
 }
 
@@ -63,8 +63,16 @@
 .clear-filter {
 	display: none;
 }
+
+.title-color{
+  color: #183442;
+  font-family: 'Roboto', 'Arial';
+  font-weight: 300;
+}
+
 #filterBtn{
-	margin-bottom: 20px
+	margin-bottom: 20px;
+  float: left;
 }
 
 #iconTable{
@@ -73,11 +81,6 @@
 }
 
 #createResourceBookingButton{
-	margin-left: 35px;
-}
-@media screen and (max-width: 620px) {
-	#createResourceBookingButton{
-		margin-left: 35px;
-		margin-bottom: 15px;
-	}
+  float: left;
+  margin-left: 10px;
 }

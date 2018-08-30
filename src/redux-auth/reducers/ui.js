@@ -53,12 +53,14 @@ const initialState = Immutable.fromJS({
 });
 
 export default createReducer(initialState, {
-  [emailSignInActions.EMAIL_SIGN_IN_COMPLETE]: state => { 
-    Materialize.toast("Bem vindo.", 10000, "green",function(){$("#toast-container").remove()}); 
-    return state; 
+  [emailSignInActions.EMAIL_SIGN_IN_COMPLETE]: state => {
+    $("#toast-container").remove();
+    Materialize.toast("Bem vindo.", 10000, "green",function(){$("#toast-container").remove()});
+    return state;
   },
 
   [emailSignInActions.EMAIL_SIGN_IN_ERROR]: state => {
+    $("#toast-container").remove();
     Materialize.toast("Erro ao realizar login.", 10000, "red",function(){$("#toast-container").remove()});
     return state;
   },
@@ -103,7 +105,7 @@ export default createReducer(initialState, {
   ),
 
   [emailSignUpActions.EMAIL_SIGN_UP_COMPLETE]: (state, {user}) => {
-    Materialize.toast("Registrado com sucesso.", 10000, "green",function(){$("#toast-container").remove()}); 
+    Materialize.toast("Registrado com sucesso.", 10000, "green",function(){$("#toast-container").remove()});
     emailSignUpAddress: user.email
     return state;
   },
@@ -113,11 +115,13 @@ export default createReducer(initialState, {
   },
 
   [emailSignUpActions.SIGN_UP_CEP_COMPLETE]: (state) => {
-    Materialize.toast("CEP válido.", 10000, "green",function(){$("#toast-container").remove()}); 
+    $("#toast-container").remove();
+    Materialize.toast("CEP válido.", 10000, "green",function(){$("#toast-container").remove()});
     return state;
   },
 
   [emailSignUpActions.SIGN_UP_CEP_ERROR]: state => {
+    $("#toast-container").remove();
     Materialize.toast("CEP inválido.", 10000, "red",function(){$("#toast-container").remove()});
     return state;
   },

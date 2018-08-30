@@ -29,7 +29,7 @@
 
 .logo-text {
   font-weight: bold;
-  font-size: 24px;  
+  font-size: 24px;
 }
 
 .container {
@@ -99,7 +99,7 @@ body {
   width: 70%;
 }
 
-.nav-logo { 
+.nav-logo {
   padding: 5px;
   height: 54px;
 
@@ -154,7 +154,15 @@ body {
   margin-bottom: 5px;
   font-size: 13px;
 }
-=======
+
 .top-footer a {
   text-transform: none;
+}
+
+.license-img{
+  margin-top: 20px;
+}
+
+.align-width{
+  width: 70%;
 }

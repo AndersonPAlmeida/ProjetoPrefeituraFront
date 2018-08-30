@@ -61,9 +61,9 @@ class getResourceList extends Component {
       service_places:[],
       current_permission: ''
     };
-    this.getCityHallName = this.getCityHallName.bind(this);      
-    this.getResourceType = this.getResourceType.bind(this);      
-    this.getServicePlace = this.getServicePlace.bind(this);      
+    this.getCityHallName = this.getCityHallName.bind(this);
+    this.getResourceType = this.getResourceType.bind(this);
+    this.getServicePlace = this.getServicePlace.bind(this);
   }
 
   componentWillMount() {
@@ -72,7 +72,7 @@ class getResourceList extends Component {
     var current_permission = undefined;
     for (let i = 0; i < user_roles.length; i++){
       if (user_roles[i].id === current_role){
-        current_permission = user_roles[i].role; 
+        current_permission = user_roles[i].role;
         break;
       }
     }
@@ -85,7 +85,7 @@ class getResourceList extends Component {
     if (current_permission == 'adm_c3sl' || current_permission == 'adm_prefeitura'){
       this.getServicePlace();
       if(current_permission == 'adm_c3sl'){
-        this.getCityHallName();   
+        this.getCityHallName();
       }
     }
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -138,7 +138,7 @@ class getResourceList extends Component {
         'Content-Type': 'application/json' },
       method: 'get',
     }).then(parseResponse).then(resp => {
-      resp.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );      
+      resp.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );
       self.setState({ resource_types: resp });
     });
   }
@@ -154,7 +154,7 @@ class getResourceList extends Component {
       method: 'get',
     }).then(parseResponse).then(completeResp => {
       let resp = completeResp.entries;
-      resp.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );      
+      resp.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );
       self.setState({ service_places: resp });
     });
   }
@@ -176,36 +176,36 @@ class getResourceList extends Component {
             </td>
             <td key={Math.random()} >
               {resource.model}
-            </td>            
+            </td>
             <td key={Math.random()} >
               {resource.active ? 'Ativo' : 'Inativo'}
             </td>
-            
+
             <td key={Math.random()} >
               {
-                this.state.current_permission == 'adm_c3sl' || this.state.current_permission == 'adm_prefeitura' ? 
+                this.state.current_permission == 'adm_c3sl' || this.state.current_permission == 'adm_prefeitura' ?
                   this.state.service_places.find(o => o.id === resource.service_place_id).name :
                   undefined
               }
             </td>
 
             <td key={Math.random()} >
-              <a className='back-bt waves-effect btn-flat' 
+              <a className='back-bt waves-effect btn-flat'
                 id="iconTable"
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/resources/${resource.id}/edit`) 
+                href='#'
+                onClick={ () =>
+                  browserHistory.push(`/resources/${resource.id}/edit`)
                 }>
                 <i className="waves-effect material-icons tooltipped">
                     edit
                 </i>
               </a>
 
-              <a className='back-bt waves-effect btn-flat' 
+              <a className='back-bt waves-effect btn-flat'
                 id="iconTable"
-                href='#' 
-                onClick={ () => 
-                  browserHistory.push(`/resources/${resource.id}`) 
+                href='#'
+                onClick={ () =>
+                  browserHistory.push(`/resources/${resource.id}`)
                 }>
                 <i className="waves-effect material-icons tooltipped">
                     visibility
@@ -221,20 +221,20 @@ class getResourceList extends Component {
     const fields = (
       <tr>
         <th>
-          <a 
-            href='#' 
+          <a
+            href='#'
             className="grey-text text-darken-3 "
-            onClick={ 
-              () => { 
+            onClick={
+              () => {
                 if (this.state.filter_s == 'resource_types_id+asc'){
                   document.getElementById('ascTypeIcon').style.display = 'none';
-                  document.getElementById('descTypeIcon').style.display = 'inline-block';                    
-                } 
+                  document.getElementById('descTypeIcon').style.display = 'inline-block';
+                }
                 else{
-                  document.getElementById('descTypeIcon').style.display = 'none';               
+                  document.getElementById('descTypeIcon').style.display = 'none';
                   document.getElementById('ascTypeIcon').style.display = 'inline-block';
                 }
-                  
+
                 this.setState({
                   ['filter_s']: this.state.filter_s == 'resource_types_id+asc' ? 'resource_types_id+desc' : 'resource_types_id+asc'
                 }, this.handleFilterSubmit.bind(this,true));
@@ -251,20 +251,20 @@ class getResourceList extends Component {
           </a>
         </th>
         <th>
-          <a 
-            href='#' 
+          <a
+            href='#'
             className="grey-text text-darken-3 "
-            onClick={ 
-              () => { 
+            onClick={
+              () => {
                 if (this.state.filter_s == 'label+asc'){
                   document.getElementById('ascLabelIcon').style.display = 'none';
-                  document.getElementById('descLabelIcon').style.display = 'inline-block';                    
-                } 
+                  document.getElementById('descLabelIcon').style.display = 'inline-block';
+                }
                 else{
-                  document.getElementById('descLabelIcon').style.display = 'none';               
+                  document.getElementById('descLabelIcon').style.display = 'none';
                   document.getElementById('ascLabelIcon').style.display = 'inline-block';
                 }
-                  
+
                 this.setState({
                   ['filter_s']: this.state.filter_s == 'label+asc' ? 'label+desc' : 'label+asc'
                 }, this.handleFilterSubmit.bind(this,true));
@@ -282,20 +282,20 @@ class getResourceList extends Component {
         </th>
 
         <th>
-          <a 
-            href='#' 
+          <a
+            href='#'
             className="grey-text text-darken-3 "
-            onClick={ 
-              () => { 
+            onClick={
+              () => {
                 if (this.state.filter_s == 'brand+asc'){
                   document.getElementById('ascBrandIcon').style.display = 'none';
-                  document.getElementById('descBrandIcon').style.display = 'inline-block';                    
-                } 
+                  document.getElementById('descBrandIcon').style.display = 'inline-block';
+                }
                 else{
-                  document.getElementById('descBrandIcon').style.display = 'none';               
+                  document.getElementById('descBrandIcon').style.display = 'none';
                   document.getElementById('ascBrandIcon').style.display = 'inline-block';
                 }
-                  
+
                 this.setState({
                   ['filter_s']: this.state.filter_s == 'brand+asc' ? 'brand+desc' : 'brand+asc'
                 }, this.handleFilterSubmit.bind(this,true));
@@ -313,20 +313,20 @@ class getResourceList extends Component {
         </th>
 
         <th>
-          <a 
-            href='#' 
+          <a
+            href='#'
             className="grey-text text-darken-3 "
-            onClick={ 
-              () => { 
+            onClick={
+              () => {
                 if (this.state.filter_s == 'model+asc'){
                   document.getElementById('ascModelIcon').style.display = 'none';
-                  document.getElementById('descModelIcon').style.display = 'inline-block';                    
-                } 
+                  document.getElementById('descModelIcon').style.display = 'inline-block';
+                }
                 else{
-                  document.getElementById('descModelIcon').style.display = 'none';               
+                  document.getElementById('descModelIcon').style.display = 'none';
                   document.getElementById('ascModelIcon').style.display = 'inline-block';
                 }
-                  
+
                 this.setState({
                   ['filter_s']: this.state.filter_s == 'model+asc' ? 'model+desc' : 'model+asc'
                 }, this.handleFilterSubmit.bind(this,true));
@@ -343,10 +343,10 @@ class getResourceList extends Component {
           </a>
         </th>
 
-        
+
         <th>Situação</th>
         {
-          this.state.current_permission == 'adm_c3sl' || this.state.current_permission == 'adm_prefeitura' ? 
+          this.state.current_permission == 'adm_c3sl' || this.state.current_permission == 'adm_prefeitura' ?
             <th>Local do recurso</th> :
             <th></th>
         }
@@ -380,7 +380,7 @@ class getResourceList extends Component {
 
   filterResourceType() {
     return (
-      <div>
+    <div>
         <Row id='filterRow'>
           <Col s={12} m={4}>
             <div>
@@ -422,23 +422,23 @@ class getResourceList extends Component {
               </label>
             </div>
           </Col>
-        </Row>
-
-        <div className='right' id='createResourceButton'>
-          {this.newResourceTypeButton()}
-        </div>
-
-        <button 
-          id="filterBtn"
-          className="waves-effect btn right button-color" 
-          onClick={this.handleFilterSubmit.bind(this,false)} 
-          name="commit" 
-          type="submit">
+        <Col s={12}>
+          <button
+            id="filterBtn"
+            className="waves-effect btn button-color" 
+            onClick={this.handleFilterSubmit.bind(this,false)}
+            name="commit"
+            type="submit">
             FILTRAR
-        </button>
-        
-      
-      </div>
+          </button>
+
+          <div id='createResourceButton'>
+            {this.newResourceTypeButton()}
+          </div>
+        </Col>
+      </Row>
+
+    </div>
     );
   }
 
@@ -449,7 +449,7 @@ class getResourceList extends Component {
     if(sort_only) {
       label = this.state.last_fetch_label;
       model = this.state.last_fetch_model;
-      brand = this.state.last_fetch_brand; 
+      brand = this.state.last_fetch_brand;
     } else {
       label = this.state.filter_label;
       model = this.state.filter_model;
@@ -478,12 +478,12 @@ class getResourceList extends Component {
 
   newResourceTypeButton() {
     return (
-      <button 
+      <button
         onClick={() =>
-          browserHistory.push({ pathname: '/resources/new'}) 
+          browserHistory.push({ pathname: '/resources/new'})
         }
-        className="btn waves-effect btn button-color" 
-        name="anterior" 
+        className="btn waves-effect btn button-color"
+        name="anterior"
         type="submit">
           CADASTRAR RECURSO
       </button>

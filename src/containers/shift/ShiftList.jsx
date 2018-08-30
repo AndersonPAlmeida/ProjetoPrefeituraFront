@@ -27,6 +27,9 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import strftime from 'strftime';
 import MaskedInput from 'react-maskedinput';
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import 'react-day-picker/lib/style.css';
+import {DatePicker} from '../components/AgendadorComponents'
 
 class getShiftList extends Component {
   constructor(props) {
@@ -105,38 +108,153 @@ class getShiftList extends Component {
   }
 
   pickDate(){
-    /*
-      Date selector
-    <Input name="filter_date" type='date' value={this.state.filter_date} className='date'
-      onChange={
-        (event) => {
-          var selected_service_type = event.target.value
-          /*if(this.state.filter_service_type != selected_service_type) {
-          this.setState({
-          filter_service_type: selected_service_type,
-          });
-          }
-        }
-
-      }
-      >
-    </Input>
-    */
     return (
       <Col s={12} m={4}>
         <div>
           <h6 className='display-inline'>A partir de:</h6>
-            <input name="filter_date" type='text' value={this.state.filter_date} className='date'
-              onChange={
-                (event) => {
-                  var selected_date = event.target.value
-                  if(this.state.filter_date != selected_date) {
-                    this.setState({
-                      filter_date:  selected_date
-                    });
+          <DatePicker
+            format='yyyy-mm-dd'
+            name="filter_date"
+            value={this.state.filter_date}
+            onChange={
+              (event) => {
+                var selected_date = event.target.value
+                if(this.state.filter_date != selected_date) {
+                  this.setState({
+                    filter_date:  selected_date
+                  });
                 }
-              }}>
-            </input>
+              }
+            }
+            />
+        </div>
+      </Col>
+    )
+  }
+
+  pickProfessional() {
+    const professionalList = (
+      this.state.collections.professionals.map((professional) => {
+        return (
+          <option key={professional.id} value={professional.id}>{professional.name}</option>
+        )
+      })
+    )
+    return (
+      <Col s={12} m={3}>
+        <div>
+          <h6 className='display-inline'>Profissional:</h6>
+          <Input name="filter_professional" type='select' value={this.state.filter_professional}
+            onChange={
+              (event) => {
+                var selected_professional = event.target.value
+                if(this.state.filter_professional != selected_professional) {
+                  this.setState({
+                    filter_professional: selected_professional,
+                  });
+                }
+              }
+            }
+            >
+            <option value={''}>Todas</option>
+            {professionalList}
+          </Input>
+        </div>
+      </Col>
+    )
+  }
+
+  pickServiceType() {
+    const service_typeList = (
+      this.state.collections.service_types.map((service_type) => {
+        return (
+          <option key={service_type.id} value={service_type.id}>{service_type.description}</option>
+        )
+      })
+    )
+    return (
+      <Col s={12} m={ this.props.current_role.role === 'responsavel_atendimento' ? 4 : 3}>
+        <div>
+          <h6 className='display-inline'>Tipo de Atendimento:</h6>
+          <Input name="filter_service_type" type='select' value={this.state.filter_service_type}
+            onChange={
+              (event) => {
+                var selected_service_type = event.target.value
+                if(this.state.filter_service_type != selected_service_type) {
+                  this.setState({
+                    filter_service_type: selected_service_type,
+                  });
+                }
+              }
+            }
+            >
+            <option value={''}>Todos</option>
+            {service_typeList}
+          </Input>
+        </div>
+      </Col>
+    )
+  }
+
+  pickServicePlace() {
+    const servicePlaceList = (
+      this.state.collections.service_places.map((service_place) => {
+        return (
+          <option key={service_place.id} value={service_place.id}>{service_place.name}</option>
+        )
+      })
+    )
+    return (
+      <Col s={12} m={3}>
+        <div>
+          <h6 className='display-inline'>Local de Atendimento:</h6>
+          <Input name="filter_service_place" type='select' value={this.state.filter_service_place}
+            onChange={
+              (event) => {
+                var selected_service_place = event.target.value
+                if(this.state.filter_service_place != selected_service_place) {
+                  this.setState({
+                    filter_service_place: selected_service_place,
+                  });
+                }
+              }
+            }
+            >
+            <option value={''}>Todos</option>
+            {servicePlaceList}
+          </Input>
+        </div>
+      </Col>
+    )
+  }
+
+  pickCityHall() {
+    const cityHallList = (
+      this.state.collections.city_halls.map((city_hall) => {
+        return (
+          <option key={city_hall.id} value={city_hall.id}>{city_hall.name}</option>
+        )
+      })
+    )
+    return (
+      <Col s={12} m={3}>
+        <div>
+          <h6>Prefeitura:</h6>
+          <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
+            onChange={
+              (event) => {
+                var selected_city_hall = event.target.value
+                if(this.state.filter_city_hall != selected_city_hall) {
+                  this.setState({
+                    filter_city_hall: selected_city_hall,
+                  });
+                }
+              }
+            }
+            >
+            <option value={''}>Todas</option>
+            {cityHallList}
+          </Input>
         </div>
       </Col>
     )
@@ -315,134 +433,6 @@ class getShiftList extends Component {
     }
   }
 
-  pickProfessional() {
-    const professionalList = (
-      this.state.collections.professionals.map((professional) => {
-        return (
-          <option key={professional.id} value={professional.id}>{professional.name}</option>
-        )
-      })
-    )
-    return (
-      <Col s={12} m={3}>
-        <div>
-          <h6 className='display-inline'>Profissional:</h6>
-          <Input name="filter_professional" type='select' value={this.state.filter_professional}
-            onChange={
-              (event) => {
-                var selected_professional = event.target.value
-                if(this.state.filter_professional != selected_professional) {
-                  this.setState({
-                    filter_professional: selected_professional,
-                  });
-                }
-              }
-            }
-          >
-            <option value={''}>Todas</option>
-            {professionalList}
-          </Input>
-        </div>
-      </Col>
-    )
-  }
-
-  pickServiceType() {
-    const service_typeList = (
-      this.state.collections.service_types.map((service_type) => {
-        return (
-          <option key={service_type.id} value={service_type.id}>{service_type.description}</option>
-        )
-      })
-    )
-    return (
-      <Col s={12} m={ this.props.current_role.role === 'responsavel_atendimento' ? 4 : 3}>
-        <div>
-          <h6 className='display-inline'>Tipo de Atendimento:</h6>
-          <Input name="filter_service_type" type='select' value={this.state.filter_service_type}
-            onChange={
-              (event) => {
-                var selected_service_type = event.target.value
-                if(this.state.filter_service_type != selected_service_type) {
-                  this.setState({
-                    filter_service_type: selected_service_type,
-                  });
-                }
-              }
-            }
-          >
-            <option value={''}>Todos</option>
-            {service_typeList}
-          </Input>
-        </div>
-      </Col>
-    )
-  }
-
-  pickServicePlace() {
-    const servicePlaceList = (
-      this.state.collections.service_places.map((service_place) => {
-        return (
-          <option key={service_place.id} value={service_place.id}>{service_place.name}</option>
-        )
-      })
-    )
-    return (
-      <Col s={12} m={3}>
-        <div>
-          <h6 className='display-inline'>Local de Atendimento:</h6>
-          <Input name="filter_service_place" type='select' value={this.state.filter_service_place}
-            onChange={
-              (event) => {
-                var selected_service_place = event.target.value
-                if(this.state.filter_service_place != selected_service_place) {
-                  this.setState({
-                    filter_service_place: selected_service_place,
-                  });
-                }
-              }
-            }
-          >
-            <option value={''}>Todos</option>
-            {servicePlaceList}
-          </Input>
-        </div>
-      </Col>
-    )
-  }
-
-  pickCityHall() {
-    const cityHallList = (
-      this.state.collections.city_halls.map((city_hall) => {
-        return (
-          <option key={city_hall.id} value={city_hall.id}>{city_hall.name}</option>
-        )
-      })
-    )
-    return (
-      <Col s={12} m={3}>
-        <div>
-          <h6>Prefeitura:</h6>
-          <Input name="filter_city_hall" type='select' value={this.state.filter_city_hall}
-            onChange={
-              (event) => {
-                var selected_city_hall = event.target.value
-                if(this.state.filter_city_hall != selected_city_hall) {
-                  this.setState({
-                    filter_city_hall: selected_city_hall,
-                  });
-                }
-              }
-            }
-          >
-            <option value={''}>Todas</option>
-            {cityHallList}
-          </Input>
-        </div>
-      </Col>
-    )
-  }
-
   filterShift() {
     if(this.props.current_role.role === 'responsavel_atendimento'){
       return(
@@ -488,7 +478,7 @@ class getShiftList extends Component {
             <Col>
               {this.newShiftButton()}
             </Col>
-            
+
           </Row>
         </div>
       )
@@ -504,11 +494,12 @@ class getShiftList extends Component {
   }
 
   handleFilterSubmit(sort_only) {
-    var professional
-    var service_type
-    var service_place
-    var city_hall
-    var current_page
+    let professional
+    let service_type
+    let service_place
+    let city_hall
+    let current_page
+    let execution_start_time;
     if(sort_only) {
       professional = this.state.last_fetch_professional
       service_type = this.state.last_fetch_service_type
@@ -519,6 +510,7 @@ class getShiftList extends Component {
       service_type = this.state.filter_service_type
       service_place = this.state.filter_service_place
       city_hall = this.state.filter_city_hall
+      execution_start_time = this.state.filter_date;
     }
     const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `/shifts`;
@@ -529,13 +521,12 @@ class getShiftList extends Component {
     professional == '' ? params = params : params += `&q[professional]=${professional}`;
     service_type == '' ? params = params : params += +`&q[service_type_id]=${service_type}`;
     service_place == '' ? params = params : params += `&q[service_place_id]=${service_place}`;
+    if(execution_start_time != null)
+      params += `&q[execution_start_time]=${execution_start_time}`;
+
+
     ((this.props.current_role.role !== 'adm_c3sl') || (city_hall == null)) ?
     params = params : params += `&q[city_hall]=${city_hall}`;
-    console.log(params);
-    console.log(professional);
-    console.log(service_type);
-    console.log(service_place);
-
 
     current_page = sort_only ? this.state.current_page : 1
     fetch(`${apiUrl}/${collection}?${params}`, {
@@ -557,6 +548,11 @@ class getShiftList extends Component {
   }
 
 	newShiftButton() {
+
+     if(this.props.current_role.role === 'atendente_local'){
+       return(null);
+     }
+
 		return (
 			<button
         onClick={() =>
