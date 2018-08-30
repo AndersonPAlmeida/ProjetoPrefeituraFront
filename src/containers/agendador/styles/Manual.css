@@ -1,0 +1,18 @@
+.info-text {
+  font-size: 13px;
+}
+
+.info-text p {
+  margin-bottom: 45px;
+  font-family: 'Roboto', 'Arial';
+  font-size: 15px;
+}
+
+.main {
+  width: 100%;
+  /*margin-top: 70px;*/
+}
+
+.btn-color{
+  color: #92bf23;
+}

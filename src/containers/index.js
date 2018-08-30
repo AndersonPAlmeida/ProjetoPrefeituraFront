@@ -27,7 +27,7 @@ export ChooseRole from './application/ChooseRole';
 export PasswordRetrieval from './account/PasswordRetrieval';
 export PasswordChange from './account/PasswordChange';
 export InvalidToken from './account/InvalidToken';
-
+export Manual from './agendador/Manual'
 export ScheduleAgreement from './schedule/ScheduleAgreement';
 export ScheduleChoose from './schedule/ScheduleChoose';
 export ScheduleCitizen from './schedule/ScheduleCitizen';

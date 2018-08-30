@@ -39,7 +39,7 @@ import { App, Home, NotFound, Login, Register, PasswordChange,
   ShiftList, OccupationCreate,OccupationList, OccupationEdit,OccupationShow, MyReport, Reports,
   citizenReport, schedulesReport, shiftsReport, professionalsReport,
   servicesReport, shiftTypeReport, ServiceEdit, ServiceList,
-  CityHallList, CityHallEdit, CityHallCreate, CitizenEditPassword
+  CityHallList, CityHallEdit, CityHallCreate, CitizenEditPassword, Manual
 } from './containers';
 
 import { configure } from './redux-auth';
@@ -107,7 +107,7 @@ export function initialize({ apiUrl, cookies, isServer, currentLocation, userAge
         <Route path="signup" component={UserIsNotAuthenticated(RegisterCep)} />
         <Route path="signup2" component={UserIsNotAuthenticated(Register)} />
         <Route path="password" component={UserIsNotAuthenticated(PasswordRetrieval)}/>
-
+        <Route path="agendador/manual" component={UserIsNotAuthenticated(Manual)} />
         <Route path="new_password" component={UserIsNotAuthenticated(PasswordChange)}/>
         <Route path="new_password/invalid" component={UserIsNotAuthenticated(InvalidToken)}/>
 
