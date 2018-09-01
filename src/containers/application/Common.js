@@ -58,13 +58,13 @@ export const Footer = (props) =>
             </div>
             <Row className='align-width'>
               <Col s={12} m={12} l={12}>
-                <Col s={2} className='offset-s4'>
+                <Col s={2} className='offset-s3'>
                   <img
                     className={styles['mc-img']}
                     src={McImg}
                     />
                 </Col>
-                <Col s={1}>
+                <Col s={3}>
                   <div style={{'marginBottom':'10px'}}>
                     <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/br/">
                       <img className='license-img' alt="Licença Creative Commons" style={{'borderWidth':0}}
