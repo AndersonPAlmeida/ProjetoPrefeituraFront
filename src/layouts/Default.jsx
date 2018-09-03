@@ -27,9 +27,9 @@ export default class Default extends React.Component {
       <html lang="en">
         <head>
           <title>Agendador</title>
-          <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons" />
-          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css" />
-  
+          <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons" />
+          <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css" />
+
           <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"/>
           <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.0/leaflet.css"/>
 
