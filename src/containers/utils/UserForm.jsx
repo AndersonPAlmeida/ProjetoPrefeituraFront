@@ -306,7 +306,7 @@ class getUserForm extends Component {
   checkErrors(formData, auxData, send_password) {
     let errors = []
     let form_mandatory = (!this.props.professional_only) ? [ { id: 'name', name: 'Nome' },{ id: 'address_number', name: 'Número' }] : []
-    if(this.props.user_class == `citizen` || this.props.user_class == `professional` ) {
+    if(this.props.user_class == `citizen`) {
       form_mandatory.push({ id: 'cpf', name: 'CPF' })
       form_mandatory.push({ id: 'cep', name: 'CEP' })
       form_mandatory.push({ id: 'phone1', name: 'Telefone 1' })
@@ -314,7 +314,7 @@ class getUserForm extends Component {
     errors = this.checkEmptyFields(formData, form_mandatory)
     if(this.props.user_class == `professional`) {
         if(this.state.professional.occupation_id === 0)
-            errors.push('Campo Cargo é obrigatório`')
+            errors.push('Campo Cargo é obrigatório')
     }
     if(send_password) {
       if(!auxData['password'])
@@ -325,11 +325,15 @@ class getUserForm extends Component {
         errors.push("A senha de confirmação não corresponde a senha atual.");
     }
 
-    if(!auxData['birth_date'])
+    if(!auxData['birth_date'] && this.props.user_class == `citizen` )
       errors.push("Campo Data de Nascimento é obrigatório.");
-    if(auxData['birth_date'].length < 8 || !isValidDate(auxData['birth_date'])){
-        errors.push('Digite uma data válida');
+
+    if(this.props.user_class == `citizen`){
+        if(auxData['birth_date'].length < 8 || !isValidDate(auxData['birth_date'])){
+            errors.push('Digite uma data válida');
+        }
     }
+
 
     return errors;
   }
