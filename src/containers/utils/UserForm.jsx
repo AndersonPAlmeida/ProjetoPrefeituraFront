@@ -38,9 +38,9 @@ import { InputDate } from '../components/AgendadorComponents'
 
 function isValidDate(s) {
   var bits = s.split('/');
-  var y = bits[0],
+  var y = bits[2],
     m = bits[1],
-    d = bits[2];
+    d = bits[0];
   // Assume not leap year by default (note zero index for Jan)
   var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
@@ -245,6 +245,7 @@ class getUserForm extends Component {
             format='yyyy-mm-dd'
           />
         </Row>
+
       )
     }
 
@@ -304,13 +305,17 @@ class getUserForm extends Component {
 
   checkErrors(formData, auxData, send_password) {
     let errors = []
-    let form_mandatory = (!this.props.professional_only) ? [ { id: 'name', name: 'Nome' } ] : []
+    let form_mandatory = (!this.props.professional_only) ? [ { id: 'name', name: 'Nome' },{ id: 'address_number', name: 'Número' }] : []
     if(this.props.user_class == `citizen`) {
       form_mandatory.push({ id: 'cpf', name: 'CPF' })
       form_mandatory.push({ id: 'cep', name: 'CEP' })
       form_mandatory.push({ id: 'phone1', name: 'Telefone 1' })
     }
     errors = this.checkEmptyFields(formData, form_mandatory)
+    if(this.props.user_class == `professional`) {
+        if(this.state.professional.occupation_id === 0)
+            errors.push('Campo Cargo é obrigatório')
+    }
     if(send_password) {
       if(!auxData['password'])
         errors.push("Campo senha não pode estar vazio.")
@@ -319,13 +324,14 @@ class getUserForm extends Component {
       if(auxData['password_confirmation'] != auxData['password'])
         errors.push("A senha de confirmação não corresponde a senha atual.");
     }
-    if(!this.props.professional_only){
-      if(!auxData['birth_date'])
+
+    if(!auxData['birth_date'] && this.props.user_class == `citizen` )
       errors.push("Campo Data de Nascimento é obrigatório.");
 
-      if(auxData['birth_date'].length < 10 || !isValidDate(auxData['birth_date'])){
-        errors.push('Digite uma data válida');
-      }
+    if(this.props.user_class == `citizen`){
+        if(auxData['birth_date'].length < 8 || !isValidDate(auxData['birth_date'])){
+            errors.push('Digite uma data válida');
+        }
     }
 
 
@@ -333,10 +339,10 @@ class getUserForm extends Component {
   }
 
   generateBody(formData, auxData, send_password) {
-
     let day = auxData['birth_date'].slice(0,2);
     let month = auxData['birth_date'].slice(3,5);
     let year = auxData['birth_date'].slice(6,10);
+
 
     if(!auxData['pcd_value']) {
       formData['pcd'] = ''
@@ -452,12 +458,15 @@ class getUserForm extends Component {
         $("#toast-container").remove();
         Materialize.toast(this.successMessage.bind(this)(), 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
-      }).catch((errors) => {
-        if(errors && errors['full_messages']) { // TODO: UPDATE ERRORS ARRAY ACCORDING TO API
+    }).catch((errors_resp) => {
+        if(errors_resp) { // TODO: UPDATE ERRORS ARRAY ACCORDING TO API
           let full_error_msg = "";
-          errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n' });
-          $("#toast-container").remove();
-          Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+          if(errors_resp.errors.length > 0) {
+            let full_error_msg = "";
+            $("#toast-container").remove();
+            errors_resp.errors.forEach(function(elem){ full_error_msg += elem + '\n' });
+            Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+          }
           throw errors;
         }
       });
@@ -525,7 +534,12 @@ class getUserForm extends Component {
                           {contact_info.bind(this)()}
                         </Col>
                         <Col s={12} m={6}>
-                           {this.password_field.bind(this)()}
+                          {
+                            this.props.user_class != `dependant` ?
+                              password_info.bind(this)() :
+                              null
+                          }
+
                         </Col>
                       </Row>
                     </div>
