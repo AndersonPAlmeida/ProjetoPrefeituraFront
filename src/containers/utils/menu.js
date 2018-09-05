@@ -87,7 +87,7 @@ export const getOptions = (user_permission,user_name) =>
           'fields':
                 [
                     { 'name': 'Locais de Atendimento', 'link': '/service_places', 'separator': true },
-                    { 'name': 'Prefeituras', 'link': '/city_hall/edit', 'separator': false },
+                    { 'name': 'Prefeitura', 'link': '/city_hall/edit', 'separator': false },
                     { 'name': 'Setores', 'link': '/sectors', 'separator': false },
                     { 'name': 'Cargos', 'link': '/occupations', 'separator': false },
                     { 'name': 'Profissionais', 'link': '/professionals', 'separator': false },
