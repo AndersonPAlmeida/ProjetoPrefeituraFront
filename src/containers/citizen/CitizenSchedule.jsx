@@ -62,7 +62,7 @@ class getCitizenSchedule extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ 
+      self.setState({
         collections: resp,
         sectors: resp.sectors,
         situation: resp.situation
@@ -76,32 +76,32 @@ class getCitizenSchedule extends Component {
         "Content-Type": "application/json" },
         method: "get",
     }).then(parseResponse).then(resp => {
-      self.setState({ 
+      self.setState({
         schedules: resp.schedules,
         dependants: resp.dependants
       })
     });
   }
 
-	firstComponent() {
-		return (
-			<div>
-				<div className='card'>
+    firstComponent() {
+        return (
+            <div>
+                <div className='card'>
           <div className='card-content'>
             <h2 className='card-title h2-title-home'>Bem vindo {this.props.user.citizen.name}! </h2>
             <div className={styles['div-component-home']}>
-            	<p>Abaixo, você poderá visualizar o histórico, com seus agendamentos marcados, 
-            			efetuados e cancelados, podendo verificar também a possibilidade de realizar novos agendamentos.</p>
-            	<p>Para mais informações sobre como usar o Sistema Agendador de Serviços Públicos 
-            			visite o Manual de Utilização ou a seção de Perguntas Frequentes. </p>
+                <p>Abaixo, você poderá visualizar o histórico, com seus agendamentos marcados,
+                        efetuados e cancelados, podendo verificar também a possibilidade de realizar novos agendamentos.</p>
+                <p>Para mais informações sobre como usar o Sistema Agendador de Serviços Públicos
+                        visite o Manual de Utilização ou a seção de Perguntas Frequentes. </p>
             </div>
           </div>
-		    </div>
-			</div>
-		)
-	}	
+            </div>
+            </div>
+        )
+    }
 
-	secondComponent() {
+    secondComponent() {
     const sectorsLimit = this.state.schedules && this.state.schedules.sectors.length > 0 ?
     (
       this.state.schedules.sectors.map((sector) => {
@@ -110,35 +110,35 @@ class getCitizenSchedule extends Component {
         )
       })
     ) : <p>Nenhum agendamento realizado</p>
-		return (
-			<div>
-				<div className='card'>
+        return (
+            <div>
+                <div className='card'>
           <div className='card-content'>
             <h2 className='card-title h2-title-home'>Situação de agendamentos </h2>
             <div className={styles['div-component-home']}>
-            	<p><b>Agendamentos por setor: utilizados/máximo</b></p>
+                <p><b>Agendamentos por setor: utilizados/máximo</b></p>
               {sectorsLimit}
             </div>
           </div>
-		    </div>
-			</div>
-		)
-	}	
+            </div>
+            </div>
+        )
+    }
 
-	thirdComponent() {
-		return (
-			<div>
-				<div className='card'>
+    thirdComponent() {
+        return (
+            <div>
+                <div className='card'>
           <div className='card-content'>
             <h2 className='card-title h2-title-home'>Histórico de agendamentos </h2>
             <div className={styles['div-component-home']}>
-            	<p>Agendamentos podem ser cancelados em até hora(s) antes do horário de início do atendimento.</p>
+                <p>Agendamentos podem ser cancelados em até hora(s) antes do horário de início do atendimento.</p>
             </div>
           </div>
-		    </div>
-			</div>
-		)
-	}
+            </div>
+            </div>
+        )
+    }
 
   pickSector() {
     const sectorsList = (
@@ -149,7 +149,7 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col s={12} m={3}> 
+      <Col s={12} m={3}>
         <div>
           <h6>Setor:</h6>
           <Input name="filter_sector" type='select' value={this.state.filter_sector}
@@ -163,7 +163,7 @@ class getCitizenSchedule extends Component {
                       function(type) {
                         return type.sector_id == selected_sector
                       }
-                    ) 
+                    )
                   }
                   else {
                     service_types = this.state.collections.service_type
@@ -182,7 +182,7 @@ class getCitizenSchedule extends Component {
             {sectorsList}
           </Input>
         </div>
-      </Col> 
+      </Col>
     )
   }
 
@@ -196,7 +196,7 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col s={12} m={3}> 
+      <Col s={12} m={3}>
         <div>
           <h6>Tipo de Atendimento:</h6>
           <Input name="filter_service_type" type='select' value={this.state.filter_service_type}
@@ -215,7 +215,7 @@ class getCitizenSchedule extends Component {
                         }
                         return false
                       }
-                    ) 
+                    )
                   }
                   else {
                     service_places = this.state.collections.service_place
@@ -233,7 +233,7 @@ class getCitizenSchedule extends Component {
             {serviceTypeList}
           </Input>
         </div>
-      </Col> 
+      </Col>
     )
   }
 
@@ -246,7 +246,7 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col s={12} m={3}> 
+      <Col s={12} m={3}>
         <div>
           <h6>Local de Atendimento:</h6>
           <Input name="filter_service_place" type='select' value={this.state.filter_service_place}
@@ -265,7 +265,7 @@ class getCitizenSchedule extends Component {
             {servicePlaceList}
           </Input>
         </div>
-      </Col> 
+      </Col>
     )
   }
 
@@ -278,7 +278,7 @@ class getCitizenSchedule extends Component {
       })
     )
     return (
-      <Col s={12} m={3}> 
+      <Col s={12} m={3}>
         <div>
           <h6>Situação:</h6>
           <Input name="filter_situation" type='select' value={this.state.filter_situation}
@@ -297,7 +297,7 @@ class getCitizenSchedule extends Component {
             {situationList}
           </Input>
         </div>
-      </Col> 
+      </Col>
     )
   }
 
@@ -305,18 +305,22 @@ class getCitizenSchedule extends Component {
     return (
       <div>
         <Row></Row>
-        <Row s={12}>
-          {this.pickSector()}
-          {this.pickServiceType()}
-          {this.pickServicePlace()}
-          {this.pickSituation()}
+        <Row>
+            <Col s={12}>
+                {this.pickSector()}
+                {this.pickServiceType()}
+                {this.pickServicePlace()}
+                {this.pickSituation()}
+            </Col>
         </Row>
-        <Row s={12}>
-          <Col> 
-            <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
-          </Col>
-          <Col>
-          <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+        <Row >
+            <Col s={12}>
+              <Col>
+                <button className="waves-effect btn button-color" onClick={this.handleFilterSubmit.bind(this,false)} name="commit" type="submit">FILTRAR</button>
+              </Col>
+              <Col>
+              <button className="waves-effect btn button-color" onClick={this.cleanFilter.bind(this)} name="commit" type="submit">LIMPAR CAMPOS</button>
+              </Col>
           </Col>
         </Row>
       </div>
@@ -406,7 +410,7 @@ class getCitizenSchedule extends Component {
       d = new Date(schedule.service_start_time)
       time = this.addZeroBefore(d.getHours()) + ":" + this.addZeroBefore(d.getMinutes())
         return (
-          <tr>
+          <tr  key={schedule.id}>
             <td>
               {schedule.id}
             </td>
@@ -480,13 +484,13 @@ class getCitizenSchedule extends Component {
           </table>
         </div>
         <br />
-        <Pagination 
+        <Pagination
           value={current_page}
           onSelect={pagination_function.bind(this)}
-          className={styles['pagination']} 
-          items={Math.ceil(num_entries/num_items_per_page)} 
-          activePage={current_page} 
-          maxButtons={8} 
+          className={styles['pagination']}
+          items={Math.ceil(num_entries/num_items_per_page)}
+          activePage={current_page}
+          maxButtons={8}
         />
       </div>
     )
@@ -508,20 +512,20 @@ class getCitizenSchedule extends Component {
             {sectorsLimit}
             <br />
             {
-              dependant.schedules.entries.length > 0 ? 
-                this.tableList(dependant.schedules.entries, dependant.schedules.num_entries, 
+              dependant.schedules.entries.length > 0 ?
+                this.tableList(dependant.schedules.entries, dependant.schedules.num_entries,
                   (dependant.id == this.state.current_dependant_id) ? this.state.current_dependant_page : 1,
-                  (val) => 
-                    { 
+                  (val) =>
+                    {
                       this.setState(
                         {
                           current_dependant_page: val,
                           current_dependant_id: dependant.id
-                        }, 
+                        },
                         () => {this.handleFilterSubmit.bind(this)(true)}
                       )
                     }
-                ) 
+                )
                 : '- Nenhum agendamento encontrado'
             }
           </CollapsibleItem>
@@ -539,34 +543,34 @@ class getCitizenSchedule extends Component {
     )
   }
 
-	fourthComponent() {
-		return (
-			<div>
-				<div className='card'>
+    fourthComponent() {
+        return (
+            <div>
+                <div className='card'>
           <div className='card-content'>
             <h2 className='card-title h2-title-home'>Buscar agendamentos </h2>
             {this.filterSchedule()}
             {
-              (this.state.schedules && this.state.schedules.entries && this.state.schedules.entries.length) > 0 ? 
+              (this.state.schedules && this.state.schedules.entries && this.state.schedules.entries.length) > 0 ?
                 this.tableList(this.state.schedules.entries, this.state.schedules.num_entries, this.state.current_page,
-                  (val) => 
-                    { 
+                  (val) =>
+                    {
                       this.setState(
                         {
                           current_page: val
-                        }, 
+                        },
                         () => {this.handleFilterSubmit.bind(this)(true)}
                       )
                     }
-                ) 
+                )
                 : '- Nenhum agendamento encontrado'
             }
             {this.dependantSchedules()}
           </div>
-		    </div>
-			</div>
-		)
-	}
+            </div>
+            </div>
+        )
+    }
 
   render() {
     var home = false
@@ -576,19 +580,19 @@ class getCitizenSchedule extends Component {
         home = query
     }
     return (
-      <div> 
-	      <main>
-	      	<Row>
-		        <Col s={12}>
-			      	<div>
-			      		{home ? this.firstComponent() : <div />}
-			      		{this.secondComponent()}
-			      		{this.thirdComponent()}
-			      		{this.fourthComponent()}
-			      	</div>
-		      	</Col>
-		    </Row>
-		  </main>
+      <div>
+          <main>
+              <Row>
+                <Col s={12}>
+                      <div>
+                          {home ? this.firstComponent() : <div />}
+                          {this.secondComponent()}
+                          {this.thirdComponent()}
+                          {this.fourthComponent()}
+                      </div>
+                  </Col>
+            </Row>
+          </main>
       </div>
     )
   }
@@ -605,4 +609,3 @@ const CitizenSchedule = connect(
   mapStateToProps
 )(getCitizenSchedule)
 export default CitizenSchedule
-
