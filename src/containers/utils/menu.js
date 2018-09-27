@@ -220,13 +220,6 @@ export const getOptions = (user_permission,user_name) =>
                   { 'name': 'Imprimir Cadastro', 'link': '/citizens/my_report/report.pdf', 'separator': true },
                 ]
         },
-        { 'name': 'Recursos',
-          'rolldown': true,
-          'fields':
-              [
-                { 'name': 'Agendar', 'link': '/resource_bookings', 'separator': false }
-              ]
-        },
         { 'name': 'Serviços',
           'rolldown': true,
           'fields':
