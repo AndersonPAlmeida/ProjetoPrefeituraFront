@@ -21,8 +21,9 @@ COPY . .
 
 
 RUN npm install npm@latest -g && \
-         npm install && \
-         npm audit fix
+         npm install 
+         #npm install && \
+         #npm audit fix
 
 # VOLUME ["$INSTALL_PATH/src"]
 
