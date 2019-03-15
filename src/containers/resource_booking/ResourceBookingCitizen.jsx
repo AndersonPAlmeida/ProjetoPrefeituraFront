@@ -59,7 +59,7 @@ class getResourceBookingCitizen extends Component {
       method: 'get',
     }).then(parseResponse).then(resp => {
       this.groupResources(resp);
-      self.setState({ 
+      self.setState({
         resource_shifts:resp
       });
     });
@@ -77,7 +77,7 @@ class getResourceBookingCitizen extends Component {
     }).then(parseResponse).then(resp => {
       let details = this.state.resource_details;
       details.push(resp);
-      self.setState({ 
+      self.setState({
         resource_details:details
       });
     });
@@ -108,11 +108,11 @@ class getResourceBookingCitizen extends Component {
     final_message['citizen_id'] = Number(this.props.current_citizen.id);
     final_message['resource_shift_id'] = Number(this.state.selected_time);
 
-    
+
     final_message['service_place_id'] = Number(resource.service_place.id);
     final_message['booking_start_time'] = new Date(shift.execution_start_time);
     final_message['booking_end_time'] = new Date(shift.execution_end_time);
-    
+
     final_message['booking_reason'] = this.state.booking_reason;
     final_message['status'] = 'Em Análise';
     final_message['situation_id'] = 1;
@@ -142,7 +142,7 @@ class getResourceBookingCitizen extends Component {
   }
 
   setIDResourceString(resource){
-    let final_name;    
+    let final_name;
     if(resource){
       if(resource.label.length > 0){
         if (resource.brand.length > 0){
@@ -154,7 +154,7 @@ class getResourceBookingCitizen extends Component {
           }
         }
         else{
-          final_name = `${resource.label}`;          
+          final_name = `${resource.label}`;
         }
       }
       else{
@@ -177,7 +177,7 @@ class getResourceBookingCitizen extends Component {
       }
       else{
         if(time.length == 2){
-          return time;          
+          return time;
         }
         else{
           return time[0]+time[1];
@@ -191,8 +191,8 @@ class getResourceBookingCitizen extends Component {
     var transformedTime;
     transformedTime = strftime.timezone('+0000')('%d/%m/%Y', new Date(time))
       + ' - '
-      + this.timeSizeFixer((new Date(time).getHours()).toString()) 
-      + ':' 
+      + this.timeSizeFixer((new Date(time).getHours()).toString())
+      + ':'
       + this.timeSizeFixer((new Date(time).getMinutes()).toString());
 
     return (transformedTime);
@@ -218,7 +218,7 @@ class getResourceBookingCitizen extends Component {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    
+
     if(name == 'selected_resource')
       this.getShiftsFromResource(value);
 
@@ -245,7 +245,10 @@ class getResourceBookingCitizen extends Component {
     let errors = [];
     let formData = {};
     formData = this.buildBody();
-
+    console.log("Reason",this.state.booking_reason)
+    if(!this.state.booking_reason){
+        errors.push("Motivo está vazio");
+    }
     if(errors.length > 0) {
       let full_error_msg = '';
       errors.forEach(function(elem){ full_error_msg += elem + '\n'; });
@@ -253,7 +256,7 @@ class getResourceBookingCitizen extends Component {
     } else {
       const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
       const collection = this.props.fetch_collection;
-      const params = this.props.fetch_params; 
+      const params = this.props.fetch_params;
       let fetch_body = {};
       fetch_body = formData;
       fetch(`${apiUrl}/${collection}?${params}`, {
@@ -275,7 +278,7 @@ class getResourceBookingCitizen extends Component {
         }
         else{
           this.updateShift(Number(this.state.selected_time));
-          Materialize.toast('Reserva de recurso criada com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});      
+          Materialize.toast('Reserva de recurso criada com sucesso.', 10000, 'green',function(){$('#toast-container').remove();});
         }
       });
     }
@@ -295,16 +298,16 @@ class getResourceBookingCitizen extends Component {
       resourceTypeList.map((rt) => {
         return (
           <option key={Math.random()} value={rt ? rt.id : 0}>
-            {`${rt.name}`} 
+            {`${rt.name}`}
           </option>
         );
       })
     );
 
     return (
-      <Input 
-        name="selected_resource_type"   
-        type='select' 
+      <Input
+        name="selected_resource_type"
+        type='select'
         value={this.state.selected_resource_type}
         onChange={
           (event) => {
@@ -326,7 +329,7 @@ class getResourceBookingCitizen extends Component {
       for(let i = 0; i < this.state.resource_details.length; i++){
         let aux = this.state.resource_details[i]['resource'];
         let aux2 = this.state.resource_details[i]['resource_type'];
-        let final_name = this.setIDResourceString(aux);        
+        let final_name = this.setIDResourceString(aux);
         if(this.state.selected_resource_type == aux2.id)
           resourceList.push({id: aux.id, name: final_name});
       }
@@ -337,15 +340,15 @@ class getResourceBookingCitizen extends Component {
       resourceList.map((rt) => {
         return (
           <option key={Math.random()} value={rt ? rt.id : 0}>
-            {`${rt.name}`} 
+            {`${rt.name}`}
           </option>
         );
       })
     );
     return (
-      <Input 
-        name="selected_resource"   
-        type='select' 
+      <Input
+        name="selected_resource"
+        type='select'
         value={this.state.selected_resource}
         onChange={
           (event) => {
@@ -369,15 +372,15 @@ class getResourceBookingCitizen extends Component {
       timeList.map((rt) => {
         return (
           <option key={Math.random()} value={rt ? rt.id : 0}>
-            {`${rt.time}`} 
+            {`${rt.time}`}
           </option>
         );
       })
     );
     return (
-      <Input 
-        name="selected_time"   
-        type='select' 
+      <Input
+        name="selected_time"
+        type='select'
         value={this.state.selected_time}
         onChange={
           (event) => {
@@ -393,14 +396,14 @@ class getResourceBookingCitizen extends Component {
     );
   }
 
-  render() {   
+  render() {
     return (
       <main>
         <Row>
           <Col s={12}>
             <div className='card'>
               <div className='card-content'>
-                <h2 className="card-title">Nova solicitação de recurso</h2> 
+                <h2 className="card-title">Nova solicitação de recurso</h2>
 
                 <Row>
                   <Col s={12} l={6}>
@@ -426,22 +429,22 @@ class getResourceBookingCitizen extends Component {
 
                   <Col s={12} l={6}>
                     <div id="text-area-size">
-                      <h6>4. Motivo da reserva:</h6>
+                      <h6>4. Motivo da reserva*:</h6>
                       <label>
-                        <textarea  
+                        <textarea
                           className='input-field materialize-textarea black-text'
-                          name="booking_reason" 
+                          name="booking_reason"
                           placeholder="Explique o motivo para reservar este recurso"
-                          value={this.state.booking_reason} 
-                          onChange={this.handleInputResourceChange.bind(this)} 
+                          value={this.state.booking_reason}
+                          onChange={this.handleInputResourceChange.bind(this)}
                         />
                       </label>
                     </div>
                   </Col>
-                </Row> 
+                </Row>
                 <Row>
                   <Col l={2} offset={'l9'}>
-                    <button className="waves-effect btn right button-color" onClick={this.handleClick.bind(this)} name="commit" type="submit">Solicitar</button>    
+                    <button className="waves-effect btn right button-color" onClick={this.handleClick.bind(this)} name="commit" type="submit">Solicitar</button>
                   </Col>
                 </Row>
               </div>

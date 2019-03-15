@@ -49,7 +49,7 @@ class getProfessionalCheck extends Component {
     let errors = []
     const apiUrl = `${apiHost}:${apiPort}/${apiVer}`;
     const collection = `check_create_professional`;
-    const params = `permission=${this.props.user.current_role}&cpf=${cpf}`; 
+    const params = `permission=${this.props.user.current_role}&cpf=${cpf}`;
     fetch(`${apiUrl}/${collection}?${params}`, {
       headers: {
         "Accept": "application/json",
@@ -62,8 +62,9 @@ class getProfessionalCheck extends Component {
         let full_error_msg = "";
         errors.forEach(function(elem){ full_error_msg += elem + '\n' });
         Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
+      }else{
+        browserHistory.push({ pathname: '/professionals/new', query: {professional_only: false} })
       }
-      browserHistory.push({ pathname: '/professionals/new', query: {professional_only: false} })
     });
   }
 
@@ -75,18 +76,18 @@ class getProfessionalCheck extends Component {
   confirmButton() {
     return (
       <div className="card-action">
-        <a className='back-bt waves-effect btn-flat' 
-           href='#' 
-           onClick={this.prev} 
-        > 
-          Voltar 
+        <a className='back-bt waves-effect btn-flat'
+           href='#'
+           onClick={this.prev}
+        >
+          Voltar
         </a>
-        <button className="waves-effect btn right button-color" 
-                href='#' 
+        <button className="waves-effect btn right button-color"
+                href='#'
                 onClick={ (e) => {
                   this.handleSubmit.bind(this)(e)
-                }} 
-                name="commit" 
+                }}
+                name="commit"
                 type="submit">
                   Verificar CPF
         </button>

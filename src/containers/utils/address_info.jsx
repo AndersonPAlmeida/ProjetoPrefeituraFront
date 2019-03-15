@@ -99,7 +99,7 @@ export default function () {
       </div>
 
       <div className="field-input" >
-        <h6>Número:</h6>
+        <h6>Número*:</h6>
         <label>
           <input
             type="text"
