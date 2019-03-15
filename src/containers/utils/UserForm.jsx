@@ -38,9 +38,9 @@ import { InputDate } from '../components/AgendadorComponents'
 
 function isValidDate(s) {
   var bits = s.split('/');
-  var y = bits[0],
+  var y = bits[2],
     m = bits[1],
-    d = bits[2];
+    d = bits[0];
   // Assume not leap year by default (note zero index for Jan)
   var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
@@ -304,14 +304,18 @@ class getUserForm extends Component {
 
   checkErrors(formData, auxData, send_password) {
     let errors = []
-    let form_mandatory = (!this.props.professional_only) ? [ { id: 'name', name: 'Nome' } ] : []
+    let form_mandatory = (!this.props.professional_only) ? [ { id: 'name', name: 'Nome' },{ id: 'address_number', name: 'Número' }] : []
     if(this.props.user_class == `citizen`) {
       form_mandatory.push({ id: 'cpf', name: 'CPF' })
       form_mandatory.push({ id: 'cep', name: 'CEP' })
       form_mandatory.push({ id: 'phone1', name: 'Telefone 1' })
     }
     errors = this.checkEmptyFields(formData, form_mandatory)
-    if(send_password) {
+    if(this.props.user_class == `professional`) {
+        if(this.state.professional.occupation_id === 0)
+            errors.push('Campo Cargo é obrigatório')
+    }
+    if(send_password && this.props.is_edit) {
       if(!auxData['password'])
         errors.push("Campo senha não pode estar vazio.")
       if(!auxData['password_confirmation'])
@@ -319,13 +323,14 @@ class getUserForm extends Component {
       if(auxData['password_confirmation'] != auxData['password'])
         errors.push("A senha de confirmação não corresponde a senha atual.");
     }
-    if(!this.props.professional_only){
-      if(!auxData['birth_date'])
+
+    if(!auxData['birth_date'] && this.props.user_class == `citizen` )
       errors.push("Campo Data de Nascimento é obrigatório.");
 
-      if(auxData['birth_date'].length < 10 || !isValidDate(auxData['birth_date'])){
-        errors.push('Digite uma data válida');
-      }
+    if(this.props.user_class == `citizen`){
+        if(auxData['birth_date'].length < 8 || !isValidDate(auxData['birth_date'])){
+            errors.push('Digite uma data válida');
+        }
     }
 
 
@@ -337,6 +342,7 @@ class getUserForm extends Component {
     let day = auxData['birth_date'].slice(0,2);
     let month = auxData['birth_date'].slice(3,5);
     let year = auxData['birth_date'].slice(6,10);
+
 
     if(!auxData['pcd_value']) {
       formData['pcd'] = ''
@@ -478,8 +484,22 @@ class getUserForm extends Component {
       if(this.props.user_class != 'dependant'){
         if(this.props.fetch_collection === 'auth'){
           return password_info.bind(this)()
+
         }else{
-          return this.password_change.bind(this)()
+            if(this.props.is_edit){
+                return this.password_change.bind(this)()
+            }else{
+                return(
+                  <div>
+                    <div className='category-title'>
+                      <p>Senha</p>
+                    </div>
+                    <div>
+                        <p font color="red"> A primeira senha do usuario é a data de nascimento no modelo DD/MM/AA   </p>
+                    </div>
+                  </div>
+                )
+            }
         }
       }
       else{
@@ -525,7 +545,12 @@ class getUserForm extends Component {
                           {contact_info.bind(this)()}
                         </Col>
                         <Col s={12} m={6}>
-                           {this.password_field.bind(this)()}
+                          {
+                            this.props.user_class != `dependant` ?
+                              this.password_field() :
+                              null
+                          }
+
                         </Col>
                       </Row>
                     </div>
