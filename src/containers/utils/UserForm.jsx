@@ -245,7 +245,6 @@ class getUserForm extends Component {
             format='yyyy-mm-dd'
           />
         </Row>
-
       )
     }
 
@@ -316,7 +315,7 @@ class getUserForm extends Component {
         if(this.state.professional.occupation_id === 0)
             errors.push('Campo Cargo é obrigatório')
     }
-    if(send_password) {
+    if(send_password && this.props.is_edit) {
       if(!auxData['password'])
         errors.push("Campo senha não pode estar vazio.")
       if(!auxData['password_confirmation'])
@@ -339,6 +338,7 @@ class getUserForm extends Component {
   }
 
   generateBody(formData, auxData, send_password) {
+
     let day = auxData['birth_date'].slice(0,2);
     let month = auxData['birth_date'].slice(3,5);
     let year = auxData['birth_date'].slice(6,10);
@@ -458,15 +458,12 @@ class getUserForm extends Component {
         $("#toast-container").remove();
         Materialize.toast(this.successMessage.bind(this)(), 10000, "green",function(){$("#toast-container").remove()});
         browserHistory.push(this.props.submit_url)
-    }).catch((errors_resp) => {
-        if(errors_resp) { // TODO: UPDATE ERRORS ARRAY ACCORDING TO API
+      }).catch((errors) => {
+        if(errors && errors['full_messages']) { // TODO: UPDATE ERRORS ARRAY ACCORDING TO API
           let full_error_msg = "";
-          if(errors_resp.errors.length > 0) {
-            let full_error_msg = "";
-            $("#toast-container").remove();
-            errors_resp.errors.forEach(function(elem){ full_error_msg += elem + '\n' });
-            Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
-          }
+          errors['full_messages'].forEach(function(elem){ full_error_msg += elem + '\n' });
+          $("#toast-container").remove();
+          Materialize.toast(full_error_msg, 10000, "red",function(){$("#toast-container").remove()});
           throw errors;
         }
       });
@@ -487,8 +484,22 @@ class getUserForm extends Component {
       if(this.props.user_class != 'dependant'){
         if(this.props.fetch_collection === 'auth'){
           return password_info.bind(this)()
+
         }else{
-          return this.password_change.bind(this)()
+            if(this.props.is_edit){
+                return this.password_change.bind(this)()
+            }else{
+                return(
+                  <div>
+                    <div className='category-title'>
+                      <p>Senha</p>
+                    </div>
+                    <div>
+                        <p font color="red"> A primeira senha do usuario é a data de nascimento no modelo DD/MM/AA   </p>
+                    </div>
+                  </div>
+                )
+            }
         }
       }
       else{
@@ -536,7 +547,7 @@ class getUserForm extends Component {
                         <Col s={12} m={6}>
                           {
                             this.props.user_class != `dependant` ?
-                              password_info.bind(this)() :
+                              this.password_field() :
                               null
                           }
 
