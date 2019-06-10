@@ -5,6 +5,8 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LANG C.UTF-8
 
 #Install apt-utils to prevent warning messages
+RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://archive.debian.org/debian/ jessie main\ndeb http://security.debian.org jessie/updates main\ndeb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
+
 RUN apt-get -y update -qq && apt-get install -y -qq apt-utils
 
 # Set an environment variable to store where the app is installed to inside of the Docker image.
@@ -28,6 +30,10 @@ RUN npm install npm@latest -g && \
 # VOLUME ["$INSTALL_PATH/src"]
 
 EXPOSE 3002
+
+
+
+
 
 ENTRYPOINT ["/app/agendador-entrypoint.sh"]
 CMD ["PRODUCTION"]

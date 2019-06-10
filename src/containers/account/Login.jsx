@@ -24,7 +24,7 @@ export const Infographic = () => (
         <div>
           <div>
             <div className={styles['info-text']}>
-              <p> O aplicativo Agendador foi desenvolvido para viabilizar a
+              <p> A aplicativo Agendador foi desenvolvido para viabilizar a
                 <b> automatização do agendamento</b> dos atendimentos com hora marcada  
                 <b> em órgãos públicos</b>, permitindo que uma prefeitura crie, por exemplo, 
                 horários de atendimento para médicos em postos de saúde.
